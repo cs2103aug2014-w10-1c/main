@@ -5,10 +5,11 @@
 
 #pragma once
 #ifndef YOU_STDAFX_H_
+#define YOU_STDAFX_H_
 
 #include <SDKDDKVer.h>
 
 #include <stdio.h>
 #include <tchar.h>
 
-#endif
+#endif  // YOU_STDAFX_H_
