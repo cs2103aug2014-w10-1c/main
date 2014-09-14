@@ -19,3 +19,9 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio temporary files
+*.opensdf
+*.sdf
+*.suo
+**/ipch

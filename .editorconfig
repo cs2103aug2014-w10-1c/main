@@ -1,0 +1,14 @@
+; Top-most EditorConfig file
+root = true
+
+; Windows-style newlines
+[*]
+end_of_line = CRLF
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+; 4-column tab indentation
+[*.{cpp,h}]
+indent_style = tab
+indent_size = 4
