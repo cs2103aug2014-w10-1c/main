@@ -25,4 +25,12 @@
 *.sdf
 *.suo
 **/ipch
+
+# NuGet
 /packages
+
+# Compiled binaries
+/Debug
+/Release
+**/Debug
+**/Release
