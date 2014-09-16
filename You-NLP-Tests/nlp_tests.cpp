@@ -13,6 +13,6 @@ namespace Tests {
 			Assert::IsTrue(false);
 		}
 	};
-} // namespace Tests
-} // namespace NLP
-} // namespace You
+}  // namespace Tests
+}  // namespace NLP
+}  // namespace You
