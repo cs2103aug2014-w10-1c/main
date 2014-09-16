@@ -18,6 +18,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-DataStore", "You-DataSt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-NLP-Tests", "You-NLP-Tests\You-NLP-Tests.vcxproj", "{6C82E543-56F8-485D-9D04-8217B9C02395}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-QueryEngine-Tests", "You-QueryEngine-Tests\You-QueryEngine-Tests.vcxproj", "{278D09AE-F2F0-4A24-81AF-C82C4710B390}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-DataStore-Tests", "You-DataStore-Tests\You-DataStore-Tests.vcxproj", "{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -44,6 +48,14 @@ Global
 		{6C82E543-56F8-485D-9D04-8217B9C02395}.Debug|Win32.Build.0 = Debug|Win32
 		{6C82E543-56F8-485D-9D04-8217B9C02395}.Release|Win32.ActiveCfg = Release|Win32
 		{6C82E543-56F8-485D-9D04-8217B9C02395}.Release|Win32.Build.0 = Release|Win32
+		{278D09AE-F2F0-4A24-81AF-C82C4710B390}.Debug|Win32.ActiveCfg = Debug|Win32
+		{278D09AE-F2F0-4A24-81AF-C82C4710B390}.Debug|Win32.Build.0 = Debug|Win32
+		{278D09AE-F2F0-4A24-81AF-C82C4710B390}.Release|Win32.ActiveCfg = Release|Win32
+		{278D09AE-F2F0-4A24-81AF-C82C4710B390}.Release|Win32.Build.0 = Release|Win32
+		{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}.Debug|Win32.Build.0 = Debug|Win32
+		{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}.Release|Win32.ActiveCfg = Release|Win32
+		{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
