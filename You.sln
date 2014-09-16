@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-QueryEngine", "You-Quer
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-DataStore", "You-DataStore\You-DataStore.vcxproj", "{15C8CBBD-E87A-4744-8F03-658E121A8088}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-NLP-Tests", "You-NLP-Tests\You-NLP-Tests.vcxproj", "{6C82E543-56F8-485D-9D04-8217B9C02395}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -38,6 +40,10 @@ Global
 		{15C8CBBD-E87A-4744-8F03-658E121A8088}.Debug|Win32.Build.0 = Debug|Win32
 		{15C8CBBD-E87A-4744-8F03-658E121A8088}.Release|Win32.ActiveCfg = Release|Win32
 		{15C8CBBD-E87A-4744-8F03-658E121A8088}.Release|Win32.Build.0 = Release|Win32
+		{6C82E543-56F8-485D-9D04-8217B9C02395}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6C82E543-56F8-485D-9D04-8217B9C02395}.Debug|Win32.Build.0 = Debug|Win32
+		{6C82E543-56F8-485D-9D04-8217B9C02395}.Release|Win32.ActiveCfg = Release|Win32
+		{6C82E543-56F8-485D-9D04-8217B9C02395}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
