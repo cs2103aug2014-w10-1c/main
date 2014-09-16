@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include <CppUnitTest.h>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
@@ -13,6 +13,6 @@ namespace Tests {
 			Assert::IsTrue(false);
 		}
 	};
-}
-}
-}
+} // namespace Tests
+} // namespace NLP
+} // namespace You
