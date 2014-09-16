@@ -25,3 +25,4 @@
 *.sdf
 *.suo
 **/ipch
+/packages
