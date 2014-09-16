@@ -20,6 +20,9 @@
 *.out
 *.app
 
+# cpplint
+/cpplint.py
+
 # Visual Studio temporary files
 *.opensdf
 *.sdf

@@ -1,5 +1,9 @@
 # Grab the CppLint script
-Invoke-WebRequest https://gist.githubusercontent.com/lowjoel/8e75c651494fe7975dda/raw/cpplint.py -OutFile cpplint.py
+$cpplint = 'cpplint.py'
+$cpplint_exists = Test-Path $cpplint
+if ($cpplint_exists -ne $true) {
+	Invoke-WebRequest https://gist.githubusercontent.com/lowjoel/8e75c651494fe7975dda/raw/cpplint.py -OutFile $cpplint
+}
 
 # Get all files
 $cpp = Get-ChildItem -recurse -filter *.cpp
