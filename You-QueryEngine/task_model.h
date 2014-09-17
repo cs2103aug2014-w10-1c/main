@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace You {
 namespace QueryEngine {
@@ -12,9 +13,9 @@ namespace QueryEngine {
 /// The task instances are created using builder pattern.
 class Task {
 	/// Type definitions of each fields.
-	typedef long long ID;
+	typedef int64_t ID;
 	typedef std::wstring Description;
-	typedef long long Time;
+	typedef std::int64_t Time;
 	typedef std::vector<Task> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
 
@@ -67,13 +68,13 @@ public:
 
 	private:
 		Builder() = default;
-	};// class Builder
+	};  // class Builder
 
 private:
 	Task() = default;
 };
 
-} // namespace QueryEngine
-} // namespace You
+}  // namespace QueryEngine
+}  // namespace You
 
-#endif
+#endif  // YOU_QUERYENGINE_TASK_MODEL_H_
