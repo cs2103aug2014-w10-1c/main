@@ -6,9 +6,11 @@
 
 namespace You {
 namespace NLP {
-	class Exception : public std::exception {
-	};
-}
-}
+
+class Exception : public std::exception {
+};
+
+}  // namespace NLP
+}  // namespace You
 
 #endif  // YOU_NLP_EXCEPTION_H_

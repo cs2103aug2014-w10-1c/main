@@ -4,13 +4,15 @@
 
 namespace You {
 namespace NLP {
-	class Task {
-	};
+
+class Task {
+};
 	
-	/// Defines the task list that can be returned by the engine.
-	class TaskList {
-	};
-}
-}
+/// Defines the task list that can be returned by the engine.
+class TaskList {
+};
+
+}  // namespace NLP
+}  // namespace You
 
 #endif  // YOU_NLP_TASK_LIST_H_

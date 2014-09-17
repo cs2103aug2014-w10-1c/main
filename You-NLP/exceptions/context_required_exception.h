@@ -6,9 +6,11 @@
 
 namespace You {
 namespace NLP {
-	class ContextRequiredException : public Exception {
-	};
-}
-}
+
+class ContextRequiredException : public Exception {
+};
+
+}  // namespace NLP
+}  // namespace You
 
 #endif  // YOU_NLP_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
