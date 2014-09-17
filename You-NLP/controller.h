@@ -18,8 +18,7 @@ public:
 	class Context {
 	public:
 		/// Task List conversion constructor.
-		// NOLINTNEXTLINE
-		Context(const TaskList& taskList);
+		Context(const TaskList& taskList);  // NOLINT
 
 		/// Checks if the given context is the default context.
 		///
