@@ -11,4 +11,4 @@ class Result {
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_QUERYENGINE_EXCEPTION_H_
+#endif  // YOU_QUERYENGINE_RESULT_H_
