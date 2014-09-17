@@ -27,6 +27,9 @@
     <ClInclude Include="result.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="task_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
