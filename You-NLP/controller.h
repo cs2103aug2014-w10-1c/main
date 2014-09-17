@@ -4,11 +4,14 @@
 
 #include <string>
 #include "result.h"
+#include "task_list.h"
 
 namespace You {
 namespace NLP {
 	/// The entry-point for all communications with the rest of the You
 	/// framework.
+	///
+	/// This is a singleton class.
 	class Controller {
 	public:
 		Controller(const Controller&) = delete;

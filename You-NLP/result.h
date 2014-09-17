@@ -7,7 +7,7 @@ namespace NLP {
 	/// Defines the result of a query.
 	class Result {
 
-	protected:
+	private:
 		union {
 
 		};
@@ -15,4 +15,4 @@ namespace NLP {
 }
 }
 
-#endif
+#endif  // YOU_NLP_RESULT_H_
