@@ -10,10 +10,9 @@ namespace QueryEngine {
 typedef std::wstring XMLNode;
 
 class QueryEngine {
-
 };
 
-} // namespace QueryEngine
-} // namespace You
+}  // namespace QueryEngine
+}  // namespace You
 
-#endif
+#endif  // YOU_QUERYENGINE_QUERY_H_

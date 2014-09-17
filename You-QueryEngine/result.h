@@ -6,10 +6,9 @@ namespace You {
 namespace QueryEngine {
 
 class Result {
-
 };
 
-} // namespace QueryEngine
-} // namespace You
+}  // namespace QueryEngine
+}  // namespace You
 
-#endif
+#endif  // YOU_QUERYENGINE_RESULT_H_
