@@ -80,6 +80,8 @@ namespace NLP {
 		/// \param[in] query The natural language query to execute.
 		/// \param[in] context The task list context in which the query is run.
 		/// \return The result of the query.
+		/// \exception ContextRequiredException This is raised when a context is
+		///                                     needed for the query to run.
 		/// \see Result The result is polymorphic.
 		Result query(const std::wstring& query, const TaskList& context) const;
 
