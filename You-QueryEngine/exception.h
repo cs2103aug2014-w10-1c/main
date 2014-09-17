@@ -13,4 +13,4 @@ class Exception : public std::exception {
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_NLP_EXCEPTION_H_
+#endif  // YOU_QUERYENGINE_EXCEPTION_H_
