@@ -7,12 +7,12 @@ namespace NLP {
 
 class Task {
 };
-	
+
 /// Defines the task list that can be returned by the engine.
 class TaskList {
 };
 
-}  // namespace You
+}  // namespace NLP
 }  // namespace You
 
 #endif  // YOU_NLP_TASK_LIST_H_
