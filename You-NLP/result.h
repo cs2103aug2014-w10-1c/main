@@ -9,6 +9,21 @@ namespace NLP {
 
 /// Defines the result of a natural language query.
 class Result {
+public:
+	/// Checks if this result is a result set.
+	///
+	/// \return true if the result is a result set result.
+	bool isResultSetResult() const;
+
+	/// Checks if this result is a task object.
+	///
+	/// \return true if the result is an object result.
+	bool isAffectedObjectResult() const;
+
+	/// Checks if this result is a affected row count.
+	///
+	/// \return true if the result is an affected row count result.
+	bool isAffectedCountResult() const;
 
 private:
 	/// The possible types of results.
