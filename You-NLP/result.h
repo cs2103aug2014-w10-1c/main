@@ -6,7 +6,7 @@
 
 namespace You {
 namespace NLP {
-	/// Defines the result of a query.
+	/// Defines the result of a natural language query.
 	class Result {
 
 	private:
