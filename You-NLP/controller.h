@@ -20,9 +20,9 @@ namespace NLP {
 		/// Gets the singleton instance for the controller.
 		static Controller& get();
 
-		/// Executes the given query.
+		/// Executes the given natural language query.
 		///
-		/// \param[in] query The query to execute.
+		/// \param[in] query The natural language query to execute.
 		/// \param[in] context The task list context in which the query is run.
 		/// \return The result of the query.
 		/// \see Result The result is polymorphic.
