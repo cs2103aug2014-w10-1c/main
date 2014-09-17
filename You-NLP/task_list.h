@@ -4,6 +4,9 @@
 
 namespace You {
 namespace NLP {
+	class Task {
+	};
+	
 	/// Defines the task list that can be returned by the engine.
 	class TaskList {
 	};
