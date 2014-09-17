@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "nlp_controller.h"
+#include "controller.h"
 
 namespace You {
 namespace NLP {
