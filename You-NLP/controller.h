@@ -21,8 +21,12 @@ namespace NLP {
 		static Controller& get();
 
 		/// Executes the given query.
+		///
 		/// \param[in] query The query to execute.
-		Result query(const std::wstring& query) const;
+		/// \param[in] context The task list context in which the query is run.
+		/// \return The result of the query.
+		/// \see Result The result is polymorphic.
+		Result query(const std::wstring& query, const TaskList& context) const;
 
 	private:
 		Controller() = default;
