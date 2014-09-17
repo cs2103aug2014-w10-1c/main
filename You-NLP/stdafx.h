@@ -9,4 +9,7 @@
 
 #include <SDKDDKVer.h>
 
+#include <string>
+#include <stdexcept>
+
 #endif  // YOU_NLP_STDAFX_H_
