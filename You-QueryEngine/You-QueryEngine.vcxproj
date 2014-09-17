@@ -71,7 +71,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="query.h" />
+    <ClInclude Include="result.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="task_controller.h" />
+    <ClInclude Include="task_model.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
