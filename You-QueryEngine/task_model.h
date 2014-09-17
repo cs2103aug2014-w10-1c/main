@@ -9,10 +9,11 @@
 namespace You {
 namespace QueryEngine {
 
-/// Class for task objects.
+/// \class Task
+/// \brief The task model
 /// The task instances are created using builder pattern.
 class Task {
-	/// Type definitions of each fields.
+	// Type definitions of each fields.
 	typedef int64_t ID;
 	typedef std::wstring Description;
 	typedef std::int64_t Time;
@@ -36,7 +37,6 @@ public:
 
 public:
 	// Field setters
-	void setID(ID);
 	void setDescription(const Description&);
 	void setDeadline(Time);
 	void setDependencies(const Dependencies&);
@@ -50,9 +50,23 @@ private:
 	static const Priority DEFAULT_PRIORITY;
 
 public:
-	// Singleton builder class, new instance of task should be
-	// created from here.
+	/// \class Builder
+	/// Singleton builder class, new instance of task should be created using this
+	/// builder.
+	///
+	/// \remarks Note that the temporary instance variable will be resetted
+	/// each time build is invoked.
+	///
+	/// Example usage:
+	///   \code{.cpp}
+	///	    auto builder = Builder::get().id(2000).description("Feed the kitten");
+	///     auto newTask = builder.build();
+	///   \endcode
 	class Builder {
+	private:
+		/// Instance returned by the builder
+		static Task instance;
+
 	public:
 		static Builder& get();
 		static Builder&	id(ID id);
