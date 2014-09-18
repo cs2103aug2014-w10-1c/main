@@ -11,12 +11,22 @@ namespace NLP {
 namespace Internal {
 
 namespace qi = boost::spirit::qi;
+
+/// Import the entire character traits namespace from Spirit.
+namespace ParserCharTraits { using namespace qi::standard_wide; } // NOLINT
+
+/// The type of one character in the lexer stream.
+typedef boost::spirit::char_encoding::standard_wide ParserCharEncoding;
+
+/// The type of the parser iterator.
 typedef std::wstring::const_iterator ParserIteratorType;
-typedef boost::spirit::standard_wide::space_type ParserSkipperType;
+
+/// The type of the parser skipper.
+typedef ParserCharTraits::space_type ParserSkipperType;
 
 class Parser : public qi::grammar<
 	ParserIteratorType,
-	Query(),
+	QUERY(),
 	ParserSkipperType> {
 
 	/// The type of the iterator used in this grammar.
@@ -24,19 +34,37 @@ class Parser : public qi::grammar<
 
 	/// The type of the skipper used in this grammar.
 	typedef ParserSkipperType SkipperType;
+
+	/// The type of the lexeme buffer provided in a lexing semantic action.
+	typedef std::vector<ParserCharEncoding::char_type> LexemeType;
 	
 public:
 	Parser();
+
+private:
+	/// Process the nonterminal returned from the start production rule, but
+	/// use a selector to result in the correct \ref QUERY type.
+	///
+	/// \param[in,out] nonterminal The non terminal returned from the parser.
+	/// \return The synthesised value for the \ref start rule.
+	static QUERY combineStart(boost::variant<QUERY, ADD_QUERY>& nonterminal);
+
+	/// Process the nonterminal returned from the add query rule, converting it
+	/// to an appropriate \ref ADD_QUERY type.
+	///
+	/// \param[in] lexeme The lexeme from the parser.
+	/// \return The synthesised value for the \ref addCommand rule.
+	static ADD_QUERY constructAddQuery(const LexemeType& lexme);
 
 private:
 	/// The start rule.
 	start_type start;
 
 	/// Explicit command rule.
-	qi::rule<IteratorType, Query(), SkipperType> explicitCommand;
+	qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
 
 	/// Add command rule.
-	qi::rule<IteratorType, AddQuery(), SkipperType> addCommand;
+	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
 };
 
 }  // namespace Internal
