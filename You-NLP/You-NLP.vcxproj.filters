@@ -16,6 +16,12 @@
     <Filter Include="Header Files\exceptions">
       <UniqueIdentifier>{4f30e072-a8b1-40f9-a7a6-65d25b03b1e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal">
+      <UniqueIdentifier>{9f9cfe3f-7a87-45b4-8b89-e720461f7514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\internal\parse_tree">
+      <UniqueIdentifier>{0631b946-68ab-435a-9a70-51c9d04693a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -39,6 +45,12 @@
     <ClInclude Include="exceptions\context_required_exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="internal\parser.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\parse_tree.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="controller_context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
