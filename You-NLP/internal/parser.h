@@ -28,7 +28,7 @@ class Parser : public qi::grammar<
 	ParserIteratorType,
 	QUERY(),
 	ParserSkipperType> {
-
+public:
 	/// The type of the iterator used in this grammar.
 	typedef ParserIteratorType IteratorType;
 
@@ -37,9 +37,18 @@ class Parser : public qi::grammar<
 
 	/// The type of the lexeme buffer provided in a lexing semantic action.
 	typedef std::vector<ParserCharEncoding::char_type> LexemeType;
-	
+
+	/// The type of input strings accepted by this parser.
+	typedef std::basic_string<ParserCharEncoding::char_type> StringType;
+
 public:
 	Parser();
+
+	/// Parses the given input string into a query.
+	///
+	/// \param[in] string The string to parse.
+	/// \return The query tree representing the given query.
+	static QUERY parse(const StringType& string);
 
 private:
 	/// Process the nonterminal returned from the start production rule, but
