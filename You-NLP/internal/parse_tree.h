@@ -14,7 +14,7 @@ namespace Internal {
 struct ADD_QUERY {
 	/// The description of the task.
 	std::wstring description;
-	
+
 	/// The due date of the task.
 	std::wstring due;
 };
@@ -26,7 +26,7 @@ typedef boost::variant<ADD_QUERY> QUERY;
 }  // namespace NLP
 }  // namespace You
 
-/// \section Boost::Fusion adapters 
+/// \section Boost::Fusion adapters
 
 BOOST_FUSION_ADAPT_STRUCT(
 	You::NLP::Internal::ADD_QUERY,
