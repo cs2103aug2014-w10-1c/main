@@ -75,6 +75,8 @@
   <ItemGroup>
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\context_required_exception.h" />
+    <ClInclude Include="internal\parser.h" />
+    <ClInclude Include="internal\parse_tree.h" />
     <ClInclude Include="nlp.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="result.h" />
@@ -84,6 +86,7 @@
   <ItemGroup>
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="controller_context.cpp" />
+    <ClCompile Include="internal\parser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

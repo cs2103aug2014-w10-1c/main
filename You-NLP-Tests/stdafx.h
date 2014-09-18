@@ -10,4 +10,6 @@
 #include <SDKDDKVer.h>
 #include <CppUnitTest.h>
 
+#include "../You-NLP/stdafx.h"
+
 #endif  // YOU_NLP_TESTS_STDAFX_H_
