@@ -10,19 +10,26 @@ namespace You {
 namespace NLP {
 namespace Internal {
 
-struct AddQuery {
+/// Defines the synthesised value type of an add query.
+struct ADD_QUERY {
+	/// The description of the task.
 	std::wstring description;
+	
+	/// The due date of the task.
 	std::wstring due;
 };
 
-typedef boost::variant<AddQuery> Query;
+/// Defines the synthesised value type of a query.
+typedef boost::variant<ADD_QUERY> QUERY;
 
 }  // namespace Internal
 }  // namespace NLP
 }  // namespace You
 
+/// \section Boost::Fusion adapters 
+
 BOOST_FUSION_ADAPT_STRUCT(
-	You::NLP::Internal::AddQuery,
+	You::NLP::Internal::ADD_QUERY,
 	(std::wstring, description)
 	(std::wstring, due)
 )

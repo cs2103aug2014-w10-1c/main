@@ -12,7 +12,7 @@
 #include <string>
 #include <stdexcept>
 
-#include <boost/fusion/adapted/struct.hpp>
+#include <boost/fusion/adapted.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/variant.hpp>
