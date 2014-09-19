@@ -7,12 +7,11 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 namespace You {
 namespace NLP {
 namespace Tests {
-	TEST_CLASS(NlpTests) {
-	public:
-		TEST_METHOD(DummyTest1) {
-			Assert::IsTrue(true);
-		}
-	};
+
+TEST_CLASS(NlpTests) {
+public:
+};
+
 }  // namespace Tests
 }  // namespace NLP
 }  // namespace You
