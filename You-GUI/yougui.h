@@ -4,7 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 
-class YouGUI : public QMainWindow{
+class YouGUI : public QMainWindow {
 	Q_OBJECT
 
 public:
