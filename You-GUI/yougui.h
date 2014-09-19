@@ -1,19 +1,18 @@
-#ifndef YOUGUI_H
-#define YOUGUI_H
+#ifndef YOU_GUI_YOUGUI_H_
+#define YOU_GUI_YOUGUI_H_
 
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 
-class YouGUI : public QMainWindow
-{
+class YouGUI : public QMainWindow{
 	Q_OBJECT
 
 public:
-	YouGUI(QWidget *parent = 0);
+	explicit YouGUI(QWidget *parent = nullptr);
 	~YouGUI();
 
 private:
 	Ui::YouGUIClass ui;
 };
 
-#endif // YOUGUI_H
+#endif  // YOU_GUI_YOUGUI_H_

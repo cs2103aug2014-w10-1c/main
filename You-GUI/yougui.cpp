@@ -2,12 +2,9 @@
 #include "yougui.h"
 
 YouGUI::YouGUI(QWidget *parent)
-	: QMainWindow(parent)
-{
+	: QMainWindow(parent){
 	ui.setupUi(this);
 }
 
-YouGUI::~YouGUI()
-{
-
+YouGUI::~YouGUI(){
 }
