@@ -18,6 +18,13 @@ namespace Internal {
 		std::wstring due;
 	};
 
+	/// Defines an output formatter for ADD_QUERY queries.
+	///
+	/// \param[in,out] s The stream to write to.
+	/// \param[in] q The query to display.
+	/// \return The stream object passed to the formatter.
+	std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q);
+
 }  // namespace Internal
 }  // namespace NLP
 }  // namespace You
