@@ -22,6 +22,12 @@
     <Filter Include="Header Files\internal\parse_tree">
       <UniqueIdentifier>{0631b946-68ab-435a-9a70-51c9d04693a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{757e9372-5cf7-4a23-9f33-23161531f5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\parse_tree">
+      <UniqueIdentifier>{53c82bc4-dde6-4281-b566-2bf833988490}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -66,7 +72,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="internal\parser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\parse_tree\add_query.cpp">
+      <Filter>Source Files\internal\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
