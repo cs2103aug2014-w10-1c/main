@@ -51,6 +51,9 @@
     <ClInclude Include="internal\parse_tree.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="internal\parse_tree\add_query.h">
+      <Filter>Header Files\internal\parse_tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
