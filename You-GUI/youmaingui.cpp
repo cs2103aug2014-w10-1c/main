@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "youmaingui.h"
+#include "TaskModel.h"
+#include <QApplication>
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent) {
@@ -8,3 +10,9 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 
 YouMainGUI::~YouMainGUI() {
 }
+
+void YouMainGUI::on_commandEnterButton_clicked() {
+	ui.commandInputBox->setText("Signal Slot Test");
+}
+
+

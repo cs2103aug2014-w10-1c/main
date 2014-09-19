@@ -14,17 +14,17 @@
    <string>YouGUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="commandInputBox">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>320</y>
-      <width>581</width>
+      <width>511</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QTreeView" name="treeView">
+   <widget class="QTreeView" name="taskTreePanel">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -32,6 +32,19 @@
       <width>581</width>
       <height>301</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="commandEnterButton">
+    <property name="geometry">
+     <rect>
+      <x>534</x>
+      <y>320</y>
+      <width>51</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enter</string>
     </property>
    </widget>
   </widget>
