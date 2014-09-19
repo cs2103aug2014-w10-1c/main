@@ -4,5 +4,6 @@
 
 #include "controller.h"
 #include "result.h"
+#include "exception.h"
 
 #endif  // YOU_NLP_NLP_H_
