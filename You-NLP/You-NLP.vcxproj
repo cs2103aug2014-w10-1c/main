@@ -75,7 +75,9 @@
   <ItemGroup>
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\context_required_exception.h" />
+    <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\parser_exception.h" />
+    <ClInclude Include="exceptions\parse_error_exception.h" />
     <ClInclude Include="internal\parser.h" />
     <ClInclude Include="internal\parse_tree.h" />
     <ClInclude Include="internal\parse_tree\add_query.h" />
