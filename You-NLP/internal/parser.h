@@ -51,13 +51,6 @@ public:
 	static QUERY parse(const StringType& string);
 
 private:
-	/// Process the nonterminal returned from the start production rule, but
-	/// use a selector to result in the correct \ref QUERY type.
-	///
-	/// \param[in,out] nonterminal The non terminal returned from the parser.
-	/// \return The synthesised value for the \ref start rule.
-	static QUERY combineStart(boost::variant<QUERY, ADD_QUERY>& nonterminal);
-
 	/// Process the nonterminal returned from the add query rule, converting it
 	/// to an appropriate \ref ADD_QUERY type.
 	///
