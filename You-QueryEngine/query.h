@@ -2,7 +2,7 @@
 #ifndef YOU_QUERYENGINE_QUERY_H_
 #define YOU_QUERYENGINE_QUERY_H_
 
-#include "result.h"
+#include "internal/result.h"
 #include <string>
 
 namespace You {
