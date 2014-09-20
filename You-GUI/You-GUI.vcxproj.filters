@@ -53,6 +53,9 @@
     <ClCompile Include="you_main_gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="session_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -70,6 +73,9 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="you_main_gui.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="session_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

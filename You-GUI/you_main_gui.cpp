@@ -15,11 +15,26 @@ YouMainGUI::~YouMainGUI() {
 
 void YouMainGUI::on_commandEnterButton_clicked() {
 	//Fire off command to NLP!
+	QFile file("tt");
+	if (file.open(QIODevice::WriteOnly)) {
+		QDataStream stream(&file);
+		qint32 n(itemModel.rowCount()), m(itemModel.columnCount());
+		stream << n << m;
+
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < m; j++){
+				QString test;
+				test = itemModel.item(i, j)->text();
+				stream << test;
+			}
+		}
+		file.close();
+	}
 }
 
 void YouMainGUI::taskPanelSetup() {
-	itemModel.setRowCount(4);
-	itemModel.setColumnCount(4);
+	itemModel.setRowCount(1000);
+	itemModel.setColumnCount(2);
 	ui.taskTreePanel->setModel(&itemModel);
 
 	//Creates a hidden root item, and set the tree view to show only its children
@@ -37,6 +52,13 @@ void YouMainGUI::populateTaskPanel() {
 	//Adds the task to the task panel. The first parameter indicates the parent
 	//Therefore tasks created with parents other than hiddenRoot are subtasks
 	createTask(&hiddenRoot, rowStrings);
+
+	for (int i = 0; i < 10; i++){
+		std::vector<std::wstring> rowStrings;
+		rowStrings.push_back(L"abc");
+		rowStrings.push_back(L"xyz");
+		createTask(&hiddenRoot, rowStrings);
+	}
 }
 
 //A helper function to build a QList from a vector of strings
