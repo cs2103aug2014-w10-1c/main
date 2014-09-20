@@ -13,6 +13,7 @@ namespace QueryEngine {
 /// \brief The task model
 /// The task instances are created using builder pattern.
 class Task {
+public:
 	// Type definitions of each fields.
 	typedef int64_t ID;
 	typedef std::wstring Description;
@@ -20,14 +21,6 @@ class Task {
 	typedef std::vector<Task> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
 
-private:
-	const ID id;
-	Description description;
-	Time deadline;
-	Dependencies dependencies;
-	Priority priority;
-
-public:
 	// Field getters
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
@@ -35,19 +28,11 @@ public:
 	inline Dependencies getDependencies() const { return dependencies; }
 	inline Priority getPriority() const { return priority; }
 
-public:
 	// Field setters
 	void setDescription(const Description&);
 	void setDeadline(Time);
 	void setDependencies(const Dependencies&);
 	void setPriority(Priority);
-
-private:
-	// Default values for fields
-	static const Time DEFAULT_TIME;
-	static const Description DEFAULT_DESCRIPTION;
-	static const Dependencies DEFAULT_DEPENDENCIES;
-	static const Priority DEFAULT_PRIORITY;
 
 public:
 	/// \class Builder
@@ -63,10 +48,6 @@ public:
 	///     auto newTask = builder.build();
 	///   \endcode
 	class Builder {
-	private:
-		/// Instance returned by the builder
-		static Task instance;
-
 	public:
 		static Builder& get();
 		static Builder&	id(ID id);
@@ -76,16 +57,30 @@ public:
 		static Builder& priority(Priority priority);
 		static Task build();
 
-	public:
 		Builder(Builder&) = delete;
 		Builder& operator=(const Builder&) = delete;
 
 	private:
 		Builder() = default;
+		// Instance returned by the builder
+		static Task instance;
 	};  // class Builder
 
 private:
 	Task() = default;
+
+	// Fields
+	const ID id;
+	Description description;
+	Time deadline;
+	Dependencies dependencies;
+	Priority priority;
+
+	// Default values for fields
+	static const Time DEFAULT_TIME;
+	static const Description DEFAULT_DESCRIPTION;
+	static const Dependencies DEFAULT_DEPENDENCIES;
+	static const Priority DEFAULT_PRIORITY;
 };
 
 }  // namespace QueryEngine
