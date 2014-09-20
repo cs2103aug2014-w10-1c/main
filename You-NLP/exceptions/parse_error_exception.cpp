@@ -15,6 +15,5 @@ ParseErrorException::ParseErrorException(
 
 }
 
-
 }  // namespace NLP
 }  // namespace You
