@@ -8,9 +8,13 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 
 HEADERS += ./stdafx.h \
-    ./yougui.h
-SOURCES += ./stdafx.cpp \
-    ./main.cpp \
-    ./yougui.cpp
+    ./TaskModelItem.h \
+    ./TaskModel.h \
+    ./youmaingui.h
+SOURCES += ./main.cpp \
+    ./stdafx.cpp \
+    ./TaskModel.cpp \
+    ./TaskModelItem.cpp \
+    ./youmaingui.cpp
 FORMS += ./yougui.ui
 RESOURCES += yougui.qrc

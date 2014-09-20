@@ -7,10 +7,10 @@ TARGET = You-GUI
 DESTDIR = ../Win32/Debug
 QT += core widgets gui
 CONFIG += debug
-DEFINES += WIN64 QT_DLL QT_WIDGETS_LIB
+DEFINES += QT_NO_OPENGL WIN64 QT_DLL QT_WIDGETS_LIB
 INCLUDEPATH += ./GeneratedFiles \
     . \
-    ./GeneratedFiles/Debug \
+    ./GeneratedFiles/Debug
 PRECOMPILED_HEADER = stdafx.h
 DEPENDPATH += .
 MOC_DIR += ./GeneratedFiles/debug

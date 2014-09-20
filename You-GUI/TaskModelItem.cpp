@@ -7,5 +7,4 @@ TaskModelItem::TaskModelItem(){
 TaskModelItem::TaskModelItem(const QString & text){
 }
 TaskModelItem::~TaskModelItem(){
-
 }
