@@ -11,8 +11,6 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 }
 
 YouMainGUI::~YouMainGUI() {
-	delete itemModel;
-	delete hiddenRoot;
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -20,13 +18,14 @@ void YouMainGUI::on_commandEnterButton_clicked() {
 }
 
 void YouMainGUI::taskPanelSetup() {
-	itemModel = new QStandardItemModel(1, 4);
-	ui.taskTreePanel->setModel(itemModel);
+	itemModel.setRowCount(4);
+	itemModel.setColumnCount(4);
+	ui.taskTreePanel->setModel(&itemModel);
 
 	//Creates a hidden root item, and set the tree view to show only its children
-	hiddenRoot = new QStandardItem(0);
-	itemModel->setItem(0, 0, hiddenRoot);
-	ui.taskTreePanel->setRootIndex(itemModel->index(0, 0, QModelIndex()));
+	//hiddenRoot = new QStandardItem(0);
+	itemModel.setItem(0, 0, &hiddenRoot);
+	ui.taskTreePanel->setRootIndex(itemModel.index(0, 0, QModelIndex()));
 }
 
 //A function to demonstrate how to add data
@@ -37,7 +36,7 @@ void YouMainGUI::populateTaskPanel() {
 	rowStrings.push_back(L"xyz");
 	//Adds the task to the task panel. The first parameter indicates the parent
 	//Therefore tasks created with parents other than hiddenRoot are subtasks
-	createTask(hiddenRoot, rowStrings);
+	createTask(&hiddenRoot, rowStrings);
 }
 
 //A helper function to build a QList from a vector of strings

@@ -18,8 +18,9 @@ private:
 	QList<QStandardItem*> buildRow(std::vector<std::wstring> rowStrings);
 	void createTask(QStandardItem *parent, std::vector<std::wstring> rowStrings);
 	Ui::YouMainGUIClass ui;
-	QStandardItemModel *itemModel;
-	QStandardItem *hiddenRoot;
+	QStandardItemModel itemModel;
+	//QStandardItemModel itemModel(1, 4);
+	QStandardItem hiddenRoot;
 	
 	private slots:
 	void on_commandEnterButton_clicked();
