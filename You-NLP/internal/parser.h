@@ -10,7 +10,8 @@ namespace You {
 namespace NLP {
 namespace Internal {
 
-namespace qi = boost::spirit::qi;
+namespace spirit = boost::spirit;
+namespace qi = spirit::qi;
 
 /// Import the entire character traits namespace from Spirit.
 namespace ParserCharTraits { using namespace qi::standard_wide; } // NOLINT
@@ -57,6 +58,13 @@ private:
 	/// \param[in] lexeme The lexeme from the parser.
 	/// \return The synthesised value for the \ref addCommand rule.
 	static ADD_QUERY constructAddQuery(const LexemeType& lexme);
+
+	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	///
+	/// \exception ParseErrorException The exception representing the parse
+	///                                error.
+	static void onFailure(ParserIteratorType begin, ParserIteratorType end,
+		ParserIteratorType errorPos, const spirit::info& message);
 
 private:
 	/// The start rule.
