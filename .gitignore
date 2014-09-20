@@ -28,6 +28,7 @@
 *.sdf
 *.suo
 **/ipch
+**/*.ipch
 
 # NuGet
 /packages
@@ -37,5 +38,3 @@
 /Release
 **/Debug
 **/Release
-
-**/*.ipch

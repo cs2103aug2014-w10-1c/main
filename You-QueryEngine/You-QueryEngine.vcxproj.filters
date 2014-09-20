@@ -13,22 +13,28 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\internal">
+      <UniqueIdentifier>{d41a07e1-94b6-48d0-b356-baf975350320}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="query.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\exception.h">
+    <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\exception.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="internal\result.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\task_controller.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="internal\task_model.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\task_controller.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
