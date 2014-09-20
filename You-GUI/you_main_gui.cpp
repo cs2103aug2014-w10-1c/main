@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "youmaingui.h"
+#include "you_main_gui.h"
 #include <QApplication>
 #include <QList>
 
