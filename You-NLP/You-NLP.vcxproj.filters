@@ -31,6 +31,9 @@
     <Filter Include="Header Files\internal\exceptions">
       <UniqueIdentifier>{99a8561a-4e6d-4632-b71a-cd9f326046e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\exceptions">
+      <UniqueIdentifier>{7e6382bf-2367-42f2-a0df-3a9cdc4eca46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="internal\parse_tree\add_query.cpp">
       <Filter>Source Files\internal\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions\parse_error_exception.cpp">
+      <Filter>Source Files\exceptions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
