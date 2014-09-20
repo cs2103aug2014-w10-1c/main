@@ -53,18 +53,6 @@
     <ClCompile Include="youmaingui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_TaskModel.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_TaskModel.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskModelItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -79,12 +67,6 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="youmaingui.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="TaskModel.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="TaskModelItem.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="yougui.ui">

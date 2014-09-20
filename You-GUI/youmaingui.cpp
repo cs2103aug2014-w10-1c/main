@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "youmaingui.h"
-#include "TaskModel.h"
 #include <QApplication>
 
 YouMainGUI::YouMainGUI(QWidget *parent)
