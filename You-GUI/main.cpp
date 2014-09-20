@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "you_main_gui.h"
 #include <QtWidgets/QApplication>
+#include "you_main_gui.h"
 
 int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);

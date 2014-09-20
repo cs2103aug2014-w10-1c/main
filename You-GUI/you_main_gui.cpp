@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "you_main_gui.h"
 #include <QApplication>
 #include <QList>
+#include "you_main_gui.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent) {
@@ -11,6 +11,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 }
 
 YouMainGUI::~YouMainGUI() {
+	delete itemModel;
+	delete hiddenRoot;
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -30,27 +32,26 @@ void YouMainGUI::taskPanelSetup() {
 //A function to demonstrate how to add data
 void YouMainGUI::populateTaskPanel() {
 	//Create a vector of strings representing the data for each column for a single entry
-	std::vector<std::string> rowStrings;
-	rowStrings.push_back("abc");
-	rowStrings.push_back("xyz");
-
+	std::vector<std::wstring> rowStrings;
+	rowStrings.push_back(L"abc");
+	rowStrings.push_back(L"xyz");
 	//Adds the task to the task panel. The first parameter indicates the parent
 	//Therefore tasks created with parents other than hiddenRoot are subtasks
 	createTask(hiddenRoot, rowStrings);
 }
 
 //A helper function to build a QList from a vector of strings
-QList<QStandardItem*> YouMainGUI::buildRow(std::vector<std::string> rowStrings) {
+QList<QStandardItem*> YouMainGUI::buildRow(std::vector<std::wstring> rowStrings) {
 	QList<QStandardItem*> rowItems;
-	std::vector<std::string>::iterator it;
-	for (it = rowStrings.begin(); it < rowStrings.end(); it++) {
-		rowItems.append(new QStandardItem(QString::fromStdString(*it)));
+	//std::vector<std::wstring>::iterator it;
+	for (auto it = rowStrings.begin(); it < rowStrings.end(); it++) {
+		rowItems.append(new QStandardItem(QString::fromStdWString(*it)));
 	}
 	return rowItems;
 }
 
 //Creates the task and appends it to indicated parent
-void YouMainGUI::createTask(QStandardItem *parent, std::vector<std::string> rowStrings) {
+void YouMainGUI::createTask(QStandardItem *parent, std::vector<std::wstring> rowStrings) {
 	QList<QStandardItem*> strList = buildRow(rowStrings);
 	parent->appendRow(strList);
 }

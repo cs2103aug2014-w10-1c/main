@@ -2,9 +2,9 @@
 #define YOU_MAIN_GUI_YOUGUI_H_
 
 #include <QtWidgets/QMainWindow>
-#include "ui_yougui.h"
-#include <qlist.h>
 #include <QList>
+#include "ui_yougui.h"
+
 class YouMainGUI : public QMainWindow {
 	Q_OBJECT
 
@@ -15,8 +15,8 @@ public:
 
 private:
 	void taskPanelSetup();  // initializes the item model and associates it with tree view
-	QList<QStandardItem*> buildRow(std::vector<std::string> rowStrings);
-	void createTask(QStandardItem *parent, std::vector<std::string> rowStrings);
+	QList<QStandardItem*> buildRow(std::vector<std::wstring> rowStrings);
+	void createTask(QStandardItem *parent, std::vector<std::wstring> rowStrings);
 	Ui::YouMainGUIClass ui;
 	QStandardItemModel *itemModel;
 	QStandardItem *hiddenRoot;
