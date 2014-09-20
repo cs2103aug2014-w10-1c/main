@@ -9,7 +9,7 @@ using Parser = Internal::Parser;
 
 ParseErrorException::ParseErrorException(
 	spirit::info message,
-	const Parser::StringType& token)
+	Parser::StringType token)
 : message(message),
   token(token) {
 

@@ -18,7 +18,7 @@ public:
 	///
 	/// \param[in] message The Spirit parse error information.
 	/// \param[in] token The token being parsed.
-	ParseErrorException(spirit::info message, const Parser::StringType& token);
+	ParseErrorException(spirit::info message, Parser::StringType token);
 
 private:
 	/// The Spirit parse error.
