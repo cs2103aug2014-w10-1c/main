@@ -96,6 +96,11 @@
   <ItemGroup>
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
       <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
