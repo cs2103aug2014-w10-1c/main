@@ -27,6 +27,7 @@
 *.opensdf
 *.sdf
 *.suo
+*.user
 **/ipch
 **/*.ipch
 
