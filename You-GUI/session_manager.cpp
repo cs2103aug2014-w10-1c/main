@@ -38,13 +38,6 @@ void SessionManager::saveModel(QIODevice *device, QStandardItemModel *itemModel)
 }
 
 void SessionManager::writeFile(std::string filename, QStandardItemModel* itemModel) {
-	/*
-	QFile file;
-	file.setFileName(QString::fromStdString(filename));
-	if (file.open(QIODevice::WriteOnly))
-		saveModel(&file, itemModel);
-	file.close();
-	*/
 	QFile file("somefile.bin");
 	if (file.open(QIODevice::WriteOnly)) {
 		QDataStream stream(&file);

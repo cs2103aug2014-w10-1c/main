@@ -64,6 +64,9 @@
     <ClInclude Include="GeneratedFiles\ui_yougui.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="yougui.qrc">

@@ -123,6 +123,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </Command>
     </CustomBuild>
+    <ClInclude Include="constants.h" />
     <ClInclude Include="GeneratedFiles\ui_yougui.h" />
     <ClInclude Include="stdafx.h" />
     <CustomBuild Include="you_main_gui.h">
