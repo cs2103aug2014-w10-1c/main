@@ -2,8 +2,9 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_MODEL_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_MODEL_H_
 
-#include "../stdafx.h"
-#include "exception.h"
+#include <cstdint>
+#include <string>
+#include <vector>
 
 namespace You {
 namespace QueryEngine {

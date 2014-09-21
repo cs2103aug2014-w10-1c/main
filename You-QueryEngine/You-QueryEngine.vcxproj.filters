@@ -51,7 +51,7 @@
       <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="internal\task_builder.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

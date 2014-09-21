@@ -2,8 +2,8 @@
 #ifndef YOU_QUERYENGINE_QUERY_H_
 #define YOU_QUERYENGINE_QUERY_H_
 
-#include "internal/result.h"
 #include <string>
+#include "internal/result.h"
 
 namespace You {
 namespace QueryEngine {
