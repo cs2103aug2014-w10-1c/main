@@ -8,5 +8,7 @@
 #define YOU_QUERYENGINE_STDAFX_H_
 
 #include <SDKDDKVer.h>
+#include <vector>
+#include <stdexcept>
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_

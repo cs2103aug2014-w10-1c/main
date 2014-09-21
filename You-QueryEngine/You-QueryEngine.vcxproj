@@ -71,6 +71,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="internal\exception.h" />
+    <ClInclude Include="internal\result.h" />
+    <ClInclude Include="internal\task_controller.h" />
+    <ClInclude Include="internal\task_model.h" />
+    <ClInclude Include="query.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
