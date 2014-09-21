@@ -77,8 +77,7 @@ private:
 	Priority priority;
 
 	// Default values for fields
-	static const Time DEFAULT_TIME;
-	static const Description DEFAULT_DESCRIPTION;
+	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
 };
