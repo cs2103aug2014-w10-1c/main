@@ -35,7 +35,8 @@ void YouMainGUI::taskPanelSetup() {
 }
 
 void YouMainGUI::populateTaskPanel() {
-	// Create a vector of strings representing the data for each column for a single entry
+	// Create a vector of strings representing the data for each column for a
+	// single entry
 	for (int i = 0; i < 10; i++) {
 		std::vector<std::wstring> rowStrings;
 		rowStrings.push_back(L"abc");

@@ -24,7 +24,6 @@ public:
 	void populateTaskPanel();
 
 private:
-
 	/// Initializes the taskTreePanel by setting column count and headers.
 	void taskPanelSetup();
 
