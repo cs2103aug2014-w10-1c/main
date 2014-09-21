@@ -16,6 +16,9 @@
     <Filter Include="Header Files\internal">
       <UniqueIdentifier>{d41a07e1-94b6-48d0-b356-baf975350320}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{48aa80cc-9b78-4938-a662-92e9536f0ee0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="query.h">
@@ -42,7 +45,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="internal\task_model.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
