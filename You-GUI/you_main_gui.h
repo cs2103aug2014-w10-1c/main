@@ -19,7 +19,6 @@ private:
 	void createTask(QStandardItem *parent, std::vector<std::wstring> rowStrings);
 	Ui::YouMainGUIClass ui;
 	QStandardItemModel itemModel;
-	//QStandardItemModel itemModel(1, 4);
 	QStandardItem hiddenRoot;
 	
 	private slots:

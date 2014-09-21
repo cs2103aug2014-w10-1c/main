@@ -23,7 +23,6 @@ void YouMainGUI::taskPanelSetup() {
 	ui.taskTreePanel->setModel(&itemModel);
 
 	//Creates a hidden root item, and set the tree view to show only its children
-	//hiddenRoot = new QStandardItem(0);
 	itemModel.setItem(0, 0, &hiddenRoot);
 	ui.taskTreePanel->setRootIndex(itemModel.index(0, 0, QModelIndex()));
 }
@@ -42,7 +41,6 @@ void YouMainGUI::populateTaskPanel() {
 //A helper function to build a QList from a vector of strings
 QList<QStandardItem*> YouMainGUI::buildRow(std::vector<std::wstring> rowStrings) {
 	QList<QStandardItem*> rowItems;
-	//std::vector<std::wstring>::iterator it;
 	for (auto it = rowStrings.begin(); it < rowStrings.end(); it++) {
 		rowItems.append(new QStandardItem(QString::fromStdWString(*it)));
 	}
