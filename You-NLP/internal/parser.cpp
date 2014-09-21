@@ -54,7 +54,6 @@ ADD_QUERY Parser::constructAddQuery(const LexemeType& lexeme) {
 
 void Parser::onFailure(ParserIteratorType begin, ParserIteratorType end,
 	ParserIteratorType errorPos, const spirit::info& message) {
-
 	throw ParseErrorException(message, StringType(errorPos, end));
 }
 
