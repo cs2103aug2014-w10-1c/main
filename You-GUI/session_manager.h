@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SESSION_MANAGER_H_
 #define SESSION_MANAGER_H_
 
@@ -12,4 +13,5 @@ public:
 	void loadFile(std::string filename, QStandardItemModel* itemModel);
 private:
 };
+
 #endif  // SESSION_MANAGER_H_

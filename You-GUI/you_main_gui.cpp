@@ -29,7 +29,6 @@ void YouMainGUI::taskPanelSetup() {
 	ui.taskTreePanel->setColumnHidden(3, true);
 }
 
-//A function to demonstrate how to add data
 void YouMainGUI::populateTaskPanel() {
 	//Create a vector of strings representing the data for each column for a single entry
 	for (int i = 0; i < 10; i++) {

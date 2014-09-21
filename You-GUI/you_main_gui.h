@@ -1,3 +1,4 @@
+#pragma once
 #ifndef YOU_MAIN_GUI_YOUGUI_H_
 #define YOU_MAIN_GUI_YOUGUI_H_
 
