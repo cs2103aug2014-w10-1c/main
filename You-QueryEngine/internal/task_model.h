@@ -33,54 +33,19 @@ public:
 	void setDependencies(const Dependencies&);
 	void setPriority(Priority);
 
-public:
-	/// \class Builder
-	/// Singleton builder class, new instance of task should be created using this
-	/// builder.
-	///
-	/// \remarks Note that the temporary instance variable will be resetted
-	/// each time build is invoked.
-	///
-	/// Example usage:
-	///   \code{.cpp}
-	///	    Task newTask = Task::Builder::id(2000).description("Feed the kitten");
-	///   \endcode
-	class Builder {
-		friend class Task;
-	public:
-		static Builder&& description(const Description &description);
-		static Builder&& deadline(Time deadline);
-		static Builder&& dependencies(const Dependencies &dependencies);
-		static Builder&& priority(Priority priority);
+	/// Return a task with using default values for all its fields.
+	/// The ID of the task created is LAST_ID + 1
+	static Task nextNewTask();
 
-		// Cannot copy or assign singletons.
-		Builder(Builder&) = delete;
-		Builder& operator=(const Builder&) = delete;
-
-	private:
-		/// Fetch new task ID from Data Storage.
-		static Builder&& id(ID id);
-
-		/// Get instance of the singleton builder.
-		static Builder&& get();
-
-		Builder() = default;
-		// Instance returned by the builder
-		static Task instance;
-	};  // class Builder
-
-	Task(const Task::Builder &&builder); // NOLINT
-	Task&& operator=(const Task::Builder &&builder);
+	class Builder;
+	Task(const Task::Builder& builder);  // NOLINT
+	Task& operator=(const Task::Builder& builder);
 
 private:
 	Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
-
-	/// Return a task with using default values for all its fields.
-	/// The ID of the task created is LAST_ID + 1
-	static Task nextNewTask();
 
 	// Fields
 	ID id;
