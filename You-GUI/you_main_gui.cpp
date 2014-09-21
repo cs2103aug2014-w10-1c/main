@@ -7,11 +7,16 @@
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent) {
 	ui.setupUi(this);
+	loadSession();
 	taskPanelSetup();
 	populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
+}
+
+void YouMainGUI::closeEvent(QCloseEvent *event) {
+	saveSession();
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -63,4 +68,20 @@ QTreeWidgetItem* YouMainGUI::createItem(std::vector<std::wstring> rowStrings) {
 
 void YouMainGUI::deleteTask(QTreeWidgetItem* task) {
 	delete task;
+}
+
+void YouMainGUI::loadSession() {
+	QSettings settings("You", "You");
+	settings.beginGroup("MainWindow");
+	resize(settings.value("size", QSize(400, 400)).toSize());
+	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	settings.endGroup();
+}
+
+void YouMainGUI::saveSession() {
+	QSettings settings("You", "You");
+	settings.beginGroup("MainWindow");
+	settings.setValue("size", size());
+	settings.setValue("pos", pos());
+	settings.endGroup();
 }

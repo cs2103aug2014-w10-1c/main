@@ -5,7 +5,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QList>
 #include "ui_yougui.h"
-#include "session_manager.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP engine. It deals with
 /// basic tasks regarding GUI initialization, passes all user input to the NLP engine and listens
@@ -23,7 +22,6 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution of the program; it
 	/// merely serves example data.
 	void populateTaskPanel();
-
 private:
 
 	/// Initializes the taskTreePanel by setting column count and headers.
@@ -48,7 +46,9 @@ private:
 	Ui::YouMainGUIClass ui;
 
 	/// Manages the state of the GUI on loading and saving for persistence.
-	SessionManager sessionManager;
+	void loadSession();
+	void saveSession();
+	void closeEvent(QCloseEvent *event);
 
 	private slots:
 	void on_commandEnterButton_clicked();
