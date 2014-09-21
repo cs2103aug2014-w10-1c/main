@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTreeView" name="taskTreePanel">
+   <widget class="QTreeWidget" name="taskTreePanel">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -33,6 +33,11 @@
       <height>301</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
    </widget>
    <widget class="QPushButton" name="commandEnterButton">
     <property name="geometry">
