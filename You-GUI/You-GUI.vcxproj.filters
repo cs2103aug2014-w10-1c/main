@@ -41,8 +41,11 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_yougui.cpp">
-      <Filter>Generated Files</Filter>
+    <ClCompile Include="you_main_gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="session_manager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_you_main_gui.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -50,8 +53,8 @@
     <ClCompile Include="GeneratedFiles\Release\moc_you_main_gui.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="you_main_gui.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\qrc_yougui.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_yougui.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +76,9 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="you_main_gui.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="session_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
