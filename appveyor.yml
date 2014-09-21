@@ -1,0 +1,15 @@
+# Cache boost
+cache:
+  - packages
+
+# Not sure if artifacts and caches are the same thing
+build:
+  publish_nuget: true
+
+# Only build release
+configuration: Release
+
+# Stop immediately once fail
+matrix:
+  fast_finish: true
+
