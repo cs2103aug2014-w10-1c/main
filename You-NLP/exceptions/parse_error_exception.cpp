@@ -12,7 +12,6 @@ ParseErrorException::ParseErrorException(
 	Parser::StringType token)
 : message(message),
   token(token) {
-
 }
 
 }  // namespace NLP
