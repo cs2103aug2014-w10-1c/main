@@ -56,7 +56,6 @@ void YouMainGUI::addSubtask(QTreeWidgetItem* parent,
 	parent->addChild(item);
 }
 
-
 QTreeWidgetItem* YouMainGUI::createItem(std::vector<std::wstring> rowStrings) {
 	QStringList tempList;
 	std::vector<std::wstring>::iterator it;
