@@ -19,7 +19,7 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
-	/// String/numeric constants for
+	/// String/numeric constants the GUI
 	const int TASK_COLUMN_COUNT = 4;
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
 	const std::wstring TASK_COLUMN_2 = L"Index";
@@ -56,9 +56,13 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	/// Manages the state of the GUI on loading and saving for persistence.
+	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();
+
+	/// Saves the state of the GUI before closing. Called during closeEvent
 	void saveSession();
+
+	/// Reimplementation of closeEvent to save state of GUI
 	void closeEvent(QCloseEvent *event);
 
 	private slots:
