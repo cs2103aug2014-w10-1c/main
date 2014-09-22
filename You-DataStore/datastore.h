@@ -9,7 +9,7 @@ namespace DataStore {
 
 class DataStore {
 public:
-	const static std::wstring FILE_PATH;
+	static const std::wstring FILE_PATH;
 
 	DataStore();
 	~DataStore();

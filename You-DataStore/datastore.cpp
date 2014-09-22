@@ -7,7 +7,7 @@ namespace DataStore {
 
 	const std::wstring DataStore::FILE_PATH =
 		boost::lexical_cast<std::wstring>("data.xml");
-	
+
 	DataStore::DataStore() {
 		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 
