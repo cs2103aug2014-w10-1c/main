@@ -5,6 +5,8 @@
 #include <QtWidgets/QMainWindow>
 #include <QList>
 #include "ui_yougui.h"
+#include "..\You-NLP\controller.h"
+#include "..\You-NLP\result.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
@@ -32,6 +34,17 @@ public:
 	void populateTaskPanel();
 
 private:
+	/// Creates the NLP parser
+	You::NLP::Controller controller;
+
+	/// Queries the NLP engine. Converts the current view into a context,
+	/// passes the context and input into the NLP engine, and gets a
+	/// Result object. This is currently just a placeholder.
+	void queryNLP();
+
+	/// Updates tree widget as the result of a query. This is currently just a placeholder.
+	void updateTreeWidget();
+
 	/// Initializes the taskTreePanel by setting column count and headers.
 	void taskPanelSetup();
 
