@@ -16,10 +16,9 @@ public:
 
 private:
 	pugi::xml_document document;
-
 };
 
-} // namespace DataStore
-} // namespace You
+}  // namespace DataStore
+}  // namespace You
 
-#endif // YOU_DATASTORE_DATASTORE_H_
+#endif  // YOU_DATASTORE_DATASTORE_H_
