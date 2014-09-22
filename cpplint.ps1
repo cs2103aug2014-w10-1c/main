@@ -16,7 +16,11 @@ $files = ($cpp + $h) |
 	?{ $_ -notmatch "pugixml\\*" }			# Exclude pugixml
 
 # Execute CppLint
-$arguments = @('cpplint.py', '--output=vs7', '--filter=-legal/copyright,-build/include,-whitespace/tab') + $files
+$arguments = @(
+		'cpplint.py',
+		'--output=vs7',
+		'--filter=-legal/copyright,-build/include,-whitespace/tab,-whitespace/indent'
+	) + $files
 $env:PATH += ";C:\python27"
 &python $arguments 2>&1 | %{
 	if ($_.gettype().Name -eq "ErrorRecord") {
