@@ -37,13 +37,20 @@ private:
 	/// Creates the NLP parser
 	You::NLP::Controller controller;
 
+	/// All user action functions. Probably will all be of
+	/// on_(ui_element)_(event) type. Depending on the function,
+	/// it will convert current program state into a context,
+	/// populate commandInputBox, call queryNLP() to parse that command,
+	/// then clear the commandInputBox and do updateTreeWidget();
+
 	/// Queries the NLP engine. Converts the current view into a context,
 	/// passes the context and input into the NLP engine, and gets a
-	/// Result object. This is currently just a placeholder.
-	void queryNLP();
+	/// Result object. Called by user's confirmation to send entry in
+	/// commandInputBox. This is currently just a placeholder.
+	You::NLP::Result queryNLP();
 
-	/// Updates tree widget as the result of a query. This is currently just a placeholder.
-	void updateTreeWidget();
+	/// Updates tree widget as the result of a query. Called by This is currently just a placeholder.
+	void updateTreeWidget(You::NLP::Result result);
 
 	/// Initializes the taskTreePanel by setting column count and headers.
 	void taskPanelSetup();

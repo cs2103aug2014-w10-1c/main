@@ -85,11 +85,13 @@ void YouMainGUI::saveSession() {
 	settings.endGroup();
 }
 
-void YouMainGUI::queryNLP() {
+You::NLP::Result YouMainGUI::queryNLP() {
 	/// Init a task list
 	/// Convert GUI state into a context
 	/// Feed query and context into NLP engine
 	You::NLP::TaskList tl;
 	QString inputString = ui.commandInputBox->text();
 	/// Get Result from controller.query()
+	You::NLP::Result result;
+	return result;
 }
