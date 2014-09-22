@@ -19,18 +19,15 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
-	// Fire off command to NLP!
+	YouMainGUI::queryNLP();
 }
 
 void YouMainGUI::taskPanelSetup() {
 	ui.taskTreePanel->setColumnCount(YouMainGUI::TASK_COLUMN_COUNT);
-	std::vector<std::wstring> headerStrings;
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_1);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_2);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_3);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_4);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_5);
-
+	const std::vector<std::wstring> headerStrings = {
+		YouMainGUI::TASK_COLUMN_1, YouMainGUI::TASK_COLUMN_2,
+		YouMainGUI::TASK_COLUMN_3, YouMainGUI::TASK_COLUMN_4,
+		YouMainGUI::TASK_COLUMN_5 };
 	ui.taskTreePanel->setHeaderItem(createItem(headerStrings));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }
