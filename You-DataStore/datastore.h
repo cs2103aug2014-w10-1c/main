@@ -2,7 +2,7 @@
 #ifndef YOU_DATASTORE_DATASTORE_H_
 #define YOU_DATASTORE_DATASTORE_H_
 
-#include "internal\pugixml.hpp"
+#include "src\pugixml.hpp"
 
 namespace You {
 namespace DataStore {

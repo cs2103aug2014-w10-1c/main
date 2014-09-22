@@ -18,21 +18,12 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\pugiconfig.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\pugixml.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="datastore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\pugixml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="datastore.cpp">
