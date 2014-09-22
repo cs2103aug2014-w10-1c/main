@@ -29,6 +29,8 @@ void YouMainGUI::taskPanelSetup() {
 	headerStrings.push_back(YouMainGUI::TASK_COLUMN_2);
 	headerStrings.push_back(YouMainGUI::TASK_COLUMN_3);
 	headerStrings.push_back(YouMainGUI::TASK_COLUMN_4);
+	headerStrings.push_back(YouMainGUI::TASK_COLUMN_5);
+
 	ui.taskTreePanel->setHeaderItem(createItem(headerStrings));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }

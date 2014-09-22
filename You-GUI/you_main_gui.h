@@ -19,11 +19,13 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
+	/// String/numeric constants for
 	const int TASK_COLUMN_COUNT = 4;
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
-	const std::wstring TASK_COLUMN_2 = L"Task Title";
-	const std::wstring TASK_COLUMN_3 = L"Task Description";
-	const std::wstring TASK_COLUMN_4 = L"Due Date";
+	const std::wstring TASK_COLUMN_2 = L"Index";
+	const std::wstring TASK_COLUMN_3 = L"Task Title";
+	const std::wstring TASK_COLUMN_4 = L"Task Description";
+	const std::wstring TASK_COLUMN_5 = L"Due Date";
 
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
