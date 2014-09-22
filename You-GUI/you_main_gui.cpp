@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "constants.h"
 #include "you_main_gui.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
@@ -24,12 +23,12 @@ void YouMainGUI::on_commandEnterButton_clicked() {
 }
 
 void YouMainGUI::taskPanelSetup() {
-	ui.taskTreePanel->setColumnCount(CONSTANTS_YOUGUI::TASK_COLUMN_COUNT);
+	ui.taskTreePanel->setColumnCount(YouMainGUI::TASK_COLUMN_COUNT);
 	std::vector<std::wstring> headerStrings;
-	headerStrings.push_back(CONSTANTS_YOUGUI::TASK_COLUMN_1);
-	headerStrings.push_back(CONSTANTS_YOUGUI::TASK_COLUMN_2);
-	headerStrings.push_back(CONSTANTS_YOUGUI::TASK_COLUMN_3);
-	headerStrings.push_back(CONSTANTS_YOUGUI::TASK_COLUMN_4);
+	headerStrings.push_back(YouMainGUI::TASK_COLUMN_1);
+	headerStrings.push_back(YouMainGUI::TASK_COLUMN_2);
+	headerStrings.push_back(YouMainGUI::TASK_COLUMN_3);
+	headerStrings.push_back(YouMainGUI::TASK_COLUMN_4);
 	ui.taskTreePanel->setHeaderItem(createItem(headerStrings));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }

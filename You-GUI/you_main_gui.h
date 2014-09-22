@@ -19,6 +19,12 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
+	const int TASK_COLUMN_COUNT = 4;
+	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
+	const std::wstring TASK_COLUMN_2 = L"Task Title";
+	const std::wstring TASK_COLUMN_3 = L"Task Description";
+	const std::wstring TASK_COLUMN_4 = L"Due Date";
+
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
