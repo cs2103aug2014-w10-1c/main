@@ -2,8 +2,6 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_H_
 #define YOU_QUERYENGINE_INTERNAL_ACTION_H_
 
-#include "exception.h"
-
 namespace You {
 namespace QueryEngine {
 
