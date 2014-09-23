@@ -30,9 +30,6 @@
     <ClInclude Include="internal\exception.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\result.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\task_model.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
