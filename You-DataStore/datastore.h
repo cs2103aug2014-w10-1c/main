@@ -15,6 +15,7 @@ public:
 	~DataStore();
 
 private:
+	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 };
 
