@@ -85,6 +85,12 @@ private:
 	/// Reimplementation of closeEvent to save state of GUI
 	void closeEvent(QCloseEvent *event);
 
+	/// System Tray functions
+	void setIcon();
+	QSystemTrayIcon trayIcon;
+	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+	QIcon icon;
+
 	private slots:
 	void on_commandEnterButton_clicked();
 };
