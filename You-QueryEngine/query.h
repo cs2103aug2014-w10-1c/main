@@ -10,33 +10,33 @@ namespace QueryEngine {
 /// Defines schema for raw queries from NLP parser that will be
 /// converted to real queries, executed, and converted back to string
 /// to be displayed in the GUI.
-namespace Raw {
+namespace Query {
 
 struct Query {};
 
-struct ADD_QUERY : public Query {
+struct AddTask : public Query {
 	std::wstring description;
 	std::wstring deadline;
 	std::wstring priority;
 	std::wstring dependencies;
 };
 
-struct READ_QUERY : public Query {
+struct GetTask : public Query {
 	std::wstring taskID;
 };
 
-struct DELETE_QUERY : public Query {
+struct DeleteTask : public Query {
 	std::wstring taskID;
 };
 
-struct FIND_QUERY : public Query {
+struct FindTask : public Query {
 	std::wstring searchKeyword;
 };
 
 }  // namespace Raw
 
 /// This is all the parser need to call.
-std::wstring executeQuery(Raw::Query query);
+std::wstring executeQuery(Query::Query query);
 
 }  // namespace QueryEngine
 }  // namespace You
