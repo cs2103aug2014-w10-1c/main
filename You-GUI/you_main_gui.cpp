@@ -6,6 +6,7 @@
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent) {
 	ui.setupUi(this);
+	setIcon();
 	loadSession();
 	taskPanelSetup();
 	populateTaskPanel();
@@ -94,4 +95,36 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	/// Get Result from controller.query()
 	You::NLP::Result result;
 	return result;
+}
+
+
+void YouMainGUI::setIcon() {
+	QIcon icon ("icon.png");
+	trayIcon.setIcon(icon);
+	setWindowIcon(icon);
+	trayIcon.show();
+}
+
+
+void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+	switch (reason) {
+	case QSystemTrayIcon::Trigger:
+		if (!YouMainGUI::isVisible()) {
+			YouMainGUI::setVisible(false);
+		}
+		else {
+			YouMainGUI::setVisible(true);
+		}
+	case QSystemTrayIcon::DoubleClick:
+		if (!YouMainGUI::isVisible()) {
+			YouMainGUI::setVisible(false);
+		}
+		else {
+			YouMainGUI::setVisible(true);
+		}
+		break;
+	default:
+		;
+	}
 }
