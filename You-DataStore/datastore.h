@@ -9,14 +9,17 @@ namespace DataStore {
 
 class DataStore {
 public:
-	static const std::wstring FILE_PATH;
-
-	DataStore();
-	~DataStore();
+	DataStore() = default;
+	~DataStore() = default;
 
 private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
+	// Saves the xml object to a file
+	// Returns true if operation successful and false otherwise
+	bool saveData();
+	// Loads the xml file into the xml object
+	void loadData();
 };
 
 }  // namespace DataStore
