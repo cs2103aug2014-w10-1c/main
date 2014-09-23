@@ -3,54 +3,40 @@
 #define YOU_QUERYENGINE_QUERY_H_
 
 #include <string>
-#include <boost/variant.hpp>
 
 namespace You {
 namespace QueryEngine {
 
-/// Raw queries returned from NLP parser that will be
-/// converted to real queries.
+/// Defines schema for raw queries from NLP parser that will be
+/// converted to real queries, executed, and converted back to string
+/// to be displayed in the GUI.
 namespace Raw {
 
-struct ADD_QUERY {
+struct Query {};
+
+struct ADD_QUERY : public Query {
 	std::wstring description;
 	std::wstring deadline;
 	std::wstring priority;
 	std::wstring dependencies;
 };
 
-struct READ_QUERY {
+struct READ_QUERY : public Query {
 	std::wstring taskID;
 };
 
-struct DELETE_QUERY {
+struct DELETE_QUERY : public Query {
 	std::wstring taskID;
 };
 
-struct FIND_QUERY {
+struct FIND_QUERY : public Query {
 	std::wstring searchKeyword;
-};
-
-struct EDIT_QUERY {
-	std::wstring taskID;
-	std::wstring description;
-	std::wstring deadline;
-	std::wstring priority;
-	std::wstring dependencies;
 };
 
 }  // namespace Raw
 
-typedef boost::variant
-	< Raw::ADD_QUERY
-	, Raw::READ_QUERY
-	, Raw::DELETE_QUERY
-	, Raw::FIND_QUERY
-	, Raw::EDIT_QUERY
-	> QUERY;
-
 /// This is all the parser need to call.
-std::wstring executeQuery(QUERY query);
+std::wstring executeQuery(Raw::Query query);
 
 }  // namespace QueryEngine
 }  // namespace You

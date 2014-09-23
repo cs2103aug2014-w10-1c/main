@@ -5,22 +5,30 @@
 namespace You {
 namespace QueryEngine {
 
-/// \class Action
 /// Defines an interface for all You command (addTask, deleteTask, etc.)
-template<class TCommand, class TData, class TResponse>
+/// Example usage
+/// \code {.cpp}
+///   class AddTask : public IAction<ADD_QUERY, TaskList, Task>;
+/// \endcode
+template<class TQuery, class TData, class TResponse>
 class IAction {
 public:
-	/// Read from a command and modify internal state.
-	virtual TResponse read(const TCommand&);
+	/// Read from a query and modify internal state.
+	/// \param [TQuery&] Query to be read
+	virtual void read(const TQuery&);
 
-	/// Execute the action and mutate data.
+	/// Execute without mutating data.
+	/// \param [TData&]	The immutable data to be executed upon.
+	/// \return A response object of type TResponse
 	virtual TResponse execute(TData&) = 0;
 
 	/// Execute without mutating data.
-	virtual TResponse execute_(const TData&) = 0;
+	/// \param [TData&]	The immutable data to be executed upon.
+	/// \return A response object of type TResponse
+	virtual TResponse execute_(const TData&) const = 0;
 
 	/// Get the reverse of this action.
-	virtual IAction getReverse() = 0;
+	virtual IAction getReverse() const = 0;
 
 	virtual ~Action() = default;
 	Action() = default;
