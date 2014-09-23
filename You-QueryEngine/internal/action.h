@@ -2,6 +2,8 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_H_
 #define YOU_QUERYENGINE_INTERNAL_ACTION_H_
 
+#include "query.h"
+
 namespace You {
 namespace QueryEngine {
 
@@ -27,8 +29,8 @@ public:
 	/// \return A response object of type TResponse
 	virtual TResponse execute_(const TData&) const = 0;
 
-	/// Get the reverse of this action.
-	virtual IAction getReverse() const = 0;
+	/// Get a query as a representation of the reverse of this action.
+	virtual Query::Query getReverse() const = 0;
 
 	virtual ~Action() = default;
 	Action() = default;

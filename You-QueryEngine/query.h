@@ -53,6 +53,9 @@ struct RemoveDependency : public Query {
 	std::wstring dependencyID;
 };
 
+struct Undo : public Query {
+};
+
 }  // namespace Query
 
 /// This is all the parser need to call.
