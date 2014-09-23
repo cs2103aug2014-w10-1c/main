@@ -33,7 +33,27 @@ struct FindTask : public Query {
 	std::wstring searchKeyword;
 };
 
-}  // namespace Raw
+struct EditDeadline : public Query {
+	std::wstring taskID;
+	std::wstring newDeadline;
+};
+
+struct EditDescription : public Query {
+	std::wstring taskID;
+	std::wstring newDescription;
+};
+
+struct AddDependency : public Query {
+	std::wstring taskID;
+	std::wstring dependencyID;
+};
+
+struct RemoveDependency : public Query {
+	std::wstring taskID;
+	std::wstring dependencyID;
+};
+
+}  // namespace Query
 
 /// This is all the parser need to call.
 std::wstring executeQuery(Query::Query query);

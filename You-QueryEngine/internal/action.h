@@ -17,8 +17,8 @@ public:
 	/// \param [TQuery&] Query to be read
 	virtual void read(const TQuery&);
 
-	/// Execute without mutating data.
-	/// \param [TData&]	The immutable data to be executed upon.
+	/// Execute and mutate data.
+	/// \param [TData]	The mutable data to be executed upon.
 	/// \return A response object of type TResponse
 	virtual TResponse execute(TData&) = 0;
 
