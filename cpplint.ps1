@@ -14,7 +14,8 @@ $files = ($cpp + $h) |
 	Foreach-Object {$_.FullName} |			# Full name
 	Resolve-Path -relative |				# Relative path
 	Foreach-Object {$_.substring(2)} |		# Remove dots
-	?{ $_ -notmatch "packages\\*" }			# Exclude NuGet
+	?{ $_ -notmatch "packages\\*" }	|		# Exclude NuGet
+	?{ $_ -notmatch "pugixml\\*" }			# Exclude pugixml
 
 # Execute CppLint
 $arguments = @(
