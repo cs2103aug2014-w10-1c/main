@@ -37,11 +37,17 @@ if ($doxygen_exists -ne $true) {
 	if ($_.gettype().Name -eq "ErrorRecord") {
 		if ($_ -match 'warning:') {
 			if (Get-Command 'Add-AppveyorCompilationMessage' -errorAction SilentlyContinue) {
-				$match = Select-String -InputObject $_ -Pattern '^([A-Za-z]:[^:]+):([\d]+): warning: (.*)$'
-				$file = $match.Matches.Groups[1].Value
-				$line = [System.Convert]::ToInt32($match.Matches.Groups[2].Value)
-				$message = $match.Matches.Groups[3].Value
-				Add-AppveyorCompilationMessage -Message $message -Category Warning -FileName $file -Line $line -ProjectName 'Documentation'
+				$matches = $_.ToString().split("`r`n") |
+					Select-String -Pattern '^([A-Za-z]:[^:]+):([\d]+): warning: (.*)$' -AllMatches
+
+				foreach ($match in $matches) {
+					$match = $match.Matches
+					$file = $match.Groups[1].Value
+					$line = [System.Convert]::ToInt32($match.Groups[2].Value)
+					$message = $match.Groups[3].Value
+
+					Add-AppveyorCompilationMessage -Message $message -Category Warning -FileName $file -Line $line -ProjectName 'Documentation'
+				}
 			}
 			$Host.UI.WriteWarningLine($_)
 		} else {
