@@ -47,7 +47,7 @@ public:
 
 private:
 	/// The union type of all possible results we can return.
-	typedef boost::variant<TaskList, Task, size_t> ResultType;
+	typedef QueryEngine::Response ResultType;
 
 private:
 	/// Constructor.
