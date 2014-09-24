@@ -9,7 +9,7 @@ namespace You {
 namespace NLP {
 
 namespace spirit = boost::spirit;
-using Parser = Internal::Parser;
+using QueryParser = Internal::QueryParser;
 
 /// Represents a parse error in the NLP engine.
 class ParseErrorException : public ParserException {
@@ -18,14 +18,14 @@ public:
 	///
 	/// \param[in] message The Spirit parse error information.
 	/// \param[in] token The token being parsed.
-	ParseErrorException(spirit::info message, Parser::StringType token);
+	ParseErrorException(spirit::info message, QueryParser::StringType token);
 
 private:
 	/// The Spirit parse error.
 	spirit::info message;
 
 	/// The token causing the error.
-	Parser::StringType token;
+	QueryParser::StringType token;
 };
 
 }  // namespace NLP

@@ -26,7 +26,7 @@ typedef std::wstring::const_iterator ParserIteratorType;
 typedef ParserCharTraits::space_type ParserSkipperType;
 
 /// The query parser that recognises our input syntax.
-class Parser : public qi::grammar<
+class QueryParser : public qi::grammar<
 	ParserIteratorType,
 	QUERY(),
 	ParserSkipperType> {
@@ -44,7 +44,7 @@ public:
 	typedef std::basic_string<ParserCharEncoding::char_type> StringType;
 
 public:
-	Parser();
+	QueryParser();
 
 	/// Parses the given input string into a query.
 	///

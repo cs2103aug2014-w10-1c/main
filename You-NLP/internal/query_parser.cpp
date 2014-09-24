@@ -9,12 +9,12 @@ namespace Internal {
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
-QUERY Parser::parse(const Parser::StringType& string) {
+QUERY QueryParser::parse(const QueryParser::StringType& string) {
 	QUERY result;
 	bool success = qi::phrase_parse(
 		begin(string),
 		end(string),
-		Parser(),
+		QueryParser(),
 		ParserSkipperType(),
 		result);
 
@@ -25,7 +25,7 @@ QUERY Parser::parse(const Parser::StringType& string) {
 	}
 }
 
-Parser::Parser() : Parser::base_type(start) {
+QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
@@ -38,21 +38,21 @@ Parser::Parser() : Parser::base_type(start) {
 
 	addCommand = (
 		qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(&Parser::constructAddQuery, qi::_1)];
+	)[qi::_val = phoenix::bind(&QueryParser::constructAddQuery, qi::_1)];
 	addCommand.name("addCommand");
 
 	qi::on_error<qi::fail>(start,
-		phoenix::bind(&Parser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
+		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
 }
 
-ADD_QUERY Parser::constructAddQuery(const LexemeType& lexeme) {
+ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(lexeme.begin(), lexeme.end()),
 		std::wstring()
 	};
 }
 
-void Parser::onFailure(ParserIteratorType begin, ParserIteratorType end,
+void QueryParser::onFailure(ParserIteratorType begin, ParserIteratorType end,
 	ParserIteratorType errorPos, const spirit::info& message) {
 	StringType lexeme(errorPos, end);
 	throw ParseErrorException(message, lexeme);
