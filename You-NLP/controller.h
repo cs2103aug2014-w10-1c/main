@@ -70,9 +70,6 @@ public:
 	};
 
 public:
-	Controller(const Controller&) = delete;
-	Controller& operator=(const Controller&) = delete;
-
 	/// Gets the singleton instance for the controller.
 	static Controller& get();
 
@@ -87,6 +84,8 @@ public:
 	Result query(const std::wstring& query, const TaskList& context) const;
 
 private:
+	Controller(const Controller&) = delete;
+	Controller& operator=(const Controller&) = delete;
 	Controller() = default;
 };
 
