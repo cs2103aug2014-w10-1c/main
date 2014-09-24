@@ -49,7 +49,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\pugixml</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>pugixml\pugixml\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,8 +88,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\pugixml\scripts\pugixml_vs2013.vcxproj">
-      <Project>{a0150c5d-ea87-4024-9d67-834bd25c2947}</Project>
+    <ProjectReference Include="..\pugixml\pugixml.vcxproj">
+      <Project>{37c6baaa-e37d-4558-9595-dfb5c9fb59bc}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
