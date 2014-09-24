@@ -39,5 +39,3 @@ if ($LastExitCode -ne 0) {
 	Throw "doxygen completed with errors."
 }
 
-$documentation_dir = 'docs'
-$github_pages_dir = 'you_documentation'
