@@ -2,15 +2,15 @@
 #ifndef YOU_NLP_TASK_LIST_H_
 #define YOU_NLP_TASK_LIST_H_
 
+#include "../You-QueryEngine/query.h"
+
 namespace You {
 namespace NLP {
 
-class Task {
-};
+typedef ::You::QueryEngine::Task Task;
 
 /// Defines the task list that can be returned by the engine.
-class TaskList {
-};
+typedef std::vector<Task> TaskList;
 
 }  // namespace NLP
 }  // namespace You
