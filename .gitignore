@@ -20,6 +20,9 @@
 *.out
 *.app
 
+# User config
+*.user
+
 # cpplint
 /cpplint.py
 
@@ -27,7 +30,6 @@
 *.opensdf
 *.sdf
 *.suo
-*.user
 **/ipch
 **/*.ipch
 
@@ -41,7 +43,6 @@
 **/Release
 
 # Qt-es
-
 /.qmake.cache
 /.qmake.stash
 *.pro.user
@@ -54,13 +55,8 @@ Makefile*
 *-build-*
 
 # QtCreator
-
 *.autosave
 
-#QtCtreator Qml
+# QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
-
-# User files
-
-*.vcxproj.user
