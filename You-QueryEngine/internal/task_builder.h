@@ -6,45 +6,48 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_BUILDER_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_BUILDER_H_
 
-#include "task_model.h"
+#include "../task_model.h"
 
 namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-///   \brief Builder for tasks
+///   Builder for tasks
 ///	  New instance of task should be created using this builder.
 ///
 ///   Example usage:
 ///   \code{.cpp}
-///	    Task newTask = Task::Builder::get().description("Feed");
+///	    Task newTask = Task::TaskBuilder::get().description("Feed");
 ///   \endcode
 ///
 ///	  \note At least description must be provided when creating a task.
-class Task::Builder {
-	friend class Task;
+class TaskBuilder {
 public:
 	/// Return a new builder instance.
 	/// \return A builder object.
-	static Builder get();
+	static TaskBuilder get();
 
 	/// Initialize task description .
-	Builder& description(const Task::Description& description);
+	TaskBuilder& description(const Task::Description& description);
 	/// Initialize task deadline.
-	Builder& deadline(Task::Time deadline);
+	TaskBuilder& deadline(Task::Time deadline);
 	/// Initialize task dependencies.
-	Builder& dependencies(const Task::Dependencies& dependencies);
+	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
 	/// Initialize task priority.
-	Builder& priority(Task::Priority priority);
+	TaskBuilder& priority(Task::Priority priority);
 
 	/// Destructor
-	~Builder() = default;
+	~TaskBuilder() = default;
+
+	/// Convert the builder to task implicitly
+	operator Task() const;
 
 private:
 	/// Disable default no-arg constructor.
-	Builder();
+	TaskBuilder();
+
 	/// Copy constructor from instance.
-	explicit Builder(const Task& instance) : instance(instance) {}
+	explicit TaskBuilder(const Task& instance) : instance(instance) {}
 
 	/// Instance that will be returned by the builder
 	Task instance;

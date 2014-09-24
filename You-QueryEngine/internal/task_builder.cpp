@@ -6,51 +6,38 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-using Builder = Task::Builder;
-
-Builder Task::Builder::get() {
-	Builder builder(nextNewTask());
+TaskBuilder TaskBuilder::get() {
+	TaskBuilder builder(Task::nextNewTask());
 	return builder;
 }
 
-Builder& Task::Builder::description(const Task::Description &description) {
-	instance.description = description;
+TaskBuilder& TaskBuilder::description(const Task::Description &description) {
+	instance.setDescription(description);
 	return *this;
 }
 
-Builder& Task::Builder::deadline(Task::Time deadline) {
-	instance.deadline = deadline;
+TaskBuilder& TaskBuilder::deadline(Task::Time deadline) {
+	instance.setDeadline(deadline);
 	return *this;
 }
 
-Builder& Task::Builder::dependencies(const Task::Dependencies &dependencies) {
-	instance.dependencies = dependencies;
+TaskBuilder& TaskBuilder::dependencies(const Task::Dependencies &dependencies) {
+	instance.setDependencies(dependencies);
 	return *this;
 }
 
-Builder& Task::Builder::priority(Task::Priority priority) {
-	instance.priority = priority;
+TaskBuilder& TaskBuilder::priority(Task::Priority priority) {
+	instance.setPriority(priority);
 	return *this;
 }
 
-Task::Task(const Builder& builder) {
-	bool taskAlreadyExist = false;  // TODO(evansb) Change this when DS ready.
-	bool isEmptyDescription = builder.instance.description == DEFAULT_DESCRIPTION;
-
+TaskBuilder::operator Task() const {
+	bool isEmptyDescription =
+		instance.description == Task::DEFAULT_DESCRIPTION;
 	if (isEmptyDescription) {
-		throw EmptyTaskDescriptionException();
-	} else {
-		this->id = builder.instance.id;
-		this->description = builder.instance.description;
+		throw Internal::EmptyTaskDescriptionException();
 	}
-
-	this->dependencies = builder.instance.dependencies;
-	this->deadline = builder.instance.deadline;
-	this->priority = builder.instance.priority;
-}
-
-Task Task::operator=(const Builder& builder) {
-	return Task(builder);
+	return instance;
 }
 
 }  // namespace Internal

@@ -5,7 +5,8 @@
 #include "internal/exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-using Task = You::QueryEngine::Internal::Task;
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+using Task = You::QueryEngine::Task;
 
 namespace Microsoft {
 namespace VisualStudio {
@@ -28,8 +29,8 @@ public:
 	/// field.
 	TEST_METHOD(buildValidTask) {
 		const Task::Description desc = L"Learn Haskell Lens";
-		Task task = Task::Builder::get().description(desc);
-		Task task2 = Task::Builder::get().description(desc);
+		Task task = TaskBuilder::get().description(desc);
+		Task task2 = TaskBuilder::get().description(desc);
 		Assert::AreEqual(task.getDescription(), desc);
 		// They should have equal deadline, which is the default
 		Assert::AreEqual(task.getDeadline(), task2.getDeadline());
@@ -41,7 +42,7 @@ public:
 		const Task::Time dead = 100L;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Priority prio = Task::Priority::IMPORTANT;
-		Task task = Task::Builder::get()
+		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(dead)
 			.priority(prio)
@@ -57,7 +58,7 @@ public:
 	TEST_METHOD(buildEmptyDescriptionTask) {
 		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
 		Assert::ExpectException<EmptyTaskDescriptionException>([] {
-			Task task = Task::Builder::get().deadline(100L);
+			Task task = TaskBuilder::get().deadline(100L);
 		});
 	}
 };
