@@ -35,6 +35,7 @@
 
 # NuGet
 /packages
+Packages.dgml
 
 # Compiled binaries
 /Debug
