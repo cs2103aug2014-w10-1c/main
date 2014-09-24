@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClInclude Include="internal\action.h" />
     <ClInclude Include="internal\exception.h" />
+    <ClInclude Include="internal\schema.h" />
     <ClInclude Include="internal\task_builder.h" />
     <ClInclude Include="internal\task_model.h" />
     <ClInclude Include="query.h" />
@@ -83,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="internal\task_builder.cpp" />
     <ClCompile Include="internal\task_model.cpp" />
+    <ClCompile Include="query.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
