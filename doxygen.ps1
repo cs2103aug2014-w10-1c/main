@@ -24,8 +24,12 @@ $doxygen_dir = '.\doxygen'
 $doxygen_zip = $doxygen_dir + '.zip'
 $doxygen_exists = Test-Path $doxygen_dir
 if ($doxygen_exists -ne $true) {
-	echo 'Downloading doxygen...'
-	Invoke-WebRequest ftp://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.8.windows.bin.zip -OutFile $doxygen_zip
+	$doxygen_zip_exists = Test-path $doxygen_zip
+	if ($doxygen_zip_exists -ne $true) {
+		echo 'Downloading doxygen...'
+		Invoke-WebRequest ftp://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.8.windows.bin.zip -OutFile $doxygen_zip
+	}
+
 	UnzipFile $doxygen_zip $doxygen_dir
 }
 
