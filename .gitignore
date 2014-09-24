@@ -64,3 +64,8 @@ Makefile*
 # User files
 
 *.vcxproj.user
+
+# Documentation
+/docs
+/doxygen
+/doxygen.zip
