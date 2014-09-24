@@ -22,7 +22,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-QueryEngine-Tests", "Yo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-DataStore-Tests", "You-DataStore-Tests\You-DataStore-Tests.vcxproj", "{3B32FF95-B5B8-4F73-A6AB-74D5F2F36085}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pugixml_vs2013", "..\pugixml\scripts\pugixml_vs2013.vcxproj", "{A0150C5D-EA87-4024-9D67-834BD25C2947}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pugixml_vs2013", "pugixml\scripts\pugixml_vs2013.vcxproj", "{A0150C5D-EA87-4024-9D67-834BD25C2947}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
