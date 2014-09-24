@@ -41,17 +41,3 @@ if ($LastExitCode -ne 0) {
 
 $documentation_dir = 'docs'
 $github_pages_dir = 'you_documentation'
-if ($env:YOU_DOCUMENTATION_KEY -and
-	($env:APPVEYOR_REPO_NAME -eq 'cs2103aug2014-w10-1c/main') -and # only main
-	($env:APPVEYOR_REPO_BRANCH -eq 'master')) {
-	&git clone git@github.com:cs2103aug2014-w10-1c/you-documentation.git $github_pages_dir --quiet
-
-	Remove-Item $github_pages_dir -Exclude *.git -Recurse
-	pushd $github_pages_dir
-	move ('..\' + $documentation_dir + '\html\*') '.'
-	&git add --all
-	&git commit -m 'Latest documentation'
-	&git push
-
-	popd
-}
