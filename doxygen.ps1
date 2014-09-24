@@ -24,4 +24,17 @@ if ($doxygen_exists -ne $true) {
 	UnzipFile $doxygen_zip $doxygen_dir
 }
 
-.\doxygen\doxygen.exe .\Doxyfile
+.\doxygen\doxygen.exe .\Doxyfile 2>&1 | %{
+	if ($_.gettype().Name -eq "ErrorRecord") {
+		if ($_ -match 'warning:') {
+			$Host.UI.WriteWarningLine($_)
+		} else {
+			$Host.UI.WriteErrorLine($_)
+		}
+	} else {
+		echo $_
+	}
+}
+if ($LastExitCode -ne 0) {
+	Throw "doxygen completed with errors."
+}
