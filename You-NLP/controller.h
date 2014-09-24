@@ -8,12 +8,15 @@
 
 namespace You {
 namespace NLP {
+namespace Internal { class QueryBuilderVisitor; }
 
 /// The entry-point for all communications with the rest of the You
 /// framework.
 ///
 /// This is a singleton class.
 class Controller {
+	friend class You::NLP::Internal::QueryBuilderVisitor;
+
 public:
 	/// Represents a context of a query. This is usually a task list so that
 	/// relative indices can be used in a query.
