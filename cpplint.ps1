@@ -28,7 +28,7 @@ $env:PATH += ";C:\python27"
 	if ($_.gettype().Name -eq "ErrorRecord") {
 		if (Get-Command 'Add-AppveyorCompilationMessage' -errorAction SilentlyContinue) {
 			$matches = $_.ToString().split("`r`n") |
-				Select-String -Pattern '^([^(]+)\(([\d]+\)):  ([^[]*)\[([^\]]+)\]' -AllMatches
+				Select-String -Pattern '^([^(]+)\(([\d]+\)): ([^[]*)\[([^\]]+)\]' -AllMatches
 
 			foreach ($match in $matches) {
 				$match = $match.Matches
