@@ -1,65 +1,74 @@
+/// \file query.h
+/// Defines the API for Query Engine.
+/// \author a0112054y
+
 #pragma once
 #ifndef YOU_QUERYENGINE_QUERY_H_
 #define YOU_QUERYENGINE_QUERY_H_
 
-#include <string>
+#include <memory>
+#include <boost/variant.hpp>
+#include "internal/schema.h"
+#include "internal/task_model.h"
 
 namespace You {
 namespace QueryEngine {
 
-/// Defines schema for raw queries from NLP parser that will be
-/// converted to real queries, executed, and converted back to string
-/// to be displayed in the GUI.
-namespace Query {
+typedef Internal::Query::Query Query;
+typedef Internal::Task Task;
 
-struct Query {};
+/// Return a query for adding a task
+/// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
+std::shared_ptr<Query> AddTask(
+	  Task::Description description
+	, Task::Time deadline
+	, Task::Priority priority
+	, Task::Dependencies dependencies
+);
 
-struct AddTask : public Query {
-	std::wstring description;
-	std::wstring deadline;
-	std::wstring priority;
-	std::wstring dependencies;
-};
+/// Return a query for fetching single task.
+std::shared_ptr<Query> GetTask(Task::ID id);
 
-struct GetTask : public Query {
-	std::wstring taskID;
-};
+/// Return a query for deleting single task.
+std::shared_ptr<Query> DeleteTask(Task::ID taskID);
 
-struct DeleteTask : public Query {
-	std::wstring taskID;
-};
+/// Return a query for searching task based on keyword.
+/// \todo Implement custom filters using LINQ-like syntax
+std::shared_ptr<Query> FindTask(std::wstring searchKeyword);
 
-struct FindTask : public Query {
-	std::wstring searchKeyword;
-};
+/// Return a query for set new deadline for a task.
+std::shared_ptr<Query> EditDeadline(Task::ID taskID,
+							        Task::Time newDeadline);
 
-struct EditDeadline : public Query {
-	std::wstring taskID;
-	std::wstring newDeadline;
-};
+/// Return a query for set new description for a task.
+std::shared_ptr<Query> EditDescription(Task::ID taskID,
+									   Task::Time newDescription);
 
-struct EditDescription : public Query {
-	std::wstring taskID;
-	std::wstring newDescription;
-};
+/// Return a query for adding new dependency for a task.
+std::shared_ptr<Query> AddDependency(Task::ID taskID, Task::ID dependencyID);
 
-struct AddDependency : public Query {
-	std::wstring taskID;
-	std::wstring dependencyID;
-};
+/// Return a query for removing dependency from a task.
+std::shared_ptr<Query> RemoveDependency(Task::ID taskID, Task::ID dependencyID);
 
-struct RemoveDependency : public Query {
-	std::wstring taskID;
-	std::wstring dependencyID;
-};
+/// Return a query for undoing actions.
+std::shared_ptr<Query> Undo();
 
-struct Undo : public Query {
-};
+/// Return a query for sorting a list of tasks based on comparator.
+/// \todo Implement usable comparators instead of string.
+std::shared_ptr<Query> Sort(std::vector<Task::ID> tasks,
+	                        std::wstring comparator);
 
-}  // namespace Query
+typedef boost::variant <
+	  std::vector<Task>
+	, Task
+	, Task::ID
+	, Task::Time
+	, Task::Dependencies
+	, Task::Description
+	> Response;
 
-/// This is all the parser need to call.
-std::wstring executeQuery(Query::Query query);
+/// Execute a query from the parser.
+Response executeQuery(std::shared_ptr<Query> query);
 
 }  // namespace QueryEngine
 }  // namespace You

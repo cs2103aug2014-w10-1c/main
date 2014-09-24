@@ -1,3 +1,7 @@
+/// \file task_model.h
+/// Defines the task model class.
+/// \author a0112054y
+
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_MODEL_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_MODEL_H_
@@ -8,10 +12,11 @@
 
 namespace You {
 namespace QueryEngine {
+namespace Internal {
 
-/// \class Task
 /// \brief The task model
-/// The task instances are created using builder pattern.
+/// The task instances must be created using builder pattern.
+/// \see [Task::Builder]
 class Task {
 public:
 	// Type definitions of each fields.
@@ -66,6 +71,7 @@ private:
 	static const ID DUMMY_ID;
 };
 
+}  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
 

@@ -4,6 +4,7 @@
 
 namespace You {
 namespace QueryEngine {
+namespace Internal {
 
 using Builder = Task::Builder;
 
@@ -51,5 +52,7 @@ Task::Task(const Builder& builder) {
 Task& Task::operator=(const Builder& builder) {
 	return std::move(Task(builder));
 }
+
+}  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

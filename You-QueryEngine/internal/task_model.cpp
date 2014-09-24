@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "task_model.h"
-
+#include "../query.h"
 namespace You {
 namespace QueryEngine {
+namespace Internal {
 
 using Builder = Task::Builder;
 
@@ -38,5 +39,6 @@ const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 
 const Task::ID Task::DUMMY_ID = 42L;
 
+}  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
