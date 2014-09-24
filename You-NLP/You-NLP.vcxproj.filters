@@ -75,6 +75,9 @@
     <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="internal\date_time_parser.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
