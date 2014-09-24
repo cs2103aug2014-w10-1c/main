@@ -16,15 +16,16 @@ function UnzipFile($file, $destination) {
 	}
 }
 
-$doxygen_dir = 'doxygen'
+$doxygen_dir = '.\doxygen'
 $doxygen_zip = $doxygen_dir + '.zip'
 $doxygen_exists = Test-Path $doxygen_dir
 if ($doxygen_exists -ne $true) {
+	echo 'Downloading doxygen...'
 	Invoke-WebRequest ftp://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.8.windows.bin.zip -OutFile $doxygen_zip
 	UnzipFile $doxygen_zip $doxygen_dir
 }
 
-.\doxygen\doxygen.exe .\Doxyfile 2>&1 | %{
+&$doxygen_dir\doxygen.exe .\Doxyfile 2>&1 | %{
 	if ($_.gettype().Name -eq "ErrorRecord") {
 		if ($_ -match 'warning:') {
 			$Host.UI.WriteWarningLine($_)
