@@ -37,7 +37,7 @@ $env:PATH += ";C:\python27"
 				$message = $match.Groups[3].Value.Trim()
 				$category = $match.Groups[4].Value
 
-				Add-AppveyorCompilationMessage -Message $message -Category Warning -FileName $file -Line $line -ProjectName ('Linting: ' + $category)
+				Add-AppveyorCompilationMessage -Message $message -Category Error -FileName $file -Line $line -ProjectName ('Linting: ' + $category)
 			}
 		}
 
