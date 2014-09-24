@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "parser.h"
+#include "query_parser.h"
 #include "../exceptions/parse_error_exception.h"
 
 namespace You {
@@ -54,7 +54,8 @@ ADD_QUERY Parser::constructAddQuery(const LexemeType& lexeme) {
 
 void Parser::onFailure(ParserIteratorType begin, ParserIteratorType end,
 	ParserIteratorType errorPos, const spirit::info& message) {
-	throw ParseErrorException(message, StringType(errorPos, end));
+	StringType lexeme(errorPos, end);
+	throw ParseErrorException(message, lexeme);
 }
 
 }  // namespace Internal

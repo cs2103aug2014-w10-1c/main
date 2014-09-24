@@ -3,7 +3,7 @@
 #define YOU_NLP_EXCEPTIONS_PARSE_ERROR_EXCEPTION_H_
 
 #include "parser_exception.h"
-#include "../internal/parser.h"
+#include "../internal/query_parser.h"
 
 namespace You {
 namespace NLP {

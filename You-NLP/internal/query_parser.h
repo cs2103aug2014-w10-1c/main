@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_PARSER_H_
-#define YOU_NLP_INTERNAL_PARSER_H_
+#ifndef YOU_NLP_INTERNAL_QUERY_PARSER_H_
+#define YOU_NLP_INTERNAL_QUERY_PARSER_H_
 
 #include <boost/spirit/include/qi.hpp>
 
