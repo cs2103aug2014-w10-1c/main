@@ -8,6 +8,7 @@
 #define YOU_QUERYENGINE_TESTS_STDAFX_H_
 
 #include <SDKDDKVer.h>
+#pragma warning(disable: 4505)
 #include <CppUnitTest.h>
 
 #include <boost/lexical_cast.hpp>
