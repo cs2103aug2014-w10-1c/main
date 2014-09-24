@@ -9,6 +9,8 @@ namespace NLP {
 
 /// Defines the result of a natural language query.
 class Result {
+	friend class Controller;
+
 public:
 	/// Checks if this result is a result set.
 	///
@@ -44,40 +46,23 @@ public:
 	const size_t getAffectedCount() const;
 
 private:
-	/// The possible types of results.
-	enum class Types {
-		/// The result is a set of tasks.
-		RESULT_SET,
-
-		/// The result is the affected task.
-		AFFECTED_OBJECT,
-
-		/// The result is the number of affected tasks.
-		AFFECTED_COUNT
-	};
+	/// The union type of all possible results we can return.
+	typedef boost::variant<TaskList, Task, size_t> ResultType;
 
 private:
-	/// The type of this result.
-	Types type;
+	/// Constructor.
+	///
+	/// \param[in] result The result from the query engine.
+	explicit Result(const ResultType& result);
 
-	union {
-		/// The task list, if the result is that.
-		///
-		/// \see TaskList
-		/// \see type The type of the result
-		TaskList taskList;
+	/// Move constructor.
+	///
+	/// \param[in] result The result from the query engine.
+	Result(ResultType&& result);
 
-		/// The task, if the result is that.
-		///
-		/// \see Task
-		/// \see type The type of the result
-		Task task;
-
-		/// The number of affected tasks, if the result is that.
-		///
-		/// \see type The type of the result
-		size_t count;
-	};
+private:
+	/// The actual result type.
+	ResultType record;
 };
 
 }  // namespace NLP
