@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_DATE_TIME_PARSER
-#define YOU_NLP_INTERNAL_DATE_TIME_PARSER
+#ifndef YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
+#define YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
 
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include "query_parser.h"
@@ -25,4 +25,4 @@ public:
 }  // namespace NLP
 }  // namespace You
 
-#endif  // YOU_NLP_INTERNAL_DATE_TIME_PARSER
+#endif  // YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
