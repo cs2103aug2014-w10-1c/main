@@ -12,15 +12,15 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// \brief Builder for tasks
-///	New instance of task should be created using this builder.
+///   \brief Builder for tasks
+///	  New instance of task should be created using this builder.
 ///
-/// Example usage:
+///   Example usage:
 ///   \code{.cpp}
 ///	    Task newTask = Task::Builder::get().description("Feed");
 ///   \endcode
 ///
-///	\note At least description must be provided when creating a task.
+///	  \note At least description must be provided when creating a task.
 class Task::Builder {
 	friend class Task;
 public:
