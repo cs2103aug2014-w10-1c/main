@@ -15,10 +15,10 @@ public:
 private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
-	// Saves the xml object to a file
-	// Returns true if operation successful and false otherwise
+	/// Saves the xml object to a file
+	/// Returns true if operation successful and false otherwise
 	bool saveData();
-	// Loads the xml file into the xml object
+	/// Loads the xml file into the xml object
 	void loadData();
 };
 

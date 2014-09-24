@@ -6,14 +6,14 @@ namespace DataStore {
 
 const std::wstring DataStore::FILE_PATH =std::wstring(L"data.xml");
 
-// Saves the xml object to a file
-// Returns true if operation successful and false otherwise
+/// Saves the xml object to a file
+/// Returns true if operation successful and false otherwise
 bool You::DataStore::DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
 }
 
-// Loads the xml file into the xml object
+/// Loads the xml file into the xml object
 void You::DataStore::DataStore::loadData() {
 	pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 
