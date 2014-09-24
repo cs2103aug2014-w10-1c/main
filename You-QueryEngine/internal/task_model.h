@@ -59,19 +59,22 @@ private:
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
 
-	// Fields
+	/// \name Private Fields
+	/// @{
 	ID id;
 	Description description;
 	Time deadline;
 	Dependencies dependencies;
 	Priority priority;
+	/// @}
 
-	/// \defgroup Defaults Default values
-
+	/// \name Default Values
+	/// @{
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
+	/// @}
 
 	// TODO(evansb) Remove when getNextID() that talks to
 	// Data Storage is implemented.

@@ -37,9 +37,12 @@ public:
 	/// Initialize task priority.
 	Builder& priority(Task::Priority priority);
 
+	/// Destructor
 	~Builder() = default;
 private:
+	/// Disable default no-arg constructor.
 	Builder();
+	/// Copy constructor from instance.
 	explicit Builder(const Task& instance) : instance(instance) {}
 
 	/// Instance that will be returned by the builder

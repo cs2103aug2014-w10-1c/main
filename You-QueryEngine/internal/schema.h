@@ -21,49 +21,49 @@ struct Query {};
 
 /// Schema for AddTask command.
 struct AddTask : public Query {
-	Task::Description description;  /// Description.
-	Task::Time deadline;  /// Deadline.
-	Task::Priority priority;  /// Priority.
-	Task::Dependencies dependencies;  /// Dependencies.
+	Task::Description description;  ///< Description.
+	Task::Time deadline;  ///< Deadline.
+	Task::Priority priority;  ///< Priority.
+	Task::Dependencies dependencies;  ///< Dependencies.
 };
 
 /// Schema for GetTask command.
 struct GetTask : public Query {
-	Task::ID taskID;  /// ID
+	Task::ID taskID;  ///< ID
 };
 
 /// Schema for DeleteTask command.
 struct DeleteTask : public Query {
-	Task::ID taskID;  /// ID
+	Task::ID taskID;  ///< ID
 };
 
 /// Schema for FindTask command.
 struct FindTask : public Query {
-	std::wstring searchKeyword;  /// Keyword
+	std::wstring searchKeyword;  ///< Keyword
 };
 
 /// Schema for EditDeadline command.
 struct EditDeadline : public Query {
-	Task::ID taskID;  /// ID
-	Task::Time newDeadline;  /// Deadline
+	Task::ID taskID;  ///< ID
+	Task::Time newDeadline;  ///< Deadline
 };
 
 /// Schema for EditDescription command.
 struct EditDescription : public Query {
-	Task::ID taskID;  /// ID
-	Task::Description newDescription;  /// Description
+	Task::ID taskID;  ///< ID
+	Task::Description newDescription;  ///< Description
 };
 
 /// Schema for AddDependency command.
 struct AddDependency : public Query {
-	Task::ID taskID;  /// ID
-	Task::ID dependencyID;  /// ID
+	Task::ID taskID;  ///< ID
+	Task::ID dependencyID;  ///< ID
 };
 
 /// Schema for RemoveDependency command.
 struct RemoveDependency : public Query {
-	Task::ID taskID;  /// ID
-	Task::ID dependencyID;  /// ID
+	Task::ID taskID;  ///< ID
+	Task::ID dependencyID;  ///< ID
 };
 
 /// Schema for Undo command.
@@ -72,7 +72,7 @@ struct Undo : public Query {
 
 /// Schema for Sort command.
 struct Sort : public Query {
-	std::wstring comparatorField;  /// \example "deadline"
+	std::wstring comparatorField;  ///< \example "deadline"
 };
 
 }  // namespace Query
