@@ -57,7 +57,7 @@ Result Controller::query(
 
 std::shared_ptr<QueryEngine::Query>
 QueryBuilderVisitor::build(const ADD_QUERY& query) {
-	std::wstring& description = query.description;
+	const std::wstring& description = query.description;
 	boost::gregorian::date deadline = DateTimeParser::parse(query.due);
 
 	return QueryEngine::AddTask(
