@@ -6,24 +6,30 @@
 namespace You {
 namespace QueryEngine {
 
-std::shared_ptr<Query> AddTask(Task::Description description
+std::unique_ptr<Query> AddTask(Task::Description description
 	, Task::Time deadline
 	, Task::Priority priority
 	, Task::Dependencies dependencies
 	) {
 	using Internal::Query::AddTask;
-	return std::make_shared<AddTask>(description, deadline,
-		priority, dependencies);
+	return std::make_unique<AddTask>(description,
+		deadline, priority, dependencies);
 }
 
-std::shared_ptr<Query> GetTask(Task::ID id) {
+std::unique_ptr<Query> GetTask(Task::ID id) {
 	using Internal::Query::GetTask;
-	return std::make_shared<GetTask>(id);
+	return std::make_unique<GetTask>(id);
 }
 
-std::shared_ptr<Query> DeleteTask(Task::ID taskID) {
+std::unique_ptr<Query> DeleteTask(Task::ID taskID) {
 	using Internal::Query::DeleteTask;
-	return std::make_shared<DeleteTask>(taskID);
+	return std::make_unique<DeleteTask>(taskID);
+}
+
+Response executeQuery(std::unique_ptr<Query> query) {
+	using Internal::Query::AddTask;
+	using Internal::Query::GetTask;
+	using Internal::Query::DeleteTask;
 }
 
 }  // namespace QueryEngine
