@@ -17,6 +17,8 @@ namespace QueryEngine {
 typedef Internal::Query::Query Query;
 typedef Internal::Task Task;
 
+/// Return a query for adding a task
+/// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
 std::shared_ptr<Query> AddTask(
 	  Task::Description description
 	, Task::Time deadline
@@ -24,32 +26,46 @@ std::shared_ptr<Query> AddTask(
 	, Task::Dependencies dependencies
 );
 
+/// Return a query for fetching single task.
 std::shared_ptr<Query> GetTask(Task::ID id);
 
+/// Return a query for deleting single task.
 std::shared_ptr<Query> DeleteTask(Task::ID taskID);
 
+/// Return a query for searching task based on keyword.
+/// \todo Implement custom filters using LINQ-like syntax
 std::shared_ptr<Query> FindTask(std::wstring searchKeyword);
 
-std::shared_ptr<Query> EditDeadline(Task::ID taskID, Task::Time newDeadline);
+/// Return a query for set new deadline for a task.
+std::shared_ptr<Query> EditDeadline(Task::ID taskID,
+							        Task::Time newDeadline);
 
-std::shared_ptr<Query> EditDescription(Task::ID taskID, Task::Time newDescription);
+/// Return a query for set new description for a task.
+std::shared_ptr<Query> EditDescription(Task::ID taskID,
+									   Task::Time newDescription);
 
+/// Return a query for adding new dependency for a task.
 std::shared_ptr<Query> AddDependency(Task::ID taskID, Task::ID dependencyID);
 
+/// Return a query for removing dependency from a task.
 std::shared_ptr<Query> RemoveDependency(Task::ID taskID, Task::ID dependencyID);
 
+/// Return a query for undoing actions.
 std::shared_ptr<Query> Undo();
 
-std::shared_ptr<Query> Sort(std::wstring comparator);
+/// Return a query for sorting a list of tasks based on comparator.
+/// \todo Implement usable comparators instead of string.
+std::shared_ptr<Query> Sort(std::vector<Task::ID> tasks,
+	                        std::wstring comparator);
 
-boost::variant <
+typedef boost::variant <
 	  std::vector<Task>
 	, Task
 	, Task::ID
 	, Task::Time
 	, Task::Dependencies
 	, Task::Description
-> Response;
+	> Response;
 
 /// Execute a query from the parser.
 Response executeQuery(std::shared_ptr<Query> query);
