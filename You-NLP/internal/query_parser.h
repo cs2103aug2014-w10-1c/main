@@ -82,4 +82,4 @@ private:
 }  // namespace NLP
 }  // namespace You
 
-#endif  // YOU_NLP_INTERNAL_PARSER_H_
+#endif  // YOU_NLP_INTERNAL_QUERY_PARSER_H_
