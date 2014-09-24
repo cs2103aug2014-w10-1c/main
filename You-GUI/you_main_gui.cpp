@@ -51,7 +51,7 @@ void YouMainGUI::addTask(std::vector<std::wstring> rowStrings) {
 }
 
 void YouMainGUI::addSubtask(QTreeWidgetItem* parent,
-							std::vector<std::wstring> rowStrings) {
+		std::vector<std::wstring> rowStrings) {
 	QTreeWidgetItem* item = createItem(rowStrings);
 	parent->addChild(item);
 }
@@ -106,8 +106,7 @@ void YouMainGUI::setIcon() {
 }
 
 
-void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason)
-{
+void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	switch (reason) {
 	case QSystemTrayIcon::Trigger:
 		if (!YouMainGUI::isVisible()) {

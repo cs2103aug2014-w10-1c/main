@@ -21,12 +21,24 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
-	/// String/numeric constants the GUI
+	/// String/numeric constants for the GUI
+
+	/// Number of columns in task panel
 	const int TASK_COLUMN_COUNT = 4;
+
+	/// Header string for column 1
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
+	
+	/// Header string for column 2
 	const std::wstring TASK_COLUMN_2 = L"Index";
+	
+	/// Header string for column 3
 	const std::wstring TASK_COLUMN_3 = L"Task Title";
+	
+	/// Header string for column 4
 	const std::wstring TASK_COLUMN_4 = L"Task Description";
+	
+	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
 
 	/// Populates the task panel with data. This is not vital to the execution
@@ -49,7 +61,8 @@ private:
 	/// commandInputBox. This is currently just a placeholder.
 	You::NLP::Result queryNLP();
 
-	/// Updates tree widget as the result of a query. Called by This is currently just a placeholder.
+	/// Updates tree widget as the result of a query. This is 
+	/// currently just a placeholder.
 	void updateTreeWidget(You::NLP::Result result);
 
 	/// Initializes the taskTreePanel by setting column count and headers.
@@ -79,19 +92,28 @@ private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();
 
-	/// Saves the state of the GUI before closing. Called during closeEvent
+	/// Saves the state of the GUI before closing. Called during closeEvent.
 	void saveSession();
 
-	/// Reimplementation of closeEvent to save state of GUI
+	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
 	/// System Tray functions
+
+	/// Defines and sets the tray icon. Called in the constructor.
 	void setIcon();
+
+	/// System tray icon object that adds an icon to the tray.
 	QSystemTrayIcon trayIcon;
+
+	/// QT's signal/slot mechanism for tray icon activation.
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+	/// Icon image for system tray.
 	QIcon icon;
 
 	private slots:
+	/// QT's signal/slot mechanism for input enter button.
 	void on_commandEnterButton_clicked();
 };
 
