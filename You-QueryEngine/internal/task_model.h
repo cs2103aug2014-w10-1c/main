@@ -19,25 +19,31 @@ namespace Internal {
 /// \see [Task::Builder]
 class Task {
 public:
-	// Type definitions of each fields.
+	/// \name Typedefs
+	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
 	typedef std::int64_t Time;
 	typedef std::vector<Task::ID> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
+	/// @}
 
-	// Field getters
+	/// \name Getters
+	/// @{
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
 	inline Time getDeadline() const { return deadline; }
 	inline Dependencies getDependencies() const { return dependencies; }
 	inline Priority getPriority() const { return priority; }
+	/// @}
 
-	// Field setters
+	/// \name Setters
+	/// @{
 	void setDescription(const Description&);
 	void setDeadline(Time);
 	void setDependencies(const Dependencies&);
 	void setPriority(Priority);
+	/// @}
 
 	/// Return a task with using default values for all its fields.
 	/// The ID of the task created is LAST_ID + 1
@@ -60,7 +66,8 @@ private:
 	Dependencies dependencies;
 	Priority priority;
 
-	// Default values for fields
+	/// \defgroup Defaults Default values
+
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
