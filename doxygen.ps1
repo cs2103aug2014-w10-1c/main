@@ -7,12 +7,16 @@ function UnzipFile($file, $destination) {
 	$file = (Resolve-Path $file)[0].Path
 	$destination = (Resolve-Path $destination)[0].Path
 
-	Write-Progress ('Extracting ' + $file + ' => ' + $destination)
+	echo ('Extracting ' + $file + ' => ' + $destination)
 
-	$shell = new-object -com shell.application
-	$zip = $shell.NameSpace($file)
-	foreach ($item in $zip.items()) {
-		$shell.Namespace($destination).copyhere($item)
+	if (Get-Command "7z.exe" -ErrorAction SilentlyContinue) {
+		7z x -y "-o$destination" $file
+	} else {
+		$shell = new-object -com shell.application
+		$zip = $shell.NameSpace($file)
+		foreach ($item in $zip.items()) {
+			$shell.Namespace($destination).copyhere($item)
+		}
 	}
 }
 
