@@ -25,6 +25,7 @@ typedef std::wstring::const_iterator ParserIteratorType;
 /// The type of the parser skipper.
 typedef ParserCharTraits::space_type ParserSkipperType;
 
+/// The query parser that recognises our input syntax.
 class Parser : public qi::grammar<
 	ParserIteratorType,
 	QUERY(),
