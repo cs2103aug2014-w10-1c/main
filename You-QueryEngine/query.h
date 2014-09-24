@@ -1,3 +1,7 @@
+/// \file query.h
+/// Defines the API for Query Engine.
+/// \author a0112054y
+
 #pragma once
 #ifndef YOU_QUERYENGINE_QUERY_H_
 #define YOU_QUERYENGINE_QUERY_H_

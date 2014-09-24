@@ -76,7 +76,6 @@
     <ClInclude Include="internal\action.h" />
     <ClInclude Include="internal\exception.h" />
     <ClInclude Include="internal\task_builder.h" />
-    <ClInclude Include="internal\task_controller.h" />
     <ClInclude Include="internal\task_model.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="stdafx.h" />

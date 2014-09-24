@@ -5,7 +5,7 @@
 #include "internal/exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-using Task = You::QueryEngine::Task;
+using Task = You::QueryEngine::Internal::Task;
 
 namespace Microsoft {
 namespace VisualStudio {
@@ -55,7 +55,7 @@ public:
 	/// Should throw an exception when trying to create
 	/// an empty task.
 	TEST_METHOD(buildEmptyDescriptionTask) {
-		using You::QueryEngine::EmptyTaskDescriptionException;
+		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
 		Assert::ExpectException<EmptyTaskDescriptionException>([] {
 			Task task = Task::Builder::get().deadline(100L);
 		});

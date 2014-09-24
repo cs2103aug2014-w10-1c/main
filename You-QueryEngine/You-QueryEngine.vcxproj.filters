@@ -33,9 +33,6 @@
     <ClInclude Include="internal\task_model.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\task_controller.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\task_builder.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
