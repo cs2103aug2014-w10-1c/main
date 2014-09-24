@@ -49,8 +49,13 @@ if ($doxygen_exists -ne $true) {
 					Add-AppveyorCompilationMessage -Message $message -Category Warning -FileName $file -Line $line -ProjectName 'Documentation'
 				}
 			}
+
 			$Host.UI.WriteWarningLine($_)
 		} else {
+			if (Get-Command 'Add-AppveyorMessage' -errorAction SilentlyContinue) {
+				Add-AppveyorMessage -Message $_ -Category Error
+			}
+
 			$Host.UI.WriteErrorLine($_)
 		}
 	} else {
