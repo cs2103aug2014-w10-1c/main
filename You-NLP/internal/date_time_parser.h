@@ -21,7 +21,8 @@ public:
 	static date parse(const std::wstring& string);
 };
 
-}
-}
-}
-#endif
+}  // namespace Internal
+}  // namespace NLP
+}  // namespace You
+
+#endif  // YOU_NLP_INTERNAL_DATE_TIME_PARSER

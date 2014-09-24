@@ -40,7 +40,7 @@ private:
 	static time_t dateToTimeT(const Date& date);
 };
 
-}
+}  // namespace
 
 Result Controller::query(
 	const std::wstring& query,
