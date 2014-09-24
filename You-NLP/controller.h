@@ -15,6 +15,8 @@ namespace NLP {
 /// This is a singleton class.
 class Controller {
 public:
+	/// Represents a context of a query. This is usually a task list so that
+	/// relative indices can be used in a query.
 	class Context {
 	public:
 		/// Task List conversion constructor.
