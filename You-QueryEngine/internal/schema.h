@@ -21,20 +21,20 @@ struct Query {};
 
 /// Schema for AddTask command.
 struct AddTask : public Query {
-	std::wstring description;  /// Description.
-	std::wstring deadline;  /// Deadline.
-	std::wstring priority;  /// Priority.
-	std::wstring dependencies;  /// Dependencies.
+	Task::Description description;  /// Description.
+	Task::Time deadline;  /// Deadline.
+	Task::Priority priority;  /// Priority.
+	Task::Dependencies dependencies;  /// Dependencies.
 };
 
 /// Schema for GetTask command.
 struct GetTask : public Query {
-	std::wstring taskID;  /// ID
+	Task::ID taskID;  /// ID
 };
 
 /// Schema for DeleteTask command.
 struct DeleteTask : public Query {
-	std::wstring taskID;  /// ID
+	Task::ID taskID;  /// ID
 };
 
 /// Schema for FindTask command.
@@ -44,26 +44,26 @@ struct FindTask : public Query {
 
 /// Schema for EditDeadline command.
 struct EditDeadline : public Query {
-	std::wstring taskID;  /// ID
-	std::wstring newDeadline;  /// Deadline
+	Task::ID taskID;  /// ID
+	Task::Time newDeadline;  /// Deadline
 };
 
 /// Schema for EditDescription command.
 struct EditDescription : public Query {
-	std::wstring taskID;  /// ID
-	std::wstring newDescription;  /// Description
+	Task::ID taskID;  /// ID
+	Task::Description newDescription;  /// Description
 };
 
 /// Schema for AddDependency command.
 struct AddDependency : public Query {
-	std::wstring taskID;  /// ID
-	std::wstring dependencyID;  /// ID
+	Task::ID taskID;  /// ID
+	Task::ID dependencyID;  /// ID
 };
 
 /// Schema for RemoveDependency command.
 struct RemoveDependency : public Query {
-	std::wstring taskID;  /// ID
-	std::wstring dependencyID;  /// ID
+	Task::ID taskID;  /// ID
+	Task::ID dependencyID;  /// ID
 };
 
 /// Schema for Undo command.
