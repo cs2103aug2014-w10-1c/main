@@ -60,3 +60,12 @@ Makefile*
 # QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# User files
+*.vcxproj.user
+
+# Documentation
+/docs
+/doxygen
+/doxygen.zip
+/you_documentation
