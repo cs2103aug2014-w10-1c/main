@@ -69,7 +69,7 @@ struct Undo : public Query {
 
 /// Schema for Sort command.
 struct Sort : public Query {
-	std::wstring comparatorField;  ///< \example "deadline"
+	std::wstring comparatorField;  ///< Comparator field
 };
 
 }  // namespace Query

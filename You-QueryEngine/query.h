@@ -58,6 +58,7 @@ Undo();
 std::unique_ptr<Query::Sort>
 Sort(std::vector<Task::ID> tasks, std::wstring comparator);
 
+/// A synthesized type for query responses
 typedef boost::variant <
 	  std::vector<Task>
 	, Task
@@ -67,10 +68,13 @@ typedef boost::variant <
 	, Task::Description
 	> Response;
 
-/// Execute a query from the parser.
+/// Overloaded function to execute a query from the parser.
+/// \name executeQuery
+/// @{
 Response executeQuery(std::unique_ptr<Query::AddTask> query);
 Response executeQuery(std::unique_ptr<Query::GetTask> query);
 Response executeQuery(std::unique_ptr<Query::DeleteTask> query);
+/// @}
 
 }  // namespace QueryEngine
 }  // namespace You
