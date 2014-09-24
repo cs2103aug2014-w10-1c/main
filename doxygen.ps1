@@ -36,6 +36,13 @@ if ($doxygen_exists -ne $true) {
 &$doxygen_dir\doxygen.exe .\Doxyfile 2>&1 | %{
 	if ($_.gettype().Name -eq "ErrorRecord") {
 		if ($_ -match 'warning:') {
+			if (Get-Command 'Add-AppveyorCompilationMessage' -errorAction SilentlyContinue) {
+				$match = Select-String -InputObject $_ -Pattern '^([A-Za-z]:[^:]+):([\d]+): warning: (.*)$'
+				$file = $match.Matches.Groups[1].Value
+				$line = [System.Convert]::ToInt32($match.Matches.Groups[2].Value)
+				$message = $match.Matches.Groups[3].Value
+				Add-AppveyorCompilationMessage -Message $message -Category 'Documentation' Warning -FileName $file -Line $line
+			}
 			$Host.UI.WriteWarningLine($_)
 		} else {
 			$Host.UI.WriteErrorLine($_)
