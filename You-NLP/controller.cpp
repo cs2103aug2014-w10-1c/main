@@ -24,7 +24,7 @@ public:
 	///
 	/// \param[in] query The actual query from the parse tree.
 	template<typename QueryType>
-	std::shared_ptr<QueryEngine::Query> operator()(QueryType& query) const {
+	std::shared_ptr<QueryEngine::Query> operator()(const QueryType& query) const {
 		return build(query);
 	}
 
@@ -32,7 +32,7 @@ private:
 	/// Builds a query engine query from the given syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::shared_ptr<QueryEngine::Query> build(ADD_QUERY& query);
+	static std::shared_ptr<QueryEngine::Query> build(const ADD_QUERY& query);
 
 	/// Converts a boost::gregorian::date to a time_t.
 	///
@@ -56,7 +56,7 @@ Result Controller::query(
 }
 
 std::shared_ptr<QueryEngine::Query>
-QueryBuilderVisitor::build(ADD_QUERY& query) {
+QueryBuilderVisitor::build(const ADD_QUERY& query) {
 	std::wstring& description = query.description;
 	boost::gregorian::date deadline = DateTimeParser::parse(query.due);
 
