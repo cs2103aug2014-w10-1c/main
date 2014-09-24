@@ -1,3 +1,5 @@
+Set-StrictMode -version 2
+
 # Grab the CppLint script
 $cpplint = 'cpplint.py'
 $cpplint_exists = Test-Path $cpplint
@@ -19,11 +21,26 @@ $files = ($cpp + $h) |
 $arguments = @(
 		'cpplint.py',
 		'--output=vs7',
-		'--filter=-legal/copyright,-build/include,-whitespace/tab,-whitespace/indent'
+		'--filter=-legal/copyright,-build/include,-whitespace/tab,-whitespace/indent, -build/c++11'
 	) + $files
 $env:PATH += ";C:\python27"
 &python $arguments 2>&1 | %{
 	if ($_.gettype().Name -eq "ErrorRecord") {
+		if (Get-Command 'Add-AppveyorCompilationMessage' -errorAction SilentlyContinue) {
+			$matches = $_.ToString().split("`r`n") |
+				Select-String -Pattern '^([^(]+)\(([\d]+\)):  ([^[]*)\[([^\]]+)\]' -AllMatches
+
+			foreach ($match in $matches) {
+				$match = $match.Matches
+				$file = $match.Groups[1].Value
+				$line = [System.Convert]::ToInt32($match.Groups[2].Value)
+				$message = $match.Groups[3].Value.Trim()
+				$category = $match.Groups[4].Value
+
+				Add-AppveyorCompilationMessage -Message $message -Category Warning -FileName $file -Line $line -ProjectName ('Linting: ' + $category)
+			}
+		}
+
 		$Host.UI.WriteErrorLine($_)
 	} else {
 		echo $_

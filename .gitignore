@@ -20,6 +20,9 @@
 *.out
 *.app
 
+# User config
+*.user
+
 # cpplint
 /cpplint.py
 
@@ -27,7 +30,6 @@
 *.opensdf
 *.sdf
 *.suo
-*.user
 **/ipch
 **/*.ipch
 
@@ -39,3 +41,31 @@
 /Release
 **/Debug
 **/Release
+
+# Qt-es
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.moc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+Makefile*
+*-build-*
+
+# QtCreator
+*.autosave
+
+# QtCtreator Qml
+*.qmlproject.user
+*.qmlproject.user.*
+
+# User files
+*.vcxproj.user
+
+# Documentation
+/docs
+/doxygen
+/doxygen.zip
+/you_documentation

@@ -41,13 +41,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="yougui.cpp">
+    <ClCompile Include="you_main_gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_yougui.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_you_main_gui.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_yougui.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_you_main_gui.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_yougui.cpp">
@@ -63,14 +63,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="yougui.h">
-      <Filter>Header Files</Filter>
+    <CustomBuild Include="yougui.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="yougui.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="yougui.qrc">
-      <Filter>Resource Files</Filter>
+    <CustomBuild Include="you_main_gui.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

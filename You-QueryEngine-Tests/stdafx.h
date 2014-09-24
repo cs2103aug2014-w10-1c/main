@@ -10,4 +10,7 @@
 #include <SDKDDKVer.h>
 #include <CppUnitTest.h>
 
+#include <boost/lexical_cast.hpp>
+#include <boost/variant/static_visitor.hpp>
+
 #endif  // YOU_QUERYENGINE_TESTS_STDAFX_H_
