@@ -1,3 +1,5 @@
+Set-StrictMode -version 2
+
 # Grab the CppLint script
 $cpplint = 'cpplint.py'
 $cpplint_exists = Test-Path $cpplint
