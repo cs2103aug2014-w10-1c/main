@@ -10,6 +10,9 @@ namespace QueryEngine {
 class Exception : public std::exception {
 };
 
+class EmptyTaskDescriptionException : public Exception {
+};
+
 }  // namespace QueryEngine
 }  // namespace You
 
