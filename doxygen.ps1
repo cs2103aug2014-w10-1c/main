@@ -42,25 +42,7 @@ if ($LastExitCode -ne 0) {
 $documentation_dir = 'docs'
 $github_pages_dir = 'you_documentation'
 if ($env:YOU_DOCUMENTATION_KEY) {
-	$ssh_config_dir = (Resolve-Path '~/.ssh')[0].Path
-	mkdir $ssh_config_dir
-
-	$key = [System.Convert]::FromBase64String($env:YOU_DOCUMENTATION_KEY)
-	[System.IO.File]::WriteAllBytes($ssh_config_dir + '\\id_rsa', $key)
-
-	echo 'Host github.com
-	HostName github.com
-	User git
-	IdentityFile ' + $ssh_config_dir + '\\id_rsa' |
-	Add-Content ($ssh_config_dir + '/config')
-
-	&git clone git@github.com:cs2103aug2014-w10-1c/you-documentation.git $github_pages_dir --quiet 2>&1 | %{
-		if ($_.gettype().Name -eq "ErrorRecord") {
-			$Host.UI.WriteErrorLine($_)
-		} else {
-			echo $_
-		}
-	}
+	&git clone git@github.com:cs2103aug2014-w10-1c/you-documentation.git $github_pages_dir --quiet
 
 	Remove-Item $github_pages_dir -Exclude *.git -Recurse
 	pushd $github_pages_dir
