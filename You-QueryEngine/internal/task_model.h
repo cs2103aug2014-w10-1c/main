@@ -51,7 +51,7 @@ public:
 
 	class Builder;
 	Task(const Task::Builder& builder);  // NOLINT
-	Task& operator=(const Task::Builder& builder);
+	Task operator=(const Task::Builder& builder);
 
 private:
 	Task(ID id, const Description& description, Time deadline,

@@ -49,8 +49,8 @@ Task::Task(const Builder& builder) {
 	this->priority = builder.instance.priority;
 }
 
-Task& Task::operator=(const Builder& builder) {
-	return std::move(Task(builder));
+Task Task::operator=(const Builder& builder) {
+	return Task(builder);
 }
 
 }  // namespace Internal

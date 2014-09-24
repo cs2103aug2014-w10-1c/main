@@ -39,6 +39,7 @@ public:
 
 	/// Destructor
 	~Builder() = default;
+
 private:
 	/// Disable default no-arg constructor.
 	Builder();
