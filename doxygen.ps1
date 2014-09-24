@@ -38,4 +38,3 @@ if ($doxygen_exists -ne $true) {
 if ($LastExitCode -ne 0) {
 	Throw "doxygen completed with errors."
 }
-
