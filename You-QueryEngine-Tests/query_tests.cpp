@@ -8,9 +8,8 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 namespace UnitTests {
 
 using You::QueryEngine::Task;
-using You::QueryEngine::AddTask;
-using You::QueryEngine::GetTask;
-using You::QueryEngine::DeleteTask;
+using You::QueryEngine::Response;
+using You::QueryEngine::ADD_TASK;
 using You::QueryEngine::executeQuery;
 
 using boost::gregorian::date;
@@ -23,21 +22,9 @@ TEST_CLASS(QueryEngineTest) {
 	const Task::Dependencies dep = Task::Dependencies();
 
 	TEST_METHOD(constructAddTaskQuery) {
-		auto resp = executeQuery(AddTask(desc, dead, prio, dep));
+		Response resp = executeQuery(ADD_TASK(desc, dead, prio, dep));
 		Assert::AreEqual(boost::get<std::wstring>(resp),
 			std::wstring(L"ADD"));
-	}
-
-	TEST_METHOD(constructGetTaskQuery) {
-		auto resp = executeQuery(GetTask(42));
-		Assert::AreEqual(boost::get<std::wstring>(resp),
-			std::wstring(L"GET"));
-	}
-
-	TEST_METHOD(constructDeleteTaskQuery) {
-		auto resp = executeQuery(DeleteTask(42));
-		Assert::AreEqual(boost::get<std::wstring>(resp),
-			std::wstring(L"DELETE"));
 	}
 };
 }  // namespace UnitTests

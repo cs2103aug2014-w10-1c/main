@@ -74,13 +74,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="internal\exception.h" />
-    <ClInclude Include="schema.h" />
+    <ClInclude Include="internal\action\add_task.h" />
     <ClInclude Include="internal\task_builder.h" />
     <ClInclude Include="task_model.h" />
     <ClInclude Include="api.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="internal\action\add_task.cpp" />
     <ClCompile Include="internal\task_builder.cpp" />
     <ClCompile Include="task_model.cpp" />
     <ClCompile Include="api.cpp" />

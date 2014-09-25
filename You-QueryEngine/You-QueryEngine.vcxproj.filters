@@ -30,13 +30,13 @@
     <ClInclude Include="internal\task_builder.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="schema.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="task_model.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\action\add_task.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -51,6 +51,9 @@
       <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\add_task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
