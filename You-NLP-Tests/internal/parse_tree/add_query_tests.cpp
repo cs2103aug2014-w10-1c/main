@@ -24,6 +24,12 @@ public:
 			stream.str());
 	}
 
+	TEST_METHOD(convertsToString) {
+		Assert::AreEqual(
+			(boost::wformat(L"%1% (due %2%)") % DESCRIPTION % DUE).str(),
+			boost::lexical_cast<std::wstring>(DUMMY));
+	}
+
 	TEST_METHOD(comparesEquality) {
 		ADD_QUERY local {
 			DESCRIPTION,
