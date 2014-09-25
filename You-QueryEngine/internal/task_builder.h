@@ -36,9 +36,6 @@ public:
 	/// Initialize task priority.
 	TaskBuilder& priority(Task::Priority priority);
 
-	/// Destructor
-	~TaskBuilder() = default;
-
 	/// Convert the builder to task implicitly
 	operator Task() const;
 

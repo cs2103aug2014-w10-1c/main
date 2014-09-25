@@ -36,11 +36,6 @@ public:
 
 	/// Get a query as a representation of the reverse of this action.
 	virtual Query::Query getReverse() const = 0;
-
-	/// Default destructor
-	virtual ~Action() = default;
-	/// Default constructor
-	Action() = default;
 };
 
 }  // namespace Internal
