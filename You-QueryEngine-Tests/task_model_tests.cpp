@@ -45,9 +45,7 @@ public:
 	/// Should be able to create a task with complete fields.
 	TEST_METHOD(buildCompleteTask) {
 		const Task::Description desc = L"Learn Haskell Lens";
-		using boost::gregorian::date;
-		using boost::gregorian::max_date_time;
-		const Task::Time dead = date(max_date_time);
+		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Priority prio = Task::Priority::IMPORTANT;
 		Task task = TaskBuilder::get()
@@ -64,9 +62,7 @@ public:
 	/// an empty task.
 	TEST_METHOD(buildEmptyDescriptionTask) {
 		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
-		using boost::gregorian::date;
-		using boost::gregorian::max_date_time;
-		const Task::Time dead = date(max_date_time);
+		const Task::Time dead = Task::NEVER;
 		Assert::ExpectException<EmptyTaskDescriptionException>([=] {
 			Task task = TaskBuilder::get().deadline(dead);
 		});

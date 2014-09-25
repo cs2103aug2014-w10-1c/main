@@ -17,7 +17,7 @@ using boost::gregorian::max_date_time;
 
 TEST_CLASS(QueryEngineTest) {
 	const Task::Description desc = L"Learn Haskell Lens";
-	const Task::Time dead = date(max_date_time);
+	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::IMPORTANT;
 	const Task::Dependencies dep = Task::Dependencies();
 

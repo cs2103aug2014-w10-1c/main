@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
 namespace QueryEngine {
@@ -30,7 +30,7 @@ public:
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
-	typedef boost::gregorian::date Time;
+	typedef boost::posix_time::ptime Time;
 	typedef std::vector<Task::ID> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
