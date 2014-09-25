@@ -14,42 +14,42 @@
 namespace You {
 namespace QueryEngine {
 
-/// Return a query for adding a task
+/// Construct a query for adding a task
 /// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
 std::unique_ptr<Query::AddTask>
 AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
 
-/// Return a query for fetching single task.
+/// Construct a query for fetching single task.
 std::unique_ptr<Query::GetTask>
 GetTask(Task::ID id);
 
-/// Return a query for deleting single task.
+/// Construct a query for deleting single task.
 std::unique_ptr<Query::DeleteTask>
 DeleteTask(Task::ID taskID);
 
-/// Return a query for searching task based on keyword.
+/// Construct a query for searching task based on keyword.
 /// \todo Implement custom filters using LINQ-like syntax
 std::unique_ptr<Query::FindTask>
 FindTask(std::wstring searchKeyword);
 
-/// Return a query for set new deadline for a task.
+/// Construct a query for set new deadline for a task.
 std::unique_ptr<Query::EditDeadline>
 EditDeadline(Task::ID taskID, Task::Time newDeadline);
 
-/// Return a query for set new description for a task.
+/// Construct a query for set new description for a task.
 std::unique_ptr<Query::EditDescription>
 EditDescription(Task::ID taskID, Task::Time newDescription);
 
-/// Return a query for adding new dependency for a task.
+/// Construct a query for adding new dependency for a task.
 std::unique_ptr<Query::AddDependency>
 AddDependency(Task::ID taskID, Task::ID dependencyID);
 
-/// Return a query for removing dependency from a task.
+/// Construct a query for removing dependency from a task.
 std::unique_ptr<Query::RemoveDependency>
 RemoveDependency(Task::ID taskID, Task::ID dependencyID);
 
-/// Return a query for undoing actions.
+/// Construct a query for undoing actions.
 std::unique_ptr<Query::Undo>
 Undo();
 
@@ -68,13 +68,20 @@ typedef boost::variant <
 	, Task::Description
 	> Response;
 
-/// Overloaded function to execute a query from the parser.
-/// \name executeQuery
-/// @{
+/// Execute AddTask query
+/// \param [in] query The query
+/// \returns The task added back
 Response executeQuery(std::unique_ptr<Query::AddTask> query);
+
+/// Execute GetTask query
+/// \param [in] query The query
+/// \returns The task if exists or throws TaskNotFoundException
 Response executeQuery(std::unique_ptr<Query::GetTask> query);
+
+/// Execute DeleteTask query
+/// \param [in] query The query
+/// \returns The task ID if success, or throws TaskNotFoundException
 Response executeQuery(std::unique_ptr<Query::DeleteTask> query);
-/// @}
 
 }  // namespace QueryEngine
 }  // namespace You
