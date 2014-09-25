@@ -13,6 +13,7 @@
 #include <stdexcept>
 
 #include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <boost/format.hpp>
 #include <boost/fusion/adapted.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/qi.hpp>
