@@ -7,7 +7,7 @@
 
 namespace You {
 namespace NLP {
-namespace Internal { class QueryBuilderVisitor; }
+namespace UnitTests { class ControllerContextTests; }
 
 /// The entry-point for all communications with the rest of the You
 /// framework.
@@ -16,6 +16,7 @@ namespace Internal { class QueryBuilderVisitor; }
 class Controller {
 	class QueryBuilderVisitor;
 	class Context;
+	friend class UnitTests::ControllerContextTests;
 
 public:
 	/// Gets the singleton instance for the controller.

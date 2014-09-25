@@ -7,10 +7,13 @@
 
 namespace You {
 namespace NLP {
+namespace UnitTests { class ControllerContextTests; }
 
 /// Represents a context of a query. This is usually a task list so that
 /// relative indices can be used in a query.
 class Controller::Context {
+	friend class UnitTests::ControllerContextTests;
+
 	/// The set of possible types that can form a context.
 	typedef boost::variant<void*, TaskList> Types;
 
@@ -45,11 +48,11 @@ private:
 	/// default context.
 	///
 	/// \see Context::DEFAULT
-	Context() = default;
+	Context();
 
 private:
 	/// The actual context.
-	Types type;
+	Types context;
 };
 
 }  // namespace NLP

@@ -47,6 +47,9 @@
     <ClCompile Include="internal\query_parser_tests.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
+    <ClCompile Include="controller_context_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
