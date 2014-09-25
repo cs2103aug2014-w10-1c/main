@@ -1,10 +1,10 @@
-/// \file query.h
+/// \file api.h
 /// Defines the API for Query Engine.
 /// \author a0112054y
 
 #pragma once
-#ifndef YOU_QUERYENGINE_QUERY_H_
-#define YOU_QUERYENGINE_QUERY_H_
+#ifndef YOU_QUERYENGINE_API_H_
+#define YOU_QUERYENGINE_API_H_
 
 #include <memory>
 #include <boost/variant.hpp>
@@ -86,4 +86,4 @@ Response executeQuery(std::unique_ptr<Query::DeleteTask> query);
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_QUERYENGINE_QUERY_H_
+#endif  // YOU_QUERYENGINE_API_H_
