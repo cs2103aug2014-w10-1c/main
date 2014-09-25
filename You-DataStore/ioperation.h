@@ -13,7 +13,6 @@ public:
 
 	/// Executes the operation
 	virtual void run() = 0;
-
 };
 
 }   // namespace DataStore
