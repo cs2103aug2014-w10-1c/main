@@ -58,7 +58,37 @@ private:
 	///
 	/// \param[in] lexeme The lexeme from the parser.
 	/// \return The synthesised value for the \ref addCommand rule.
-	static ADD_QUERY constructAddQuery(const LexemeType& lexme);
+	static ADD_QUERY constructAddQuery(const LexemeType& lexeme);
+
+	/// Process the nonterminal returned from the add query rule, when a
+	/// deadline is specified, converting it to an appropriate \ref ADD_QUERY
+	/// type.
+	///
+	/// \see constructAddQueryWithDeadlineTail
+	/// This rule is two-part, because we need exhaustive backtracking.
+	///
+	/// \param[in] lexeme The lexeme from the parser. This is either the tail,
+	///                   which contains the deadline and the rest of the
+	///                   description; or the tail and one character of the
+	///                   description.
+	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
+	static ADD_QUERY constructAddQueryWithDeadline(const boost::variant<
+		ADD_QUERY,
+		boost::fusion::vector<ParserCharEncoding::char_type, ADD_QUERY>
+	>& lexeme);
+
+	/// Process the nonterminal returned from the add query rule, when a
+	/// deadline is specified, converting it to an appropriate \ref ADD_QUERY
+	/// type.
+	///
+	/// \see constructAddQueryWithDeadline
+	/// This rule is two-part, because we need exhaustive backtracking.
+	///
+	/// \param[in] c The last character of the description.
+	/// \param[in] deadline The deadline from the parser.
+	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
+	static ADD_QUERY constructAddQueryWithDeadlineTail(
+		const ParserCharEncoding::char_type c, const LexemeType& deadline);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
 	///
@@ -76,6 +106,13 @@ private:
 
 	/// Add command rule.
 	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
+
+	/// Add command rule.
+	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDescription;
+
+	/// Add command's deadline rule.
+	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDeadline;
+	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDeadlineTail;
 };
 
 }  // namespace Internal

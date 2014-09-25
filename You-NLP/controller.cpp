@@ -60,7 +60,7 @@ Result Controller::query(
 		boost::apply_visitor(visitor, parseTree);
 
 	QueryEngine::Response response = QueryEngine::executeQuery(queryRef);
-	return Result(response);
+	return response;
 }
 
 Controller::QueryBuilderVisitor::QueryBuilderVisitor(

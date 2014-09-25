@@ -32,6 +32,15 @@ public:
 			std::wstring()
 		}), q);
 	}
+
+	TEST_METHOD(parsesStringWithDeadlineAsTask) {
+		QUERY q = QueryParser::parse(L"win by 23 may");
+
+		Assert::AreEqual(QUERY(ADD_QUERY{
+			L"win",
+			L"23 may"
+		}), q);
+	}
 };
 
 }  // namespace UnitTests

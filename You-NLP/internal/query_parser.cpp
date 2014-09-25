@@ -36,10 +36,32 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L"add") >> addCommand);
 	explicitCommand.name("explicitCommand");
 
-	addCommand = (
+	addCommand %= (
+		addCommandWithDeadline |
+		addCommandWithDescription
+	);
+	addCommand.name("addCommand");
+
+	addCommandWithDescription = (
 		qi::lexeme[+ParserCharTraits::char_]
 	)[qi::_val = phoenix::bind(&QueryParser::constructAddQuery, qi::_1)];
-	addCommand.name("addCommand");
+	addCommandWithDescription.name("addCommandWithDescription");
+
+	addCommandWithDeadline = (
+		addCommandWithDeadlineTail |
+		(ParserCharTraits::char_ >> addCommandWithDeadline)
+	)[qi::_val = phoenix::bind(
+		&QueryParser::constructAddQueryWithDeadline,
+		qi::_1)];
+	addCommand.name("addCommandWithDeadline");
+	
+	addCommandWithDeadlineTail = (
+		ParserCharTraits::char_
+		>> (qi::lit("by") | qi::lit("before"))
+		>> qi::lexeme[+ParserCharTraits::char_]
+	)[qi::_val = phoenix::bind(
+		&QueryParser::constructAddQueryWithDeadlineTail,
+		qi::_1, qi::_2)];
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
@@ -49,6 +71,40 @@ ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(lexeme.begin(), lexeme.end()),
 		std::wstring()
+	};
+}
+
+ADD_QUERY QueryParser::constructAddQueryWithDeadline(
+	const boost::variant<
+		ADD_QUERY,
+		boost::fusion::vector<ParserCharEncoding::char_type, ADD_QUERY>
+	>& lexeme) {
+	typedef ADD_QUERY HeadType;
+	const HeadType* head = boost::get<HeadType>(&lexeme);
+
+	typedef boost::fusion::vector<
+			ParserCharEncoding::char_type,
+			ADD_QUERY
+		> TailType;
+	const TailType* tail = boost::get<TailType>(&lexeme);
+
+	if (head) {
+		return *head;
+	} else {
+		ParserCharEncoding::char_type char_ = boost::fusion::at_c<0>(*tail);
+		const ADD_QUERY& query(boost::fusion::at_c<1>(*tail));
+		return ADD_QUERY {
+			std::wstring(1, char_) + query.description,
+			query.due
+		};
+	}
+}
+
+ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
+	const ParserCharEncoding::char_type c, const LexemeType& lexeme) {
+	return ADD_QUERY {
+		std::wstring(1, c),
+		std::wstring(lexeme.begin(), lexeme.end())
 	};
 }
 
