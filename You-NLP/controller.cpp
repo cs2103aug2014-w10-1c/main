@@ -26,7 +26,8 @@ public:
 	///
 	/// \param[in] query The actual query from the parse tree.
 	template<typename QueryType>
-	std::shared_ptr<QueryEngine::Query> operator()(const QueryType& query) const {
+	std::shared_ptr<QueryEngine::Query> operator()(
+		const QueryType& query) const {
 		return build(query);
 	}
 
