@@ -60,12 +60,12 @@ Sort(std::vector<Task::ID> tasks, std::wstring comparator);
 
 /// A synthesized type for query responses
 typedef boost::variant <
-	  std::vector<Task>
-	, Task
-	, Task::ID
-	, Task::Time
-	, Task::Dependencies
-	, Task::Description
+	 std::vector<Task>,
+	 Task,
+	 Task::ID,
+	 Task::Time,
+	 Task::Dependencies,
+	 Task::Description
 	> Response;
 
 /// Execute AddTask query
