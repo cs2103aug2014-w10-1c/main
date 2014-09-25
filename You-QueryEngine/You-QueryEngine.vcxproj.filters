@@ -47,11 +47,11 @@
     <ClCompile Include="internal\task_builder.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
-    <ClCompile Include="query.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="task_model.cpp">
       <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="api.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
