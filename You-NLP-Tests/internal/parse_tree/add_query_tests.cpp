@@ -53,14 +53,16 @@ private:
 	static const std::wstring DESCRIPTION;
 
 	/// The dummy deadline.
-	static const boost::gregorian::date DUE;
+	static const boost::posix_time::ptime DUE;
 
 	/// A dummy object.
 	static const ADD_QUERY DUMMY;
 };
 
 const std::wstring AddQueryTests::DESCRIPTION(L"Hello world");
-const boost::gregorian::date AddQueryTests::DUE(2010, boost::gregorian::Dec, 4);
+const boost::posix_time::ptime AddQueryTests::DUE(
+	boost::gregorian::date(2010, boost::gregorian::Dec, 4),
+	boost::posix_time::hours(0));
 const ADD_QUERY AddQueryTests::DUMMY { DESCRIPTION, DUE };
 
 }  // namespace UnitTests

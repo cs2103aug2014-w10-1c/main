@@ -4,7 +4,7 @@
 
 #include <string>
 #include <boost/fusion/adapted/struct.hpp>
-#include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
 namespace NLP {
@@ -21,7 +21,7 @@ struct ADD_QUERY {
 	std::wstring description;
 
 	/// The due date of the task.
-	boost::gregorian::date due;
+	boost::posix_time::ptime due;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.

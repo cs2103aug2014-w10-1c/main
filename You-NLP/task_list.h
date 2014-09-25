@@ -2,7 +2,7 @@
 #ifndef YOU_NLP_TASK_LIST_H_
 #define YOU_NLP_TASK_LIST_H_
 
-#include "../You-QueryEngine/query.h"
+#include "You-QueryEngine/api.h"
 
 namespace You {
 namespace NLP {

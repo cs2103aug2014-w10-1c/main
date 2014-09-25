@@ -16,7 +16,7 @@ using Date = boost::gregorian::date;
 /// The query builder that will send the query to the appropriate builder
 /// in the controller class.
 class Controller::QueryBuilderVisitor : public boost::static_visitor<
-	std::unique_ptr<QueryEngine::Query::Any>> {
+	std::unique_ptr<QueryEngine::Query>> {
 public:
 	/// Constructor. Specify the context for which the query is to be built
 	/// with.
@@ -26,7 +26,7 @@ public:
 	///
 	/// \param[in] query The actual query from the parse tree.
 	template<typename QueryType>
-	std::unique_ptr<QueryEngine::Query::Any> operator()(
+	std::unique_ptr<QueryEngine::Query> operator()(
 		const QueryType& query) const {
 		return build(query);
 	}
@@ -38,7 +38,7 @@ private:
 	/// Builds a query engine query from the given syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<QueryEngine::Query::Any>
+	static std::unique_ptr<QueryEngine::Query>
 	build(const ADD_QUERY& query);
 
 private:
@@ -52,10 +52,11 @@ Result Controller::query(
 	QUERY parseTree = QueryParser::parse(query);
 
 	QueryBuilderVisitor visitor(context);
-	std::unique_ptr<QueryEngine::Query::Any> queryRef =
+	std::unique_ptr<QueryEngine::Query> queryRef =
 		boost::apply_visitor(visitor, parseTree);
 
-	QueryEngine::Response response = QueryEngine::executeQuery(queryRef);
+	QueryEngine::Response response = QueryEngine::executeQuery(
+		std::move(queryRef));
 	return response;
 }
 
@@ -64,7 +65,7 @@ Controller::QueryBuilderVisitor::QueryBuilderVisitor(
 : context(context) {
 }
 
-std::unique_ptr<QueryEngine::Query::Any>
+std::unique_ptr<QueryEngine::Query>
 Controller::QueryBuilderVisitor::build(const ADD_QUERY& query) {
 	return QueryEngine::AddTask(
 		query.description,

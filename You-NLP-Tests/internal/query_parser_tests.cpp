@@ -10,6 +10,8 @@ namespace NLP {
 namespace UnitTests {
 
 using boost::gregorian::date;
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
 using You::NLP::ParserException;
 
 using You::NLP::Internal::QueryParser;
@@ -30,7 +32,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			date()
+			ptime()
 		}), q);
 	}
 
@@ -39,7 +41,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			date(0, boost::gregorian::May, 23)
+			ptime(date(0, boost::gregorian::May, 23), hours(0))
 		}), q);
 	}
 };

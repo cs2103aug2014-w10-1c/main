@@ -10,6 +10,7 @@ namespace NLP {
 namespace Internal {
 
 using date = boost::gregorian::date;
+using ptime = boost::posix_time::ptime;
 
 /// The query parser that recognises our input syntax.
 class DateTimeParser {
@@ -17,8 +18,8 @@ public:
 	/// Parses the given input string into date.
 	///
 	/// \param[in] string The string to parse.
-	/// \return The date representing the string.
-	static date parse(const std::wstring& string);
+	/// \return The date/time representing the string.
+	static ptime parse(const std::wstring& string);
 };
 
 }  // namespace Internal

@@ -12,7 +12,8 @@
 #include <string>
 #include <stdexcept>
 
-#include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/format.hpp>
 #include <boost/fusion/adapted.hpp>
 #include <boost/lexical_cast.hpp>
