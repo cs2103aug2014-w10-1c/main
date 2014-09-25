@@ -12,5 +12,6 @@
 #include <stdexcept>
 #include <string>
 #include <cstdint>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_

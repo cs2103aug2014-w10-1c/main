@@ -13,5 +13,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/variant/static_visitor.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 #endif  // YOU_QUERYENGINE_TESTS_STDAFX_H_
