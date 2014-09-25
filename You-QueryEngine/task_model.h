@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
 namespace QueryEngine {
@@ -30,7 +30,7 @@ public:
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
-	typedef boost::gregorian::date Time;
+	typedef boost::posix_time::ptime Time;
 	typedef std::vector<Task::ID> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
@@ -52,25 +52,6 @@ public:
 	void setPriority(Priority);
 	/// @}
 
-	/// Return a task with using default values for all its fields.
-	/// The ID of the task created is LAST_ID + 1
-	static Task nextNewTask();
-
-private:
-	Task(ID id, const Description& description, Time deadline,
-		const Dependencies& dependencies, Priority priority) :
-		id(id), description(description), deadline(deadline),
-		dependencies(dependencies), priority(priority) {}
-
-	/// \name Private Fields
-	/// @{
-	ID id;
-	Description description;
-	Time deadline;
-	Dependencies dependencies;
-	Priority priority;
-	/// @}
-
 	/// \name Default Values
 	/// @{
 	static const Description DEFAULT_DESCRIPTION;
@@ -83,6 +64,25 @@ private:
 	// TODO(evansb) Remove when getNextID() that talks to
 	// Data Storage is implemented.
 	static const ID DUMMY_ID;
+
+private:
+	Task(ID id, const Description& description, Time deadline,
+		const Dependencies& dependencies, Priority priority) :
+		id(id), description(description), deadline(deadline),
+		dependencies(dependencies), priority(priority) {}
+
+	/// Return a task with using default values for all its fields.
+	/// The ID of the task created is LAST_ID + 1
+	static Task nextNewTask();
+
+	/// \name Private Fields
+	/// @{
+	ID id;
+	Description description;
+	Time deadline;
+	Dependencies dependencies;
+	Priority priority;
+	/// @}
 };
 
 }  // namespace QueryEngine
