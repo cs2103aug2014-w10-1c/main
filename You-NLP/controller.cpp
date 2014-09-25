@@ -44,7 +44,7 @@ private:
 
 Result Controller::query(
 	const std::wstring& query,
-	const TaskList& context) const {
+	const Controller::Context& context) const {
 	QUERY parseTree = QueryParser::parse(query);
 
 	QueryBuilderVisitor visitor;

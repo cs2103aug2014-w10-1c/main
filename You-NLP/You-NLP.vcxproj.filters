@@ -78,6 +78,9 @@
     <ClInclude Include="internal\query_parser.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="controller_context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
