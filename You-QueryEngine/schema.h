@@ -13,8 +13,11 @@ namespace You {
 namespace QueryEngine {
 namespace Query {
 
+/// Base class for queries
+struct Any {};
+
 /// Schema for AddTask command.
-struct AddTask {
+struct AddTask : public Any {
 	Task::Description description;  ///< Description.
 	Task::Time deadline;  ///< Deadline.
 	Task::Priority priority;  ///< Priority.
@@ -22,50 +25,50 @@ struct AddTask {
 };
 
 /// Schema for GetTask command.
-struct GetTask {
+struct GetTask : public Any {
 	Task::ID taskID;  ///< ID
 };
 
 /// Schema for DeleteTask command.
-struct DeleteTask {
+struct DeleteTask : public Any {
 	Task::ID taskID;  ///< ID
 };
 
 /// Schema for FindTask command.
-struct FindTask {
+struct FindTask : public Any {
 	std::wstring searchKeyword;  ///< Keyword
 };
 
 /// Schema for EditDeadline command.
-struct EditDeadline {
+struct EditDeadline : public Any {
 	Task::ID taskID;  ///< ID
 	Task::Time newDeadline;  ///< Deadline
 };
 
 /// Schema for EditDescription command.
-struct EditDescription {
+struct EditDescription : public Any {
 	Task::ID taskID;  ///< ID
 	Task::Description newDescription;  ///< Description
 };
 
 /// Schema for AddDependency command.
-struct AddDependency {
+struct AddDependency : public Any {
 	Task::ID taskID;  ///< ID
 	Task::ID dependencyID;  ///< ID
 };
 
 /// Schema for RemoveDependency command.
-struct RemoveDependency {
+struct RemoveDependency : public Any {
 	Task::ID taskID;  ///< ID
 	Task::ID dependencyID;  ///< ID
 };
 
 /// Schema for Undo command.
-struct Undo {
+struct Undo : public Any {
 };
 
 /// Schema for Sort command.
-struct Sort {
+struct Sort : public Any {
 	std::wstring comparatorField;  ///< Comparator field
 };
 
