@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "task_model.h"
 
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
 using boost::gregorian::date;
 using boost::gregorian::max_date_time;
 
@@ -33,7 +35,7 @@ Task Task::nextNewTask() {
 }
 
 const Task::Description Task::DEFAULT_DESCRIPTION = L"";
-const Task::Time Task::NEVER = date(max_date_time);
+const Task::Time Task::NEVER = ptime(date(max_date_time), hours(0));
 const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
