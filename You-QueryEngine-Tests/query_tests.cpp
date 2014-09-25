@@ -9,7 +9,7 @@ namespace UnitTests {
 
 using You::QueryEngine::Task;
 using You::QueryEngine::Response;
-using You::QueryEngine::ADD_TASK;
+using You::QueryEngine::AddTask;
 using You::QueryEngine::executeQuery;
 
 using boost::gregorian::date;
@@ -22,7 +22,7 @@ TEST_CLASS(QueryEngineTest) {
 	const Task::Dependencies dep = Task::Dependencies();
 
 	TEST_METHOD(constructAddTaskQuery) {
-		Response resp = executeQuery(ADD_TASK(desc, dead, prio, dep));
+		Response resp = executeQuery(AddTask(desc, dead, prio, dep));
 		Assert::AreEqual(boost::get<std::wstring>(resp),
 			std::wstring(L"ADD"));
 	}

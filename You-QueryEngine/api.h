@@ -37,7 +37,7 @@ Response executeQuery(std::unique_ptr<Query> query);
 /// Construct a query for adding a task
 /// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
 std::unique_ptr<Query>
-ADD_TASK(Task::Description description, Task::Time deadline,
+AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
 
 }  // namespace QueryEngine
