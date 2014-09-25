@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "query_parser.h"
+#include "query.h"
+#include "date_time_parser.h"
 #include "../exceptions/parse_error_exception.h"
+#include "query_parser.h"
 
 namespace You {
 namespace NLP {
@@ -70,7 +72,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(lexeme.begin(), lexeme.end()),
-		std::wstring()
+		QueryEngine::Task::DEFAULT_DEADLINE
 	};
 }
 
@@ -104,7 +106,7 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
 	const ParserCharEncoding::char_type c, const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(1, c),
-		std::wstring(lexeme.begin(), lexeme.end())
+		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
 }
 
