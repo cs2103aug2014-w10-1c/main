@@ -21,7 +21,7 @@
     <ClInclude Include="datastore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ioperation.h">
+    <ClInclude Include="operation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
