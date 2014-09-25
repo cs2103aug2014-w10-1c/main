@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace You {
 namespace QueryEngine {
@@ -29,7 +30,7 @@ public:
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
-	typedef std::int64_t Time;
+	typedef boost::gregorian::date Time;
 	typedef std::vector<Task::ID> Dependencies;
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
@@ -73,6 +74,7 @@ private:
 	/// \name Default Values
 	/// @{
 	static const Description DEFAULT_DESCRIPTION;
+	static const Time NEVER;
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;

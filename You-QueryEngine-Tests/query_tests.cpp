@@ -18,7 +18,9 @@ TEST_CLASS(QueryEngineTest) {
 	/// a query and it can be responded correctly
 	TEST_METHOD(constructQueryForNLP) {
 		const Task::Description desc = L"Learn Haskell Lens";
-		const Task::Time dead = 100L;
+		using boost::gregorian::date;
+		using boost::gregorian::max_date_time;
+		const Task::Time dead = date(max_date_time);
 		const Task::Priority prio = Task::Priority::IMPORTANT;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		auto resp = executeQuery(AddTask(desc, dead, prio, dep));
