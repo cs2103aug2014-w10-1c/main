@@ -52,7 +52,7 @@ private:
 	Types type;
 };
 
-}
-}
+}  // namespace NLP
+}  // namespace You
 
 #endif  // YOU_NLP_CONTROLLER_CONTEXT_H_
