@@ -46,7 +46,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -61,7 +61,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -75,15 +75,15 @@
   <ItemGroup>
     <ClInclude Include="internal\action.h" />
     <ClInclude Include="internal\exception.h" />
-    <ClInclude Include="internal\schema.h" />
+    <ClInclude Include="schema.h" />
     <ClInclude Include="internal\task_builder.h" />
-    <ClInclude Include="internal\task_model.h" />
+    <ClInclude Include="task_model.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="internal\task_builder.cpp" />
-    <ClCompile Include="internal\task_model.cpp" />
+    <ClCompile Include="task_model.cpp" />
     <ClCompile Include="query.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

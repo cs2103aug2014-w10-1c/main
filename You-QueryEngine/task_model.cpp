@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "task_model.h"
-#include "../query.h"
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
 namespace You {
 namespace QueryEngine {
-namespace Internal {
-
-using Builder = Task::Builder;
 
 void Task::setDescription(const Task::Description &description) {
 	this->description = description;
@@ -33,12 +33,12 @@ Task Task::nextNewTask() {
 }
 
 const Task::Description Task::DEFAULT_DESCRIPTION = L"";
-const Task::Time Task::DEFAULT_DEADLINE = INT64_MAX;
+const Task::Time Task::NEVER = date(max_date_time);
+const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 
 const Task::ID Task::DUMMY_ID = 42L;
 
-}  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
