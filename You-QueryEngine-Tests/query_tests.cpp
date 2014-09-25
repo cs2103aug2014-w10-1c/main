@@ -5,13 +5,13 @@
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
+namespace UnitTests {
+
 using You::QueryEngine::Task;
 using You::QueryEngine::AddTask;
 using You::QueryEngine::GetTask;
 using You::QueryEngine::DeleteTask;
 using You::QueryEngine::executeQuery;
-
-namespace UnitTests {
 
 TEST_CLASS(QueryEngineTest) {
 	/// Test whether NLP's can construct

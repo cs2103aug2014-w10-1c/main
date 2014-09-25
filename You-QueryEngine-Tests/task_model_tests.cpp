@@ -5,7 +5,6 @@
 #include "internal/exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 using Task = You::QueryEngine::Task;
 
 namespace Microsoft {
@@ -27,6 +26,8 @@ namespace CppUnitTestFramework {
 }  // namespace Microsoft
 
 namespace UnitTests {
+
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 TEST_CLASS(TaskModelTest) {
 public:
