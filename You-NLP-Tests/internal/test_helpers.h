@@ -7,15 +7,6 @@
 
 namespace You {
 namespace NLP {
-
-namespace Internal {
-
-template <typename Q> static std::wstring ToString(const Q& q) {
-	return q.toString();
-}
-
-}  // namespace Internal
-
 namespace UnitTests {
 
 struct ToStringVisitor : public boost::static_visitor<std::wstring> {

@@ -16,11 +16,6 @@ struct ADD_QUERY {
 	/// \param[in] rhs The other query object to compare with.
 	bool operator==(const ADD_QUERY& rhs) const;
 
-	/// String conversion -- mainly useful for unit testing and display.
-	///
-	/// \return The string representation of the current query object.
-	std::wstring toString() const;
-
 	/// The description of the task.
 	std::wstring description;
 
@@ -34,6 +29,12 @@ struct ADD_QUERY {
 /// \param[in] q The query to display.
 /// \return The stream object passed to the formatter.
 std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q);
+
+/// String conversion -- mainly useful for unit testing and display.
+///
+/// \param[in] q The query to convert to a string.
+/// \return The string representation of the current query object.
+std::wstring ToString(const ADD_QUERY& q);
 
 }  // namespace Internal
 }  // namespace NLP

@@ -16,8 +16,8 @@ bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {
 		due == rhs.due;
 }
 
-std::wstring ADD_QUERY::toString() const {
-	return boost::lexical_cast<std::wstring>(*this);
+std::wstring ToString(const ADD_QUERY& q) {
+	return boost::lexical_cast<std::wstring>(q);
 }
 
 }  // namespace Internal
