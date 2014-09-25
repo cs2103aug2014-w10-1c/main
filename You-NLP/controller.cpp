@@ -78,5 +78,6 @@ Controller::QueryBuilderVisitor::build(const ADD_QUERY& query) {
 		Task::Priority::NORMAL,
 		Task::Dependencies());
 }
+
 }  // namespace NLP
 }  // namespace You
