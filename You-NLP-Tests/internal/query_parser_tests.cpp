@@ -15,7 +15,7 @@ using You::NLP::Internal::QueryParser;
 using You::NLP::Internal::ADD_QUERY;
 using You::NLP::Internal::QUERY;
 
-TEST_CLASS(ParserTests) {
+TEST_CLASS(QueryParserTests) {
 public:
 	TEST_METHOD(throwsExceptionWhenParseFails) {
 		Assert::ExpectException<ParserException>([]() {
