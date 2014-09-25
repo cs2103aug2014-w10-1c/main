@@ -14,7 +14,7 @@ namespace Internal { class QueryBuilderVisitor; }
 ///
 /// This is a singleton class.
 class Controller {
-	friend class You::NLP::Internal::QueryBuilderVisitor;
+	class QueryBuilderVisitor;
 	class Context;
 
 public:

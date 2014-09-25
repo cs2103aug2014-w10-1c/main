@@ -13,13 +13,15 @@ using Internal::QUERY;
 using Internal::ADD_QUERY;
 using Date = boost::gregorian::date;
 
-namespace {
-
 /// The query builder that will send the query to the appropriate builder
 /// in the controller class.
-class QueryBuilderVisitor : public boost::static_visitor<
+class Controller::QueryBuilderVisitor : public boost::static_visitor<
 	std::shared_ptr<QueryEngine::Query>> {
 public:
+	/// Constructor. Specify the context for which the query is to be built
+	/// with.
+	explicit QueryBuilderVisitor(const Controller::Context& context);
+
 	/// Visitor implementation.
 	///
 	/// \param[in] query The actual query from the parse tree.
@@ -29,6 +31,9 @@ public:
 	}
 
 private:
+	QueryBuilderVisitor(const QueryBuilderVisitor&) = delete;
+	QueryBuilderVisitor& operator=(const QueryBuilderVisitor&) = delete;
+
 	/// Builds a query engine query from the given syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
@@ -38,16 +43,18 @@ private:
 	///
 	/// \param[in] date The date to convert.
 	static time_t dateToTimeT(const Date& date);
-};
 
-}  // namespace
+private:
+	/// The context for the query.
+	const Controller::Context& context;
+};
 
 Result Controller::query(
 	const std::wstring& query,
 	const Controller::Context& context) const {
 	QUERY parseTree = QueryParser::parse(query);
 
-	QueryBuilderVisitor visitor;
+	QueryBuilderVisitor visitor(context);
 	std::shared_ptr<QueryEngine::Query> queryRef =
 		boost::apply_visitor(visitor, parseTree);
 
@@ -55,8 +62,13 @@ Result Controller::query(
 	return Result(response);
 }
 
+Controller::QueryBuilderVisitor::QueryBuilderVisitor(
+	const Controller::Context& context)
+: context(context) {
+}
+
 std::shared_ptr<QueryEngine::Query>
-QueryBuilderVisitor::build(const ADD_QUERY& query) {
+Controller::QueryBuilderVisitor::build(const ADD_QUERY& query) {
 	const std::wstring& description = query.description;
 	boost::gregorian::date deadline = DateTimeParser::parse(query.due);
 
