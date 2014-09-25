@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "query.h"
+#include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
