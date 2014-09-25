@@ -11,6 +11,9 @@ namespace NLP {
 /// Represents a context of a query. This is usually a task list so that
 /// relative indices can be used in a query.
 class Controller::Context {
+	/// The set of possible types that can form a context.
+	typedef boost::variant<void*, TaskList> Types;
+
 public:
 	/// Task List conversion constructor.
 	Context(const TaskList& taskList);  // NOLINT
@@ -38,16 +41,6 @@ public:
 	static const Context DEFAULT;
 
 private:
-	/// The types of contexts expressible.
-	enum class Types {
-		/// This is the default context.
-		DEFAULT,
-
-		/// This context refers to a task list.
-		TASK_LIST
-	};
-
-private:
 	/// Hidden default constructor. Use \ref Context::DEFAULT for the
 	/// default context.
 	///
@@ -55,13 +48,8 @@ private:
 	Context() = default;
 
 private:
-	/// The type of the context.
+	/// The actual context.
 	Types type;
-
-	union {
-		/// The task list referenced by this context.
-		const TaskList& taskList;
-	};
 };
 
 }
