@@ -1,5 +1,5 @@
-/// \file api.h
-/// Defines the base class for queries.
+/// \file add_task.h
+/// Defines action for adding tasks.
 /// \author a0112054y
 
 #pragma once
