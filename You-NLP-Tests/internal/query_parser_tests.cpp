@@ -9,6 +9,7 @@ namespace You {
 namespace NLP {
 namespace UnitTests {
 
+using boost::gregorian::date;
 using You::NLP::ParserException;
 
 using You::NLP::Internal::QueryParser;
@@ -29,7 +30,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			std::wstring()
+			date()
 		}), q);
 	}
 
@@ -38,7 +39,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			L"23 may"
+			date(0, boost::gregorian::May, 23)
 		}), q);
 	}
 };

@@ -41,8 +41,8 @@ public:
 
 	TEST_METHOD(comparesInequality) {
 		ADD_QUERY local {
-			DUE,
-			DESCRIPTION
+			L"x" + DESCRIPTION,
+			DUE
 		};
 
 		Assert::AreNotEqual(DUMMY, local);
@@ -53,14 +53,14 @@ private:
 	static const std::wstring DESCRIPTION;
 
 	/// The dummy deadline.
-	static const std::wstring DUE;
+	static const boost::gregorian::date DUE;
 
 	/// A dummy object.
 	static const ADD_QUERY DUMMY;
 };
 
 const std::wstring AddQueryTests::DESCRIPTION(L"Hello world");
-const std::wstring AddQueryTests::DUE(L"23 May");
+const boost::gregorian::date AddQueryTests::DUE(2010, boost::gregorian::Dec, 4);
 const ADD_QUERY AddQueryTests::DUMMY { DESCRIPTION, DUE };
 
 }  // namespace UnitTests
