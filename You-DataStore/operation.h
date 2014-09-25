@@ -1,6 +1,9 @@
 #pragma once
-#ifndef YOU_DATASTORE_IOPERATION_H_
-#define YOU_DATASTORE_IOPERATION_H_
+#ifndef YOU_DATASTORE_OPERATION_H_
+#define YOU_DATASTORE_OPERATION_H_
+
+#include <unordered_map>
+#include "datastore.h"
 
 namespace You {
 namespace DataStore {
@@ -12,10 +15,10 @@ public:
 	~IOperation() = default;
 
 	/// Executes the operation
-	virtual void run() = 0;
+	virtual void run(DataStore::Task) = 0;
 };
 
 }   // namespace DataStore
 }   // namespace You
 
-#endif  // YOU_DATASTORE_IOPERATION_H_
+#endif  // YOU_DATASTORE_OPERATION_H_
