@@ -25,6 +25,9 @@ ptime DateTimeParser::parse(const StringType& string) {
 	}
 }
 
+DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
+}
+
 }  // namespace Internal
 }  // namespace NLP
 }  // namespace You

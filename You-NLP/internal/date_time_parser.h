@@ -36,6 +36,10 @@ public:
 
 private:
 	DateTimeParser();
+
+private:
+	/// The start rule.
+	start_type start;
 };
 
 }  // namespace Internal
