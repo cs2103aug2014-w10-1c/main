@@ -29,17 +29,15 @@ public:
 	///
 	/// Returns true if insertion successful,
 	/// false if task id already exists
-	bool post(TaskId, STask);
+	bool post(TaskId, STask&);
 
 	/// Update the content of a task
 	///
 	/// Returns true if update successful,
 	/// false if task id specified does not exist
-	bool put(TaskId, STask);
+	bool put(TaskId, STask&);
 
 	/// Get a task
-	///
-	/// Throws exception if task id specified does not exist
 	STask get(TaskId);
 
 	/// Delete a task
