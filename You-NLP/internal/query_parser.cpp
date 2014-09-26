@@ -57,7 +57,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		&QueryParser::constructAddQueryWithDeadline,
 		qi::_1)];
 	addCommand.name("addCommandWithDeadline");
-	
+
 	addCommandWithDeadlineTail = (
 		ParserCharTraits::char_
 		>> (qi::lit("by") | qi::lit("before"))
