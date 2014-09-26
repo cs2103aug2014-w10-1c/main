@@ -4,11 +4,11 @@
 #include "you_main_gui.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
-	: QMainWindow(parent) {
+	: QMainWindow(parent), sm(*this), tpm(*this), stm(*this) {
 	ui.setupUi(this);
-	setIcon();
-	loadSession();
-	taskPanelSetup();
+	stm.setIcon();
+	sm.loadSession();
+	tpm.taskPanelSetup();
 	populateTaskPanel();
 }
 
@@ -16,22 +16,22 @@ YouMainGUI::~YouMainGUI() {
 }
 
 void YouMainGUI::closeEvent(QCloseEvent *event) {
-	saveSession();
+	sm.saveSession();
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
 	YouMainGUI::queryNLP();
 }
 
-void YouMainGUI::taskPanelSetup() {
-	columnHeaders.push_back(TASK_COLUMN_1);
-	columnHeaders.push_back(TASK_COLUMN_2);
-	columnHeaders.push_back(TASK_COLUMN_3);
-	columnHeaders.push_back(TASK_COLUMN_4);
-	columnHeaders.push_back(TASK_COLUMN_5);
-	ui.taskTreePanel->setColumnCount(4);
-	ui.taskTreePanel->setHeaderItem(createItem(columnHeaders));
-	ui.taskTreePanel->setColumnHidden(0, true);
+void YouMainGUI::TaskPanelManager::taskPanelSetup() {
+	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_1);
+	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_2);
+	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_3);
+	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_4);
+	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_5);
+	parentGUI.ui.taskTreePanel->setColumnCount(4);
+	parentGUI.ui.taskTreePanel->setHeaderItem(createItem(parentGUI.columnHeaders));
+	parentGUI.ui.taskTreePanel->setColumnHidden(0, true);
 }
 
 void YouMainGUI::populateTaskPanel() {
@@ -42,22 +42,28 @@ void YouMainGUI::populateTaskPanel() {
 		rowStrings.push_back(L"abc");
 		rowStrings.push_back(L"xyz");
 		rowStrings.push_back(L"xyzz");
-		addTask(rowStrings);
+		tpm.addTask(rowStrings);
 	}
 }
 
-void YouMainGUI::addTask(std::vector<std::wstring> rowStrings) {
-	QTreeWidgetItem* item = createItem(rowStrings);
-	ui.taskTreePanel->addTopLevelItem(item);
+YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
 }
 
-void YouMainGUI::addSubtask(QTreeWidgetItem* parent,
+YouMainGUI::TaskPanelManager::~TaskPanelManager(){
+}
+
+void YouMainGUI::TaskPanelManager::addTask(std::vector<std::wstring> rowStrings) {
+	QTreeWidgetItem* item = createItem(rowStrings);
+	parentGUI.ui.taskTreePanel->addTopLevelItem(item);
+}
+
+void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 		std::vector<std::wstring> rowStrings) {
 	QTreeWidgetItem* item = createItem(rowStrings);
 	parent->addChild(item);
 }
 
-QTreeWidgetItem* YouMainGUI::createItem(std::vector<std::wstring> rowStrings) {
+QTreeWidgetItem* YouMainGUI::TaskPanelManager::createItem(std::vector<std::wstring> rowStrings) {
 	QStringList tempList;
 	std::vector<std::wstring>::iterator it;
 	for (auto it = rowStrings.begin(); it != rowStrings.end(); it++) {
@@ -67,23 +73,29 @@ QTreeWidgetItem* YouMainGUI::createItem(std::vector<std::wstring> rowStrings) {
 	return item;
 }
 
-void YouMainGUI::deleteTask(QTreeWidgetItem* task) {
+void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-void YouMainGUI::loadSession() {
+YouMainGUI::SessionManager::SessionManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
+}
+
+YouMainGUI::SessionManager::~SessionManager() {
+}
+
+void YouMainGUI::SessionManager::loadSession() {
 	QSettings settings("You", "You");
 	settings.beginGroup("MainWindow");
-	resize(settings.value("size", QSize(400, 400)).toSize());
-	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	parentGUI.resize(settings.value("size", QSize(400, 400)).toSize());
+	parentGUI.move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
 }
 
-void YouMainGUI::saveSession() {
+void YouMainGUI::SessionManager::saveSession() {
 	QSettings settings("You", "You");
 	settings.beginGroup("MainWindow");
-	settings.setValue("size", size());
-	settings.setValue("pos", pos());
+	settings.setValue("size", parentGUI.size());
+	settings.setValue("pos", parentGUI.pos());
 	settings.endGroup();
 }
 
@@ -98,26 +110,32 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	return result;
 }
 
-void YouMainGUI::setIcon() {
+YouMainGUI::SystemTrayManager::SystemTrayManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
+}
+
+YouMainGUI::SystemTrayManager::~SystemTrayManager(){
+}
+
+void YouMainGUI::SystemTrayManager::setIcon() {
 	QIcon icon("icon.png");
 	trayIcon.setIcon(icon);
-	setWindowIcon(icon);
+	parentGUI.setWindowIcon(icon);
 	trayIcon.show();
 }
 
-void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+void YouMainGUI::SystemTrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	switch (reason) {
 	case QSystemTrayIcon::Trigger:
-		if (!YouMainGUI::isVisible()) {
-			YouMainGUI::setVisible(false);
+		if (!parentGUI.YouMainGUI::isVisible()) {
+			parentGUI.YouMainGUI::setVisible(false);
 		} else {
-			YouMainGUI::setVisible(true);
+			parentGUI.YouMainGUI::setVisible(true);
 		}
 	case QSystemTrayIcon::DoubleClick:
-		if (!YouMainGUI::isVisible()) {
-			YouMainGUI::setVisible(false);
+		if (!parentGUI.YouMainGUI::isVisible()) {
+			parentGUI.YouMainGUI::setVisible(false);
 		} else {
-			YouMainGUI::setVisible(true);
+			parentGUI.YouMainGUI::setVisible(true);
 		}
 		break;
 	default: {}

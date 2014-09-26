@@ -13,7 +13,6 @@
 /// user input to the NLP engine and listens for any return instructions.
 class YouMainGUI : public QMainWindow {
 	Q_OBJECT
-
 public:
 	/// Constructor for the GUI.
 	explicit YouMainGUI(QWidget *parent = nullptr);
@@ -45,6 +44,29 @@ public:
 	void populateTaskPanel();
 
 private:
+
+	/// The QT object that holds all items that are defined when building the
+	/// UI in Designer. All UI objects must be referenced through this class.
+	Ui::YouMainGUIClass ui;
+
+	class YouMainGUI::SessionManager {
+		friend class YouMainGUI;
+	public:
+		YouMainGUI & parentGUI;
+		SessionManager(YouMainGUI & parentGUI);
+		~SessionManager();
+	private:
+		/// Loads the previous state of the GUI. Called during constructor.
+		void loadSession();
+
+		/// Saves the state of the GUI before closing. Called during closeEvent.
+		void saveSession();
+	};
+	/// Local instance of a session manager.
+	SessionManager sm;
+	/// Reimplementation of closeEvent to save state of GUI.
+	void closeEvent(QCloseEvent *event);
+
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
@@ -56,59 +78,67 @@ private:
 	/// commandInputBox. This is currently just a placeholder.
 	You::NLP::Result queryNLP();
 
-	/// Updates tree widget as the result of a query. This is
-	/// currently just a placeholder.
-	void updateTreeWidget(You::NLP::Result result);
 
-	/// Initializes the taskTreePanel by setting column count and headers.
-	void taskPanelSetup();
+	class TaskPanelManager {
+		friend class YouMainGUI;
+	public:
+		YouMainGUI & parentGUI;
+		TaskPanelManager(YouMainGUI & parentGUI);
+		~TaskPanelManager();
+	private:
+		/// Updates tree widget as the result of a query. This is
+		/// currently just a placeholder.
+		void updateTreeWidget(You::NLP::Result result);
 
-	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
-	/// intermediate step to adding headings and tasks.
-	QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
+		/// Initializes the taskTreePanel by setting column count and headers.
+		void taskPanelSetup();
 
-	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(std::vector<std::wstring> rowStrings);
+		/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
+		/// intermediate step to adding headings and tasks.
+		QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
 
-	/// Adds a subtask to the taskTreePanel. Requires the specification of a
-	/// parent task.
-	void addSubtask(QTreeWidgetItem* parent,
-		std::vector<std::wstring> rowStrings);
+		/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
+		void addTask(std::vector<std::wstring> rowStrings);
 
-	/// Deletes a task or subtask. Memory management is automagically dealt
-	/// with by QT's parent/child structure, so all child objects are
-	/// automatically deleted.
-	void deleteTask(QTreeWidgetItem* task);
+		/// Adds a subtask to the taskTreePanel. Requires the specification of a
+		/// parent task.
+		void addSubtask(QTreeWidgetItem* parent,
+			std::vector<std::wstring> rowStrings);
 
-	/// The QT object that holds all items that are defined when building the
-	/// UI in Designer. All UI objects must be referenced through this class.
-	Ui::YouMainGUIClass ui;
+		/// Deletes a task or subtask. Memory management is automagically dealt
+		/// with by QT's parent/child structure, so all child objects are
+		/// automatically deleted.
+		void deleteTask(QTreeWidgetItem* task);
+	};
 
-	/// Loads the previous state of the GUI. Called during constructor.
-	void loadSession();
+	TaskPanelManager tpm;
 
-	/// Saves the state of the GUI before closing. Called during closeEvent.
-	void saveSession();
+	class SystemTrayManager {
+		friend class YouMainGUI;
+	public:
+		YouMainGUI & parentGUI;
+		SystemTrayManager(YouMainGUI & parentGUI);
+		~SystemTrayManager();
+	private:
+		/// System Tray functions
+		/// Defines and sets the tray icon. Called in the constructor.
+		void setIcon();
 
-	/// Reimplementation of closeEvent to save state of GUI.
-	void closeEvent(QCloseEvent *event);
+		/// System tray icon object that adds an icon to the tray.
+		QSystemTrayIcon trayIcon;
 
-	/// System Tray functions
-	/// Defines and sets the tray icon. Called in the constructor.
-	void setIcon();
+		/// QT's signal/slot mechanism for tray icon activation.
+		void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
-	/// System tray icon object that adds an icon to the tray.
-	QSystemTrayIcon trayIcon;
-
-	/// QT's signal/slot mechanism for tray icon activation.
-	void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
-	/// Icon image for system tray.
-	QIcon icon;
+		/// Icon image for system tray.
+		QIcon icon;
+	};
+	SystemTrayManager stm;
 
 	private slots:
 	/// QT's signal/slot mechanism for input enter button.
 	void on_commandEnterButton_clicked();
 };
+
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_
