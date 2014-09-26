@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
+#include "boost\variant.hpp"
 
 #include "pugixml.hpp"
 
@@ -38,7 +39,9 @@ public:
 	bool put(TaskId, STask&);
 
 	/// Get a task
-	STask get(TaskId);
+	///
+	/// Returns false and an empty STask if task id does not exist
+	boost::variant<bool, STask> get(TaskId);
 
 	/// Delete a task
 	///
