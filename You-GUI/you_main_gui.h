@@ -49,7 +49,7 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	class YouMainGUI::SessionManager {
+	class SessionManager {
 		friend class YouMainGUI;
 	public:
 		YouMainGUI & parentGUI;
