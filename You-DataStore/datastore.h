@@ -27,14 +27,14 @@ public:
 
 	/// Insert a task into the datastore
 	///
-	/// Returns	true if insertion successful,
-	///			false if task id already exists
+	/// Returns true if insertion successful,
+	/// false if task id already exists
 	bool post(TaskId, STask);
 
 	/// Update the content of a task
 	///
-	/// Returns	true if update successful,
-	///			false if task id specified does not exist
+	/// Returns true if update successful,
+	/// false if task id specified does not exist
 	bool put(TaskId, STask);
 
 	/// Get a task
@@ -44,8 +44,8 @@ public:
 
 	/// Delete a task
 	///
-	/// Returns	true if erase successful,
-	///			false if task id specified does not exist
+	/// Returns true if erase successful,
+	/// false if task id specified does not exist
 	bool erase(TaskId);
 
 	/// Get a list of tasks that passes the filter
