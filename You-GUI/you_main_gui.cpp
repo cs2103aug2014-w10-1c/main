@@ -120,7 +120,6 @@ void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 			YouMainGUI::setVisible(true);
 		}
 		break;
-	default:
-		{}
+	default: {}
 	}
 }
