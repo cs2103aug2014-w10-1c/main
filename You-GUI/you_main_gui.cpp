@@ -24,12 +24,8 @@ void YouMainGUI::on_commandEnterButton_clicked() {
 }
 
 void YouMainGUI::taskPanelSetup() {
-	ui.taskTreePanel->setColumnCount(YouMainGUI::TASK_COLUMN_COUNT);
-	const std::vector<std::wstring> headerStrings = {
-		YouMainGUI::TASK_COLUMN_1, YouMainGUI::TASK_COLUMN_2,
-		YouMainGUI::TASK_COLUMN_3, YouMainGUI::TASK_COLUMN_4,
-		YouMainGUI::TASK_COLUMN_5 };
-	ui.taskTreePanel->setHeaderItem(createItem(headerStrings));
+	ui.taskTreePanel->setColumnCount(columnHeaders.size - 1);
+	ui.taskTreePanel->setHeaderItem(createItem(columnHeaders));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }
 
@@ -91,9 +87,9 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	/// Convert GUI state into a context
 	/// Feed query and context into NLP engine
 	You::NLP::TaskList tl;
-	QString inputString = ui.commandInputBox->text();
+	std::wstring inputString = ui.commandInputBox->text().toStdWString();
 	/// Get Result from controller.query()
-	You::NLP::Result result;
+	You::NLP::Result result = You::NLP::Controller::get().query(inputString, tl);;
 	return result;
 }
 
@@ -111,19 +107,17 @@ void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	case QSystemTrayIcon::Trigger:
 		if (!YouMainGUI::isVisible()) {
 			YouMainGUI::setVisible(false);
-		}
-		else {
+		} else {
 			YouMainGUI::setVisible(true);
 		}
 	case QSystemTrayIcon::DoubleClick:
 		if (!YouMainGUI::isVisible()) {
 			YouMainGUI::setVisible(false);
-		}
-		else {
+		} else {
 			YouMainGUI::setVisible(true);
 		}
 		break;
 	default:
-		;
+	{}
 	}
 }

@@ -4,9 +4,9 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QList>
+#include "../You-NLP/controller.h"
+#include "../You-NLP/result.h"
 #include "ui_yougui.h"
-#include "..\You-NLP\controller.h"
-#include "..\You-NLP\result.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
@@ -25,19 +25,21 @@ public:
 
 	/// Number of columns in task panel
 	const int TASK_COLUMN_COUNT = 4;
+	const std::wstring columnHeaders[5] = { std::wstring(L"Hidden ID Col"), std::wstring(L"Index"), std::wstring(L"Task Title"), std::wstring(L"Task Description"), std::wstring(L"Due Date") };
 
+	//std::wstring columnHeaders[5] = {L"Hidden ID Col", L"Index", L"Task Title", L"Task Description", L"Due Date"};
 	/// Header string for column 1
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
-	
+
 	/// Header string for column 2
 	const std::wstring TASK_COLUMN_2 = L"Index";
-	
+
 	/// Header string for column 3
 	const std::wstring TASK_COLUMN_3 = L"Task Title";
-	
+
 	/// Header string for column 4
 	const std::wstring TASK_COLUMN_4 = L"Task Description";
-	
+
 	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
 
@@ -46,22 +48,18 @@ public:
 	void populateTaskPanel();
 
 private:
-	/// Creates the NLP parser
-	You::NLP::Controller controller;
-
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
 	/// populate commandInputBox, call queryNLP() to parse that command,
 	/// then clear the commandInputBox and do updateTreeWidget();
-
 	/// Queries the NLP engine. Converts the current view into a context,
 	/// passes the context and input into the NLP engine, and gets a
 	/// Result object. Called by user's confirmation to send entry in
 	/// commandInputBox. This is currently just a placeholder.
 	You::NLP::Result queryNLP();
 
-	/// Updates tree widget as the result of a query. This is 
+	/// Updates tree widget as the result of a query. This is
 	/// currently just a placeholder.
 	void updateTreeWidget(You::NLP::Result result);
 
@@ -99,7 +97,6 @@ private:
 	void closeEvent(QCloseEvent *event);
 
 	/// System Tray functions
-
 	/// Defines and sets the tray icon. Called in the constructor.
 	void setIcon();
 
