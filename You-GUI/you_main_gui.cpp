@@ -6,6 +6,7 @@
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent) {
 	ui.setupUi(this);
+	setIcon();
 	loadSession();
 	taskPanelSetup();
 	populateTaskPanel();
@@ -19,19 +20,17 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
-	// Fire off command to NLP!
+	YouMainGUI::queryNLP();
 }
 
 void YouMainGUI::taskPanelSetup() {
-	ui.taskTreePanel->setColumnCount(YouMainGUI::TASK_COLUMN_COUNT);
-	std::vector<std::wstring> headerStrings;
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_1);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_2);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_3);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_4);
-	headerStrings.push_back(YouMainGUI::TASK_COLUMN_5);
-
-	ui.taskTreePanel->setHeaderItem(createItem(headerStrings));
+	columnHeaders.push_back(TASK_COLUMN_1);
+	columnHeaders.push_back(TASK_COLUMN_2);
+	columnHeaders.push_back(TASK_COLUMN_3);
+	columnHeaders.push_back(TASK_COLUMN_4);
+	columnHeaders.push_back(TASK_COLUMN_5);
+	ui.taskTreePanel->setColumnCount(4);
+	ui.taskTreePanel->setHeaderItem(createItem(columnHeaders));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }
 
@@ -53,7 +52,7 @@ void YouMainGUI::addTask(std::vector<std::wstring> rowStrings) {
 }
 
 void YouMainGUI::addSubtask(QTreeWidgetItem* parent,
-							std::vector<std::wstring> rowStrings) {
+		std::vector<std::wstring> rowStrings) {
 	QTreeWidgetItem* item = createItem(rowStrings);
 	parent->addChild(item);
 }
@@ -86,4 +85,41 @@ void YouMainGUI::saveSession() {
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.endGroup();
+}
+
+You::NLP::Result YouMainGUI::queryNLP() {
+	/// Init a task list
+	/// Convert GUI state into a context
+	/// Feed query and context into NLP engine
+	You::NLP::TaskList tl;
+	std::wstring inputString = ui.commandInputBox->text().toStdWString();
+	/// Get Result from controller.query()
+	You::NLP::Result result;
+	return result;
+}
+
+void YouMainGUI::setIcon() {
+	QIcon icon("icon.png");
+	trayIcon.setIcon(icon);
+	setWindowIcon(icon);
+	trayIcon.show();
+}
+
+void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+	switch (reason) {
+	case QSystemTrayIcon::Trigger:
+		if (!YouMainGUI::isVisible()) {
+			YouMainGUI::setVisible(false);
+		} else {
+			YouMainGUI::setVisible(true);
+		}
+	case QSystemTrayIcon::DoubleClick:
+		if (!YouMainGUI::isVisible()) {
+			YouMainGUI::setVisible(false);
+		} else {
+			YouMainGUI::setVisible(true);
+		}
+		break;
+	default: {}
+	}
 }

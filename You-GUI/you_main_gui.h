@@ -4,6 +4,8 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QList>
+#include "../You-NLP/controller.h"
+#include "../You-NLP/result.h"
 #include "ui_yougui.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
@@ -19,12 +21,23 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
-	/// String/numeric constants the GUI
+	/// String/numeric constants for the GUI
+	/// Number of columns in task panel
 	const int TASK_COLUMN_COUNT = 4;
+	std::vector<std::wstring> columnHeaders;
+	/// Header string for column 1
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
+
+	/// Header string for column 2
 	const std::wstring TASK_COLUMN_2 = L"Index";
+
+	/// Header string for column 3
 	const std::wstring TASK_COLUMN_3 = L"Task Title";
+
+	/// Header string for column 4
 	const std::wstring TASK_COLUMN_4 = L"Task Description";
+
+	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
 
 	/// Populates the task panel with data. This is not vital to the execution
@@ -32,6 +45,21 @@ public:
 	void populateTaskPanel();
 
 private:
+	/// All user action functions. Probably will all be of
+	/// on_(ui_element)_(event) type. Depending on the function,
+	/// it will convert current program state into a context,
+	/// populate commandInputBox, call queryNLP() to parse that command,
+	/// then clear the commandInputBox and do updateTreeWidget();
+	/// Queries the NLP engine. Converts the current view into a context,
+	/// passes the context and input into the NLP engine, and gets a
+	/// Result object. Called by user's confirmation to send entry in
+	/// commandInputBox. This is currently just a placeholder.
+	You::NLP::Result queryNLP();
+
+	/// Updates tree widget as the result of a query. This is
+	/// currently just a placeholder.
+	void updateTreeWidget(You::NLP::Result result);
+
 	/// Initializes the taskTreePanel by setting column count and headers.
 	void taskPanelSetup();
 
@@ -59,13 +87,27 @@ private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();
 
-	/// Saves the state of the GUI before closing. Called during closeEvent
+	/// Saves the state of the GUI before closing. Called during closeEvent.
 	void saveSession();
 
-	/// Reimplementation of closeEvent to save state of GUI
+	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
+	/// System Tray functions
+	/// Defines and sets the tray icon. Called in the constructor.
+	void setIcon();
+
+	/// System tray icon object that adds an icon to the tray.
+	QSystemTrayIcon trayIcon;
+
+	/// QT's signal/slot mechanism for tray icon activation.
+	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+	/// Icon image for system tray.
+	QIcon icon;
+
 	private slots:
+	/// QT's signal/slot mechanism for input enter button.
 	void on_commandEnterButton_clicked();
 };
 
