@@ -17,6 +17,15 @@ using You::NLP::Internal::DateTimeParser;
 
 TEST_CLASS(DateTimeParserTests) {
 public:
+	TEST_METHOD(parsesYear) {
+		Assert::AreEqual(static_cast<short>(2056),
+			static_cast<short>(DateTimeParser::parse(L"2056").date().year()));
+	}
+
+	TEST_METHOD(parsesTwoDigitYear) {
+		Assert::AreEqual(static_cast<short>(parseTwoDigitYear(13)),
+			static_cast<short>(DateTimeParser::parse(L"13").date().year()));
+	}
 
 private:
 	int parseTwoDigitYear(int year) {
