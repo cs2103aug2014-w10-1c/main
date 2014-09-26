@@ -8,6 +8,7 @@
 namespace You {
 namespace NLP {
 namespace Internal {
+namespace UnitTests { class DateTimeParserTests; }
 
 /// The query parser that recognises our input syntax.
 class DateTimeParser : public boost::spirit::qi::grammar<
@@ -15,6 +16,8 @@ class DateTimeParser : public boost::spirit::qi::grammar<
 	boost::posix_time::ptime(),
 	ParserSkipperType> {
 public:
+	friend class UnitTests::DateTimeParserTests;
+
 	/// The type of the iterator used in this grammar.
 	typedef ParserIteratorType IteratorType;
 
@@ -37,9 +40,30 @@ public:
 private:
 	DateTimeParser();
 
+	/// Parses the given two digit year into a full year.
+	///
+	/// This is a semantic action for the \ref twoDigitYear rule.
+	static int parseTwoDigitYear(
+		ParserCharEncoding::char_type _1,
+		ParserCharEncoding::char_type _2);
+
+	/// Parses the given two-digit year into a full year according to system
+	/// settings (on Windows) or using strptime conversion rules.
+	///
+	/// \param[in] year The year to convert. This must be between 0 and 99
+	///                 inclusive.
+	/// \return The actual year referenced.
+	static int parseTwoDigitYearNative(int year);
+
 private:
 	/// The start rule.
 	start_type start;
+
+	/// Parsing years: this handles two-digit years.
+	boost::spirit::qi::rule<IteratorType, int(), SkipperType> twoDigitYear;
+
+	/// Parsing years: this handles four-digit years.
+	boost::spirit::qi::rule<IteratorType, int(), SkipperType> fullYear;
 };
 
 }  // namespace Internal
