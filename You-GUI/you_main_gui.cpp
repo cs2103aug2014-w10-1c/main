@@ -98,14 +98,12 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	return result;
 }
 
-
 void YouMainGUI::setIcon() {
-	QIcon icon ("icon.png");
+	QIcon icon("icon.png");
 	trayIcon.setIcon(icon);
 	setWindowIcon(icon);
 	trayIcon.show();
 }
-
 
 void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	switch (reason) {
@@ -123,6 +121,6 @@ void YouMainGUI::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 		}
 		break;
 	default:
-	{}
+		{}
 	}
 }

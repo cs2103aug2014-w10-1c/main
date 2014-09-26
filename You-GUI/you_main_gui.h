@@ -22,7 +22,6 @@ public:
 	~YouMainGUI();
 
 	/// String/numeric constants for the GUI
-
 	/// Number of columns in task panel
 	const int TASK_COLUMN_COUNT = 4;
 	std::vector<std::wstring> columnHeaders;
