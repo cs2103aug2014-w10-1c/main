@@ -17,20 +17,22 @@ public:
 	friend class DataStoreAPITest;
 
 	/// typedefs
-	typedef std::unordered_map<std::wstring, std::wstring> Task;
+	/// typedef for Serialized Task
+	typedef std::unordered_map<std::wstring, std::wstring> STask;
+	/// typedef for Task ID
 	typedef int64_t TaskId;
 
 	DataStore() = default;
 	~DataStore() = default;
 
 	/// Insert a task into the datastore
-	void post(Task);
+	void post(STask);
 
 	/// Update the content of a task
-	void put(TaskId, Task);
+	void put(TaskId, STask);
 
 	/// Get a task
-	Task get(TaskId);
+	STask get(TaskId);
 
 	/// Delete a task
 	void erase(TaskId);
@@ -42,7 +44,7 @@ public:
 	void rollback();
 
 	/// Get a list of tasks that passes the filter
-	std::vector<Task> filter(const std::function<bool(Task)>&);
+	std::vector<STask> filter(const std::function<bool(STask)>&);
 
 private:
 	static const std::wstring FILE_PATH;

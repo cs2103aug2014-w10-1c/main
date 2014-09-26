@@ -15,7 +15,7 @@ public:
 	~IOperation() = default;
 
 	/// Executes the operation
-	virtual void run(DataStore::Task) = 0;
+	virtual void run(DataStore::STask) = 0;
 };
 
 }   // namespace DataStore
