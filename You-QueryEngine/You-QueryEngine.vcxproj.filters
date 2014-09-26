@@ -19,41 +19,47 @@
     <Filter Include="Source Files\internal">
       <UniqueIdentifier>{48aa80cc-9b78-4938-a662-92e9536f0ee0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal\action">
+      <UniqueIdentifier>{0134cd87-660c-4f59-9894-3e62cdff3362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\action">
+      <UniqueIdentifier>{96f5e0b1-ca86-4a69-ae0d-532603b3c72b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="query.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="internal\exception.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\task_model.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\task_builder.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="api.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\schema.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="internal\action\add_task.h">
+      <Filter>Header Files\internal\action</Filter>
+    </ClInclude>
+    <ClInclude Include="task_model.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\task_model.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\task_builder.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
-    <ClCompile Include="query.cpp">
+    <ClCompile Include="api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\add_task.cpp">
+      <Filter>Source Files\internal\action</Filter>
+    </ClCompile>
+    <ClCompile Include="task_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

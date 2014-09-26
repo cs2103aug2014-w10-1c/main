@@ -12,5 +12,7 @@
 #include <stdexcept>
 #include <string>
 #include <cstdint>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_

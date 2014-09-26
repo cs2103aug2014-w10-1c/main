@@ -8,6 +8,7 @@
 #define YOU_DATASTORE_TESTS_STDAFX_H_
 
 #include <SDKDDKVer.h>
+#pragma warning(disable: 4505)
 #include <CppUnitTest.h>
 
 #endif  // YOU_DATASTORE_TESTS_STDAFX_H_
