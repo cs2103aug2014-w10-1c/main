@@ -8,7 +8,8 @@ namespace You {
 namespace NLP {
 namespace Internal {
 
-namespace qi = boost::spirit::qi;
+namespace spirit = boost::spirit;
+namespace qi = spirit::qi;
 namespace phoenix = boost::phoenix;
 
 QUERY QueryParser::parse(const QueryParser::StringType& string) {
@@ -110,8 +111,11 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
 	};
 }
 
-void QueryParser::onFailure(ParserIteratorType begin, ParserIteratorType end,
-	ParserIteratorType errorPos, const spirit::info& message) {
+void QueryParser::onFailure(
+	ParserIteratorType begin,
+	ParserIteratorType end,
+	ParserIteratorType errorPos,
+	const spirit::info& message) {
 	StringType lexeme(errorPos, end);
 	throw ParseErrorException(message, lexeme);
 }

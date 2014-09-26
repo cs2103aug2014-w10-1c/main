@@ -5,28 +5,14 @@
 #include <boost/spirit/include/qi.hpp>
 
 #include "parse_tree.h"
+#include "parser.h"
 
 namespace You {
 namespace NLP {
 namespace Internal {
 
-namespace spirit = boost::spirit;
-namespace qi = spirit::qi;
-
-/// Import the entire character traits namespace from Spirit.
-namespace ParserCharTraits { using namespace qi::standard_wide; } // NOLINT
-
-/// The type of one character in the lexer stream.
-typedef boost::spirit::char_encoding::standard_wide ParserCharEncoding;
-
-/// The type of the parser iterator.
-typedef std::wstring::const_iterator ParserIteratorType;
-
-/// The type of the parser skipper.
-typedef ParserCharTraits::space_type ParserSkipperType;
-
 /// The query parser that recognises our input syntax.
-class QueryParser : public qi::grammar<
+class QueryParser : public boost::spirit::qi::grammar<
 	ParserIteratorType,
 	QUERY(),
 	ParserSkipperType> {
@@ -94,25 +80,33 @@ private:
 	///
 	/// \exception ParseErrorException The exception representing the parse
 	///                                error.
-	static void onFailure(ParserIteratorType begin, ParserIteratorType end,
-		ParserIteratorType errorPos, const spirit::info& message);
+	static void onFailure(
+		ParserIteratorType begin,
+		ParserIteratorType end,
+		ParserIteratorType errorPos,
+		const boost::spirit::info& message);
 
 private:
 	/// The start rule.
 	start_type start;
 
 	/// Explicit command rule.
-	qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
+	boost::spirit::qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
 
 	/// Add command rule.
-	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
 
 	/// Add command rule.
-	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDescription;
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
+		addCommandWithDescription;
 
 	/// Add command's deadline rule.
-	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDeadline;
-	qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommandWithDeadlineTail;
+	/// {
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
+		addCommandWithDeadline;
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
+		addCommandWithDeadlineTail;
+	/// }
 };
 
 }  // namespace Internal
