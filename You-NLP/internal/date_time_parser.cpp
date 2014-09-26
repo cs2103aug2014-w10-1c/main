@@ -57,7 +57,8 @@ int DateTimeParser::parseTwoDigitYear(
 }
 
 int DateTimeParser::parseTwoDigitYearNative(int year) {
-	assert(year >= 0 && year <= 99);
+	assert(year >= 0);
+	assert(year <= 99);
 
 #ifdef _WIN32
 	// TODO(lowjoel): get the actual Windows implementation, from the .NET

@@ -13,6 +13,12 @@ public:
 	TEST_METHOD(defaultIsADefaultContext) {
 		Assert::IsTrue(Controller::Context::DEFAULT.isDefault());
 	}
+
+	TEST_METHOD(taskListIsNotADefaultContext) {
+		TaskList list;
+		Controller::Context controllerContext(list);
+		Assert::IsFalse(controllerContext.isDefault());
+	}
 };
 
 }  // namespace UnitTests
