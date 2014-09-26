@@ -25,9 +25,7 @@ public:
 
 	/// Number of columns in task panel
 	const int TASK_COLUMN_COUNT = 4;
-	const std::wstring columnHeaders[5] = { std::wstring(L"Hidden ID Col"), std::wstring(L"Index"), std::wstring(L"Task Title"), std::wstring(L"Task Description"), std::wstring(L"Due Date") };
-
-	//std::wstring columnHeaders[5] = {L"Hidden ID Col", L"Index", L"Task Title", L"Task Description", L"Due Date"};
+	std::vector<std::wstring> columnHeaders;
 	/// Header string for column 1
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
 

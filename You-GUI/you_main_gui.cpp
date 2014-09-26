@@ -24,7 +24,12 @@ void YouMainGUI::on_commandEnterButton_clicked() {
 }
 
 void YouMainGUI::taskPanelSetup() {
-	ui.taskTreePanel->setColumnCount(columnHeaders.size - 1);
+	columnHeaders.push_back(TASK_COLUMN_1);
+	columnHeaders.push_back(TASK_COLUMN_2);
+	columnHeaders.push_back(TASK_COLUMN_3);
+	columnHeaders.push_back(TASK_COLUMN_4);
+	columnHeaders.push_back(TASK_COLUMN_5);
+	ui.taskTreePanel->setColumnCount(4);
 	ui.taskTreePanel->setHeaderItem(createItem(columnHeaders));
 	ui.taskTreePanel->setColumnHidden(0, true);
 }
@@ -89,7 +94,7 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	You::NLP::TaskList tl;
 	std::wstring inputString = ui.commandInputBox->text().toStdWString();
 	/// Get Result from controller.query()
-	You::NLP::Result result = You::NLP::Controller::get().query(inputString, tl);;
+	You::NLP::Result result;
 	return result;
 }
 
