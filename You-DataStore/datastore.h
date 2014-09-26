@@ -26,16 +26,27 @@ public:
 	~DataStore() = default;
 
 	/// Insert a task into the datastore
-	void post(STask);
+	///
+	/// Returns	true if insertion successful,
+	///			false if task id already exists
+	bool post(TaskId, STask);
 
 	/// Update the content of a task
-	void put(TaskId, STask);
+	///
+	/// Returns	true if update successful,
+	///			false if task id specified does not exist
+	bool put(TaskId, STask);
 
 	/// Get a task
+	///
+	/// Throws exception if task id specified does not exist
 	STask get(TaskId);
 
 	/// Delete a task
-	void erase(TaskId);
+	///
+	/// Returns	true if erase successful,
+	///			false if task id specified does not exist
+	bool erase(TaskId);
 
 	/// Get a list of tasks that passes the filter
 	std::vector<STask> filter(const std::function<bool(STask)>&);
