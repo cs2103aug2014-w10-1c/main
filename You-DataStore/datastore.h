@@ -37,12 +37,6 @@ public:
 	/// Delete a task
 	void erase(TaskId);
 
-	/// Commits the changes
-	void commit();
-
-	/// Roll back to the last commited changes
-	void rollback();
-
 	/// Get a list of tasks that passes the filter
 	std::vector<STask> filter(const std::function<bool(STask)>&);
 
