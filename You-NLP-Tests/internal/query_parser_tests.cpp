@@ -7,6 +7,7 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
+namespace Internal {
 namespace UnitTests {
 
 using boost::gregorian::date;
@@ -47,5 +48,6 @@ public:
 };
 
 }  // namespace UnitTests
+}  // namespace Internal
 }  // namespace NLP
 }  // namespace You
