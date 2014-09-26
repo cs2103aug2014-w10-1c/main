@@ -11,8 +11,8 @@ namespace DataStore {
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
-	IOperation() = default;
-	~IOperation() = default;
+	IOperation();
+	virtual ~IOperation();
 
 	/// Executes the operation
 	virtual void run(DataStore::STask) = 0;
