@@ -21,6 +21,8 @@ public:
 		description(description), deadline(deadline), priority(priority),
 		dependencies(dependencies) { }
 
+	AddTask& operator=(const AddTask&) = delete;
+
 private:
 	/// Execute add task.
 	Response execute() override;
