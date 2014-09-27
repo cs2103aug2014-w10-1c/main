@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "You-QueryEngine/task_model.h"
 #include "internal/query_parser.h"
 #include "../internal/test_helpers.h"
 #include "exception.h"
@@ -38,11 +39,11 @@ public:
 	}
 
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
-		QUERY q = QueryParser::parse(L"win by 2014-may");
+		QUERY q = QueryParser::parse(L"win by may 2014");
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			ptime(date(0, boost::gregorian::May, 23), hours(0))
+			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 	}
 };

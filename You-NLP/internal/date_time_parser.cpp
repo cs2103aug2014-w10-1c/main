@@ -75,10 +75,15 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		year
 	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
 
+	dateMonthYear = (
+		month >> year
+	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
+
 	date %= (
 		dateYearMonthDay |
 		dateYearMonth |
-		dateYear
+		dateYear |
+		dateMonthYear
 	);
 	#pragma endregion
 }

@@ -93,6 +93,7 @@ private:
 	DateRule dateYearMonthDay;
 	DateRule dateYearMonth;
 	DateRule dateYear;
+	DateRule dateMonthYear;
 	/// }
 
 	/// Parsing years.

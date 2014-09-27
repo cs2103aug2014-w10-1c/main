@@ -27,8 +27,45 @@ public:
 			static_cast<short>(DateTimeParser::parse(L"13").date().year()));
 	}
 
+	TEST_METHOD(parsesStringMonths) {
+		std::array<std::wstring, 12> inputs = {
+			L"2014-Jan",
+			L"2014-Feb",
+			L"2014-Mar",
+			L"2014-Apr",
+			L"2014-May",
+			L"2014-Jun",
+			L"2014-Jul",
+			L"2014-Aug",
+			L"2014-Sep",
+			L"2014-Oct",
+			L"2014-Nov",
+			L"2014-Dec"
+		};
+
+		for (auto i = inputs.begin(); i != inputs.end(); ++i) {
+			const std::wstring& str = *i;
+			Assert::AreEqual(i - inputs.begin() + 1,
+				static_cast<int>(DateTimeParser::parse(str).date().month()));
+		}
+	}
+
+	TEST_METHOD(parsesStringMonthsCaseInsensitive) {
+		Assert::AreEqual(9, static_cast<int>(
+			DateTimeParser::parse(L"2014-sep").date().month()));
+	}
+
 	TEST_METHOD(parsesYearWithMonthAsFirstDay) {
 		date d = DateTimeParser::parse(L"2014-May").date();
+
+		Assert::AreEqual(2014, static_cast<int>(d.year()));
+		Assert::AreEqual(static_cast<int>(boost::gregorian::May),
+			static_cast<int>(d.month()));
+		Assert::AreEqual(1, static_cast<int>(d.day()));
+	}
+
+	TEST_METHOD(parsesMonthWithYear) {
+		date d = DateTimeParser::parse(L"may 2014").date();
 
 		Assert::AreEqual(2014, static_cast<int>(d.year()));
 		Assert::AreEqual(static_cast<int>(boost::gregorian::May),
