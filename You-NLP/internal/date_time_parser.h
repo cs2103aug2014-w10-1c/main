@@ -40,12 +40,13 @@ public:
 private:
 	DateTimeParser();
 
-	/// Parses the given two digit year into a full year.
+	/// Parses the given year string into a full year. If this has only 2 digits
+	/// then it will be treated as fuzzy; otherwise it will be a full year. This
+	/// conversion will happen unless the year string is prefixed by a zero.
 	///
-	/// This is a semantic action for the \ref twoDigitYear rule.
-	static boost::gregorian::greg_year parseTwoDigitYear(
-		ParserCharEncoding::char_type _1,
-		ParserCharEncoding::char_type _2);
+	/// \param[in] chars The character string, containing ASCII 0-9.
+	static int16_t parseFuzzyYear(
+		const std::vector<ParserCharEncoding::char_type>& chars);
 
 	/// Parses the given two-digit year into a full year according to system
 	/// settings (on Windows) or using strptime conversion rules.
@@ -53,17 +54,14 @@ private:
 	/// \param[in] year The year to convert. This must be between 0 and 99
 	///                 inclusive.
 	/// \return The actual year referenced.
-	static boost::gregorian::greg_year parseTwoDigitYearNative(int16_t year);
+	static int16_t parseTwoDigitYear(int16_t year);
 
 private:
 	/// The start rule.
 	start_type start;
 
-	/// Parsing years: this handles two-digit years.
-	boost::spirit::qi::rule<IteratorType, int(), SkipperType> twoDigitYear;
-
-	/// Parsing years: this handles four-digit years.
-	boost::spirit::qi::rule<IteratorType, int(), SkipperType> fullYear;
+	/// Parsing years.
+	boost::spirit::qi::rule<IteratorType, int16_t(), SkipperType> year;
 };
 
 }  // namespace Internal

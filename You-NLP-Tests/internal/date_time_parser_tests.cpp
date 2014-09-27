@@ -29,7 +29,7 @@ public:
 
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(int16_t year) {
-		return DateTimeParser::parseTwoDigitYearNative(year);
+		return DateTimeParser::parseTwoDigitYear(year);
 	}
 };
 
