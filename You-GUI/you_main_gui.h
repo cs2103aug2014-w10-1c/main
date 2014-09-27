@@ -1,7 +1,8 @@
 #pragma once
 #ifndef YOU_GUI_YOU_MAIN_GUI_H_
 #define YOU_GUI_YOU_MAIN_GUI_H_
-
+#include <memory>
+#include <array>
 #include <QtWidgets/QMainWindow>
 #include <QList>
 #include "../You-NLP/controller.h"
@@ -23,10 +24,9 @@ public:
 
 	/// String/numeric constants for the GUI
 	/// Number of columns in task panel
-	const int TASK_COLUMN_COUNT = 4;
-	std::vector<std::wstring> columnHeaders;
+	int TASK_COLUMN_COUNT = 4;
 	/// Header string for column 1
-	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
+	const std::wstring TASK_COLUMN_1 = L"Hidden ID Column";
 
 	/// Header string for column 2
 	const std::wstring TASK_COLUMN_2 = L"Index";
@@ -39,12 +39,26 @@ public:
 
 	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
-
+	std::vector<std::wstring> columnHeaders;
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
 
 private:
+	class BaseManager;
+	class SessionManager;
+	class TaskPanelManager;
+	class SystemTrayManager;
+
+	/// The QT object that holds all items that are defined when building the
+	/// UI in Designer. All UI objects must be referenced through this class.
+	Ui::YouMainGUIClass ui;
+	std::unique_ptr<SessionManager> sm;
+	std::unique_ptr<TaskPanelManager> tpm;
+	std::unique_ptr<SystemTrayManager> stm;
+	/// Reimplementation of closeEvent to save state of GUI.
+	void closeEvent(QCloseEvent *event);
+
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
@@ -56,6 +70,43 @@ private:
 	/// commandInputBox. This is currently just a placeholder.
 	You::NLP::Result queryNLP();
 
+	private slots:
+	/// QT's signal/slot mechanism for input enter button.
+	void on_commandEnterButton_clicked();
+};
+
+class YouMainGUI::BaseManager {
+public:
+	YouMainGUI * const parentGUI;
+	BaseManager();
+	explicit BaseManager(YouMainGUI * parentGUI);
+	void setup();
+};
+
+class YouMainGUI::SessionManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	explicit SessionManager(YouMainGUI * const parentGUI)
+		: BaseManager(parentGUI) {}
+	~SessionManager();
+private:
+	void setup();
+	/// Loads the previous state of the GUI. Called during constructor.
+	void loadSession();
+
+	/// Saves the state of the GUI before closing. Called during closeEvent.
+	void saveSession();
+};
+
+class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	explicit TaskPanelManager(YouMainGUI * const parentGUI)
+		: BaseManager(parentGUI) {}
+	~TaskPanelManager();
+
+private:
+	void setup();
 	/// Updates tree widget as the result of a query. This is
 	/// currently just a placeholder.
 	void updateTreeWidget(You::NLP::Result result);
@@ -79,20 +130,16 @@ private:
 	/// with by QT's parent/child structure, so all child objects are
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
+};
 
-	/// The QT object that holds all items that are defined when building the
-	/// UI in Designer. All UI objects must be referenced through this class.
-	Ui::YouMainGUIClass ui;
-
-	/// Loads the previous state of the GUI. Called during constructor.
-	void loadSession();
-
-	/// Saves the state of the GUI before closing. Called during closeEvent.
-	void saveSession();
-
-	/// Reimplementation of closeEvent to save state of GUI.
-	void closeEvent(QCloseEvent *event);
-
+class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	explicit SystemTrayManager(YouMainGUI * const parentGUI)
+		: BaseManager(parentGUI) {}
+	~SystemTrayManager();
+private:
+	void setup();
 	/// System Tray functions
 	/// Defines and sets the tray icon. Called in the constructor.
 	void setIcon();
@@ -105,10 +152,6 @@ private:
 
 	/// Icon image for system tray.
 	QIcon icon;
-
-	private slots:
-	/// QT's signal/slot mechanism for input enter button.
-	void on_commandEnterButton_clicked();
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_
