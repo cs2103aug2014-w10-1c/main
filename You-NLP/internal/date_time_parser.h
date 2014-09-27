@@ -40,6 +40,15 @@ public:
 private:
 	DateTimeParser();
 
+	/// Parses a partial date into its boost::date_time form.
+	///
+	/// \param[in] dateParts the parts from the various sub-parsers.
+	static boost::gregorian::date parsePartialDate(
+		const boost::variant<
+			int16_t,
+			boost::fusion::vector<int16_t, boost::gregorian::months_of_year>
+		> & dateParts);
+
 	/// Parses the given year string into a full year. If this has only 2 digits
 	/// then it will be treated as fuzzy; otherwise it will be a full year. This
 	/// conversion will happen unless the year string is prefixed by a zero.
@@ -60,8 +69,20 @@ private:
 	/// The start rule.
 	start_type start;
 
+	/// Parsing dates.
+	boost::spirit::qi::rule<
+		IteratorType,
+		boost::gregorian::date(),
+		SkipperType> date;
+
 	/// Parsing years.
 	boost::spirit::qi::rule<IteratorType, int16_t(), SkipperType> year;
+
+	/// Parsing months.
+	boost::spirit::qi::rule<
+		IteratorType,
+		boost::gregorian::months_of_year(),
+		SkipperType> month;
 };
 
 }  // namespace Internal
