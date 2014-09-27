@@ -11,6 +11,7 @@ namespace UnitTests {
 
 /// Applies ToString to the element in the container.
 struct ToStringVisitor : public boost::static_visitor<std::wstring> {
+	/// Applies ToString to the given element in the variant.
 	template<typename T>
 	std::wstring operator()(const T& value) {
 		return ToString(value);
