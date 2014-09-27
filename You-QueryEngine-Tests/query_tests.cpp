@@ -28,8 +28,6 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::AreEqual(boost::get<std::wstring>(resp),
 			std::wstring(L"ADD"));
 	}
-
-	QueryEngineTest& operator=(const QueryEngineTest&) = delete;
 };
 
 }  // namespace UnitTests
