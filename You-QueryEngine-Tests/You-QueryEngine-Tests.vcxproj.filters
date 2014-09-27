@@ -29,10 +29,10 @@
     <ClCompile Include="task_builder_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="api_test.cpp">
+    <ClCompile Include="task_serializer_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="task_serializer_tests.cpp">
+    <ClCompile Include="query_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

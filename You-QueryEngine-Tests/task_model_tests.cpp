@@ -16,7 +16,7 @@ namespace UnitTests {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(TaskBuilderTest) {
+TEST_CLASS(TaskModelTest) {
 public:
 	/// Should be able to create a task using minimal required.
 	/// field.
