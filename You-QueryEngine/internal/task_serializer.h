@@ -26,9 +26,12 @@ namespace Internal {
 ///   \endcode
 class TaskSerializer {
 public:
+	/// \name Typedefs
+	/// @{
 	typedef std::wstring Key;
 	typedef std::wstring Value;
 	typedef std::unordered_map<Key, Value> STask;
+	/// @}
 
 	/// Serialize a task model
 	/// \return Serialized form of the task .
