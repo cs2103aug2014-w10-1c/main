@@ -25,11 +25,13 @@ namespace CppUnitTestFramework {
 }  // namespace VisualStudio
 }  // namespace Microsoft
 
+namespace You {
+namespace QueryEngine {
 namespace UnitTests {
 
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(TaskModelTest) {
+TEST_CLASS(TaskModelTests) {
 public:
 	/// Should be able to create a task using minimal required.
 	/// field.
@@ -70,3 +72,5 @@ public:
 };
 
 }  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You

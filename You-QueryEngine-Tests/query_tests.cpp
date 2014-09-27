@@ -5,6 +5,8 @@
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
+namespace You {
+namespace QueryEngine {
 namespace UnitTests {
 
 using You::QueryEngine::Task;
@@ -15,7 +17,7 @@ using You::QueryEngine::executeQuery;
 using boost::gregorian::date;
 using boost::gregorian::max_date_time;
 
-TEST_CLASS(QueryEngineTest) {
+TEST_CLASS(QueryEngineTests) {
 	const Task::Description desc = L"Learn Haskell Lens";
 	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::IMPORTANT;
@@ -29,4 +31,7 @@ TEST_CLASS(QueryEngineTest) {
 
 	QueryEngineTest& operator=(const QueryEngineTest&) = delete;
 };
+
 }  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
