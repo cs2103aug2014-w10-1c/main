@@ -62,7 +62,7 @@ date DateTimeParser::parsePartialDate(
 	class PartialDateVisitor : public boost::static_visitor<date> {
 	public:
 		date operator()(const int16_t& year) {
-			return date(year, boost::gregorian::NotAMonth, 1);
+			return date(year, boost::gregorian::Jan, 1);
 		}
 
 		date operator()(const boost::fusion::vector<
