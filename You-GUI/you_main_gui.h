@@ -56,9 +56,10 @@ private:
 	std::unique_ptr<SessionManager> sm;
 	std::unique_ptr<TaskPanelManager> tpm;
 	std::unique_ptr<SystemTrayManager> stm;
+	void setVisible(bool visible);
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-
+	void createActions();
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
@@ -75,7 +76,8 @@ private:
 	void on_commandEnterButton_clicked();
 };
 
-class YouMainGUI::BaseManager {
+class YouMainGUI::BaseManager : public QObject {
+	Q_OBJECT
 public:
 	YouMainGUI * const parentGUI;
 	BaseManager();
@@ -83,7 +85,8 @@ public:
 	void setup();
 };
 
-class YouMainGUI::SessionManager : public YouMainGUI::BaseManager {
+class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
+	Q_OBJECT
 	friend class YouMainGUI;
 public:
 	explicit SessionManager(YouMainGUI * const parentGUI)
@@ -98,13 +101,13 @@ private:
 	void saveSession();
 };
 
-class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager {
+class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager{
+	Q_OBJECT
 	friend class YouMainGUI;
 public:
 	explicit TaskPanelManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~TaskPanelManager();
-
 private:
 	void setup();
 	/// Updates tree widget as the result of a query. This is
@@ -132,13 +135,20 @@ private:
 	void deleteTask(QTreeWidgetItem* task);
 };
 
-class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager {
+class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager{
+	Q_OBJECT
 	friend class YouMainGUI;
 public:
 	explicit SystemTrayManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~SystemTrayManager();
+	QAction *minimizeAction;
+	QAction *maximizeAction;
+	QAction *restoreAction;
+	QAction *quitAction;
+	QMenu* trayIconMenu;
 private:
+
 	void setup();
 	/// System Tray functions
 	/// Defines and sets the tray icon. Called in the constructor.
