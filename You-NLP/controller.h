@@ -4,72 +4,19 @@
 
 #include <string>
 #include "result.h"
-#include "task_list.h"
 
 namespace You {
 namespace NLP {
+namespace UnitTests { class ControllerContextTests; }
 
 /// The entry-point for all communications with the rest of the You
 /// framework.
 ///
 /// This is a singleton class.
 class Controller {
-public:
-	/// Represents a context of a query. This is usually a task list so that
-	/// relative indices can be used in a query.
-	class Context {
-	public:
-		/// Task List conversion constructor.
-		Context(const TaskList& taskList);  // NOLINT
-
-		/// Checks if the given context is the default context.
-		///
-		/// \return true if the current context is the default context.
-		bool isDefault() const;
-
-		/// Checks if the given context is a task list context.
-		///
-		/// \return true if the current context is a task list context.
-		/// \ref getTaskList
-		bool isTaskList() const;
-
-		/// Gets the task list if the current context is a task list
-		/// context.
-		///
-		/// \return The task list if this is a task list context. Behaviour
-		///         is undefined otherwise.
-		const TaskList& getTaskList() const;
-
-	public:
-		/// This is the global default context.
-		static const Context DEFAULT;
-
-	private:
-		/// The types of contexts expressible.
-		enum class Types {
-			/// This is the default context.
-			DEFAULT,
-
-			/// This context refers to a task list.
-			TASK_LIST
-		};
-
-	private:
-		/// Hidden default constructor. Use \ref Context::DEFAULT for the
-		/// default context.
-		///
-		/// \see Context::DEFAULT
-		Context() = default;
-
-	private:
-		/// The type of the context.
-		Types type;
-
-		union {
-			/// The task list referenced by this context.
-			const TaskList& taskList;
-		};
-	};
+	class QueryBuilderVisitor;
+	class Context;
+	friend class UnitTests::ControllerContextTests;
 
 public:
 	/// Gets the singleton instance for the controller.
@@ -83,7 +30,7 @@ public:
 	/// \exception ContextRequiredException This is raised when a context is
 	///                                     needed for the query to run.
 	/// \see Result The result is polymorphic.
-	Result query(const std::wstring& query, const TaskList& context) const;
+	Result query(const std::wstring& query, const Context& context) const;
 
 private:
 	Controller(const Controller&) = delete;

@@ -54,8 +54,8 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
@@ -73,8 +73,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
@@ -90,10 +90,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exclusions.h" />
+    <ClInclude Include="internal\test_helpers.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="parser_tests.cpp" />
+    <ClCompile Include="controller_context_tests.cpp" />
+    <ClCompile Include="internal\date_time_parser_tests.cpp" />
+    <ClCompile Include="internal\parse_tree\add_query_tests.cpp" />
+    <ClCompile Include="internal\query_parser_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -103,6 +107,9 @@
   <ItemGroup>
     <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">
       <Project>{fa205f33-9c62-45a2-b059-0f7d9afc7752}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
+      <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

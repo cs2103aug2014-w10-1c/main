@@ -1,69 +1,54 @@
 #include "stdafx.h"
-#include "internal/parser.h"
+#include "You-QueryEngine/task_model.h"
+#include "internal/query_parser.h"
+#include "../internal/test_helpers.h"
 #include "exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
-#pragma region boost::variant visitor helpers
-
-namespace {
-
-struct ToStringVisitor : public boost::static_visitor<std::wstring> {
-	template<typename T>
-	std::wstring operator()(const T& value) {
-		return ToString(value);
-	}
-};
-
-}
-
-namespace boost {
-
-template<typename T1>
-std::wstring ToString(const variant<T1>& t) {
-	ToStringVisitor visitor;
-	return apply_visitor(visitor, t);
-}
-
-}
-
-#pragma endregion
-
 namespace You {
 namespace NLP {
 namespace Internal {
-	template <typename Q> static std::wstring ToString(const Q& q) {
-		return q.toString();
-	}
-}
-
 namespace UnitTests {
 
+using boost::gregorian::date;
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
 using You::NLP::ParserException;
 
-using You::NLP::Internal::Parser;
+using You::NLP::Internal::QueryParser;
 using You::NLP::Internal::ADD_QUERY;
 using You::NLP::Internal::QUERY;
 
-TEST_CLASS(ParserTests) {
+TEST_CLASS(QueryParserTests) {
 public:
 	TEST_METHOD(throwsExceptionWhenParseFails) {
 		Assert::ExpectException<ParserException>([]() {
 				// "throw" is currently not defined, so this should work.
-				Parser::parse(L"/throw");
+				QueryParser::parse(L"/throw");
 			}, L"Throws exception on syntax error");
 	}
 
 	TEST_METHOD(parsesStringAsTask) {
-		QUERY q = Parser::parse(L"win");
+		QUERY q = QueryParser::parse(L"win");
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			std::wstring()
+			QueryEngine::Task::DEFAULT_DEADLINE
+		}), q);
+	}
+
+	TEST_METHOD(parsesStringWithDeadlineAsTask) {
+		QUERY q = QueryParser::parse(L"win by may 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY{
+			L"win",
+			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 	}
 };
 
 }  // namespace UnitTests
+}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

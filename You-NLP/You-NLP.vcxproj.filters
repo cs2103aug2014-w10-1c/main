@@ -57,9 +57,6 @@
     <ClInclude Include="exceptions\context_required_exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
-    <ClInclude Include="internal\parser.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\parse_tree.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
@@ -75,6 +72,18 @@
     <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="internal\date_time_parser.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\query_parser.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="controller_context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\parser.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -86,14 +95,17 @@
     <ClCompile Include="controller_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\parser.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\parse_tree\add_query.cpp">
       <Filter>Source Files\internal\parse_tree</Filter>
     </ClCompile>
     <ClCompile Include="exceptions\parse_error_exception.cpp">
       <Filter>Source Files\exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\query_parser.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\date_time_parser.cpp">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

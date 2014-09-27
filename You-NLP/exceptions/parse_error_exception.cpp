@@ -5,11 +5,11 @@ namespace You {
 namespace NLP {
 
 namespace spirit = boost::spirit;
-using Parser = Internal::Parser;
+using QueryParser = Internal::QueryParser;
 
 ParseErrorException::ParseErrorException(
 	spirit::info message,
-	Parser::StringType token)
+	QueryParser::StringType token)
 : message(message),
   token(token) {
 }

@@ -46,10 +46,11 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>..\;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -62,10 +63,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>..\;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -75,12 +77,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="controller_context.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\context_required_exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\parser_exception.h" />
     <ClInclude Include="exceptions\parse_error_exception.h" />
+    <ClInclude Include="internal\date_time_parser.h" />
     <ClInclude Include="internal\parser.h" />
+    <ClInclude Include="internal\query_parser.h" />
     <ClInclude Include="internal\parse_tree.h" />
     <ClInclude Include="internal\parse_tree\add_query.h" />
     <ClInclude Include="nlp.h" />
@@ -93,7 +98,8 @@
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="controller_context.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
-    <ClCompile Include="internal\parser.cpp" />
+    <ClCompile Include="internal\date_time_parser.cpp" />
+    <ClCompile Include="internal\query_parser.cpp" />
     <ClCompile Include="internal\parse_tree\add_query.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
