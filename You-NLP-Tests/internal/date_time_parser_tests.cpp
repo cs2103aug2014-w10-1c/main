@@ -81,7 +81,7 @@ public:
 	}
 
 private:
-	boost::gregorian::greg_year parseTwoDigitYear(int16_t year) {
+	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);
 	}
 };
