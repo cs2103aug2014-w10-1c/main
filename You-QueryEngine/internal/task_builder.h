@@ -17,7 +17,7 @@ namespace Internal {
 ///
 ///   Example usage:
 ///   \code{.cpp}
-///	    Task newTask = Task::TaskBuilder::get().description("Feed");
+///	    Task newTask = TaskBuilder::get().description("Feed");
 ///   \endcode
 ///
 ///	  \note At least description must be provided when creating a task.
@@ -35,6 +35,11 @@ public:
 	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
 	/// Initialize task priority.
 	TaskBuilder& priority(Task::Priority priority);
+
+	/// Build task from its serialized form
+	Task deserialize(const Task::Serialized& stask);
+	/// Serialize a task to its serialized from
+	Task::Serialized serialize(const Task& task);
 
 	/// Convert the builder to task implicitly
 	operator Task() const;
