@@ -45,6 +45,9 @@
     <ClInclude Include="task_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="internal\task_serializer.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

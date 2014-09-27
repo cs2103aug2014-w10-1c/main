@@ -79,6 +79,7 @@
     <ClInclude Include="task_model.h" />
     <ClInclude Include="api.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="internal\task_serializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="internal\action\add_task.cpp" />

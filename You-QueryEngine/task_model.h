@@ -27,7 +27,6 @@ class TaskBuilder;
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	typedef std::unordered_map<std::wstring, std::wstring> Serialized;
 	/// \name Typedef for fields
 	/// @{
 	typedef int64_t ID;

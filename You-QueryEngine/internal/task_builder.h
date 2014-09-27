@@ -36,11 +36,6 @@ public:
 	/// Initialize task priority.
 	TaskBuilder& priority(Task::Priority priority);
 
-	/// Build task from its serialized form
-	Task deserialize(const Task::Serialized& stask);
-	/// Serialize a task to its serialized from
-	Task::Serialized serialize(const Task& task);
-
 	/// Convert the builder to task implicitly
 	operator Task() const;
 
