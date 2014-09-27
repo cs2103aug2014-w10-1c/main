@@ -9,6 +9,7 @@ namespace You {
 namespace NLP {
 namespace UnitTests {
 
+/// Applies ToString to the element in the container.
 struct ToStringVisitor : public boost::static_visitor<std::wstring> {
 	template<typename T>
 	std::wstring operator()(const T& value) {
