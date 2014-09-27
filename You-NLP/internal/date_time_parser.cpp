@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/fusion/sequence.hpp>
+#include <windows.h>
 #include "../exceptions/parser_exception.h"
 #include "date_time_parser.h"
 
@@ -87,9 +88,9 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	#pragma endregion
 }
 
-int16_t DateTimeParser::parseFuzzyYear(
+DateTimeParser::Year DateTimeParser::parseFuzzyYear(
 	const std::vector<ParserCharEncoding::char_type>& chars) {
-	int16_t value = boost::lexical_cast<int16_t>(
+	Year value = boost::lexical_cast<Year>(
 		StringType(chars.begin(), chars.end()));
 	if (chars.size() == 2) {
 		return parseTwoDigitYear(value);
@@ -98,14 +99,49 @@ int16_t DateTimeParser::parseFuzzyYear(
 	}
 }
 
-int16_t DateTimeParser::parseTwoDigitYear(int16_t year) {
+DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 	assert(year >= 0);
 	assert(year <= 99);
 
 #ifdef _WIN32
-	// TODO(lowjoel): get the actual Windows implementation, from the .NET
-	// framework
-	return 2000 + year;
+	auto getTwoDigitYearMax = []() throw() {
+		static const wchar_t* TWO_DIGIT_YEAR_MAX_KEY =
+			L"Control Panel\\International\\Calendars\\TwoDigitYearMax";
+
+		HKEY twoDigitYearMaxKey;
+		if (RegOpenKeyEx(
+				HKEY_CURRENT_USER,
+				TWO_DIGIT_YEAR_MAX_KEY,
+				0,
+				KEY_READ,
+				&twoDigitYearMaxKey) == ERROR_SUCCESS
+		) {
+			DWORD twoDigitYearMax = 0;
+			DWORD size = sizeof(twoDigitYearMax);
+
+			if (RegQueryValueEx(
+				twoDigitYearMaxKey,
+				L"1",
+				nullptr,
+				nullptr,
+				reinterpret_cast<BYTE*>(&twoDigitYearMax),
+				&size)
+			) {
+				return size;
+			}
+			RegCloseKey(twoDigitYearMaxKey);
+		}
+
+		return static_cast<DWORD>(2030);
+	};  // NOLINT(readability/braces)
+
+	Year twoDigitYearMax = static_cast<Year>(getTwoDigitYearMax());
+
+	Year twoDigitCentury = twoDigitYearMax / 100;
+	Year twoDigitModulus = twoDigitYearMax % 100;
+
+	Year resultCentury = twoDigitCentury - ((year > twoDigitModulus) ? 1 : 0);
+	return resultCentury * 100 + year;
 #else
 	if (year >= 69) {
 		return 1900 + year;
