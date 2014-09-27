@@ -6,12 +6,12 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Tests {
+namespace UnitTests {
 
 TEST_CLASS(NlpTests) {
 public:
 };
 
-}  // namespace Tests
+}  // namespace UnitTests
 }  // namespace NLP
 }  // namespace You
