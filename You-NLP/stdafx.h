@@ -19,7 +19,7 @@
 #include <boost/format.hpp>
 #include <boost/fusion/adapted.hpp>
 #include <boost/lexical_cast.hpp>
-#pragma warning(disable: 4127 4100)
+#pragma warning(disable: 4127 4100 4244)
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/variant.hpp>

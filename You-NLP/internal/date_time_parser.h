@@ -43,7 +43,7 @@ private:
 	/// Parses the given two digit year into a full year.
 	///
 	/// This is a semantic action for the \ref twoDigitYear rule.
-	static int parseTwoDigitYear(
+	static boost::gregorian::greg_year parseTwoDigitYear(
 		ParserCharEncoding::char_type _1,
 		ParserCharEncoding::char_type _2);
 
@@ -53,7 +53,7 @@ private:
 	/// \param[in] year The year to convert. This must be between 0 and 99
 	///                 inclusive.
 	/// \return The actual year referenced.
-	static int parseTwoDigitYearNative(int year);
+	static boost::gregorian::greg_year parseTwoDigitYearNative(int year);
 
 private:
 	/// The start rule.

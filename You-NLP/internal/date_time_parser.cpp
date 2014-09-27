@@ -56,14 +56,14 @@ int DateTimeParser::parseTwoDigitYear(
 	return parseTwoDigitYearNative(twoDigitYear);
 }
 
-int DateTimeParser::parseTwoDigitYearNative(int year) {
+boost::gregorian::greg_year DateTimeParser::parseTwoDigitYearNative(int year) {
 	assert(year >= 0);
 	assert(year <= 99);
 
 #ifdef _WIN32
 	// TODO(lowjoel): get the actual Windows implementation, from the .NET
 	// framework
-	return 2000 + year;
+	return static_cast<boost::gregorian::greg_year>(2000 + year);
 #else
 	if (year >= 69) {
 		return 1900 + year;
