@@ -33,15 +33,13 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		date[qi::_val = phoenix::construct<DateTime>(
 			qi::_1,
 			boost::posix_time::hours(0)
-		)]
-	) >> qi::eoi;
+		)]) >> qi::eoi;
 
 	#pragma region Primitive date component parsers
 	year = (
 		+ParserCharTraits::digit
 	)[qi::_val = phoenix::bind(&DateTimeParser::parseFuzzyYear, qi::_1)];
 
-	
 	monthNames.add
 		(L"jan", boost::gregorian::Jan)
 		(L"feb", boost::gregorian::Feb)
