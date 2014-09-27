@@ -133,7 +133,7 @@ DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 		}
 
 		return static_cast<DWORD>(2030);
-	};  // NOLINT
+	};  // NOLINT(readability/braces)
 
 	Year twoDigitYearMax = static_cast<Year>(getTwoDigitYearMax());
 
