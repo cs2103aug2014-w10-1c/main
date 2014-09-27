@@ -32,7 +32,7 @@ public:
 			priority(prio).dependencies(dep);
 	}
 
-	/// Should be able to deserialize a complex task.
+	/// Should be able to serialize a complex task.
 	TEST_METHOD(serializeTask) {
 		Task task = getMockTask();
 		auto serialized = TaskSerializer::serialize(task);
@@ -44,6 +44,14 @@ public:
 			std::wstring(L"1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
 			std::wstring(L"2002;1;10;1;2;3;"));
+	}
+
+	/// Should be able to deserialize a complex task.
+	TEST_METHOD(deserializeTask) {
+		Task task = getMockTask();
+		auto serialized = TaskSerializer::serialize(task);
+		auto deserialized = TaskSerializer::deserialize(serialized);
+		Assert::IsTrue(deserialized.isStrictEqual(task));
 	}
 };
 }  // namespace UnitTests

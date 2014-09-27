@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "task_serializer.h"
+#include "task_builder.h"
 
 namespace You {
 namespace QueryEngine {
@@ -13,17 +14,24 @@ using boost::posix_time::time_duration;
 
 using TS = TaskSerializer;
 
+const TS::Key TS::KEY_ID = L"id";
 const TS::Key TS::KEY_DESCRIPTION = L"description";
 const TS::Key TS::KEY_DEADLINE = L"deadline";
 const TS::Key TS::KEY_PRIORITY = L"priority";
 const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
 
+const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
+const TS::Value TS::VALUE_PRIORITY_IMPORTANT = L"important";
+const TS::Value TS::VALUE_DELIMITER = L";";
+
 TS::STask TS::serialize(const Task& task) {
+	Value value_id = serializeID(task.getID());
 	Value value_description = serializeDescription(task.getDescription());
 	Value value_deadline = serializeDeadline(task.getDeadline());
 	Value value_priority = serializePriority(task.getPriority());
 	Value value_dependencies = serializeDependencies(task.getDependencies());
 	return {
+		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
 		{ KEY_DEADLINE, value_deadline },
 		{ KEY_PRIORITY, value_priority },
@@ -31,9 +39,19 @@ TS::STask TS::serialize(const Task& task) {
 	};
 }
 
-const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
-const TS::Value TS::VALUE_PRIORITY_IMPORTANT = L"important";
-const TS::Value TS::VALUE_DELIMITER = L";";
+Task TS::deserialize(const STask& stask) {
+	Task::Description description =
+		deserializeDescription(stask.at(KEY_DESCRIPTION));
+	Task::Time deadline =
+		deserializeDeadline(stask.at(KEY_DEADLINE));
+	Task::Priority priority =
+		deserializePriority(stask.at(KEY_PRIORITY));
+	Task::Dependencies dependencies =
+		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
+	return TaskBuilder::get().description(description)
+		.deadline(deadline).priority(priority)
+		.dependencies(dependencies);
+}
 
 TS::Value TS::serializeID(const Task::ID id) {
 	return boost::lexical_cast<std::wstring>(id);
@@ -80,20 +98,21 @@ Task::Description TS::deserializeDescription(const Value& description) {
 }
 
 Task::Time TS::deserializeDeadline(const Value& deadline) {
-	std::vector<int> numbers;
+	std::vector<unsigned short> numbers;  // NOLINT
 	std::vector<std::wstring> tokens = tokenize(deadline);
 	std::for_each(tokens.cbegin(), tokens.cend(),
 		[&numbers](const std::wstring token) {
-			numbers.push_back(boost::lexical_cast<int>(token));
+			numbers.push_back(
+				boost::lexical_cast<unsigned short>(token));  // NOLINT
 		}
 	);
 	assert(numbers.size() == 6);
-	int year = numbers[0];
-	int month = numbers[1];
-	int day = numbers[2];
-	int hour = numbers[3];
-	int minute = numbers[4];
-	int second = numbers[5];
+	auto year = numbers[0];
+	auto month = numbers[1];
+	auto day = numbers[2];
+	auto hour = numbers[3];
+	auto minute = numbers[4];
+	auto second = numbers[5];
 	return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
 		boost::posix_time::time_duration(hour, minute, second));
 }

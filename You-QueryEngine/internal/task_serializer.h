@@ -43,6 +43,7 @@ public:
 
 	/// \name Serialized task field names.
 	/// @{
+	static const Key KEY_ID;
 	static const Key KEY_DESCRIPTION;
 	static const Key KEY_DEADLINE;
 	static const Key KEY_PRIORITY;
@@ -59,6 +60,9 @@ public:
 	static const Value VALUE_DELIMITER;
 
 private:
+	/// Disable constructor, this is a utility class
+	TaskSerializer();
+
 	/// \name Serializer for each fields.
 	/// @{
 	/// The ID converted to std::wstring using lexical_cast
@@ -87,11 +91,8 @@ private:
 	static Task::Dependencies deserializeDependencies(const Value& dependencies);
 	/// @}
 
-	/// Tokenize by delimiter
+	/// Tokenize a string by VALUE_DELIMITER
 	static std::vector<std::wstring> tokenize(const Value& input);
-
-	/// Disable constructor, this is a utility class
-	TaskSerializer();
 
 	/// Maps string to priority
 	static const std::unordered_map<Value, Task::Priority> strPrioTable;
