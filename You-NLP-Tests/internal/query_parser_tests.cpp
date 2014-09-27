@@ -33,12 +33,12 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
-			ptime()
+			QueryEngine::Task::DEFAULT_DEADLINE
 		}), q);
 	}
 
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
-		QUERY q = QueryParser::parse(L"win by 23 may");
+		QUERY q = QueryParser::parse(L"win by 2014-may");
 
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
