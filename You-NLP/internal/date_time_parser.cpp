@@ -47,7 +47,7 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		qi::int_;
 }
 
-int DateTimeParser::parseTwoDigitYear(
+boost::gregorian::greg_year DateTimeParser::parseTwoDigitYear(
 	ParserCharEncoding::char_type _1,
 	ParserCharEncoding::char_type _2) {
 	StringType string({ _1, _2 });
