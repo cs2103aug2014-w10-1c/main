@@ -40,7 +40,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <NuGetPackageImportStamp>05597613</NuGetPackageImportStamp>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
@@ -49,7 +51,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\You-DataStore;..\pugixml\pugixml\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -67,7 +69,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\You-DataStore;..\pugixml\pugixml\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -85,17 +87,31 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="datastore_api_test.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\pugixml\pugixml.vcxproj">
+      <Project>{37c6baaa-e37d-4558-9595-dfb5c9fb59bc}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\You-DataStore\You-DataStore.vcxproj">
       <Project>{15c8cbbd-e87a-4744-8f03-658e121a8088}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\boost.1.56.0.0\build\native\boost.targets" Condition="Exists('..\packages\boost.1.56.0.0\build\native\boost.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\boost.1.56.0.0\build\native\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.56.0.0\build\native\boost.targets'))" />
+  </Target>
 </Project>

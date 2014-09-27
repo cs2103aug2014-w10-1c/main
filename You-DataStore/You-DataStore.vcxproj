@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="operation.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="datastore.h" />
   </ItemGroup>
