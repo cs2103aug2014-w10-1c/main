@@ -1,13 +1,13 @@
 #pragma once
 #ifndef YOU_GUI_YOU_MAIN_GUI_H_
 #define YOU_GUI_YOU_MAIN_GUI_H_
-
+#include <memory>
 #include <QtWidgets/QMainWindow>
 #include <QList>
 #include "../You-NLP/controller.h"
 #include "../You-NLP/result.h"
 #include "ui_yougui.h"
-
+#include "base_manager.h"
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -38,7 +38,7 @@ public:
 
 	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
-
+	std::vector<std::wstring> columnHeaders({ TASK_COLUMN_1, TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 });
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
@@ -49,24 +49,24 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	class SessionManager {
-		friend class YouMainGUI;
+	class BaseManager {
 	public:
 		YouMainGUI & parentGUI;
-		SessionManager(YouMainGUI & parentGUI);
-		~SessionManager();
-	private:
-		/// Loads the previous state of the GUI. Called during constructor.
-		void loadSession();
-
-		/// Saves the state of the GUI before closing. Called during closeEvent.
-		void saveSession();
+		BaseManager();
+		BaseManager(YouMainGUI & parentGUI);
+		void setup();
 	};
+
+	class SessionManager;
+	class TaskPanelManager;
+	class SystemTrayManager;
+	std::unique_ptr<SessionManager> sm;
+	std::unique_ptr<TaskPanelManager> tpm;
+	std::unique_ptr<SystemTrayManager> stm;
 	/// Local instance of a session manager.
-	SessionManager sm;
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-
+	
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
@@ -78,67 +78,80 @@ private:
 	/// commandInputBox. This is currently just a placeholder.
 	You::NLP::Result queryNLP();
 
-
-	class TaskPanelManager {
-		friend class YouMainGUI;
-	public:
-		YouMainGUI & parentGUI;
-		TaskPanelManager(YouMainGUI & parentGUI);
-		~TaskPanelManager();
-	private:
-		/// Updates tree widget as the result of a query. This is
-		/// currently just a placeholder.
-		void updateTreeWidget(You::NLP::Result result);
-
-		/// Initializes the taskTreePanel by setting column count and headers.
-		void taskPanelSetup();
-
-		/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
-		/// intermediate step to adding headings and tasks.
-		QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
-
-		/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-		void addTask(std::vector<std::wstring> rowStrings);
-
-		/// Adds a subtask to the taskTreePanel. Requires the specification of a
-		/// parent task.
-		void addSubtask(QTreeWidgetItem* parent,
-			std::vector<std::wstring> rowStrings);
-
-		/// Deletes a task or subtask. Memory management is automagically dealt
-		/// with by QT's parent/child structure, so all child objects are
-		/// automatically deleted.
-		void deleteTask(QTreeWidgetItem* task);
-	};
-
-	TaskPanelManager tpm;
-
-	class SystemTrayManager {
-		friend class YouMainGUI;
-	public:
-		YouMainGUI & parentGUI;
-		SystemTrayManager(YouMainGUI & parentGUI);
-		~SystemTrayManager();
-	private:
-		/// System Tray functions
-		/// Defines and sets the tray icon. Called in the constructor.
-		void setIcon();
-
-		/// System tray icon object that adds an icon to the tray.
-		QSystemTrayIcon trayIcon;
-
-		/// QT's signal/slot mechanism for tray icon activation.
-		void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
-		/// Icon image for system tray.
-		QIcon icon;
-	};
-	SystemTrayManager stm;
-
 	private slots:
 	/// QT's signal/slot mechanism for input enter button.
 	void on_commandEnterButton_clicked();
 };
 
+
+class YouMainGUI::SessionManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	//YouMainGUI & parentGUI;
+	SessionManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
+	~SessionManager();
+private:
+	void setup();
+	/// Loads the previous state of the GUI. Called during constructor.
+	void loadSession();
+
+	/// Saves the state of the GUI before closing. Called during closeEvent.
+	void saveSession();
+};
+
+class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	//YouMainGUI & parentGUI;
+	TaskPanelManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
+	~TaskPanelManager();
+private:
+	void setup();
+	/// Updates tree widget as the result of a query. This is
+	/// currently just a placeholder.
+	void updateTreeWidget(You::NLP::Result result);
+
+	/// Initializes the taskTreePanel by setting column count and headers.
+	void taskPanelSetup();
+
+	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
+	/// intermediate step to adding headings and tasks.
+	QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
+
+	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
+	void addTask(std::vector<std::wstring> rowStrings);
+
+	/// Adds a subtask to the taskTreePanel. Requires the specification of a
+	/// parent task.
+	void addSubtask(QTreeWidgetItem* parent,
+		std::vector<std::wstring> rowStrings);
+
+	/// Deletes a task or subtask. Memory management is automagically dealt
+	/// with by QT's parent/child structure, so all child objects are
+	/// automatically deleted.
+	void deleteTask(QTreeWidgetItem* task);
+};
+
+class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager {
+	friend class YouMainGUI;
+public:
+	//YouMainGUI & parentGUI;
+	SystemTrayManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
+	~SystemTrayManager();
+private:
+	void setup();
+	/// System Tray functions
+	/// Defines and sets the tray icon. Called in the constructor.
+	void setIcon();
+
+	/// System tray icon object that adds an icon to the tray.
+	QSystemTrayIcon trayIcon;
+
+	/// QT's signal/slot mechanism for tray icon activation.
+	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+	/// Icon image for system tray.
+	QIcon icon;
+};
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_

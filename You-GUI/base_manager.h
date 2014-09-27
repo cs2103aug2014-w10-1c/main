@@ -1,0 +1,14 @@
+#pragma once
+#ifndef YOU_GUI_BASE_MANAGER_H_
+#define YOU_GUI_BASE_MANAGER_H_
+
+#include <QtWidgets/QMainWindow>
+#include <QList>
+#include "../You-NLP/controller.h"
+#include "../You-NLP/result.h"
+#include "ui_yougui.h"
+
+
+
+
+#endif  // YOU_GUI_BASE_MANAGER_H_

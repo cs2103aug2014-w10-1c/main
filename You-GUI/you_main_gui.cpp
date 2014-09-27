@@ -4,11 +4,13 @@
 #include "you_main_gui.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
-	: QMainWindow(parent), sm(*this), tpm(*this), stm(*this) {
+	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(*this)),
+		stm(new YouMainGUI::SystemTrayManager(*this)),
+		tpm(new YouMainGUI::TaskPanelManager(*this)) {
 	ui.setupUi(this);
-	stm.setIcon();
-	sm.loadSession();
-	tpm.taskPanelSetup();
+	stm->setIcon();
+	sm->loadSession();
+	tpm->taskPanelSetup();
 	populateTaskPanel();
 }
 
@@ -16,7 +18,7 @@ YouMainGUI::~YouMainGUI() {
 }
 
 void YouMainGUI::closeEvent(QCloseEvent *event) {
-	sm.saveSession();
+	sm->saveSession();
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -42,12 +44,10 @@ void YouMainGUI::populateTaskPanel() {
 		rowStrings.push_back(L"abc");
 		rowStrings.push_back(L"xyz");
 		rowStrings.push_back(L"xyzz");
-		tpm.addTask(rowStrings);
+		tpm->addTask(rowStrings);
 	}
 }
 
-YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
-}
 
 YouMainGUI::TaskPanelManager::~TaskPanelManager(){
 }
@@ -77,8 +77,6 @@ void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-YouMainGUI::SessionManager::SessionManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
-}
 
 YouMainGUI::SessionManager::~SessionManager() {
 }
@@ -110,9 +108,6 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	return result;
 }
 
-YouMainGUI::SystemTrayManager::SystemTrayManager(YouMainGUI & parentGUI) : parentGUI(parentGUI) {
-}
-
 YouMainGUI::SystemTrayManager::~SystemTrayManager(){
 }
 
@@ -140,4 +135,17 @@ void YouMainGUI::SystemTrayManager::iconActivated(QSystemTrayIcon::ActivationRea
 		break;
 	default: {}
 	}
+}
+
+void YouMainGUI::SessionManager::setup() {
+	;
+}
+void YouMainGUI::TaskPanelManager::setup(){
+	;
+}
+void YouMainGUI::SystemTrayManager::setup(){
+	;
+}
+YouMainGUI::BaseManager::BaseManager(YouMainGUI& parentGUI) : parentGUI(parentGUI) {
+
 }

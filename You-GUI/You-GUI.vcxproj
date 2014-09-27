@@ -94,6 +94,7 @@
     <ClCompile Include="you_main_gui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base_manager.h" />
     <ClInclude Include="GeneratedFiles\ui_yougui.h" />
     <ClInclude Include="stdafx.h" />
     <CustomBuild Include="you_main_gui.h">
