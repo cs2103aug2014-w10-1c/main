@@ -18,6 +18,9 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -26,7 +29,7 @@
     <ClCompile Include="task_builder_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="APITest.cpp">
+    <ClCompile Include="api_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
