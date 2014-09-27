@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="internal\action\add_task.cpp" />
     <ClCompile Include="internal\task_builder.cpp" />
+    <ClCompile Include="internal\task_serializer.cpp" />
     <ClCompile Include="task_model.cpp" />
     <ClCompile Include="api.cpp" />
     <ClCompile Include="stdafx.cpp">

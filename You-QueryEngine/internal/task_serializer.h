@@ -1,4 +1,4 @@
-/// \file task_builder.h
+/// \file task_serializer.h
 /// Defines the task serializer class
 /// \author a0112054y
 
@@ -23,7 +23,10 @@ namespace Internal {
 ///   \endcode
 class TaskSerializer {
 public:
-	typedef std::unordered_map<std::wstring, std::wstring> STask;
+	typedef std::wstring Key;
+	typedef std::wstring Value;
+	typedef std::unordered_map<Key, Value> STask;
+
 	/// Serialize a task model
 	/// \return Serialized form of the task .
 	static STask serialize(const Task&);
@@ -33,8 +36,32 @@ public:
 	static Task deserialize(const STask&);
 
 private:
+	/// \name Serialized task field names.
+	/// @{
+	static const Key KEY_DESCRIPTION;
+	static const Key KEY_DEADLINE;
+	static const Key KEY_PRIORITY;
+	static const Key KEY_DEPENDENCIES;
+	/// @}
+
+	/// \name String for priorities
+	/// @{
+	static const Value VALUE_PRIORITY_NORMAL;
+	static const Value VALUE_PRIORITY_IMPORTANT;
+	static const Value VALUE_DEPENDENCIES_DELIMITER;
+	/// @}
+
+	/// \name Serializer for each fields.
+	/// @{
+	static Value serializeID(Task::ID id);
+	static Value serializeDescription(Task::Description description);
+	static Value serializeDeadline(Task::Time deadline);
+	static Value serializePriority(Task::Priority priority);
+	static Value serializeDependencies(Task::Dependencies dependencies);
+	/// @}
+
 	/// Disable constructor, this is a utility class
-	TaskBuilder();
+	TaskSerializer();
 };
 
 }  // namespace Internal
