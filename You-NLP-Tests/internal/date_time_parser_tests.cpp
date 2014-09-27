@@ -30,7 +30,7 @@ public:
 	}
 
 	TEST_METHOD(parsesTwoDigitYear) {
-		Assert::AreEqual(parseTwoDigitYear(13),
+		Assert::AreEqual(static_cast<int>(parseTwoDigitYear(13)),
 			static_cast<int>(DateTimeParser::parse(L"13").date().year()));
 	}
 
