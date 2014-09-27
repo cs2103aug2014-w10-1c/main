@@ -53,7 +53,7 @@ private:
 	/// \param[in] year The year to convert. This must be between 0 and 99
 	///                 inclusive.
 	/// \return The actual year referenced.
-	static boost::gregorian::greg_year parseTwoDigitYearNative(int year);
+	static boost::gregorian::greg_year parseTwoDigitYearNative(int16_t year);
 
 private:
 	/// The start rule.

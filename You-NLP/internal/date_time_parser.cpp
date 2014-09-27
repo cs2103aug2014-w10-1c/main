@@ -44,19 +44,19 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		qi::_2)];
 
 	fullYear %=
-		qi::int_;
+		qi::short_;
 }
 
 boost::gregorian::greg_year DateTimeParser::parseTwoDigitYear(
 	ParserCharEncoding::char_type _1,
 	ParserCharEncoding::char_type _2) {
 	StringType string({ _1, _2 });
-	int twoDigitYear = boost::lexical_cast<int>(string);
+	int16_t twoDigitYear = boost::lexical_cast<int16_t>(string);
 
 	return parseTwoDigitYearNative(twoDigitYear);
 }
 
-boost::gregorian::greg_year DateTimeParser::parseTwoDigitYearNative(int year) {
+boost::gregorian::greg_year DateTimeParser::parseTwoDigitYearNative(int16_t year) {
 	assert(year >= 0);
 	assert(year <= 99);
 
