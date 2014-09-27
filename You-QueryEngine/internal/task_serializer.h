@@ -8,6 +8,9 @@
 
 #include <string>
 #include <unordered_map>
+#include <boost/format.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "../task_model.h"
 
 namespace You {
@@ -35,7 +38,6 @@ public:
 	/// \return The deserialized task.
 	static Task deserialize(const STask&);
 
-private:
 	/// \name Serialized task field names.
 	/// @{
 	static const Key KEY_DESCRIPTION;
@@ -48,15 +50,23 @@ private:
 	/// @{
 	static const Value VALUE_PRIORITY_NORMAL;
 	static const Value VALUE_PRIORITY_IMPORTANT;
-	static const Value VALUE_DEPENDENCIES_DELIMITER;
 	/// @}
 
+	/// Delimiter for dependencies and deadlines
+	static const Value VALUE_DELIMITER;
+
+private:
 	/// \name Serializer for each fields.
 	/// @{
+	/// The ID converted to std::wstring using lexical_cast
 	static Value serializeID(Task::ID id);
+	/// Description is already the same
 	static Value serializeDescription(Task::Description description);
+	/// YYYY:MM:DD HH::MM::SS to "YYYY;MM;DD;HH;MM;SS;"
 	static Value serializeDeadline(Task::Time deadline);
+	/// Lowercased enum name
 	static Value serializePriority(Task::Priority priority);
+	/// { 1,2,3 } to "1;2;3"
 	static Value serializeDependencies(Task::Dependencies dependencies);
 	/// @}
 

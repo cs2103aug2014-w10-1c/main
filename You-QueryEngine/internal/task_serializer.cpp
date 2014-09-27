@@ -6,8 +6,17 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-using boost::posix_time::to_simple_string;
+using boost::posix_time::ptime;
+using boost::gregorian::date;
+using boost::gregorian::greg_year_month_day;
+using boost::posix_time::time_duration;
+
 using TS = TaskSerializer;
+
+const TS::Key TS::KEY_DESCRIPTION = L"description";
+const TS::Key TS::KEY_DEADLINE = L"deadline";
+const TS::Key TS::KEY_PRIORITY = L"priority";
+const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
 
 TS::STask TS::serialize(const Task& task) {
 	Value value_description = serializeDescription(task.getDescription());
@@ -22,14 +31,9 @@ TS::STask TS::serialize(const Task& task) {
 	};
 }
 
-const TS::Key KEY_DESCRIPTION = L"description";
-const TS::Key KEY_DEADLINE = L"deadline";
-const TS::Key KEY_PRIORITY = L"priority";
-const TS::Key KEY_DEPENDENCIES = L"dependencies";
-
-const TS::Value VALUE_PRIORITY_NORMAL = L"normal";
-const TS::Value VALUE_PRIORITY_IMPORTANT = L"important";
-const TS::Value VALUE_DEPENDENCIES_DELIMITER = L";";
+const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
+const TS::Value TS::VALUE_PRIORITY_IMPORTANT = L"important";
+const TS::Value TS::VALUE_DELIMITER = L";";
 
 TS::Value TS::serializeID(Task::ID id) {
 	return boost::lexical_cast<std::wstring>(id);
@@ -40,9 +44,16 @@ TS::Value TS::serializeDescription(Task::Description description) {
 }
 
 TS::Value TS::serializeDeadline(Task::Time deadline) {
-	TS::Value r;
-	std::string ds = to_simple_string(deadline);
-	return r.assign(ds.cbegin(), ds.cend());
+	std::wstringstream wss;
+	auto date = deadline.date();
+	auto time = deadline.time_of_day();
+	std::vector<int> fields = {
+		date.year(), date.month(), date.day(),
+		time.hours(), time.minutes(), time.seconds()
+	};
+	std::for_each(fields.begin(), fields.end(),
+		[&wss](int m) { wss << m << TS::VALUE_DELIMITER; });
+	return wss.str();
 }
 
 TS::Value TS::serializePriority(Task::Priority priority) {
@@ -58,7 +69,7 @@ TS::Value TS::serializeDependencies(Task::Dependencies dependencies) {
 	std::for_each(dependencies.cbegin(), dependencies.cend(),
 		[&ws] (const Task::ID id) {
 			ws << TS::serializeID(id);
-			ws << TS::VALUE_DEPENDENCIES_DELIMITER;
+			ws << TS::VALUE_DELIMITER;
 		}
 	);
 	return ws.str();

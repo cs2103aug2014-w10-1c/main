@@ -13,7 +13,7 @@ USE_WSTRING_TEST_WRITER(You::QueryEngine::Task::Time);
 
 namespace UnitTests {
 
-	using Task = You::QueryEngine::Task;
+using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 TEST_CLASS(TaskBuilderTest) {

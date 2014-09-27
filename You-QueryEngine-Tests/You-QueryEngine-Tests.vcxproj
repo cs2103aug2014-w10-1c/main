@@ -97,6 +97,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="task_builder_tests.cpp" />
+    <ClCompile Include="task_serializer_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
