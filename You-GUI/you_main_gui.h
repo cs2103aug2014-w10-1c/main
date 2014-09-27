@@ -7,12 +7,12 @@
 #include "../You-NLP/controller.h"
 #include "../You-NLP/result.h"
 #include "ui_yougui.h"
-#include "base_manager.h"
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
 class YouMainGUI : public QMainWindow {
 	Q_OBJECT
+
 public:
 	/// Constructor for the GUI.
 	explicit YouMainGUI(QWidget *parent = nullptr);
@@ -22,33 +22,27 @@ public:
 
 	/// String/numeric constants for the GUI
 	/// Number of columns in task panel
-	const int TASK_COLUMN_COUNT = 4;
+	 int TASK_COLUMN_COUNT = 4;
 	std::vector<std::wstring> columnHeaders;
 	/// Header string for column 1
-	const std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
+	 std::wstring TASK_COLUMN_1 = L"Hidden ID Col";
 
 	/// Header string for column 2
-	const std::wstring TASK_COLUMN_2 = L"Index";
+	 std::wstring TASK_COLUMN_2 = L"Index";
 
 	/// Header string for column 3
-	const std::wstring TASK_COLUMN_3 = L"Task Title";
+	 std::wstring TASK_COLUMN_3 = L"Task Title";
 
 	/// Header string for column 4
-	const std::wstring TASK_COLUMN_4 = L"Task Description";
+	 std::wstring TASK_COLUMN_4 = L"Task Description";
 
 	/// Header string for column 5
-	const std::wstring TASK_COLUMN_5 = L"Due Date";
-	std::vector<std::wstring> columnHeaders({ TASK_COLUMN_1, TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 });
+	 std::wstring TASK_COLUMN_5 = L"Due Date";
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
 
 private:
-
-	/// The QT object that holds all items that are defined when building the
-	/// UI in Designer. All UI objects must be referenced through this class.
-	Ui::YouMainGUIClass ui;
-
 	class BaseManager {
 	public:
 		YouMainGUI & parentGUI;
@@ -60,13 +54,16 @@ private:
 	class SessionManager;
 	class TaskPanelManager;
 	class SystemTrayManager;
+
+	/// The QT object that holds all items that are defined when building the
+	/// UI in Designer. All UI objects must be referenced through this class.
+	Ui::YouMainGUIClass ui;
 	std::unique_ptr<SessionManager> sm;
 	std::unique_ptr<TaskPanelManager> tpm;
 	std::unique_ptr<SystemTrayManager> stm;
-	/// Local instance of a session manager.
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-	
+
 	/// All user action functions. Probably will all be of
 	/// on_(ui_element)_(event) type. Depending on the function,
 	/// it will convert current program state into a context,
@@ -87,7 +84,6 @@ private:
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager {
 	friend class YouMainGUI;
 public:
-	//YouMainGUI & parentGUI;
 	SessionManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
 	~SessionManager();
 private:
@@ -102,7 +98,6 @@ private:
 class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager {
 	friend class YouMainGUI;
 public:
-	//YouMainGUI & parentGUI;
 	TaskPanelManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
 	~TaskPanelManager();
 private:
@@ -135,7 +130,6 @@ private:
 class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager {
 	friend class YouMainGUI;
 public:
-	//YouMainGUI & parentGUI;
 	SystemTrayManager(YouMainGUI & parentGUI) : BaseManager(parentGUI) {};
 	~SystemTrayManager();
 private:

@@ -6,7 +6,9 @@
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(*this)),
 		stm(new YouMainGUI::SystemTrayManager(*this)),
-		tpm(new YouMainGUI::TaskPanelManager(*this)) {
+		tpm(new YouMainGUI::TaskPanelManager(*this)),
+		columnHeaders(std::vector<std::wstring>({ TASK_COLUMN_1,
+		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 })) {
 	ui.setupUi(this);
 	stm->setIcon();
 	sm->loadSession();
@@ -26,11 +28,6 @@ void YouMainGUI::on_commandEnterButton_clicked() {
 }
 
 void YouMainGUI::TaskPanelManager::taskPanelSetup() {
-	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_1);
-	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_2);
-	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_3);
-	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_4);
-	parentGUI.columnHeaders.push_back(parentGUI.TASK_COLUMN_5);
 	parentGUI.ui.taskTreePanel->setColumnCount(4);
 	parentGUI.ui.taskTreePanel->setHeaderItem(createItem(parentGUI.columnHeaders));
 	parentGUI.ui.taskTreePanel->setColumnHidden(0, true);
@@ -48,11 +45,11 @@ void YouMainGUI::populateTaskPanel() {
 	}
 }
 
-
-YouMainGUI::TaskPanelManager::~TaskPanelManager(){
+YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
-void YouMainGUI::TaskPanelManager::addTask(std::vector<std::wstring> rowStrings) {
+void YouMainGUI::TaskPanelManager::addTask(
+		std::vector<std::wstring> rowStrings) {
 	QTreeWidgetItem* item = createItem(rowStrings);
 	parentGUI.ui.taskTreePanel->addTopLevelItem(item);
 }
@@ -63,7 +60,8 @@ void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	parent->addChild(item);
 }
 
-QTreeWidgetItem* YouMainGUI::TaskPanelManager::createItem(std::vector<std::wstring> rowStrings) {
+QTreeWidgetItem* YouMainGUI::TaskPanelManager::createItem(
+		std::vector<std::wstring> rowStrings) {
 	QStringList tempList;
 	std::vector<std::wstring>::iterator it;
 	for (auto it = rowStrings.begin(); it != rowStrings.end(); it++) {
@@ -108,7 +106,7 @@ You::NLP::Result YouMainGUI::queryNLP() {
 	return result;
 }
 
-YouMainGUI::SystemTrayManager::~SystemTrayManager(){
+YouMainGUI::SystemTrayManager::~SystemTrayManager() {
 }
 
 void YouMainGUI::SystemTrayManager::setIcon() {
@@ -118,7 +116,8 @@ void YouMainGUI::SystemTrayManager::setIcon() {
 	trayIcon.show();
 }
 
-void YouMainGUI::SystemTrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+void YouMainGUI::SystemTrayManager::iconActivated(
+		QSystemTrayIcon::ActivationReason reason) {
 	switch (reason) {
 	case QSystemTrayIcon::Trigger:
 		if (!parentGUI.YouMainGUI::isVisible()) {
@@ -137,15 +136,8 @@ void YouMainGUI::SystemTrayManager::iconActivated(QSystemTrayIcon::ActivationRea
 	}
 }
 
-void YouMainGUI::SessionManager::setup() {
-	;
-}
-void YouMainGUI::TaskPanelManager::setup(){
-	;
-}
-void YouMainGUI::SystemTrayManager::setup(){
-	;
-}
-YouMainGUI::BaseManager::BaseManager(YouMainGUI& parentGUI) : parentGUI(parentGUI) {
-
-}
+void YouMainGUI::SessionManager::setup() {}
+void YouMainGUI::TaskPanelManager::setup() {}
+void YouMainGUI::SystemTrayManager::setup() {}
+YouMainGUI::BaseManager::BaseManager(YouMainGUI& parentGUI)
+	: parentGUI(parentGUI) {}

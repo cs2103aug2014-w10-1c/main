@@ -61,7 +61,7 @@
     <ClInclude Include="GeneratedFiles\ui_yougui.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="base_manager.h">
+    <ClInclude Include="system_tray_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
