@@ -10,6 +10,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
+	createActions();
 	stm->setIcon();
 	sm->loadSession();
 	tpm->taskPanelSetup();
@@ -20,7 +21,15 @@ YouMainGUI::~YouMainGUI() {
 }
 
 void YouMainGUI::closeEvent(QCloseEvent *event) {
-	sm->saveSession();
+	if (stm->trayIcon.isVisible()) {
+		QMessageBox::information(this, tr("Systray"),
+			tr("The program will keep running in the "
+			"system tray. To terminate the program, "
+			"choose <b>Quit</b> in the context menu "
+			"of the system tray entry."));
+		hide();
+		event->ignore();
+	}
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -53,3 +62,24 @@ You::NLP::Result YouMainGUI::queryNLP() {
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {}
 
+void YouMainGUI::createActions()
+{
+	this->stm->minimizeAction = new QAction(tr("Mi&nimize"), this);
+	connect(this->stm->minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+
+	this->stm->maximizeAction = new QAction(tr("Ma&ximize"), this);
+	connect(this->stm->maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+
+	this->stm->restoreAction = new QAction(tr("&Restore"), this);
+	connect(this->stm->restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+
+	this->stm->quitAction = new QAction(tr("&Quit"), this);
+	connect(this->stm->quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+}
+
+void YouMainGUI::setVisible(bool visible){
+	this->stm->minimizeAction->setEnabled(visible);
+	this->stm->maximizeAction->setEnabled(!isMaximized());
+	this->stm->restoreAction->setEnabled(isMaximized() || !visible);
+	QWidget::setVisible(visible);
+}

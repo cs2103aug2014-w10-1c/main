@@ -4,9 +4,12 @@
 #include "you_main_gui.h"
 
 YouMainGUI::SessionManager::~SessionManager() {
+	saveSession();
 }
 
-void YouMainGUI::SessionManager::setup() {}
+void YouMainGUI::SessionManager::setup() {
+	loadSession();
+}
 
 void YouMainGUI::SessionManager::loadSession() {
 	QSettings settings("You", "You");
