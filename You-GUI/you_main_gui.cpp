@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <QList>
 #include "you_main_gui.h"
+#include "session_manager.h"
+#include "task_panel_manager.h"
+#include "system_tray_manager.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
@@ -10,9 +13,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
-	createActions();
-	stm->setIcon();
-	sm->loadSession();
+	stm->setup();
+	sm->setup();
 	tpm->taskPanelSetup();
 	populateTaskPanel();
 }
@@ -62,24 +64,9 @@ You::NLP::Result YouMainGUI::queryNLP() {
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {}
 
-void YouMainGUI::createActions()
-{
-	this->stm->minimizeAction = new QAction(tr("Mi&nimize"), this);
-	connect(this->stm->minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-
-	this->stm->maximizeAction = new QAction(tr("Ma&ximize"), this);
-	connect(this->stm->maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-
-	this->stm->restoreAction = new QAction(tr("&Restore"), this);
-	connect(this->stm->restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-
-	this->stm->quitAction = new QAction(tr("&Quit"), this);
-	connect(this->stm->quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-}
-
-void YouMainGUI::setVisible(bool visible){
-	this->stm->minimizeAction->setEnabled(visible);
-	this->stm->maximizeAction->setEnabled(!isMaximized());
-	this->stm->restoreAction->setEnabled(isMaximized() || !visible);
+void YouMainGUI::setVisible(bool visible) {
+	stm->minimizeAction->setEnabled(visible);
+	stm->maximizeAction->setEnabled(!isMaximized());
+	stm->restoreAction->setEnabled(isMaximized() || !visible);
 	QWidget::setVisible(visible);
 }

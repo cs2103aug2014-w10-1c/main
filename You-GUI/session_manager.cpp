@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
+#include "session_manager.h"
 
 YouMainGUI::SessionManager::~SessionManager() {
 	saveSession();
