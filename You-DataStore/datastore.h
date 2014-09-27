@@ -23,8 +23,8 @@ public:
 	/// typedef for Task ID
 	typedef int64_t TaskId;
 
-	DataStore() = default;
-	~DataStore() = default;
+	DataStore();
+	~DataStore();
 
 	/// Insert a task into the datastore
 	///
