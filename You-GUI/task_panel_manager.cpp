@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
-
+#include "task_panel_manager.h"
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 

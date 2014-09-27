@@ -2,13 +2,17 @@
 #include <QApplication>
 #include <QList>
 #include "you_main_gui.h"
+#include "system_tray_manager.h"
+
 YouMainGUI::SystemTrayManager::~SystemTrayManager() {
 }
 
-void YouMainGUI::SystemTrayManager::setup() {}
+void YouMainGUI::SystemTrayManager::setup() {
+	createActions();
+	setIcon();
+}
 
 void YouMainGUI::SystemTrayManager::setIcon() {
-	
 	QIcon icon("icon.png");
 	trayIcon.setIcon(icon);
 	parentGUI->setWindowIcon(icon);
@@ -39,4 +43,17 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 		break;
 	default: {}
 	}
+}
+void YouMainGUI::SystemTrayManager::createActions() {
+	minimizeAction = new QAction(tr("Minimize"), parentGUI);
+	connect(minimizeAction, SIGNAL(triggered()), parentGUI, SLOT(hide()));
+
+	maximizeAction = new QAction(tr("Maximize"), parentGUI);
+	connect(maximizeAction, SIGNAL(triggered()), parentGUI, SLOT(showMaximized()));
+
+	restoreAction = new QAction(tr("Restore"), parentGUI);
+	connect(restoreAction, SIGNAL(triggered()), parentGUI, SLOT(showNormal()));
+
+	quitAction = new QAction(tr("Quit"), parentGUI);
+	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
