@@ -32,8 +32,9 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	start %= (
 		date[qi::_val = phoenix::construct<DateTime>(
 			qi::_1,
-			boost::posix_time::hours(0)
-		)]) >> qi::eoi;
+			boost::posix_time::hours(0))
+		]
+	) >> qi::eoi;
 
 	#pragma region Primitive date component parsers
 	year = (
