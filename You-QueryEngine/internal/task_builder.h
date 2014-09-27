@@ -27,6 +27,8 @@ public:
 	/// \return A builder object.
 	static TaskBuilder get();
 
+	/// Initialize task id.
+	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
 	TaskBuilder& description(const Task::Description& description);
 	/// Initialize task deadline.

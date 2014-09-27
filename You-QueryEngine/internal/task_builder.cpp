@@ -11,6 +11,11 @@ TaskBuilder TaskBuilder::get() {
 	return builder;
 }
 
+TaskBuilder& TaskBuilder::id(Task::ID id) {
+	instance.id = id;
+	return *this;
+}
+
 TaskBuilder& TaskBuilder::description(const Task::Description &description) {
 	instance.setDescription(description);
 	return *this;

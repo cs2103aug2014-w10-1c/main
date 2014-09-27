@@ -53,8 +53,13 @@ public:
 	void setPriority(Priority);
 	/// @}
 
+	/// Test if this task is strictly equal with
+	/// another task (i.e all fields are the same)
+	bool isStrictEqual(const Task& task) const;
+
 	/// \name Default Values
 	/// @{
+	static const ID DEFAULT_ID;
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time NEVER;
 	static const Time DEFAULT_DEADLINE;
@@ -62,12 +67,17 @@ public:
 	static const Priority DEFAULT_PRIORITY;
 	/// @}
 
-	// TODO(evansb) Remove when getNextID() that talks to
-	// Data Storage is implemented.
-	static const ID DUMMY_ID;
+	/// Equality of task is determined by its ID
+	/// For stricter equality, \see isStrictEqual
+	inline bool operator==(const Task& rhs) const {
+		return id == rhs.id;
+	}
 
 private:
-	Task(ID id, const Description& description, Time deadline,
+	/// Disable default constructor - use builder only
+	Task() = delete;
+	/// Called by nextNewTask()
+	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
