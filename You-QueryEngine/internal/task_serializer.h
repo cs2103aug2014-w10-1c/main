@@ -8,7 +8,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <boost/format.hpp>
+#include <boost/tokenizer.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "../task_model.h"
@@ -64,17 +64,39 @@ private:
 	/// The ID converted to std::wstring using lexical_cast
 	static Value serializeID(Task::ID id);
 	/// Description is already the same
-	static Value serializeDescription(Task::Description description);
+	static Value serializeDescription(const Task::Description& description);
 	/// YYYY:MM:DD HH::MM::SS to "YYYY;MM;DD;HH;MM;SS;"
-	static Value serializeDeadline(Task::Time deadline);
+	static Value serializeDeadline(const Task::Time& deadline);
 	/// Lowercased enum name
-	static Value serializePriority(Task::Priority priority);
+	static Value serializePriority(const Task::Priority& priority);
 	/// { 1,2,3 } to "1;2;3"
-	static Value serializeDependencies(Task::Dependencies dependencies);
+	static Value serializeDependencies(const Task::Dependencies& dependencies);
 	/// @}
+
+	/// \name Deserializer for each fields.
+	/// @{
+	/// Lexical_cast back the ID to int64
+	static Task::ID deserializeID(Value id);
+	/// Description is already the same
+	static Task::Description deserializeDescription(const Value& description);
+	/// "YYYY;MM;DD;HH;MM;SS;" to ptime object
+	static Task::Time deserializeDeadline(const Value& deadline);
+	/// Lowercased enum name to enum
+	static Task::Priority deserializePriority(const Value& priority);
+	/// "1;2;3" to { 1,2,3 }
+	static Task::Dependencies deserializeDependencies(const Value& dependencies);
+	/// @}
+
+	/// Tokenize by delimiter
+	static std::vector<std::wstring> tokenize(const Value& input);
 
 	/// Disable constructor, this is a utility class
 	TaskSerializer();
+
+	/// Maps string to priority
+	static const std::unordered_map<Value, Task::Priority> strPrioTable;
+	/// Maps priority to string
+	static const std::unordered_map<Task::Priority, Value> prioStrTable;
 };
 
 }  // namespace Internal

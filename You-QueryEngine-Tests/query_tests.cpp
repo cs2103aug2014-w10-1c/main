@@ -27,7 +27,6 @@ TEST_CLASS(QueryEngineTest) {
 			std::wstring(L"ADD"));
 	}
 
-
 	QueryEngineTest& operator=(const QueryEngineTest&) = delete;
 };
 }  // namespace UnitTests

@@ -35,15 +35,15 @@ const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
 const TS::Value TS::VALUE_PRIORITY_IMPORTANT = L"important";
 const TS::Value TS::VALUE_DELIMITER = L";";
 
-TS::Value TS::serializeID(Task::ID id) {
+TS::Value TS::serializeID(const Task::ID id) {
 	return boost::lexical_cast<std::wstring>(id);
 }
 
-TS::Value TS::serializeDescription(Task::Description description) {
+TS::Value TS::serializeDescription(const Task::Description& description) {
 	return description;
 }
 
-TS::Value TS::serializeDeadline(Task::Time deadline) {
+TS::Value TS::serializeDeadline(const Task::Time& deadline) {
 	std::wstringstream wss;
 	auto date = deadline.date();
 	auto time = deadline.time_of_day();
@@ -52,19 +52,15 @@ TS::Value TS::serializeDeadline(Task::Time deadline) {
 		time.hours(), time.minutes(), time.seconds()
 	};
 	std::for_each(fields.begin(), fields.end(),
-		[&wss](int m) { wss << m << TS::VALUE_DELIMITER; });
+		[&wss](int m) { wss << m << VALUE_DELIMITER; });
 	return wss.str();
 }
 
-TS::Value TS::serializePriority(Task::Priority priority) {
-	if (priority == Task::Priority::NORMAL) {
-		return VALUE_PRIORITY_NORMAL;
-	} else {
-		return VALUE_PRIORITY_IMPORTANT;
-	}
+TS::Value TS::serializePriority(const Task::Priority& priority) {
+	return prioStrTable.at(priority);
 }
 
-TS::Value TS::serializeDependencies(Task::Dependencies dependencies) {
+TS::Value TS::serializeDependencies(const Task::Dependencies& dependencies) {
 	std::wstringstream ws;
 	std::for_each(dependencies.cbegin(), dependencies.cend(),
 		[&ws] (const Task::ID id) {
@@ -74,6 +70,71 @@ TS::Value TS::serializeDependencies(Task::Dependencies dependencies) {
 	);
 	return ws.str();
 }
+
+Task::ID TS::deserializeID(Value id) {
+	return boost::lexical_cast<Task::ID>(id);
+}
+
+Task::Description TS::deserializeDescription(const Value& description) {
+	return description;
+}
+
+Task::Time TS::deserializeDeadline(const Value& deadline) {
+	std::vector<int> numbers;
+	std::vector<std::wstring> tokens = tokenize(deadline);
+	std::for_each(tokens.cbegin(), tokens.cend(),
+		[&numbers](const std::wstring token) {
+			numbers.push_back(boost::lexical_cast<int>(token));
+		}
+	);
+	assert(numbers.size() == 6);
+	int year = numbers[0];
+	int month = numbers[1];
+	int day = numbers[2];
+	int hour = numbers[3];
+	int minute = numbers[4];
+	int second = numbers[5];
+	return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+		boost::posix_time::time_duration(hour, minute, second));
+}
+
+Task::Priority TS::deserializePriority(const Value& priority) {
+	return strPrioTable.at(priority);
+}
+
+Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
+	std::vector<Task::ID> deps;
+	std::vector<std::wstring> tokens = tokenize(dependencies);
+	std::for_each(tokens.cbegin(), tokens.cend(),
+		[&deps](const std::wstring token) {
+			deps.push_back(boost::lexical_cast<Task::ID>(token));
+		}
+	);
+	return deps;
+}
+
+std::vector<std::wstring> TS::tokenize(const std::wstring& input) {
+	std::vector<std::wstring> output;
+	boost::char_separator<wchar_t> sep(VALUE_DELIMITER.c_str());
+	boost::tokenizer<boost::char_separator<wchar_t>,
+		std::wstring::const_iterator, std::wstring> tokens(input, sep);
+	std::for_each(tokens.begin(), tokens.end(),
+		[&output] (std::wstring s) {
+			output.push_back(std::wstring(s.begin(), s.end()));
+		}
+	);
+	return output;
+}
+
+const std::unordered_map<TS::Value, Task::Priority> TS::strPrioTable = {
+	{ VALUE_PRIORITY_NORMAL, Task::Priority::NORMAL },
+	{ VALUE_PRIORITY_IMPORTANT, Task::Priority::IMPORTANT },
+};
+
+const std::unordered_map<Task::Priority, TS::Value> TS::prioStrTable = {
+	{ Task::Priority::NORMAL, VALUE_PRIORITY_NORMAL },
+	{ Task::Priority::IMPORTANT, VALUE_PRIORITY_IMPORTANT },
+};
 
 }  // namespace Internal
 }  // namespace QueryEngine
