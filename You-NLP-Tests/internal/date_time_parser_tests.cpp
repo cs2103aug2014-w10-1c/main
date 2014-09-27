@@ -25,13 +25,13 @@ public:
 	}
 
 	TEST_METHOD(parsesYear) {
-		Assert::AreEqual(static_cast<short>(2056),
-			static_cast<short>(DateTimeParser::parse(L"2056").date().year()));
+		Assert::AreEqual(2056,
+			static_cast<int>(DateTimeParser::parse(L"2056").date().year()));
 	}
 
 	TEST_METHOD(parsesTwoDigitYear) {
-		Assert::AreEqual(static_cast<short>(parseTwoDigitYear(13)),
-			static_cast<short>(DateTimeParser::parse(L"13").date().year()));
+		Assert::AreEqual(parseTwoDigitYear(13),
+			static_cast<int>(DateTimeParser::parse(L"13").date().year()));
 	}
 
 	TEST_METHOD(parsesStringMonths) {
