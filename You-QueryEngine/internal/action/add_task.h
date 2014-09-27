@@ -21,7 +21,6 @@ public:
 		description(description), deadline(deadline), priority(priority),
 		dependencies(dependencies) { }
 
-	/// Disallow assigning actions
 	AddTask& operator=(const AddTask&) = delete;
 
 private:
