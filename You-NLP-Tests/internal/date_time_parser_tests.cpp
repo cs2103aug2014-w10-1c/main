@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "exception.h"
 #include "internal/date_time_parser.h"
 #include "../internal/test_helpers.h"
 
@@ -17,6 +18,12 @@ using You::NLP::Internal::DateTimeParser;
 
 TEST_CLASS(DateTimeParserTests) {
 public:
+	TEST_METHOD(rejectsEmptyString) {
+		Assert::ExpectException<ParserException>([]() {
+			DateTimeParser::parse(L"");
+		}, L"Throws exception on empty string");
+	}
+
 	TEST_METHOD(parsesYear) {
 		Assert::AreEqual(static_cast<short>(2056),
 			static_cast<short>(DateTimeParser::parse(L"2056").date().year()));
