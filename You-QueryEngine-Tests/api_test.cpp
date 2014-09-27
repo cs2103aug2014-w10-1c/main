@@ -15,7 +15,7 @@ using You::QueryEngine::executeQuery;
 using boost::gregorian::date;
 using boost::gregorian::max_date_time;
 
-TEST_CLASS(QueryEngineTest) {
+TEST_CLASS(APITest) {
 	const Task::Description desc = L"Learn Haskell Lens";
 	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::IMPORTANT;
@@ -27,6 +27,6 @@ TEST_CLASS(QueryEngineTest) {
 			std::wstring(L"ADD"));
 	}
 
-	QueryEngineTest& operator=(const QueryEngineTest&) = delete;
+	APITest& operator=(const APITest&) = delete;
 };
 }  // namespace UnitTests

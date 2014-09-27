@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
@@ -26,7 +27,7 @@ class TaskBuilder;
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	/// \name Typedefs
+	/// \name Typedef for fields
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;

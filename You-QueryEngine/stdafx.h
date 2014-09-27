@@ -8,10 +8,15 @@
 #define YOU_QUERYENGINE_STDAFX_H_
 
 #include <SDKDDKVer.h>
+
+#include <cstdint>
 #include <vector>
 #include <stdexcept>
 #include <string>
-#include <cstdint>
+#include <sstream>
+#include <unordered_map>
+
+#include <boost/format.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 

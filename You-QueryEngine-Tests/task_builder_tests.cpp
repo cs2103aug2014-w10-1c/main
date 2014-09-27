@@ -4,32 +4,19 @@
 #include "internal/task_builder.h"
 #include "internal/exception.h"
 
+#include "common.h"
+
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-using Task = You::QueryEngine::Task;
 
-namespace Microsoft {
-namespace VisualStudio {
-namespace CppUnitTestFramework {
-
-	template<>
-	static std::wstring ToString<Task::ID> (const Task::ID& tid) {
-		return boost::lexical_cast<std::wstring>(tid);
-	}
-
-	template<>
-	static std::wstring ToString<Task::Time> (const Task::Time& time) {
-		return boost::lexical_cast<std::wstring>(time);
-	}
-
-}  // namespace CppUnitTestFramework
-}  // namespace VisualStudio
-}  // namespace Microsoft
+USE_WSTRING_TEST_WRITER(You::QueryEngine::Task::ID);
+USE_WSTRING_TEST_WRITER(You::QueryEngine::Task::Time);
 
 namespace UnitTests {
 
+using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(TaskModelTest) {
+TEST_CLASS(TaskBuilderTest) {
 public:
 	/// Should be able to create a task using minimal required.
 	/// field.

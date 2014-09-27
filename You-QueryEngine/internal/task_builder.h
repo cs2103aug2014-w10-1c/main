@@ -17,7 +17,7 @@ namespace Internal {
 ///
 ///   Example usage:
 ///   \code{.cpp}
-///	    Task newTask = Task::TaskBuilder::get().description("Feed");
+///	    Task newTask = TaskBuilder::get().description("Feed");
 ///   \endcode
 ///
 ///	  \note At least description must be provided when creating a task.
