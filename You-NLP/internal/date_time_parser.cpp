@@ -9,7 +9,6 @@ namespace NLP {
 namespace Internal {
 
 using ptime = boost::posix_time::ptime;
-using date = boost::gregorian::date;
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
@@ -31,13 +30,11 @@ ptime DateTimeParser::parse(const StringType& string) {
 
 DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	start %= (
-		date[qi::_val = phoenix::construct<ptime>(qi::_1, boost::posix_time::hours(0))]
+		date[qi::_val = phoenix::construct<DateTime>(
+			qi::_1,
+			boost::posix_time::hours(0)
+		)]
 	);
-
-	date = (
-		year |
-		(year >> month)
-	)[qi::_val = phoenix::bind(&DateTimeParser::parsePartialDate, qi::_1)];
 
 	year = (
 		+ParserCharTraits::digit
@@ -51,31 +48,17 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		qi::int_ |
 		ParserCharTraits::no_case[sym]
 	);
-}
 
-date DateTimeParser::parsePartialDate(
-	const boost::variant<
-		int16_t,
-		boost::fusion::vector<int16_t, boost::gregorian::months_of_year>
-	> & dateParts) {
-	using date = Internal::date;
-	class PartialDateVisitor : public boost::static_visitor<date> {
-	public:
-		date operator()(const int16_t& year) {
-			return date(year, boost::gregorian::Jan, 1);
-		}
+	dateYearMonthDay = (
+		year >> month >> day
+	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
 
-		date operator()(const boost::fusion::vector<
-			int16_t, boost::gregorian::months_of_year> & parts) {
-			return date(
-				boost::fusion::at_c<0>(parts),
-				boost::fusion::at_c<1>(parts),
-				1);
-		}
-	};
+	date %= (
+		dateYearMonthDay |
+		dateYearMonth |
+		dateYear
+	);
 
-	PartialDateVisitor visitor;
-	return boost::apply_visitor(visitor, dateParts);
 }
 
 int16_t DateTimeParser::parseFuzzyYear(

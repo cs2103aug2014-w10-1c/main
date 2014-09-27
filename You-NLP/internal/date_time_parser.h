@@ -38,23 +38,39 @@ public:
 	static boost::posix_time::ptime parse(const StringType& string);
 
 private:
+	typedef int16_t Year;
+	typedef int16_t Month;
+	typedef int8_t Day;
+	typedef boost::gregorian::date Date;
+	typedef boost::posix_time::ptime DateTime;
+
+	typedef boost::spirit::qi::rule<
+		IteratorType,
+		Date(),
+		SkipperType> DateRule;
+
+private:
 	DateTimeParser();
+
+	/// Parses a date into its boost::posix_time form.
+	///
+	/// \param[in] dateParts the parts from the various sub-parsers.
+	static DateTime buildDateTime(Date);
 
 	/// Parses a partial date into its boost::date_time form.
 	///
+	/// The prototype is nasty because these are the kinds of dates that we
+	/// support.
+	///
 	/// \param[in] dateParts the parts from the various sub-parsers.
-	static boost::gregorian::date parsePartialDate(
-		const boost::variant<
-			int16_t,
-			boost::fusion::vector<int16_t, boost::gregorian::months_of_year>
-		> & dateParts);
+	static Date buildDate(Year, Month, Day);
 
 	/// Parses the given year string into a full year. If this has only 2 digits
 	/// then it will be treated as fuzzy; otherwise it will be a full year. This
 	/// conversion will happen unless the year string is prefixed by a zero.
 	///
 	/// \param[in] chars The character string, containing ASCII 0-9.
-	static int16_t parseFuzzyYear(
+	static Year parseFuzzyYear(
 		const std::vector<ParserCharEncoding::char_type>& chars);
 
 	/// Parses the given two-digit year into a full year according to system
@@ -63,26 +79,30 @@ private:
 	/// \param[in] year The year to convert. This must be between 0 and 99
 	///                 inclusive.
 	/// \return The actual year referenced.
-	static int16_t parseTwoDigitYear(int16_t year);
+	static Year parseTwoDigitYear(Year year);
 
 private:
 	/// The start rule.
 	start_type start;
 
 	/// Parsing dates.
-	boost::spirit::qi::rule<
-		IteratorType,
-		boost::gregorian::date(),
-		SkipperType> date;
+	DateRule date;
+
+	/// Rules to parse the various kinds of dates.
+	/// {
+	DateRule dateYearMonthDay;
+	DateRule dateYearMonth;
+	DateRule dateYear;
+	/// }
 
 	/// Parsing years.
-	boost::spirit::qi::rule<IteratorType, int16_t(), SkipperType> year;
+	boost::spirit::qi::rule<IteratorType, Year(), SkipperType> year;
 
 	/// Parsing months.
-	boost::spirit::qi::rule<
-		IteratorType,
-		boost::gregorian::months_of_year(),
-		SkipperType> month;
+	boost::spirit::qi::rule<IteratorType, Month(), SkipperType> month;
+
+	/// Parsing days
+	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;
 };
 
 }  // namespace Internal
