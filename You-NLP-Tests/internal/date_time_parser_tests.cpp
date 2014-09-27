@@ -27,6 +27,15 @@ public:
 			static_cast<short>(DateTimeParser::parse(L"13").date().year()));
 	}
 
+	TEST_METHOD(parsesYearWithMonthAsFirstDay) {
+		date d = DateTimeParser::parse(L"2014-May").date();
+
+		Assert::AreEqual(2014, static_cast<int>(d.year()));
+		Assert::AreEqual(static_cast<int>(boost::gregorian::May),
+			static_cast<int>(d.month()));
+		Assert::AreEqual(1, static_cast<int>(d.day()));
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(int16_t year) {
 		return DateTimeParser::parseTwoDigitYear(year);

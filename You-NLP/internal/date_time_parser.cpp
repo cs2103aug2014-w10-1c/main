@@ -34,31 +34,53 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			qi::_1,
 			boost::posix_time::hours(0)
 		)]
-	);
+	) >> qi::eoi;
 
+	#pragma region Primitive date component parsers
 	year = (
 		+ParserCharTraits::digit
 	)[qi::_val = phoenix::bind(&DateTimeParser::parseFuzzyYear, qi::_1)];
 
-	qi::symbols<
-		ParserCharEncoding::char_type,
-		boost::gregorian::months_of_year> sym;
+	
+	monthNames.add
+		(L"jan", boost::gregorian::Jan)
+		(L"feb", boost::gregorian::Feb)
+		(L"mar", boost::gregorian::Mar)
+		(L"apr", boost::gregorian::Apr)
+		(L"may", boost::gregorian::May)
+		(L"jun", boost::gregorian::Jun)
+		(L"jul", boost::gregorian::Jul)
+		(L"aug", boost::gregorian::Aug)
+		(L"sep", boost::gregorian::Sep)
+		(L"oct", boost::gregorian::Oct)
+		(L"nov", boost::gregorian::Nov)
+		(L"dec", boost::gregorian::Dec);
 
 	month %= (
 		qi::int_ |
-		ParserCharTraits::no_case[sym]
+		ParserCharTraits::no_case[monthNames]
 	);
+	#pragma endregion
 
+	#pragma region Supported Date Formats
 	dateYearMonthDay = (
-		year >> month >> day
+		year >> '-' >> month >> '-' >> day
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
+
+	dateYearMonth = (
+		year >> '-' >> month
+	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, 1)];
+
+	dateYear = (
+		year
+	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
 
 	date %= (
 		dateYearMonthDay |
 		dateYearMonth |
 		dateYear
 	);
-
+	#pragma endregion
 }
 
 int16_t DateTimeParser::parseFuzzyYear(

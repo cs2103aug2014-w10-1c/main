@@ -101,6 +101,11 @@ private:
 	/// Parsing months.
 	boost::spirit::qi::rule<IteratorType, Month(), SkipperType> month;
 
+	/// List of months.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		boost::gregorian::months_of_year> monthNames;
+
 	/// Parsing days
 	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;
 };
