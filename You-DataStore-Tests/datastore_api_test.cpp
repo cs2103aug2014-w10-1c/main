@@ -55,8 +55,6 @@ public:
 	TEST_METHOD(DataStore_Get_Basic_Test) {
 		sut.post(0, stask);
 		boost::variant<bool, DataStore::STask> response = sut.get(0);
-		bool status = boost::get<bool>(response);
-		Assert::IsTrue(status);
 		DataStore::STask task = boost::get<DataStore::STask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
