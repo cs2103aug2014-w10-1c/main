@@ -29,24 +29,20 @@ public:
 
 
 	/// Insert a task into the datastore
-	///
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
 	bool post(TaskId, const STask&);
 
 	/// Update the content of a task
-	///
 	/// \return true if update successful,
 	/// \return false if task id specified does not exist
 	bool put(TaskId, const STask&);
 
 	/// Get a task
-	///
 	/// \return false and an empty STask if task id does not exist
 	boost::variant<bool, STask> get(TaskId);
 
 	/// Delete a task
-	///
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist
 	bool erase(TaskId);
