@@ -19,9 +19,6 @@ private:
 	/// Initializes the taskTreePanel by setting column count and headers.
 	/// Called in the constructor of YouMainGUI.
 	void setup();
-	/// Updates tree widget as the result of a query. This is currently just a
-	/// placeholder.
-	void updateTreeWidget(You::NLP::Result result);
 
 	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
 	/// intermediate step to adding headings and tasks.
