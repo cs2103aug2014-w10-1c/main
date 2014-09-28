@@ -2,9 +2,12 @@
 #ifndef YOU_GUI_SESSION_MANAGER_H_
 #define YOU_GUI_SESSION_MANAGER_H_
 #include <QApplication>
-#include <QList>
-#include "you_main_gui.h"
+#include "base_manager.h"
 
+/// The component that handles all session-related data of the application. It
+/// handles basics such as the window state of the application and task sets
+/// previously displayed, saving the state on program exit, and restoring them
+/// when the program is started again. It inherits from the BaseManager class.
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;

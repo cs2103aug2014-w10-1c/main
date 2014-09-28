@@ -2,9 +2,7 @@
 #ifndef YOU_GUI_YOU_MAIN_GUI_H_
 #define YOU_GUI_YOU_MAIN_GUI_H_
 #include <memory>
-#include <array>
 #include <QtWidgets/QMainWindow>
-#include <QList>
 #include "You-NLP/controller.h"
 #include "You-NLP/result.h"
 #include "ui_yougui.h"
@@ -45,9 +43,24 @@ public:
 	void populateTaskPanel();
 
 private:
+	/// The class from which all components inherit.
 	class BaseManager;
+
+	/// The component that handles all session-related data of the application.
+	/// It handles basics such as the window state of the application and task
+	/// sets previously displayed, saving the state on program exit, and
+	/// restoring them when the program is started again. It inherits from the
+	/// BaseManager class.
 	class SessionManager;
+
+	/// The component that deals with everything in the task panel. It handles
+	/// the presentation of logic of a set of tasks presented to it by the NLP
+	/// engine. It inherits from the BaseManager class.
 	class TaskPanelManager;
+
+	/// The component that handles all interactions with the tray icon. It
+	/// handles the window state of the application based on commands sent to
+	/// the tray manager. It inherits from the BaseManager class.
 	class SystemTrayManager;
 
 	/// The QT object that holds all items that are defined when building the
@@ -74,15 +87,5 @@ private:
 	/// QT's signal/slot mechanism for input enter button.
 	void on_commandEnterButton_clicked();
 };
-
-class YouMainGUI::BaseManager : public QObject {
-	Q_OBJECT
-public:
-	YouMainGUI * const parentGUI;
-	BaseManager();
-	explicit BaseManager(YouMainGUI * parentGUI);
-	void setup();
-};
-
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_

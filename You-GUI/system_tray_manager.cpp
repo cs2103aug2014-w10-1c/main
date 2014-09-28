@@ -10,6 +10,9 @@ YouMainGUI::SystemTrayManager::~SystemTrayManager() {
 void YouMainGUI::SystemTrayManager::setup() {
 	createActions();
 	setIcon();
+	makeContextMenu();
+	connectTrayActivatedSlot();
+	parentGUI->setVisible(true);
 }
 
 void YouMainGUI::SystemTrayManager::setIcon() {
@@ -17,6 +20,9 @@ void YouMainGUI::SystemTrayManager::setIcon() {
 	trayIcon.setIcon(icon);
 	parentGUI->setWindowIcon(icon);
 	trayIcon.show();
+}
+
+void YouMainGUI::SystemTrayManager::makeContextMenu() {
 	trayIconMenu = new QMenu(parentGUI);
 	trayIconMenu->addAction(minimizeAction);
 	trayIconMenu->addAction(maximizeAction);
@@ -24,18 +30,22 @@ void YouMainGUI::SystemTrayManager::setIcon() {
 	trayIconMenu->addSeparator();
 	trayIconMenu->addAction(quitAction);
 	trayIcon.setContextMenu(trayIconMenu);
-	parentGUI->setVisible(true);
+}
+
+void YouMainGUI::SystemTrayManager::connectTrayActivatedSlot() {
 	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
-
 void YouMainGUI::SystemTrayManager::iconActivated(
 	QSystemTrayIcon::ActivationReason reason) {
-	if (reason == QSystemTrayIcon::Trigger){
-		if (parentGUI->isVisible() == true) parentGUI->hide();
-		else parentGUI->show();
+	if (reason == QSystemTrayIcon::Trigger) {
+		if (parentGUI->isVisible() == true)
+			parentGUI->hide();
+		else
+			parentGUI->show();
 	}
 }
+
 void YouMainGUI::SystemTrayManager::createActions() {
 	minimizeAction = new QAction(tr("Minimize"), parentGUI);
 	connect(minimizeAction, SIGNAL(triggered()), parentGUI, SLOT(hide()));

@@ -80,6 +80,12 @@
     <ClCompile Include="GeneratedFiles\qrc_yougui.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_base_manager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_base_manager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -106,6 +112,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="system_tray_manager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="base_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

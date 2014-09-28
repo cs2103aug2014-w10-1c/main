@@ -5,9 +5,7 @@
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
-void YouMainGUI::TaskPanelManager::setup() {}
-
-void YouMainGUI::TaskPanelManager::taskPanelSetup() {
+void YouMainGUI::TaskPanelManager::setup() {
 	parentGUI->ui.taskTreePanel->setColumnCount(4);
 	parentGUI->ui.taskTreePanel->setHeaderItem(
 		createItem(parentGUI->columnHeaders));

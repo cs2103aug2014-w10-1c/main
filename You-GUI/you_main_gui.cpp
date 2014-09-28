@@ -15,7 +15,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	ui.setupUi(this);
 	stm->setup();
 	sm->setup();
-	tpm->taskPanelSetup();
+	tpm->setup();
 	populateTaskPanel();
 }
 

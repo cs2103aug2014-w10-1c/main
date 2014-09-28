@@ -2,9 +2,11 @@
 #ifndef YOU_GUI_TASK_PANEL_MANAGER_H_
 #define YOU_GUI_TASK_PANEL_MANAGER_H_
 #include <QApplication>
-#include <QList>
-#include "you_main_gui.h"
+#include "base_manager.h"
 
+/// The component that deals with everything in the task panel. It handles the
+/// presentation of logic of a set of tasks presented to it by the NLP engine.
+/// It inherits from the BaseManager class.
 class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
@@ -14,13 +16,12 @@ public:
 	~TaskPanelManager();
 
 private:
-	void setup();
-	/// Updates tree widget as the result of a query. This is
-	/// currently just a placeholder.
-	void updateTreeWidget(You::NLP::Result result);
-
 	/// Initializes the taskTreePanel by setting column count and headers.
-	void taskPanelSetup();
+	/// Called in the constructor of YouMainGUI.
+	void setup();
+	/// Updates tree widget as the result of a query. This is currently just a
+	/// placeholder.
+	void updateTreeWidget(You::NLP::Result result);
 
 	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
 	/// intermediate step to adding headings and tasks.
