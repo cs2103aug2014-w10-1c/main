@@ -25,7 +25,7 @@ public:
 	/// Typedefs for serializing to xml
 	typedef std::wstring Key;
 	typedef std::wstring Value;
-	typedef std::pair<Key, Value> KeyPairValue;
+	typedef std::pair<Key, Value> KeyValuePair;
 
 
 	/// Insert a task into the datastore
