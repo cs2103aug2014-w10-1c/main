@@ -3,8 +3,6 @@
 #define YOU_GUI_YOU_MAIN_GUI_H_
 #include <memory>
 #include <QtWidgets/QMainWindow>
-#include "You-NLP/controller.h"
-#include "You-NLP/result.h"
 #include "ui_yougui.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
@@ -63,12 +61,16 @@ private:
 	/// the tray manager. It inherits from the BaseManager class.
 	class SystemTrayManager;
 
+	class NLPManager;
+
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 	std::unique_ptr<SessionManager> sm;
 	std::unique_ptr<TaskPanelManager> tpm;
 	std::unique_ptr<SystemTrayManager> stm;
+	std::unique_ptr<NLPManager> nlpm;
+	
 	void setVisible(bool visible);
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
@@ -77,15 +79,7 @@ private:
 	/// it will convert current program state into a context,
 	/// populate commandInputBox, call queryNLP() to parse that command,
 	/// then clear the commandInputBox and do updateTreeWidget();
-	/// Queries the NLP engine. Converts the current view into a context,
-	/// passes the context and input into the NLP engine, and gets a
-	/// Result object. Called by user's confirmation to send entry in
-	/// commandInputBox. This is currently just a placeholder.
-	You::NLP::Result queryNLP();
 
-	private slots:
-	/// QT's signal/slot mechanism for input enter button.
-	void on_commandEnterButton_clicked();
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_
