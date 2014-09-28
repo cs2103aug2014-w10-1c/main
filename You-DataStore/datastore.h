@@ -18,14 +18,13 @@ class DataStore {
 	friend class DataStoreAPITest;
 public:
 	/// \name typedefs
-	/// typedef for Serialized Task
-	typedef std::unordered_map<std::wstring, std::wstring> STask;
 	/// typedef for Task ID
 	typedef int64_t TaskId;
 	/// Typedefs for serializing to xml
 	typedef std::wstring Key;
 	typedef std::wstring Value;
 	typedef std::pair<Key, Value> KeyValuePair;
+	typedef std::unordered_map<Key, Value> STask;
 
 
 	/// Insert a task into the datastore
@@ -59,6 +58,10 @@ private:
 	bool saveData();
 	/// Loads the xml file into the xml object
 	void loadData();
+	/// Serialize task to an xml node
+	pugi::xml_node serialize(STask);
+	/// Deserialize task from an xml node
+	STask deserialize(pugi::xml_node);
 };
 
 }  // namespace DataStore
