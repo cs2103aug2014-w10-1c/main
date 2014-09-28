@@ -2,6 +2,7 @@
 #ifndef YOU_GUI_NLP_MANAGER_H_
 #define YOU_GUI_NLP_MANAGER_H_
 #include <QApplication>
+#include <QWidget>
 #include "You-NLP/controller.h"
 #include "You-NLP/result.h"
 #include "You-NLP/controller_context.h"
@@ -20,14 +21,18 @@ public:
 	~NLPManager();
 
 private:
-	/// Generates a TaskList object from all tasks currently visible.
+	/// Generates a Task from a QTreeWidgetItem object.
+
+	/// Generates a TaskList object from all tasks currently visible in
+	/// QTreeWidget.
 	///		Questions: Can I simply build a flat list, despite the tasks being
 	///		a hierarchical structure? The tree structure is after all encoded
 	///		within the tasks themselves.
-
+	You::NLP::TaskList generateTaskList(QTreeWidget* widget);
 	/// Generates a Context object from a TaskList object
 	///		Questions: How do I build a Context object? It appears to be
-	///		inaccessible to me.
+	///		inaccessible to me. Should I simply pass a list of task IDs + their
+	///		corresponding view order back, instead of building the TaskList?
 
 	/// Queries the NLP engine. Converts the current view into a context,
 	/// passes the Context and wstring input into the NLP engine, and gets a
