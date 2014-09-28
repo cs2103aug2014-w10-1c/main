@@ -7,9 +7,8 @@ YouMainGUI::NLPManager::~NLPManager() {
 }
 
 void YouMainGUI::NLPManager::setup() {
-	connect(parentGUI->ui.commandEnterButton,
-		SIGNAL(parentGUI->ui.commandEnterButton->clicked(false)),
-		this, SLOT(commandEnterButtonClicked()));
+    connect(parentGUI->ui.commandEnterButton,
+		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
 }
 
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
