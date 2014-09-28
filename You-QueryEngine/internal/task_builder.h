@@ -17,7 +17,7 @@ namespace Internal {
 ///
 ///   Example usage:
 ///   \code{.cpp}
-///	    Task newTask = Task::TaskBuilder::get().description("Feed");
+///	    Task newTask = TaskBuilder::get().description("Feed");
 ///   \endcode
 ///
 ///	  \note At least description must be provided when creating a task.
@@ -27,6 +27,8 @@ public:
 	/// \return A builder object.
 	static TaskBuilder get();
 
+	/// Initialize task id.
+	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
 	TaskBuilder& description(const Task::Description& description);
 	/// Initialize task deadline.
