@@ -6,6 +6,26 @@ namespace DataStore {
 
 const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
+bool DataStore::post(TaskId rawId, const STask& sTask) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
+		return false;
+	}
+	pugi::xml_node newTask = document.append_child(L"task");
+
+	pugi::xml_attribute id = newTask.append_attribute(L"id");
+	id.set_value(taskId.c_str());
+
+	for each (KeyPairValue kpv in sTask) {
+		pugi::xml_node keyNode =
+			newTask.append_child(kpv.first.c_str());
+		pugi::xml_node keyValue =
+			keyNode.append_child(pugi::xml_node_type::node_pcdata);
+		keyValue.set_value(kpv.second.c_str());
+	}
+	return true;
+}
+
 bool You::DataStore::DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
