@@ -7,6 +7,7 @@ namespace DataStore {
 const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
 bool DataStore::post(TaskId rawId, const STask& sTask) {
+	// Consider changing parameter to std::wstring altogether
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
 		return false;
@@ -15,14 +16,7 @@ bool DataStore::post(TaskId rawId, const STask& sTask) {
 
 	pugi::xml_attribute id = newTask.append_attribute(L"id");
 	id.set_value(taskId.c_str());
-
-	for each (KeyValuePair kvp in sTask) {
-		pugi::xml_node keyNode =
-			newTask.append_child(kvp.first.c_str());
-		pugi::xml_node keyValue =
-			keyNode.append_child(pugi::xml_node_type::node_pcdata);
-		keyValue.set_value(kvp.second.c_str());
-	}
+	serialize(sTask, newTask);
 	return true;
 }
 
@@ -69,7 +63,17 @@ void You::DataStore::DataStore::loadData() {
 	}
 }
 
-DataStore::STask DataStore::deserialize(pugi::xml_node taskNode) {
+void DataStore::serialize(const STask& stask, pugi::xml_node& node) {
+	for each (KeyValuePair kvp in stask) {
+		pugi::xml_node keyNode =
+			node.append_child(kvp.first.c_str());
+		pugi::xml_node keyValue =
+			keyNode.append_child(pugi::xml_node_type::node_pcdata);
+		keyValue.set_value(kvp.second.c_str());
+	}
+}
+
+DataStore::STask DataStore::deserialize(pugi::xml_node& taskNode) {
 	STask stask;
 	for each (pugi::xml_node node in taskNode) {
 		stask.insert(KeyValuePair(Key(node.name()), Value(node.child_value())));

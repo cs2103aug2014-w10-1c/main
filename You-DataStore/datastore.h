@@ -59,9 +59,9 @@ private:
 	/// Loads the xml file into the xml object
 	void loadData();
 	/// Serialize task to an xml node
-	pugi::xml_node serialize(STask);
+	void serialize(const STask&, pugi::xml_node&);
 	/// Deserialize task from an xml node
-	STask deserialize(pugi::xml_node);
+	STask deserialize(pugi::xml_node&);
 };
 
 }  // namespace DataStore
