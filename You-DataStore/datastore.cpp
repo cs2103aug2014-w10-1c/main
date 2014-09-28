@@ -48,6 +48,13 @@ boost::variant<bool, DataStore::STask> DataStore::get(TaskId rawId) {
 	return stask;
 }
 
+bool DataStore::erase(TaskId rawId) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toErase =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	return document.remove_child(toErase);
+}
+
 bool You::DataStore::DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
