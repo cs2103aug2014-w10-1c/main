@@ -27,11 +27,11 @@ private:
 	/// System tray icon object that adds an icon to the tray.
 	QSystemTrayIcon trayIcon;
 
-	/// QT's signal/slot mechanism for tray icon activation.
-	void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
 	/// Icon image for system tray.
 	QIcon icon;
+	private slots:
+	/// QT's signal/slot mechanism for tray icon activation.
+	void iconActivated(QSystemTrayIcon::ActivationReason reason);
 };
 
 #endif  // YOU_GUI_SYSTEM_TRAY_MANAGER_H_

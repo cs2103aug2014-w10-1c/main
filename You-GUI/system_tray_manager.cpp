@@ -31,17 +31,9 @@ void YouMainGUI::SystemTrayManager::setIcon() {
 
 void YouMainGUI::SystemTrayManager::iconActivated(
 	QSystemTrayIcon::ActivationReason reason) {
-	switch (reason) {
-	case QSystemTrayIcon::Trigger:
-		parentGUI->setVisible(false);
-	case QSystemTrayIcon::DoubleClick:
-		if (!parentGUI->YouMainGUI::isVisible()) {
-			parentGUI->YouMainGUI::setVisible(false);
-		} else {
-			parentGUI->YouMainGUI::setVisible(true);
-		}
-		break;
-	default: {}
+	if (reason == QSystemTrayIcon::Trigger){
+		if (parentGUI->isVisible() == true) parentGUI->hide();
+		else parentGUI->show();
 	}
 }
 void YouMainGUI::SystemTrayManager::createActions() {
