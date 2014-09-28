@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
-#include "boost\variant.hpp"
+#include "boost/variant.hpp"
 
 #include "pugixml.hpp"
 
@@ -13,10 +13,9 @@ namespace You {
 namespace DataStore {
 
 class DataStore {
-public:
 	/// Test classes
 	friend class DataStoreAPITest;
-
+public:
 	/// typedefs
 	/// typedef for Serialized Task
 	typedef std::unordered_map<std::wstring, std::wstring> STask;
