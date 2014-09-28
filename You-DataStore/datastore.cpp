@@ -41,6 +41,9 @@ boost::variant<bool, DataStore::STask> DataStore::get(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
+	if (!toGet) {
+		return false;
+	}
 	DataStore::STask stask = deserialize(toGet);
 	return stask;
 }
