@@ -5,8 +5,8 @@
 #include <array>
 #include <QtWidgets/QMainWindow>
 #include <QList>
-#include "../You-NLP/controller.h"
-#include "../You-NLP/result.h"
+#include "You-NLP/controller.h"
+#include "You-NLP/result.h"
 #include "ui_yougui.h"
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
