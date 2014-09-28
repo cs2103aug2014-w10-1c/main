@@ -16,33 +16,38 @@ class DataStore {
 	/// Test classes
 	friend class DataStoreAPITest;
 public:
-	/// typedefs
+	/// \name typedefs
 	/// typedef for Serialized Task
 	typedef std::unordered_map<std::wstring, std::wstring> STask;
 	/// typedef for Task ID
 	typedef int64_t TaskId;
+	/// Typedefs for serializing to xml
+	typedef std::wstring Key;
+	typedef std::wstring Value;
+	typedef std::pair<Key, Value> KeyPairValue;
+
 
 	/// Insert a task into the datastore
 	///
-	/// Returns true if insertion successful,
-	/// false if task id already exists
+	/// \return true if insertion successful,
+	/// \return false if task id already exists
 	bool post(TaskId, const STask&);
 
 	/// Update the content of a task
 	///
-	/// Returns true if update successful,
-	/// false if task id specified does not exist
+	/// \return true if update successful,
+	/// \return false if task id specified does not exist
 	bool put(TaskId, const STask&);
 
 	/// Get a task
 	///
-	/// Returns false and an empty STask if task id does not exist
+	/// \return false and an empty STask if task id does not exist
 	boost::variant<bool, STask> get(TaskId);
 
 	/// Delete a task
 	///
-	/// Returns true if erase successful,
-	/// false if task id specified does not exist
+	/// \return true if erase successful,
+	/// \return false if task id specified does not exist
 	bool erase(TaskId);
 
 	/// Get a list of tasks that passes the filter
@@ -53,7 +58,7 @@ private:
 	pugi::xml_document document;
 
 	/// Saves the xml object to a file
-	/// Returns true if operation successful and false otherwise
+	/// \return true if operation successful and false otherwise
 	bool saveData();
 	/// Loads the xml file into the xml object
 	void loadData();
