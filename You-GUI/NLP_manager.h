@@ -2,18 +2,15 @@
 #ifndef YOU_GUI_NLP_MANAGER_H_
 #define YOU_GUI_NLP_MANAGER_H_
 #include <QApplication>
-#include <QWidget>
 #include "You-NLP/controller.h"
 #include "You-NLP/result.h"
 #include "You-NLP/controller_context.h"
 #include "base_manager.h"
 
-/// The component that handles passing of data between the NLP parser and the
-/// rest of the GUI. It has two primary operations: on setup it passes a list
-/// containing the IDs of tasks that were previously open, and receives a
-/// Result object. Every time a command is sent, the current Result as well
-/// as input string is sent to the parser. The Result is a vector of tasks, and
-/// this replaces the existing Result. It inherits from the BaseManager class.
+/// The component that handles all session-related data of the application. It
+/// handles basics such as the window state of the application and task sets
+/// previously displayed, saving the state on program exit, and restoring them
+/// when the program is started again. It inherits from the BaseManager class.
 class YouMainGUI::NLPManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
@@ -23,11 +20,19 @@ public:
 	~NLPManager();
 
 private:
-	You::NLP::Result currentResult;
+	/// Generates a TaskList object from all tasks currently visible.
+	///		Questions: Can I simply build a flat list, despite the tasks being
+	///		a hierarchical structure? The tree structure is after all encoded
+	///		within the tasks themselves.
 
-	/// Queries the NLP engine. Passes the Result and wstring input into the
-	/// NLP engine, and gets a Result object. Called by user's confirmation to
-	/// send entry in commandInputBox, via signal/slots.
+	/// Generates a Context object from a TaskList object
+	///		Questions: How do I build a Context object? It appears to be
+	///		inaccessible to me.
+
+	/// Queries the NLP engine. Converts the current view into a context,
+	/// passes the Context and wstring input into the NLP engine, and gets a
+	/// Result object. Called by user's confirmation to send entry in
+	/// commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
 
 	/// Interprets the Result object (typedef from Response)
