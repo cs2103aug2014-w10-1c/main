@@ -62,5 +62,10 @@ public:
 		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
 		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
+
+	TEST_METHOD(DataStore_Get_NonExistent_Test) {
+		boost::variant<bool, DataStore::STask> response = sut.get(0);
+		Assert::IsFalse(boost::get<bool>(response));
+	}
 };
 }  // namespace YouDataStoreTests
