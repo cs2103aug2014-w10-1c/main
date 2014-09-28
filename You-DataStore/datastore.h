@@ -22,9 +22,6 @@ public:
 	/// typedef for Task ID
 	typedef int64_t TaskId;
 
-	DataStore();
-	~DataStore();
-
 	/// Insert a task into the datastore
 	///
 	/// Returns true if insertion successful,
