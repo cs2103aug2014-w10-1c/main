@@ -73,5 +73,10 @@ public:
 		bool result = sut.erase(0);
 		Assert::IsTrue(result);
 	}
+
+	TEST_METHOD(DataStore_Erase_NonExistent_Test) {
+		bool result = sut.erase(0);
+		Assert::IsFalse(result);
+	}
 };
 }  // namespace YouDataStoreTests
