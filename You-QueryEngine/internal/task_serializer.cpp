@@ -98,12 +98,12 @@ Task::Description TS::deserializeDescription(const Value& description) {
 }
 
 Task::Time TS::deserializeDeadline(const Value& deadline) {
-	std::vector<unsigned short> numbers;  // NOLINT
+	std::vector<std::int16_t> numbers;
 	std::vector<std::wstring> tokens = tokenize(deadline);
 	std::for_each(tokens.cbegin(), tokens.cend(),
 		[&numbers](const std::wstring token) {
 			numbers.push_back(
-				boost::lexical_cast<unsigned short>(token));  // NOLINT
+				boost::lexical_cast<std::int16_t>(token));
 		}
 	);
 	assert(numbers.size() == 6);
