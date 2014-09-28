@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <QList>
 #include "you_main_gui.h"
+#include "session_manager.h"
+#include "task_panel_manager.h"
+#include "system_tray_manager.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
@@ -10,9 +13,9 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
-	stm->setIcon();
-	sm->loadSession();
-	tpm->taskPanelSetup();
+	stm->setup();
+	sm->setup();
+	tpm->setup();
 	populateTaskPanel();
 }
 
@@ -20,7 +23,15 @@ YouMainGUI::~YouMainGUI() {
 }
 
 void YouMainGUI::closeEvent(QCloseEvent *event) {
-	sm->saveSession();
+	if (stm->trayIcon.isVisible()) {
+		QMessageBox::information(this, tr("Systray"),
+			tr("The program will keep running in the "
+			"system tray. To terminate the program, "
+			"choose <b>Quit</b> in the context menu "
+			"of the system tray entry."));
+		hide();
+		event->ignore();
+	}
 }
 
 void YouMainGUI::on_commandEnterButton_clicked() {
@@ -53,3 +64,9 @@ You::NLP::Result YouMainGUI::queryNLP() {
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {}
 
+void YouMainGUI::setVisible(bool visible) {
+	stm->minimizeAction->setEnabled(visible);
+	stm->maximizeAction->setEnabled(!isMaximized());
+	stm->restoreAction->setEnabled(isMaximized() || !visible);
+	QWidget::setVisible(visible);
+}

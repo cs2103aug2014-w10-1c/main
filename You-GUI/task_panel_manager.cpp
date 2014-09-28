@@ -1,14 +1,11 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
-
+#include "task_panel_manager.h"
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
-void YouMainGUI::TaskPanelManager::setup() {}
-
-void YouMainGUI::TaskPanelManager::taskPanelSetup() {
+void YouMainGUI::TaskPanelManager::setup() {
 	parentGUI->ui.taskTreePanel->setColumnCount(4);
 	parentGUI->ui.taskTreePanel->setHeaderItem(
 		createItem(parentGUI->columnHeaders));

@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
+#include "session_manager.h"
 
 YouMainGUI::SessionManager::~SessionManager() {
+	saveSession();
 }
 
-void YouMainGUI::SessionManager::setup() {}
+void YouMainGUI::SessionManager::setup() {
+	loadSession();
+}
 
 void YouMainGUI::SessionManager::loadSession() {
 	QSettings settings("You", "You");
