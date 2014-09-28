@@ -37,6 +37,14 @@ bool DataStore::put(TaskId rawId, const STask& sTask) {
 	return post(rawId, sTask);
 }
 
+boost::variant<bool, DataStore::STask> DataStore::get(TaskId rawId) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toGet =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	DataStore::STask stask = deserialize(toGet);
+	return stask;
+}
+
 bool You::DataStore::DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
@@ -49,6 +57,14 @@ void You::DataStore::DataStore::loadData() {
 	if (status == pugi::xml_parse_status::status_file_not_found) {
 		document.reset();
 	}
+}
+
+DataStore::STask DataStore::deserialize(pugi::xml_node taskNode) {
+	STask stask;
+	for each (pugi::xml_node node in taskNode) {
+		stask.insert(KeyValuePair(Key(node.name()), Value(node.child_value())));
+	}
+	return stask;
 }
 
 }  // namespace DataStore
