@@ -26,6 +26,17 @@ bool DataStore::post(TaskId rawId, const STask& sTask) {
 	return true;
 }
 
+bool DataStore::put(TaskId rawId, const STask& sTask) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toEdit =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	if (!toEdit) {
+		return false;
+	}
+	document.remove_child(toEdit);
+	return post(rawId, sTask);
+}
+
 bool You::DataStore::DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
