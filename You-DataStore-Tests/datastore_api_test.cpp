@@ -7,6 +7,20 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 using DataStore = You::DataStore::DataStore;
 
 namespace YouDataStoreTests {
+
+const std::wstring TASK_ID = L"id";
+const std::wstring DESCRIPTION = L"desc";
+const std::wstring DEADLINE = L"deadl";
+const std::wstring PRIORITY = L"pri";
+const std::wstring DEPENDENCIES = L"depend";
+const DataStore::STask stask = {
+		{ TASK_ID, L"0" },
+		{ DESCRIPTION, L"bla bla" },
+		{ DEADLINE, L"xxxxxx" },
+		{ PRIORITY, L"urgent" },
+		{ DEPENDENCIES, L"12345" }
+};
+
 TEST_CLASS(DataStoreApiTest) {
 public:
 	DataStore sut;
