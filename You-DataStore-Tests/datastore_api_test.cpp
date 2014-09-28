@@ -67,5 +67,11 @@ public:
 		boost::variant<bool, DataStore::STask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
+
+	TEST_METHOD(DataStore_Erase_Basic_Test) {
+		sut.post(0, DataStore::STask());
+		bool result = sut.erase(0);
+		Assert::IsTrue(result);
+	}
 };
 }  // namespace YouDataStoreTests
