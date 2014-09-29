@@ -4,9 +4,12 @@
 #include "datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-using DataStore = You::DataStore::DataStore;
 
-namespace YouDataStoreTests {
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+
+using DataStore = You::DataStore::DataStore;
 
 const std::wstring TASK_ID = L"id";
 const std::wstring DESCRIPTION = L"desc";
@@ -79,4 +82,6 @@ public:
 		Assert::IsFalse(result);
 	}
 };
-}  // namespace YouDataStoreTests
+}  // namespace UnitTests
+}  // namespace DataStore
+}  // namespace You
