@@ -11,11 +11,14 @@ namespace UnitTests {
 
 using DataStore = You::DataStore::DataStore;
 
+// Dummy constants
 const std::wstring TASK_ID = L"id";
 const std::wstring DESCRIPTION = L"desc";
 const std::wstring DEADLINE = L"deadl";
 const std::wstring PRIORITY = L"pri";
 const std::wstring DEPENDENCIES = L"depend";
+
+// Dummy serialized task
 const DataStore::STask stask = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"bla bla" },
