@@ -59,7 +59,7 @@ private:
 	/// Loads the xml file into the xml object
 	void loadData();
 	/// Serialize task to an xml node
-	void serialize(const STask&, pugi::xml_node*);
+	void serialize(const STask&, pugi::xml_node&);
 	/// Deserialize task from an xml node
 	STask deserialize(const pugi::xml_node&);
 };

@@ -16,7 +16,7 @@ bool DataStore::post(TaskId rawId, const STask& sTask) {
 
 	pugi::xml_attribute id = newTask.append_attribute(L"id");
 	id.set_value(taskId.c_str());
-	serialize(sTask, &newTask);
+	serialize(sTask, newTask);
 	return true;
 }
 
@@ -63,10 +63,10 @@ void DataStore::loadData() {
 	}
 }
 
-void DataStore::serialize(const STask& stask, pugi::xml_node* node) {
+void DataStore::serialize(const STask& stask, pugi::xml_node& node) {
 	for each (KeyValuePair kvp in stask) {
 		pugi::xml_node keyNode =
-			node->append_child(kvp.first.c_str());
+			node.append_child(kvp.first.c_str());
 		pugi::xml_node keyValue =
 			keyNode.append_child(pugi::xml_node_type::node_pcdata);
 		keyValue.set_value(kvp.second.c_str());
