@@ -13,10 +13,10 @@ using DataStore = You::DataStore::DataStore;
 
 // Dummy constants
 const std::wstring TASK_ID = L"id";
-const std::wstring DESCRIPTION = L"desc";
-const std::wstring DEADLINE = L"deadl";
-const std::wstring PRIORITY = L"pri";
-const std::wstring DEPENDENCIES = L"depend";
+const std::wstring DESCRIPTION = L"description";
+const std::wstring DEADLINE = L"deadline";
+const std::wstring PRIORITY = L"priority";
+const std::wstring DEPENDENCIES = L"dependency";
 
 // Dummy serialized task
 const DataStore::STask stask = {
