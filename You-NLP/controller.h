@@ -15,8 +15,10 @@ namespace UnitTests { class ControllerContextTests; }
 /// This is a singleton class.
 class Controller {
 	class QueryBuilderVisitor;
-	class Context;
 	friend class UnitTests::ControllerContextTests;
+
+public:
+	class Context;
 
 public:
 	/// Gets the singleton instance for the controller.
