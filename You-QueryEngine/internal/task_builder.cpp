@@ -1,3 +1,4 @@
+/// \author A0112054Y
 #include "stdafx.h"
 #include "exception.h"
 #include "task_builder.h"
@@ -7,7 +8,13 @@ namespace QueryEngine {
 namespace Internal {
 
 TaskBuilder TaskBuilder::get() {
-	TaskBuilder builder(Task::nextNewTask());
+	Task defaultTask = Task(
+		Task::DEFAULT_ID,
+		Task::DEFAULT_DESCRIPTION,
+		Task::DEFAULT_DEADLINE,
+		Task::DEFAULT_DEPENDENCIES,
+		Task::DEFAULT_PRIORITY);
+	TaskBuilder builder(defaultTask);
 	return builder;
 }
 

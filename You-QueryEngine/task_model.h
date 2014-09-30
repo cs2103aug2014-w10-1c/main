@@ -1,6 +1,6 @@
 /// \file task_model.h
 /// Defines the task model class.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_TASK_MODEL_H_
@@ -15,8 +15,7 @@
 namespace You {
 namespace QueryEngine {
 
-// Do a forward declaration on TaskBuilder
-// so that it can be
+// Forward declaration on TaskBuilder
 namespace Internal {
 class TaskBuilder;
 }
@@ -27,7 +26,7 @@ class TaskBuilder;
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	/// \name Typedef for fields
+	/// \name Type Declarations for Task Fields
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
@@ -36,7 +35,7 @@ public:
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
 
-	/// \name Getters
+	/// \name Getters for Field Values.
 	/// @{
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
@@ -45,7 +44,7 @@ public:
 	inline Priority getPriority() const { return priority; }
 	/// @}
 
-	/// \name Setters
+	/// \name Setters for Field Values
 	/// @{
 	void setDescription(const Description&);
 	void setDeadline(Time);
@@ -53,8 +52,9 @@ public:
 	void setPriority(Priority);
 	/// @}
 
-	/// Test if this task is strictly equal with
-	/// another task (i.e all fields are the same)
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
 	bool isStrictEqual(const Task& task) const;
 
 	/// \name Default Values
@@ -67,7 +67,7 @@ public:
 	static const Priority DEFAULT_PRIORITY;
 	/// @}
 
-	/// Equality of task is determined by its ID
+	/// Equality of task is determined by its unique ID
 	/// For stricter equality, \see isStrictEqual
 	inline bool operator==(const Task& rhs) const {
 		return id == rhs.id;
@@ -81,10 +81,6 @@ private:
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
-
-	/// Return a task with using default values for all its fields.
-	/// The ID of the task created is LAST_ID + 1
-	static Task nextNewTask();
 
 	/// \name Private Fields
 	/// @{

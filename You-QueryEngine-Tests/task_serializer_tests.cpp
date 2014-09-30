@@ -1,4 +1,4 @@
-
+/// \author A0112054Y
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
@@ -9,6 +9,8 @@
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
+namespace You {
+namespace QueryEngine {
 namespace UnitTests {
 
 using boost::posix_time::ptime;
@@ -55,3 +57,5 @@ public:
 	}
 };
 }  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
