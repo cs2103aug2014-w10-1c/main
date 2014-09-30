@@ -57,30 +57,36 @@ private:
 	/// engine. It inherits from the BaseManager class.
 	class TaskPanelManager;
 
-	/// The component that handles all interactions with the tray icon. It
-	/// handles the window state of the application based on commands sent to
-	/// the tray manager. It inherits from the BaseManager class.
+	/// The component that handles all interactions with the tray icon. It handles
+	/// the window state of the application based on commands sent to the tray
+	/// manager. It inherits from the BaseManager class.
 	class SystemTrayManager;
 
+	/// The component that handles passing of data between the NLP parser and
+	/// the rest of the GUI. It has two primary operations: on setup it passes
+	/// a list containing the IDs of tasks that were previously open, and
+	/// receives a Result object. Every time a command is sent, the current
+	/// Result as well as input string is sent to the parser. The Result is a
+	/// vector of tasks, and this replaces the existing Result. It inherits
+	/// from the BaseManager class.
 	class NLPManager;
 
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
+
+	/// The SessionManager instance
 	std::unique_ptr<SessionManager> sm;
+	/// The TaskPanelManager instance
 	std::unique_ptr<TaskPanelManager> tpm;
+	/// The SystemTrayManager instance
 	std::unique_ptr<SystemTrayManager> stm;
+	/// The NLPManager instance
 	std::unique_ptr<NLPManager> nlpm;
-	
+	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-	/// All user action functions. Probably will all be of
-	/// on_(ui_element)_(event) type. Depending on the function,
-	/// it will convert current program state into a context,
-	/// populate commandInputBox, call queryNLP() to parse that command,
-	/// then clear the commandInputBox and do updateTreeWidget();
-
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_

@@ -22,17 +22,15 @@ public:
 	explicit NLPManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~NLPManager();
-
-private:
-	You::NLP::Result currentResult;
-
+	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
+	void setup();
 	/// Queries the NLP engine. Passes the Result and wstring input into the
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
-
-	/// Interprets the Result object (typedef from Response)
-	void setup();
+private:
+	/// The current result/context displayed to the user
+	You::NLP::Result currentResult;
 
 	private slots:
 	/// QT's signal/slot mechanism for input enter button.
