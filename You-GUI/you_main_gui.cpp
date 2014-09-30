@@ -37,7 +37,6 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 	}
 }
 
-
 void YouMainGUI::populateTaskPanel() {
 	// Create a vector of strings representing the data for each column for a
 	// single entry
