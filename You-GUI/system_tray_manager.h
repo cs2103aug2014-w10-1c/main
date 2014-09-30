@@ -1,3 +1,4 @@
+//@author A0094446X
 #pragma once
 #ifndef YOU_GUI_SYSTEM_TRAY_MANAGER_H_
 #define YOU_GUI_SYSTEM_TRAY_MANAGER_H_

@@ -1,3 +1,4 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <QApplication>
@@ -15,8 +16,8 @@ void YouMainGUI::NLPManager::setup() {
 
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
-	std::wstring inputString =
-		parentGUI->ui.commandInputBox->text().toStdWString();
+	//std::wstring inputString =
+	//	parentGUI->ui.commandInputBox->text().toStdWString();
 	You::NLP::Result result;
 	return result;
 }
