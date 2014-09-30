@@ -7,7 +7,13 @@ namespace QueryEngine {
 namespace Internal {
 
 TaskBuilder TaskBuilder::get() {
-	TaskBuilder builder(Task::nextNewTask());
+	Task defaultTask = Task(
+		Task::DEFAULT_ID,
+		Task::DEFAULT_DESCRIPTION,
+		Task::DEFAULT_DEADLINE,
+		Task::DEFAULT_DEPENDENCIES,
+		Task::DEFAULT_PRIORITY);
+	TaskBuilder builder(defaultTask);
 	return builder;
 }
 
