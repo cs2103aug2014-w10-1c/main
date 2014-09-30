@@ -11,13 +11,16 @@ YouMainGUI::NLPManager::~NLPManager() {
 void YouMainGUI::NLPManager::setup() {
     connect(parentGUI->ui.commandEnterButton,
 		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
-	You::NLP::Controller::get().query(L"", You::NLP::Controller::Context::DEFAULT);
+	// To fix
+	// You::NLP::Controller::get().query(L"",
+	// You::NLP::Controller::Context::DEFAULT);
 }
 
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
-	//std::wstring inputString =
-	//	parentGUI->ui.commandInputBox->text().toStdWString();
+	// To fix
+	// std::wstring inputString =
+	// parentGUI->ui.commandInputBox->text().toStdWString();
 	You::NLP::Result result;
 	return result;
 }

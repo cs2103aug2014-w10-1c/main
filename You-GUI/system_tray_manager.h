@@ -15,16 +15,21 @@ public:
 	explicit SystemTrayManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~SystemTrayManager();
-	QAction *minimizeAction;
-	QAction *maximizeAction;
-	QAction *restoreAction;
-	QAction *quitAction;
-	QMenu* trayIconMenu;
-
-private:
 	/// Defines and sets functionality of the tray icon. Called in the
 	/// constructor.
 	void setup();
+
+private:
+	/// Minimize action in the context menu in system tray
+	QAction *minimizeAction;
+	/// Maximize action in the context menu in system tray
+	QAction *maximizeAction;
+	/// Restore action in the context menu in system tray
+	QAction *restoreAction;
+	/// Quit action in the context menu in system tray
+	QAction *quitAction;
+	/// Tray icon context menu
+	QMenu* trayIconMenu;
 
 	/// Declares and defines the image of the tray icon.
 	void setIcon();

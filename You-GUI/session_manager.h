@@ -16,8 +16,10 @@ public:
 	explicit SessionManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~SessionManager();
-private:
+
+	/// Wrapper function to load session
 	void setup();
+private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();
 
