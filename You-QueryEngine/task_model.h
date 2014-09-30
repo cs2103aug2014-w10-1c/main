@@ -26,7 +26,7 @@ class TaskBuilder;
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	/// \name Typedef for fields
+	/// \name Type Declarations for Task Fields
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
@@ -35,7 +35,7 @@ public:
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
 
-	/// \name Getters
+	/// \name Getters for Field Values.
 	/// @{
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
@@ -44,7 +44,7 @@ public:
 	inline Priority getPriority() const { return priority; }
 	/// @}
 
-	/// \name Setters
+	/// \name Setters for Field Values
 	/// @{
 	void setDescription(const Description&);
 	void setDeadline(Time);
@@ -52,9 +52,9 @@ public:
 	void setPriority(Priority);
 	/// @}
 
-	/// Check if the task is strictly equal with
-	/// another task (Two taks are strictly equal if all fields
-	/// are equal)
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
 	bool isStrictEqual(const Task& task) const;
 
 	/// \name Default Values
