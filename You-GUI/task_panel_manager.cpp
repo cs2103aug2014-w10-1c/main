@@ -1,3 +1,4 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>

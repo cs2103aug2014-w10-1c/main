@@ -1,3 +1,4 @@
+//@author A0094446X
 #pragma once
 #ifndef YOU_GUI_BASE_MANAGER_H_
 #define YOU_GUI_BASE_MANAGER_H_
