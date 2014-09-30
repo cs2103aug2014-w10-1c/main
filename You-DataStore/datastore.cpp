@@ -63,7 +63,7 @@ void DataStore::loadData() {
 	}
 }
 
-void DataStore::serialize(const STask& stask, pugi::xml_node& node) {
+void DataStore::serialize(const STask& stask, pugi::xml_node& const node) {
 	for each (KeyValuePair kvp in stask) {
 		pugi::xml_node keyNode =
 			node.append_child(kvp.first.c_str());
