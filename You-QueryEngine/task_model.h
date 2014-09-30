@@ -1,6 +1,6 @@
 /// \file task_model.h
 /// Defines the task model class.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_TASK_MODEL_H_

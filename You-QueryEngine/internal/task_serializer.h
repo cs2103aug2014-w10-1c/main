@@ -1,6 +1,6 @@
 /// \file task_serializer.h
 /// Defines the task serializer class
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_

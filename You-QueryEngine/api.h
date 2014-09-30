@@ -1,6 +1,6 @@
 /// \file api.h
 /// Defines the API for Query Engine.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_API_H_

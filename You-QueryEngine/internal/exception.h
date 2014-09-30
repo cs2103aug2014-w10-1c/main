@@ -1,6 +1,6 @@
 /// \file You-QueryEngine/internal/exception.h
 /// Defines some exception classes.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_EXCEPTION_H_
