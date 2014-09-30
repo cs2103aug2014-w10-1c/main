@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="controller_context.h" />
+    <ClInclude Include="edit_query.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\context_required_exception.h" />
     <ClInclude Include="exceptions\exception.h" />
@@ -97,6 +98,7 @@
   <ItemGroup>
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="controller_context.cpp" />
+    <ClCompile Include="edit_query.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
     <ClCompile Include="internal\date_time_parser.cpp" />
     <ClCompile Include="internal\query_parser.cpp" />
