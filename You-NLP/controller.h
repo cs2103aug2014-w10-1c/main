@@ -34,6 +34,18 @@ public:
 	/// \see Result The result is polymorphic.
 	Result query(const std::wstring& query, const Context& context) const;
 
+	/// Gets all tasks with their IDs in the given list.
+	///
+	/// \remarks Order is preserved when returned.
+	/// \param[in] taskIDs The task IDs to return.
+	/// \return The tasks with the given ID.
+	Result getTasks(const std::vector<Task::ID>& taskIDs) const;
+
+	/// Gets all tasks.
+	///
+	/// \return The tasks currently in the data store.
+	Result getTasks() const;
+
 private:
 	Controller(const Controller&) = delete;
 	Controller& operator=(const Controller&) = delete;
