@@ -38,6 +38,10 @@ private:
 	Controller(const Controller&) = delete;
 	Controller& operator=(const Controller&) = delete;
 	Controller() = default;
+
+private:
+	/// The global singleton instance of the controller.
+	static Controller instance;
 };
 
 }  // namespace NLP

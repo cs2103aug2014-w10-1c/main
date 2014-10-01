@@ -13,6 +13,8 @@ using Internal::QUERY;
 using Internal::ADD_QUERY;
 using Date = boost::gregorian::date;
 
+Controller Controller::instance;
+
 /// The query builder that will send the query to the appropriate builder
 /// in the controller class.
 class Controller::QueryBuilderVisitor : public boost::static_visitor<
@@ -45,6 +47,10 @@ private:
 	/// The context for the query.
 	const Controller::Context& context;
 };
+
+Controller& Controller::get() {
+	return instance;
+}
 
 Result Controller::query(
 	const std::wstring& query,
