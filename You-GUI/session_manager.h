@@ -1,3 +1,4 @@
+//@author A0094446X
 #pragma once
 #ifndef YOU_GUI_SESSION_MANAGER_H_
 #define YOU_GUI_SESSION_MANAGER_H_
@@ -15,8 +16,10 @@ public:
 	explicit SessionManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~SessionManager();
-private:
+
+	/// Wrapper function to load session
 	void setup();
+private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();
 

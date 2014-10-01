@@ -1,3 +1,4 @@
+//@author A0094446X
 #pragma once
 #ifndef YOU_GUI_TASK_PANEL_MANAGER_H_
 #define YOU_GUI_TASK_PANEL_MANAGER_H_
@@ -14,15 +15,11 @@ public:
 	explicit TaskPanelManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
 	~TaskPanelManager();
-
-private:
 	/// Initializes the taskTreePanel by setting column count and headers.
 	/// Called in the constructor of YouMainGUI.
 	void setup();
-	/// Updates tree widget as the result of a query. This is currently just a
-	/// placeholder.
-	void updateTreeWidget(You::NLP::Result result);
 
+private:
 	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
 	/// intermediate step to adding headings and tasks.
 	QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
