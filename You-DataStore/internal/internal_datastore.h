@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
-
 #include "pugixml.hpp"
 
 namespace You {

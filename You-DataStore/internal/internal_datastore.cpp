@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "datastore.h"
+#include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "datastore.h"
+#include "internal/internal_datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
