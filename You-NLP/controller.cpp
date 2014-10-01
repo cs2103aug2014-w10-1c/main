@@ -13,6 +13,8 @@ using Internal::QUERY;
 using Internal::ADD_QUERY;
 using Date = boost::gregorian::date;
 
+Controller Controller::instance;
+
 /// The query builder that will send the query to the appropriate builder
 /// in the controller class.
 class Controller::QueryBuilderVisitor : public boost::static_visitor<
@@ -46,6 +48,10 @@ private:
 	const Controller::Context& context;
 };
 
+Controller& Controller::get() {
+	return instance;
+}
+
 Result Controller::query(
 	const std::wstring& query,
 	const Controller::Context& context) const {
@@ -58,6 +64,25 @@ Result Controller::query(
 	QueryEngine::Response response = QueryEngine::executeQuery(
 		std::move(queryRef));
 	return response;
+}
+
+Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
+	std::unique_ptr<QueryEngine::Query> query =
+		QueryEngine::FilterTask([&taskIDs](const Task& task) {
+			return std::find(taskIDs.begin(), taskIDs.end(), task.getID()) !=
+				taskIDs.end();
+		});
+
+	return QueryEngine::executeQuery(std::move(query));
+}
+
+Result Controller::getTasks() const {
+	std::unique_ptr<QueryEngine::Query> query =
+		QueryEngine::FilterTask([](const Task& task) {
+			return true;
+		});
+
+	return QueryEngine::executeQuery(std::move(query));
 }
 
 Controller::QueryBuilderVisitor::QueryBuilderVisitor(

@@ -1,18 +1,25 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
 #include "you_main_gui.h"
+#include "session_manager.h"
+#include "task_panel_manager.h"
+#include "system_tray_manager.h"
+#include "NLP_manager.h"
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
-		tpm(new YouMainGUI::TaskPanelManager(this)) {
+		tpm(new YouMainGUI::TaskPanelManager(this)),
+		nlpm(new YouMainGUI::NLPManager(this)) {
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
-	stm->setIcon();
-	sm->loadSession();
-	tpm->taskPanelSetup();
+	stm->setup();
+	sm->setup();
+	tpm->setup();
+	nlpm->setup();
 	populateTaskPanel();
 }
 
@@ -20,11 +27,15 @@ YouMainGUI::~YouMainGUI() {
 }
 
 void YouMainGUI::closeEvent(QCloseEvent *event) {
-	sm->saveSession();
-}
-
-void YouMainGUI::on_commandEnterButton_clicked() {
-	YouMainGUI::queryNLP();
+	if (stm->trayIcon.isVisible()) {
+		QMessageBox::information(this, tr("Systray"),
+			tr("The program will keep running in the "
+			"system tray. To terminate the program, "
+			"choose <b>Quit</b> in the context menu "
+			"of the system tray entry."));
+		hide();
+		event->ignore();
+	}
 }
 
 void YouMainGUI::populateTaskPanel() {
@@ -39,17 +50,13 @@ void YouMainGUI::populateTaskPanel() {
 	}
 }
 
-You::NLP::Result YouMainGUI::queryNLP() {
-	/// Init a task list
-	/// Convert GUI state into a context
-	/// Feed query and context into NLP engine
-	You::NLP::TaskList tl;
-	std::wstring inputString = ui.commandInputBox->text().toStdWString();
-	/// Get Result from controller.query()
-	You::NLP::Result result;
-	return result;
-}
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {}
 
+void YouMainGUI::setVisible(bool visible) {
+	stm->minimizeAction->setEnabled(visible);
+	stm->maximizeAction->setEnabled(!isMaximized());
+	stm->restoreAction->setEnabled(isMaximized() || !visible);
+	QWidget::setVisible(visible);
+}

@@ -18,9 +18,15 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="task_serializer_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="task_model_tests.cpp">

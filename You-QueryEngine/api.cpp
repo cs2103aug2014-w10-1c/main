@@ -1,10 +1,19 @@
+/// \author A0112054Y
 #include "stdafx.h"
 
 #include "api.h"
 #include "internal/action/add_task.h"
+#include "internal/action/filter_task.h"
 
 namespace You {
 namespace QueryEngine {
+
+/// Construct a new filter task action
+std::unique_ptr<Query>
+FilterTask(const std::function<bool(Task)>& filter) {
+	using FilterTask = Internal::FilterTask;
+	return std::unique_ptr<Query>(new FilterTask(filter));
+}
 
 /// Construct a new add task action
 std::unique_ptr<Query>

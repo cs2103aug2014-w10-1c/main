@@ -1,6 +1,6 @@
 /// \file task_builder.h
 /// Defines the task builder class
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_BUILDER_H_
@@ -17,7 +17,7 @@ namespace Internal {
 ///
 ///   Example usage:
 ///   \code{.cpp}
-///	    Task newTask = Task::TaskBuilder::get().description("Feed");
+///	    Task newTask = TaskBuilder::get().description("Feed");
 ///   \endcode
 ///
 ///	  \note At least description must be provided when creating a task.
@@ -27,10 +27,12 @@ public:
 	/// \return A builder object.
 	static TaskBuilder get();
 
+	/// Initialize task id.
+	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
 	TaskBuilder& description(const Task::Description& description);
 	/// Initialize task deadline.
-	TaskBuilder& deadline(Task::Time deadline);
+	TaskBuilder& deadline(const Task::Time& deadline);
 	/// Initialize task dependencies.
 	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
 	/// Initialize task priority.
@@ -45,6 +47,19 @@ private:
 
 	/// Copy constructor from instance.
 	explicit TaskBuilder(const Task& instance) : instance(instance) {}
+
+/// TODO (evansb) Implement validations
+#if 0
+	/// Check if a deadline is valid
+	/// A deadline is valid if it is:
+	///		- Not earlier the latest of its dependencies.
+	bool isValid(const Task::Time& deadline) const;
+
+	/// Check if dependencies are valid
+	/// A deadline is valid if it is:
+	///     - Does not form a cyclic dependency with its dependencies.
+	bool isValid(const Task::Dependencies& dependencies) const;
+#endif
 
 	/// Instance that will be returned by the builder
 	Task instance;

@@ -1,6 +1,6 @@
 /// \file task_model.h
 /// Defines the task model class.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_TASK_MODEL_H_
@@ -9,13 +9,13 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
 namespace QueryEngine {
 
-// Do a forward declaration on TaskBuilder
-// so that it can be
+// Forward declaration on TaskBuilder
 namespace Internal {
 class TaskBuilder;
 }
@@ -26,7 +26,7 @@ class TaskBuilder;
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	/// \name Typedefs
+	/// \name Type Declarations for Task Fields
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
@@ -35,7 +35,7 @@ public:
 	enum class Priority { IMPORTANT, NORMAL };
 	/// @}
 
-	/// \name Getters
+	/// \name Getters for Field Values.
 	/// @{
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
@@ -44,7 +44,7 @@ public:
 	inline Priority getPriority() const { return priority; }
 	/// @}
 
-	/// \name Setters
+	/// \name Setters for Field Values
 	/// @{
 	void setDescription(const Description&);
 	void setDeadline(Time);
@@ -52,8 +52,14 @@ public:
 	void setPriority(Priority);
 	/// @}
 
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
+	bool isStrictEqual(const Task& task) const;
+
 	/// \name Default Values
 	/// @{
+	static const ID DEFAULT_ID;
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time NEVER;
 	static const Time DEFAULT_DEADLINE;
@@ -61,19 +67,20 @@ public:
 	static const Priority DEFAULT_PRIORITY;
 	/// @}
 
-	// TODO(evansb) Remove when getNextID() that talks to
-	// Data Storage is implemented.
-	static const ID DUMMY_ID;
+	/// Equality of task is determined by its unique ID
+	/// For stricter equality, \see isStrictEqual
+	inline bool operator==(const Task& rhs) const {
+		return id == rhs.id;
+	}
 
 private:
-	Task(ID id, const Description& description, Time deadline,
+	/// Disable default constructor - use builder only
+	Task() = delete;
+	/// Called by nextNewTask()
+	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
-
-	/// Return a task with using default values for all its fields.
-	/// The ID of the task created is LAST_ID + 1
-	static Task nextNewTask();
 
 	/// \name Private Fields
 	/// @{

@@ -1,6 +1,6 @@
 /// \file api.h
 /// Defines the API for Query Engine.
-/// \author a0112054y
+/// \author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_API_H_
@@ -13,7 +13,7 @@
 namespace You {
 namespace QueryEngine {
 
-/// A synthesized type for query responses
+/// A synthesized type for holding query responses
 typedef boost::variant <
 	 std::vector<Task>,
 	 Task,
@@ -31,14 +31,22 @@ private:
 	virtual Response execute() = 0;
 };
 
-/// Execute the query and return a response
-Response executeQuery(std::unique_ptr<Query> query);
-
+/// \name Query Constructors
+/// @{
 /// Construct a query for adding a task
 /// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
 std::unique_ptr<Query>
 AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
+
+std::unique_ptr<Query>
+FilterTask(const std::function<bool(Task)>& filter);
+
+/// @}
+
+/// Execute a query and return a response
+/// \return The result of the query as a response object.
+Response executeQuery(std::unique_ptr<Query> query);
 
 }  // namespace QueryEngine
 }  // namespace You
