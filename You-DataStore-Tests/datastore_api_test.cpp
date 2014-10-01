@@ -29,9 +29,8 @@ const DataStore::STask stask = {
 
 TEST_CLASS(DataStoreApiTest) {
 public:
-	DataStore sut;
-
 	TEST_METHOD(DataStore_Post_Basic_Test) {
+		DataStore sut;
 		// Assert::IsTrue(sut.document.empty());
 		bool result = sut.post(0, DataStore::STask());
 		Assert::IsTrue(result);
@@ -39,12 +38,14 @@ public:
 	}
 
 	TEST_METHOD(DataStore_Post_DuplicateId_Test) {
+		DataStore sut;
 		sut.post(0, DataStore::STask());
 		bool result = sut.post(0, DataStore::STask());
 		Assert::IsFalse(result);
 	}
 
 	TEST_METHOD(DataStore_Put_Basic_Test) {
+		DataStore sut;
 		sut.post(0, DataStore::STask());
 		bool result = sut.put(0, stask);
 		Assert::IsTrue(result);
@@ -52,6 +53,7 @@ public:
 	}
 
 	TEST_METHOD(DataStore_Put_FalseId_Test) {
+		DataStore sut;
 		sut.post(0, DataStore::STask());
 		bool result = sut.put(1, DataStore::STask());
 		Assert::IsFalse(result);
@@ -59,6 +61,7 @@ public:
 	}
 
 	TEST_METHOD(DataStore_Get_Basic_Test) {
+		DataStore sut;
 		sut.post(0, stask);
 		boost::variant<bool, DataStore::STask> response = sut.get(0);
 		DataStore::STask task = boost::get<DataStore::STask>(response);
@@ -70,17 +73,20 @@ public:
 	}
 
 	TEST_METHOD(DataStore_Get_NonExistent_Test) {
+		DataStore sut;
 		boost::variant<bool, DataStore::STask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
 
 	TEST_METHOD(DataStore_Erase_Basic_Test) {
+		DataStore sut;
 		sut.post(0, DataStore::STask());
 		bool result = sut.erase(0);
 		Assert::IsTrue(result);
 	}
 
 	TEST_METHOD(DataStore_Erase_NonExistent_Test) {
+		DataStore sut;
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
 	}
