@@ -9,6 +9,7 @@ namespace QueryEngine {
 namespace Internal {
 
 Response FilterTask::execute() {
+#if 0
 	using STask = TaskSerializer::STask;
 	std::vector<STask> slist;
 	std::vector<Task> list;
@@ -27,7 +28,8 @@ Response FilterTask::execute() {
 			list.push_back(TaskSerializer::deserialize(s));
 		}
 	);
-	return list;
+#endif
+	return std::wstring(L"FILTER");
 }
 
 }  // namespace Internal
