@@ -64,12 +64,12 @@ void DataStore::loadData() {
 }
 
 void DataStore::serialize(const STask& stask, pugi::xml_node& const node) {
-	for each (KeyValuePair kvp in stask) {
+	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
-			node.append_child(kvp.first.c_str());
+			node.append_child(iter->first.c_str());
 		pugi::xml_node keyValue =
 			keyNode.append_child(pugi::xml_node_type::node_pcdata);
-		keyValue.set_value(kvp.second.c_str());
+		keyValue.set_value(iter->second.c_str());
 	}
 }
 
