@@ -12,7 +12,7 @@
 namespace You {
 namespace DataStore {
 
-class DataStore {
+class InternalDataStore {
 	/// Test classes
 	friend class DataStoreAPITest;
 public:

@@ -4,9 +4,9 @@
 namespace You {
 namespace DataStore {
 
-const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
+const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
 
-bool DataStore::post(TaskId rawId, const STask& sTask) {
+bool InternalDataStore::post(TaskId rawId, const STask& sTask) {
 	// Consider changing parameter to std::wstring altogether
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
@@ -20,7 +20,7 @@ bool DataStore::post(TaskId rawId, const STask& sTask) {
 	return true;
 }
 
-bool DataStore::put(TaskId rawId, const STask& sTask) {
+bool InternalDataStore::put(TaskId rawId, const STask& sTask) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toEdit =
 		document.find_child_by_attribute(L"id", taskId.c_str());
@@ -31,30 +31,30 @@ bool DataStore::put(TaskId rawId, const STask& sTask) {
 	return post(rawId, sTask);
 }
 
-boost::variant<bool, DataStore::STask> DataStore::get(TaskId rawId) {
+boost::variant<bool, InternalDataStore::STask> InternalDataStore::get(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
 	if (!toGet) {
 		return false;
 	}
-	DataStore::STask stask = deserialize(toGet);
+	InternalDataStore::STask stask = deserialize(toGet);
 	return stask;
 }
 
-bool DataStore::erase(TaskId rawId) {
+bool InternalDataStore::erase(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toErase =
 		document.find_child_by_attribute(L"id", taskId.c_str());
 	return document.remove_child(toErase);
 }
 
-bool DataStore::saveData() {
+bool InternalDataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
 }
 
-void DataStore::loadData() {
+void InternalDataStore::loadData() {
 	pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 
 	// Not sure if the if block below is necessary
@@ -63,7 +63,7 @@ void DataStore::loadData() {
 	}
 }
 
-void DataStore::serialize(const STask& stask, pugi::xml_node& const node) {
+void InternalDataStore::serialize(const STask& stask, pugi::xml_node& const node) {
 	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
 			node.append_child(iter->first.c_str());
@@ -73,7 +73,7 @@ void DataStore::serialize(const STask& stask, pugi::xml_node& const node) {
 	}
 }
 
-DataStore::STask DataStore::deserialize(const pugi::xml_node& taskNode) {
+InternalDataStore::STask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
 	STask stask;
 	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
 		stask.insert(KeyValuePair(Key(iter->name()),

@@ -9,7 +9,7 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
-using DataStore = You::DataStore::DataStore;
+using InternalDataStore = You::DataStore::InternalDataStore;
 
 // Dummy constants
 const std::wstring TASK_ID = L"id";
@@ -19,7 +19,7 @@ const std::wstring PRIORITY = L"priority";
 const std::wstring DEPENDENCIES = L"dependency";
 
 // Dummy serialized task
-const DataStore::STask stask = {
+const InternalDataStore::STask stask = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"bla bla" },
 		{ DEADLINE, L"xxxxxx" },
@@ -30,41 +30,41 @@ const DataStore::STask stask = {
 TEST_CLASS(DataStoreTest) {
 public:
 	TEST_METHOD(DataStore_Post_Basic_Test) {
-		DataStore sut;
+		InternalDataStore sut;
 		// Assert::IsTrue(sut.document.empty());
-		bool result = sut.post(0, DataStore::STask());
+		bool result = sut.post(0, InternalDataStore::STask());
 		Assert::IsTrue(result);
 		// Assert::IsFalse(sut.document.empty());
 	}
 
 	TEST_METHOD(DataStore_Post_DuplicateId_Test) {
-		DataStore sut;
-		sut.post(0, DataStore::STask());
-		bool result = sut.post(0, DataStore::STask());
+		InternalDataStore sut;
+		sut.post(0, InternalDataStore::STask());
+		bool result = sut.post(0, InternalDataStore::STask());
 		Assert::IsFalse(result);
 	}
 
 	TEST_METHOD(DataStore_Put_Basic_Test) {
-		DataStore sut;
-		sut.post(0, DataStore::STask());
+		InternalDataStore sut;
+		sut.post(0, InternalDataStore::STask());
 		bool result = sut.put(0, stask);
 		Assert::IsTrue(result);
 		// Check for the node being edited
 	}
 
 	TEST_METHOD(DataStore_Put_FalseId_Test) {
-		DataStore sut;
-		sut.post(0, DataStore::STask());
-		bool result = sut.put(1, DataStore::STask());
+		InternalDataStore sut;
+		sut.post(0, InternalDataStore::STask());
+		bool result = sut.put(1, InternalDataStore::STask());
 		Assert::IsFalse(result);
 		// Check for the node being edited
 	}
 
 	TEST_METHOD(DataStore_Get_Basic_Test) {
-		DataStore sut;
+		InternalDataStore sut;
 		sut.post(0, stask);
-		boost::variant<bool, DataStore::STask> response = sut.get(0);
-		DataStore::STask task = boost::get<DataStore::STask>(response);
+		boost::variant<bool, InternalDataStore::STask> response = sut.get(0);
+		InternalDataStore::STask task = boost::get<InternalDataStore::STask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
@@ -73,20 +73,20 @@ public:
 	}
 
 	TEST_METHOD(DataStore_Get_NonExistent_Test) {
-		DataStore sut;
-		boost::variant<bool, DataStore::STask> response = sut.get(0);
+		InternalDataStore sut;
+		boost::variant<bool, InternalDataStore::STask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
 
 	TEST_METHOD(DataStore_Erase_Basic_Test) {
-		DataStore sut;
-		sut.post(0, DataStore::STask());
+		InternalDataStore sut;
+		sut.post(0, InternalDataStore::STask());
 		bool result = sut.erase(0);
 		Assert::IsTrue(result);
 	}
 
 	TEST_METHOD(DataStore_Erase_NonExistent_Test) {
-		DataStore sut;
+		InternalDataStore sut;
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
 	}
