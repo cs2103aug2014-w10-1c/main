@@ -66,6 +66,14 @@ Result Controller::query(
 	return response;
 }
 
+Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) {
+
+}
+
+Result Controller::getTasks() {
+
+}
+
 Controller::QueryBuilderVisitor::QueryBuilderVisitor(
 	const Controller::Context& context)
 : context(context) {
