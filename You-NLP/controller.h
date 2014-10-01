@@ -15,8 +15,10 @@ namespace UnitTests { class ControllerContextTests; }
 /// This is a singleton class.
 class Controller {
 	class QueryBuilderVisitor;
-	class Context;
 	friend class UnitTests::ControllerContextTests;
+
+public:
+	class Context;
 
 public:
 	/// Gets the singleton instance for the controller.
@@ -32,10 +34,26 @@ public:
 	/// \see Result The result is polymorphic.
 	Result query(const std::wstring& query, const Context& context) const;
 
+	/// Gets all tasks with their IDs in the given list.
+	///
+	/// \remarks Order is preserved when returned.
+	/// \param[in] taskIDs The task IDs to return.
+	/// \return The tasks with the given ID.
+	Result getTasks(const std::vector<Task::ID>& taskIDs) const;
+
+	/// Gets all tasks.
+	///
+	/// \return The tasks currently in the data store.
+	Result getTasks() const;
+
 private:
 	Controller(const Controller&) = delete;
 	Controller& operator=(const Controller&) = delete;
 	Controller() = default;
+
+private:
+	/// The global singleton instance of the controller.
+	static Controller instance;
 };
 
 }  // namespace NLP
