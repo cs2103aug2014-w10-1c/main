@@ -36,7 +36,10 @@ public:
 
 	/// Header string for column 5
 	const std::wstring TASK_COLUMN_5 = L"Due Date";
+
+	/// Vector of strings for the headers of the columns
 	std::vector<std::wstring> columnHeaders;
+
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();

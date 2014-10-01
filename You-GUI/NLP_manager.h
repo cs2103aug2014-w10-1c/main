@@ -31,7 +31,6 @@ public:
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
-	void loadTasks(std::vector<int64_t> taskID);
 private:
 	/// The current result/context displayed to the user
 	std::unique_ptr<You::NLP::Result> currentResult;
