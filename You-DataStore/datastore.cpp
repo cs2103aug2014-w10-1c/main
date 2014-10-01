@@ -75,8 +75,9 @@ void DataStore::serialize(const STask& stask, pugi::xml_node& const node) {
 
 DataStore::STask DataStore::deserialize(const pugi::xml_node& taskNode) {
 	STask stask;
-	for each (pugi::xml_node node in taskNode) {
-		stask.insert(KeyValuePair(Key(node.name()), Value(node.child_value())));
+	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
+		stask.insert(KeyValuePair(Key(iter->name()),
+			Value(iter->child_value())));
 	}
 	return stask;
 }
