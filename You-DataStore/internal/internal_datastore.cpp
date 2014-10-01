@@ -31,7 +31,9 @@ bool InternalDataStore::put(TaskId rawId, const STask& sTask) {
 	return post(rawId, sTask);
 }
 
-boost::variant<bool, InternalDataStore::STask> InternalDataStore::get(TaskId rawId) {
+using STask = InternalDataStore::STask;
+
+boost::variant<bool, STask> InternalDataStore::get(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
@@ -63,7 +65,8 @@ void InternalDataStore::loadData() {
 	}
 }
 
-void InternalDataStore::serialize(const STask& stask, pugi::xml_node& const node) {
+void InternalDataStore::serialize(const STask& stask,
+		pugi::xml_node& const node) {
 	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
 			node.append_child(iter->first.c_str());
@@ -73,7 +76,7 @@ void InternalDataStore::serialize(const STask& stask, pugi::xml_node& const node
 	}
 }
 
-InternalDataStore::STask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
+STask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
 	STask stask;
 	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
 		stask.insert(KeyValuePair(Key(iter->name()),

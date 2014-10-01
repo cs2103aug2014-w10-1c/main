@@ -64,7 +64,8 @@ public:
 		InternalDataStore sut;
 		sut.post(0, stask);
 		boost::variant<bool, InternalDataStore::STask> response = sut.get(0);
-		InternalDataStore::STask task = boost::get<InternalDataStore::STask>(response);
+		InternalDataStore::STask task =
+			boost::get<InternalDataStore::STask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
