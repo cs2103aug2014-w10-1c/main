@@ -4,7 +4,6 @@
 #define YOU_GUI_SESSION_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
-
 /// The component that handles all session-related data of the application. It
 /// handles basics such as the window state of the application and task sets
 /// previously displayed, saving the state on program exit, and restoring them
@@ -12,6 +11,7 @@
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
+	friend class NLPManager;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SessionManager(YouMainGUI * const parentGUI)
@@ -21,6 +21,10 @@ public:
 
 	/// Wrapper function to load session
 	void setup();
+
+	std::vector<int64_t> taskIDs;
+signals:
+	void idArrayLoaded(std::vector<int64_t>);
 private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();

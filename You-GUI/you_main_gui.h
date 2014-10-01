@@ -5,7 +5,7 @@
 #include <memory>
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
-
+#include "You-NLP/task_list.h"
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -40,8 +40,6 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
-
-private:
 	/// The class from which all components inherit.
 	class BaseManager;
 
@@ -71,18 +69,24 @@ private:
 	/// from the BaseManager class.
 	class NLPManager;
 
+	/// The SessionManager instance
+	const std::unique_ptr<SessionManager> sm;
+	/// The TaskPanelManager instance
+	const std::unique_ptr<TaskPanelManager> tpm;
+	/// The SystemTrayManager instance
+	const std::unique_ptr<SystemTrayManager> stm;
+	/// The NLPManager instance
+	const std::unique_ptr<NLPManager> nlpm;
+private:
+
+
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	/// The SessionManager instance
-	std::unique_ptr<SessionManager> sm;
-	/// The TaskPanelManager instance
-	std::unique_ptr<TaskPanelManager> tpm;
-	/// The SystemTrayManager instance
-	std::unique_ptr<SystemTrayManager> stm;
-	/// The NLPManager instance
-	std::unique_ptr<NLPManager> nlpm;
+	/// List of TaskIDs
+	//You::NLP::TaskList taskList;
+
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 	/// Reimplementation of closeEvent to save state of GUI.

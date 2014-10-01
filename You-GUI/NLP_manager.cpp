@@ -15,6 +15,11 @@ void YouMainGUI::NLPManager::setup() {
 	You::NLP::Controller::get().getTasks();
 }
 
+void YouMainGUI::NLPManager::loadTasks(std::vector<int64_t> taskID) {
+	//You::NLP::Controller::get().getTasks(taskID);
+	qDebug("lol");
+}
+
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
 	std::wstring inputString =
@@ -25,5 +30,6 @@ You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 }
 
 void YouMainGUI::NLPManager::commandEnterButtonClicked() {
-	YouMainGUI::NLPManager::queryNLP();
+	//YouMainGUI::NLPManager::queryNLP();
+	parentGUI->populateTaskPanel();
 }

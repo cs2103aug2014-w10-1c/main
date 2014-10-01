@@ -7,6 +7,7 @@
 #include "You-NLP/controller.h"
 #include "You-NLP/result.h"
 #include "You-NLP/controller_context.h"
+#include "You-NLP/task_list.h"
 #include "base_manager.h"
 
 /// The component that handles passing of data between the NLP parser and the
@@ -30,6 +31,7 @@ public:
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
+	void loadTasks(std::vector<int64_t> taskID);
 private:
 	/// The current result/context displayed to the user
 	std::unique_ptr<You::NLP::Result> currentResult;

@@ -17,9 +17,9 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
 	stm->setup();
-	sm->setup();
-	tpm->setup();
 	nlpm->setup();
+	tpm->setup();
+	sm->setup();
 	populateTaskPanel();
 }
 
@@ -48,6 +48,10 @@ void YouMainGUI::populateTaskPanel() {
 		rowStrings.push_back(L"xyzz");
 		tpm->addTask(rowStrings);
 	}
+	sm->taskIDs.push_back(8);
+	sm->taskIDs.push_back(8);
+	sm->taskIDs.push_back(16);
+	sm->taskIDs.push_back(19);
 }
 
 
