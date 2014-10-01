@@ -22,8 +22,8 @@ You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	You::NLP::Result result;
-	/// You::NLP::Controller::get().query(L"",
-	///	You::NLP::Controller::Context(currentResult));
+	// You::NLP::Controller::get().query(L"",
+	// You::NLP::Controller::Context(&result));
 	return result;
 }
 

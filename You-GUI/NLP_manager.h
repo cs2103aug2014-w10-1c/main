@@ -30,7 +30,7 @@ public:
 	You::NLP::Result queryNLP();
 private:
 	/// The current result/context displayed to the user
-	You::NLP::Result currentResult;
+	std::unique_ptr<You::NLP::Result> currentResult;
 
 	private slots:
 	/// QT's signal/slot mechanism for input enter button.
