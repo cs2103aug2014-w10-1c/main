@@ -22,9 +22,12 @@ public:
 	/// Wrapper function to load session
 	void setup();
 
+	/// The list of taskIDs that will be filled on program start from the
+	/// session file, to be passed to the NLP manager. Mechanism to pass is
+	/// still being considered. This will also contain the list of IDs to be
+	/// written to the session file.
 	std::vector<int64_t> taskIDs;
-signals:
-	void idArrayLoaded(std::vector<int64_t>);
+
 private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();

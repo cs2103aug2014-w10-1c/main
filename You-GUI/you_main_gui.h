@@ -71,21 +71,22 @@ public:
 
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;
+
 	/// The TaskPanelManager instance
 	const std::unique_ptr<TaskPanelManager> tpm;
+
 	/// The SystemTrayManager instance
 	const std::unique_ptr<SystemTrayManager> stm;
+
 	/// The NLPManager instance
 	const std::unique_ptr<NLPManager> nlpm;
+
 private:
-
-
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	/// List of TaskIDs
-	//You::NLP::TaskList taskList;
+	You::NLP::TaskList taskList;
 
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);

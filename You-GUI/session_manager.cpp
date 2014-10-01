@@ -24,13 +24,12 @@ void YouMainGUI::SessionManager::loadSession() {
 	parentGUI->resize(settings.value("size", QSize(400, 400)).toSize());
 	parentGUI->move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
-
 }
 
 void YouMainGUI::SessionManager::saveSession() {
 	// Capture list of IDs
 	QList<int64_t> idList;
-	for (int i = 0; i < taskIDs.size(); i++){
+	for (int i = 0; i < taskIDs.size(); i++) {
 		idList.append(taskIDs.at(i));
 	}
 	QSettings settings("session.txt", QSettings::IniFormat);
