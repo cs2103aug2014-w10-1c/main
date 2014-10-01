@@ -11,16 +11,15 @@ YouMainGUI::NLPManager::~NLPManager() {
 void YouMainGUI::NLPManager::setup() {
     connect(parentGUI->ui.commandEnterButton,
 		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
-	// To fix
-	// You::NLP::Controller::get().getTasks();
+	// To change to get list of tasks from session instead of ALL tasks.
+	You::NLP::Controller::get().getTasks();
 }
 
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
-	// To fix
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
-	You::NLP::Result result = You::NLP::Controller::get().query(L"",
+	You::NLP::Result result = You::NLP::Controller::get().query(inputString,
 		You::NLP::Controller::Context::DEFAULT);
 	return result;
 }
