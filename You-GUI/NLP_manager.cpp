@@ -12,8 +12,7 @@ void YouMainGUI::NLPManager::setup() {
     connect(parentGUI->ui.commandEnterButton,
 		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
 	// To fix
-	You::NLP::Controller::get().query(L"",
-		You::NLP::Controller::Context::DEFAULT);
+	// You::NLP::Controller::get().getTasks();
 }
 
 You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
@@ -21,9 +20,8 @@ You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 	// To fix
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
-	You::NLP::Result result;
-	// You::NLP::Controller::get().query(L"",
-	// You::NLP::Controller::Context(&result));
+	You::NLP::Result result = You::NLP::Controller::get().query(L"",
+		You::NLP::Controller::Context::DEFAULT);
 	return result;
 }
 

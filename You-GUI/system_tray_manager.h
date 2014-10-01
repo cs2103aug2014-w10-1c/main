@@ -12,8 +12,10 @@ class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
 public:
+	/// Constructor inherited from BaseManager.
 	explicit SystemTrayManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+	/// Destructor.
 	~SystemTrayManager();
 	/// Defines and sets functionality of the tray icon. Called in the
 	/// constructor.

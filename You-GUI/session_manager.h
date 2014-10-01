@@ -13,8 +13,10 @@ class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
 public:
+	/// Constructor inherited from BaseManager.
 	explicit SessionManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+	/// Destructor.
 	~SessionManager();
 
 	/// Wrapper function to load session
