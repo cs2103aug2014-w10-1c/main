@@ -66,6 +66,25 @@ Result Controller::query(
 	return response;
 }
 
+Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
+	std::unique_ptr<QueryEngine::Query> query =
+		QueryEngine::FilterTask([&taskIDs](const Task& task) {
+			return std::find(taskIDs.begin(), taskIDs.end(), task.getID()) !=
+				taskIDs.end();
+		});
+
+	return QueryEngine::executeQuery(std::move(query));
+}
+
+Result Controller::getTasks() const {
+	std::unique_ptr<QueryEngine::Query> query =
+		QueryEngine::FilterTask([](const Task& task) {
+			return true;
+		});
+
+	return QueryEngine::executeQuery(std::move(query));
+}
+
 Controller::QueryBuilderVisitor::QueryBuilderVisitor(
 	const Controller::Context& context)
 : context(context) {
