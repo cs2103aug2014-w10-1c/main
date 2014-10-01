@@ -78,7 +78,7 @@ Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
 
 Result Controller::getTasks() const {
 	std::unique_ptr<QueryEngine::Query> query =
-		QueryEngine::FilterTask([](const Task& task) {
+		QueryEngine::FilterTask([](const Task& /*task*/) {
 			return true;
 		});
 
