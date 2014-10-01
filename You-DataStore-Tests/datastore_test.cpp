@@ -27,7 +27,7 @@ const DataStore::STask stask = {
 		{ DEPENDENCIES, L"12345" }
 };
 
-TEST_CLASS(DataStoreApiTest) {
+TEST_CLASS(DataStoreTest) {
 public:
 	TEST_METHOD(DataStore_Post_Basic_Test) {
 		DataStore sut;
