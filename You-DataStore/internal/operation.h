@@ -1,9 +1,9 @@
 #pragma once
-#ifndef YOU_DATASTORE_OPERATION_H_
-#define YOU_DATASTORE_OPERATION_H_
+#ifndef YOU_DATASTORE_INTERNAL_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATION_H_
 
 #include <unordered_map>
-#include "datastore.h"
+#include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {
@@ -21,4 +21,4 @@ public:
 }   // namespace DataStore
 }   // namespace You
 
-#endif  // YOU_DATASTORE_OPERATION_H_
+#endif  // YOU_DATASTORE_INTERNAL_OPERATION_H_

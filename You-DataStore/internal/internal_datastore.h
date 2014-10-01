@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_DATASTORE_DATASTORE_H_
-#define YOU_DATASTORE_DATASTORE_H_
+#ifndef YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
+#define YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
 
 #include <cstdint>
 #include <functional>
@@ -66,4 +66,4 @@ private:
 }  // namespace DataStore
 }  // namespace You
 
-#endif  // YOU_DATASTORE_DATASTORE_H_
+#endif  // YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
