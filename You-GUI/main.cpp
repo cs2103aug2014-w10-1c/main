@@ -1,3 +1,4 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <QtWidgets/QApplication>
 #include "you_main_gui.h"
