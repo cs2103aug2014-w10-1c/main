@@ -13,7 +13,6 @@ void YouMainGUI::NLPManager::setup() {
 		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
-	You::NLP::Controller::get().getTasks();
 	// Set result to current context
 }
 

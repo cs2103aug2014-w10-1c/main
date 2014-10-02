@@ -27,11 +27,6 @@ void YouMainGUI::SessionManager::loadSession() {
 }
 
 void YouMainGUI::SessionManager::saveSession() {
-	// Capture list of IDs
-	QList<int64_t> idList;
-	for (int i = 0; i < taskIDs.size(); i++) {
-		idList.append(taskIDs.at(i));
-	}
 	QSettings settings("session.txt", QSettings::IniFormat);
 	settings.beginWriteArray("idList");
 	for (int i = 0; i < taskIDs.size(); i++) {

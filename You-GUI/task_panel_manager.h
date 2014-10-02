@@ -15,8 +15,10 @@ public:
 	/// Constructor inherited from BaseManager.
 	explicit TaskPanelManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+
 	/// Destructor.
 	~TaskPanelManager();
+
 	/// Initializes the taskTreePanel by setting column count and headers.
 	/// Called in the constructor of YouMainGUI.
 	void setup();

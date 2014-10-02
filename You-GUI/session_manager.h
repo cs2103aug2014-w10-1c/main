@@ -11,11 +11,11 @@
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
-	friend class NLPManager;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SessionManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+
 	/// Destructor.
 	~SessionManager();
 
@@ -26,7 +26,7 @@ public:
 	/// session file, to be passed to the NLP manager. Mechanism to pass is
 	/// still being considered. This will also contain the list of IDs to be
 	/// written to the session file.
-	std::vector<int64_t> taskIDs;
+	std::vector<You::NLP::Task::ID> taskIDs;
 
 private:
 	/// Loads the previous state of the GUI. Called during constructor.

@@ -23,14 +23,18 @@ public:
 	/// Constructor inherited from BaseManager.
 	explicit NLPManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+
 	/// Destructor.
 	~NLPManager();
+
 	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
 	void setup();
+
 	/// Queries the NLP engine. Passes the Result and wstring input into the
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
+
 private:
 	/// The current result/context displayed to the user
 	std::unique_ptr<You::NLP::Result> currentResult;

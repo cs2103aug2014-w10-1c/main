@@ -22,6 +22,7 @@ public:
 	/// String/numeric constants for the GUI
 	/// Number of columns in task panel
 	int TASK_COLUMN_COUNT = 4;
+
 	/// Header string for column 1
 	const std::wstring TASK_COLUMN_1 = L"Hidden ID Column";
 
@@ -29,13 +30,13 @@ public:
 	const std::wstring TASK_COLUMN_2 = L"Index";
 
 	/// Header string for column 3
-	const std::wstring TASK_COLUMN_3 = L"Task Title";
+	const std::wstring TASK_COLUMN_3 = L"Description";
 
 	/// Header string for column 4
-	const std::wstring TASK_COLUMN_4 = L"Task Description";
+	const std::wstring TASK_COLUMN_4 = L"Deadline";
 
 	/// Header string for column 5
-	const std::wstring TASK_COLUMN_5 = L"Due Date";
+	const std::wstring TASK_COLUMN_5 = L"Priority";
 
 	/// Vector of strings for the headers of the columns
 	std::vector<std::wstring> columnHeaders;
@@ -43,6 +44,7 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
+
 	/// The class from which all components inherit.
 	class BaseManager;
 
@@ -89,10 +91,11 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	You::NLP::TaskList taskList;
+	std::unique_ptr<You::NLP::TaskList> taskList;
 
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
+
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 };
