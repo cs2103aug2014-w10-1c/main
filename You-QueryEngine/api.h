@@ -14,14 +14,8 @@ namespace You {
 namespace QueryEngine {
 
 /// A synthesized type for holding query responses
-typedef boost::variant <
-	 std::vector<Task>,
-	 Task,
-	 Task::ID,
-	 Task::Time,
-	 Task::Dependencies,
-	 Task::Description
-	> Response;
+typedef boost::variant<std::vector<Task>, Task,
+	Task::ID, std::wstring> Response;
 
 /// Base class for all queries.
 class Query {
@@ -48,7 +42,6 @@ DeleteTask(Task::ID id);
 std::unique_ptr<Query>
 UpdateTask(Task::ID id, Task::Description description,
 Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies);
-
 /// @}
 
 /// Execute a query and return a response
