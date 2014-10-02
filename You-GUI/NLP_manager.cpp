@@ -22,7 +22,7 @@ You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	// When ready, pass current context, not the default one.
 	You::NLP::Result result = You::NLP::Controller::get().query(inputString,
-		You::NLP::Controller::Context::DEFAULT);
+		You::NLP::Controller::Context::Context(parentGUI->getTaskList()));
 	return result;
 }
 
