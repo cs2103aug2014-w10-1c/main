@@ -31,6 +31,10 @@ Filter& Filter::operator!() {
 	return *this;
 }
 
+Filter::operator FFilter() const {
+	return ffilter;
+}
+
 FFilter Filter::AND(const FFilter& f, const FFilter& g) {
 	return [=] (FFilter::argument_type x) {
 		return f(x) && g(x);
