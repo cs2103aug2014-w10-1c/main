@@ -3,6 +3,7 @@
 
 namespace You {
 namespace DataStore {
+namespace Internal {
 
 const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
 
@@ -85,5 +86,6 @@ STask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
 	return stask;
 }
 
+}  // namespace Internal
 }  // namespace DataStore
 }  // namespace You

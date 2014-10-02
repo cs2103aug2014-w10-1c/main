@@ -11,6 +11,7 @@
 
 namespace You {
 namespace DataStore {
+namespace Internal {
 
 class InternalDataStore {
 	/// Test classes
@@ -63,6 +64,7 @@ private:
 	STask deserialize(const pugi::xml_node&);
 };
 
+}  // namespace Internal
 }  // namespace DataStore
 }  // namespace You
 

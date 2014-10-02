@@ -9,7 +9,7 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
-using InternalDataStore = You::DataStore::InternalDataStore;
+using InternalDataStore = You::DataStore::Internal::InternalDataStore;
 
 // Dummy constants
 const std::wstring TASK_ID = L"id";
