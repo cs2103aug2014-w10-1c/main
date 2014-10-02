@@ -73,3 +73,6 @@ void YouMainGUI::setVisible(bool visible) {
 	stm->restoreAction->setEnabled(isMaximized() || !visible);
 	QWidget::setVisible(visible);
 }
+You::NLP::TaskList YouMainGUI::getTaskList(){
+	return *taskList;
+}
