@@ -20,7 +20,7 @@ public:
 
 	/// Disable assignment operator
 	DeleteTask& operator=(const DeleteTask&) = delete;
-	
+
 	/// Destructor
 	virtual ~DeleteTask() = default;
 private:
