@@ -137,9 +137,19 @@ public:
 	/// Basic test for erasing a task with the specified task id
 	TEST_METHOD(DataStore_Erase_Basic_Test) {
 		InternalDataStore sut;
-		sut.post(0, STask());
+		sut.post(0, stask);
+		// Checks if the xml tree is modified
+		bool isEmptyDoc = sut.document.children().begin() ==
+			sut.document.children().end();
+		Assert::IsFalse(isEmptyDoc);
+
 		bool result = sut.erase(0);
 		Assert::IsTrue(result);
+
+		// Checks if the xml tree is now empty
+		isEmptyDoc = sut.document.children().begin() ==
+			sut.document.children().end();
+		Assert::IsTrue(isEmptyDoc);
 	}
 
 	/// Test for erasing task with non-existent task id
