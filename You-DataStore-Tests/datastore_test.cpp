@@ -99,10 +99,18 @@ public:
 	/// Basic test for editing a task
 	TEST_METHOD(DataStore_Put_Basic_Test) {
 		InternalDataStore sut;
-		sut.post(0, STask());
+		sut.post(0, staskAlt);
 		bool result = sut.put(0, stask);
 		Assert::IsTrue(result);
-		// Check for the node being edited
+
+		// Checks if the content has changed
+		boost::variant<bool, STask> response = sut.get(0);
+		STask task = boost::get<STask>(response);
+		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
 	/// Test for editing task with non-existent task id
