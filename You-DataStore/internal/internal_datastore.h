@@ -14,6 +14,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+/// The most primitive class that does the changes to the actual xml file
 class InternalDataStore {
 	/// Test classes
 	friend class DataStoreAPITest;

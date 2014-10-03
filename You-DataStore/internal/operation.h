@@ -11,7 +11,9 @@ namespace DataStore {
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
-	explicit IOperation(STask&);
+	/// The constructor
+	/// \param stask the serialized task the operation need to work with
+	explicit IOperation(STask& stask);
 	virtual ~IOperation();
 
 	/// Executes the operation
