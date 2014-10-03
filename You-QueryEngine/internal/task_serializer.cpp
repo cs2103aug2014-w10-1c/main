@@ -41,6 +41,8 @@ TS::STask TS::serialize(const Task& task) {
 }
 
 Task TS::deserialize(const STask& stask) {
+	Task::ID id =
+		deserializeID(stask.at(KEY_ID));
 	Task::Description description =
 		deserializeDescription(stask.at(KEY_DESCRIPTION));
 	Task::Time deadline =
@@ -49,7 +51,7 @@ Task TS::deserialize(const STask& stask) {
 		deserializePriority(stask.at(KEY_PRIORITY));
 	Task::Dependencies dependencies =
 		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
-	return TaskBuilder::get().description(description)
+	return TaskBuilder::get().id(id).description(description)
 		.deadline(deadline).priority(priority)
 		.dependencies(dependencies);
 }
@@ -90,7 +92,7 @@ TS::Value TS::serializeDependencies(const Task::Dependencies& dependencies) {
 	return ws.str();
 }
 
-Task::ID TS::deserializeID(Value id) {
+Task::ID TS::deserializeID(const Value& id) {
 	return boost::lexical_cast<Task::ID>(id);
 }
 
@@ -107,7 +109,6 @@ Task::Time TS::deserializeDeadline(const Value& deadline) {
 				boost::lexical_cast<std::int16_t>(token));
 		}
 	);
-	assert(numbers.size() == 6);
 	auto year = numbers[0];
 	auto month = numbers[1];
 	auto day = numbers[2];
