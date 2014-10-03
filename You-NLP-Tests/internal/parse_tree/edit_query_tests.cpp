@@ -71,9 +71,10 @@ public:
 
 		local.taskID = DUMMY.taskID;
 		local.fieldsToChange = local.fieldsToChange | EDIT_QUERY::FIELDS::DUE;
-		local.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
+		EDIT_QUERY local2 = local;
+		local2.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));
-		Assert::AreNotEqual(DUMMY, local);
+		Assert::AreNotEqual(local, local2);
 	}
 
 private:
