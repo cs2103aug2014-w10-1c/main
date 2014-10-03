@@ -119,17 +119,18 @@ DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 			DWORD twoDigitYearMax = 0;
 			DWORD size = sizeof(twoDigitYearMax);
 
-			if (RegQueryValueEx(
+			DWORD result = RegQueryValueEx(
 				twoDigitYearMaxKey,
 				L"1",
 				nullptr,
 				nullptr,
 				reinterpret_cast<BYTE*>(&twoDigitYearMax),
-				&size)
-			) {
+				&size);
+
+			RegCloseKey(twoDigitYearMaxKey);
+			if (result) {
 				return size;
 			}
-			RegCloseKey(twoDigitYearMaxKey);
 		}
 
 		return static_cast<DWORD>(2030);
