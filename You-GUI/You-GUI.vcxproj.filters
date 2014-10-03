@@ -86,6 +86,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_base_manager.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_NLP_manager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_NLP_manager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="NLP_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -115,6 +124,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="base_manager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="NLP_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

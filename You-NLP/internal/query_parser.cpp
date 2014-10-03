@@ -112,7 +112,7 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
 }
 
 void QueryParser::onFailure(
-	ParserIteratorType begin,
+	ParserIteratorType /*begin*/,
 	ParserIteratorType end,
 	ParserIteratorType errorPos,
 	const spirit::info& message) {

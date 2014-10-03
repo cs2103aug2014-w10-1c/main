@@ -28,7 +28,7 @@ TaskBuilder& TaskBuilder::description(const Task::Description &description) {
 	return *this;
 }
 
-TaskBuilder& TaskBuilder::deadline(Task::Time deadline) {
+TaskBuilder& TaskBuilder::deadline(const Task::Time& deadline) {
 	instance.setDeadline(deadline);
 	return *this;
 }

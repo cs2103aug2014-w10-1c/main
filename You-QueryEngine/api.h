@@ -38,6 +38,10 @@ private:
 std::unique_ptr<Query>
 AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
+
+std::unique_ptr<Query>
+FilterTask(const std::function<bool(Task)>& filter);
+
 /// @}
 
 /// Execute a query and return a response
