@@ -17,12 +17,17 @@ namespace QueryEngine {
 typedef boost::variant<std::vector<Task>, Task,
 	Task::ID, std::wstring> Response;
 
+/// This is temporary fix, state should be a more complex class instead
+typedef std::vector<Task> State;
+
 /// Base class for all queries.
 class Query {
 	friend Response executeQuery(std::unique_ptr<Query> query);
+	friend Response executeQuery(std::unique_ptr<Query> query,
+		State& const state);
 private:
 	/// Execute the query.
-	virtual Response execute() = 0;
+	virtual Response execute(State& const tasks) = 0;
 };
 
 /// \name Query Constructors
@@ -33,8 +38,9 @@ std::unique_ptr<Query>
 AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
 
+class Filter;  /// > \see filter.h
 std::unique_ptr<Query>
-FilterTask(const std::function<bool(Task)>& filter);
+FilterTask(const Filter& filter);
 
 std::unique_ptr<Query>
 DeleteTask(Task::ID id);
@@ -45,8 +51,13 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies);
 /// @}
 
 /// Execute a query and return a response
-/// \return The result of the query as a response object.
+///  \return The result of the query as a response object.
+///  \deprecated
 Response executeQuery(std::unique_ptr<Query> query);
+
+/// Execute a query on a state and return a response
+///  \return The result of the query as a response object.
+Response executeQuery(std::unique_ptr<Query> query, State& const state);
 
 }  // namespace QueryEngine
 }  // namespace You

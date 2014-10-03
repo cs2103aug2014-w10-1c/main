@@ -26,7 +26,7 @@ public:
 
 private:
 	/// Execute add task.
-	Response execute() override;
+	Response execute(State& const tasks) override;
 
 	const Task::ID id;
 	const Task::Description description;  ///< Description.

@@ -7,13 +7,12 @@
 namespace You {
 namespace QueryEngine {
 
-using FFilter = Filter::FFilter;
 // Common filters
-std::unique_ptr<Filter> Filter::anyTask() {
-	auto f = [] (const Task&) -> bool {
+Filter Filter::anyTask() {
+	const FFilter f = [] (const Task&) {
 		return true;
 	};
-	return std::unique_ptr<Filter>(new Filter(f));
+	return Filter(f);
 }
 
 Filter& Filter::operator&&(const Filter& filter) {
@@ -26,14 +25,16 @@ Filter& Filter::operator||(const Filter& filter) {
 	return *this;
 }
 
-Filter& Filter::operator!() {
+Filter& Filter::operator!(void) {
 	ffilter = NOT(ffilter);
 	return *this;
 }
 
-Filter::operator FFilter() const {
-	return ffilter;
+bool Filter::operator()(const Task& task) const {
+	return ffilter(task);
 }
+
+using FFilter = Filter::FFilter;
 
 FFilter Filter::AND(const FFilter& f, const FFilter& g) {
 	return [=] (FFilter::argument_type x) {
@@ -51,6 +52,10 @@ FFilter Filter::NOT(const FFilter& f) {
 	return [=] (FFilter::argument_type x) {
 		return !f(x);
 	};
+}
+
+Filter::operator FFilter() const {
+	return this->ffilter;
 }
 
 }  // namespace QueryEngine

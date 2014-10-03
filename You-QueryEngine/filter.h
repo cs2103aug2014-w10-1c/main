@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <functional>
 #include "task_model.h"
+#include "api.h"
 
 namespace You {
 namespace QueryEngine {
@@ -18,12 +19,12 @@ namespace QueryEngine {
 /// by using or combining common filters provided.
 class Filter {
 public:
-	/// Type of the predicate function.
+	/// Type of the predicate function using in Filter
 	typedef std::function<bool(const Task&)> FFilter;
 
 	/// \name Common Filters
 	/// @{
-	static std::unique_ptr<Filter> anyTask();
+	static Filter anyTask();
 	/// @}
 
 	/// Compose an AND operation with another filter
@@ -38,19 +39,24 @@ public:
 
 	/// Negate a filter
 	/// \param[in] filter Filter object to be negated.
-	Filter& operator!();
+	Filter& operator!(void);
 
 	/// Compose an AND NOT operation with another filter
 	/// \param[in] filter Filter object to combine with.
 	/// \returns Own reference
-	Filter& butNot(const Filter& filter);
+	const Filter butNot(const Filter& filter);
 
-	/// Filter should be able to be casted to its lambda
-	/// implicitly
+	/// Implicitly cast to its containing predicate function.
 	operator FFilter() const;
+
+	/// Filter can be applied directly
+	bool operator()(const Task&) const;
+
+	Filter(const Filter& filter) : ffilter(filter.ffilter) {}
 
 private:
 	explicit Filter(const FFilter& ffilter) : ffilter(ffilter) {}
+
 	static FFilter AND(const FFilter& f, const FFilter& g);
 	static FFilter OR(const FFilter& f, const FFilter& g);
 	static FFilter NOT(const FFilter& f);
