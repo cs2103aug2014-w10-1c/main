@@ -79,7 +79,8 @@ std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 }
 
 bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
-	if (fieldsToChange != rhs.fieldsToChange) {
+	if (fieldsToChange != rhs.fieldsToChange ||
+		taskID != rhs.taskID) {
 		return false;
 	}
 
