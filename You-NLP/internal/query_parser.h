@@ -75,6 +75,17 @@ private:
 	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
 	static ADD_QUERY constructAddQueryWithDeadlineTail(
 		const ParserCharEncoding::char_type c, const LexemeType& deadline);
+	
+	/// Constructs a edit query from the given parse tree values.
+	///
+	///	\param[in] offset The task which the user is referencing
+	/// \param[in] field The field which should be edited.
+	/// \param[in] newValue The new value the user wants to change the field to.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQuery(
+		const size_t offset,
+		EDIT_QUERY::FIELDS field,
+		const LexemeType& newValue);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
 	///
@@ -93,6 +104,7 @@ private:
 	/// Explicit command rule.
 	boost::spirit::qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
 
+	#pragma region Adding tasks
 	/// Add command rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
 
@@ -107,6 +119,17 @@ private:
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
 		addCommandWithDeadlineTail;
 	/// }
+	#pragma endregion
+
+	#pragma region Editing tasks
+	/// Edit command rule.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY, SkipperType> editCommand;
+
+	/// The symbol mapping from task properties to the actual field.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		EDIT_QUERY::FIELDS> editCommandFields;
+	#pragma endregion
 };
 
 }  // namespace Internal

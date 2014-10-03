@@ -35,10 +35,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	);
 	start.name("start");
 
-	explicitCommand %=
-		(qi::lit(L"add") >> addCommand);
+	explicitCommand %= (
+		(qi::lit(L"add") >> addCommand) |
+		(qi::lit(L"edit") >> editCommand)
+	);
 	explicitCommand.name("explicitCommand");
 
+	#pragma region Adding tasks
 	addCommand %= (
 		addCommandWithDeadline |
 		addCommandWithDescription
@@ -65,6 +68,19 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	)[qi::_val = phoenix::bind(
 		&QueryParser::constructAddQueryWithDeadlineTail,
 		qi::_1, qi::_2)];
+	#pragma endregion
+
+	#pragma region Editing tasks
+	editCommand = (
+		qi::uint_ >> qi::lit(L"set") >> editCommandFields >>
+			+ParserCharTraits::char_
+	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
+		qi::_1, qi::_2, qi::_3)];
+
+	editCommandFields.add
+		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
+		(L"due", EDIT_QUERY::FIELDS::DUE);
+	#pragma endregion
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
@@ -109,6 +125,30 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
 		std::wstring(1, c),
 		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
+}
+
+EDIT_QUERY QueryParser::constructEditQuery(
+	const size_t offset,
+	EDIT_QUERY::FIELDS field,
+	const LexemeType& newValue) {
+	EDIT_QUERY result {
+		offset,
+		field
+	};
+	StringType newStringValue(newValue.begin(), newValue.end());
+
+	switch (field) {
+	case EDIT_QUERY::FIELDS::NONE:
+		break;
+	case EDIT_QUERY::FIELDS::DESCRIPTION:
+		result.description = newStringValue;
+		break;
+	case EDIT_QUERY::FIELDS::DUE:
+		result.due = DateTimeParser::parse(newStringValue);
+		break;
+	}
+
+	return result;
 }
 
 void QueryParser::onFailure(
