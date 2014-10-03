@@ -50,8 +50,26 @@ TEST_CLASS(QueryEngineTests) {
 	TEST_METHOD(filterAnyTask) {
 		State state = stateWithMockedTasks();
 		using F = You::QueryEngine::Filter;
-		auto ab = FilterTask(F::anyTask() && F::anyTask());
-		Assert::AreEqual(state.size(), N_TASK);
+		auto result = executeQuery(FilterTask(F::anyTask()), state);
+
+		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_TASK);
+	}
+
+	TEST_METHOD(filterIdIsIn) {
+		State state = stateWithMockedTasks();
+		std::size_t N_FILTERED = 5;
+		Task::ID TEST_ID = 42L;
+		std::vector<Task::ID> mustBeHere = { TEST_ID, TEST_ID + 1};
+		for (int i = 1; i <= N_FILTERED; i++) {
+			state.push_back(TaskBuilder::get().id(TEST_ID)
+				.description(L"Dummy"));
+		}
+		using F = You::QueryEngine::Filter;
+		auto result = executeQuery(FilterTask(F::idIsIn(mustBeHere)),
+			state);
+
+		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(),
+			N_FILTERED);
 	}
 
 	TEST_METHOD(logicalAndTwoFilters) {
@@ -59,6 +77,7 @@ TEST_CLASS(QueryEngineTests) {
 		using F = You::QueryEngine::Filter;
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());
 		auto result = executeQuery(FilterTask(alwaysEmpty), state);
+
 		Assert::AreEqual(state.size(), N_TASK);  // Must not alter state
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}
@@ -66,8 +85,9 @@ TEST_CLASS(QueryEngineTests) {
 	TEST_METHOD(logicalOrTwoFilters) {
 		State state = stateWithMockedTasks();
 		using F = You::QueryEngine::Filter;
-		auto alwaysEmpty = (!F::anyTask()) && (!F::anyTask());
+		auto alwaysEmpty = (!F::anyTask()) || (!F::anyTask());
 		auto result = executeQuery(FilterTask(alwaysEmpty), state);
+
 		Assert::AreEqual(state.size(), N_TASK);  // Must not alter state
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}
