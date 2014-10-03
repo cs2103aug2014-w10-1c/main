@@ -32,8 +32,6 @@ bool InternalDataStore::put(TaskId rawId, const STask& sTask) {
 	return post(rawId, sTask);
 }
 
-using STask = InternalDataStore::STask;
-
 boost::variant<bool, STask> InternalDataStore::get(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
@@ -41,7 +39,7 @@ boost::variant<bool, STask> InternalDataStore::get(TaskId rawId) {
 	if (!toGet) {
 		return false;
 	}
-	InternalDataStore::STask stask = deserialize(toGet);
+	STask stask = deserialize(toGet);
 	return stask;
 }
 
