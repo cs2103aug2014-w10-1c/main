@@ -34,10 +34,21 @@ public:
 	/// Basic test for adding a task
 	TEST_METHOD(DataStore_Post_Basic_Test) {
 		InternalDataStore sut;
-		Assert::IsTrue(sut.document.empty());
-		bool result = sut.post(0, STask());
+
+		// Checks if the document is initially empty
+		bool isEmptyDoc = sut.document.children().begin() ==
+			sut.document.children().end();
+		Assert::IsTrue(isEmptyDoc);
+
+		// Checks for post return value
+		bool result = sut.post(0, stask);
 		Assert::IsTrue(result);
-		// Assert::IsFalse(sut.document.empty());
+
+		// Updates the boolean
+		isEmptyDoc = sut.document.children().begin() ==
+			sut.document.children().end();
+		// Checks if the document is now not empty
+		Assert::IsFalse(isEmptyDoc);
 	}
 
 	/// Test for adding task with an already existing task id
