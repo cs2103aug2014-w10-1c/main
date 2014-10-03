@@ -28,8 +28,10 @@ const STask stask = {
 		{ DEPENDENCIES, L"12345" }
 };
 
+/// Unit Test Class for InternalDataStore class
 TEST_CLASS(DataStoreTest) {
 public:
+	/// Basic test for adding a task
 	TEST_METHOD(DataStore_Post_Basic_Test) {
 		InternalDataStore sut;
 		// Assert::IsTrue(sut.document.empty());
@@ -38,6 +40,7 @@ public:
 		// Assert::IsFalse(sut.document.empty());
 	}
 
+	/// Test for adding task with an already existing task id
 	TEST_METHOD(DataStore_Post_DuplicateId_Test) {
 		InternalDataStore sut;
 		sut.post(0, STask());
@@ -45,6 +48,7 @@ public:
 		Assert::IsFalse(result);
 	}
 
+	/// Basic test for editing a task
 	TEST_METHOD(DataStore_Put_Basic_Test) {
 		InternalDataStore sut;
 		sut.post(0, STask());
@@ -53,6 +57,7 @@ public:
 		// Check for the node being edited
 	}
 
+	/// Test for editing task with non-existent task id
 	TEST_METHOD(DataStore_Put_FalseId_Test) {
 		InternalDataStore sut;
 		sut.post(0, STask());
@@ -61,6 +66,7 @@ public:
 		// Check for the node being edited
 	}
 
+	/// Basic test for retrieving a task
 	TEST_METHOD(DataStore_Get_Basic_Test) {
 		InternalDataStore sut;
 		sut.post(0, stask);
@@ -73,12 +79,14 @@ public:
 		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
+	/// Test for retrieving task with non-existent task id
 	TEST_METHOD(DataStore_Get_NonExistent_Test) {
 		InternalDataStore sut;
 		boost::variant<bool, STask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
 
+	/// Basic test for erasing a task with the specified task id
 	TEST_METHOD(DataStore_Erase_Basic_Test) {
 		InternalDataStore sut;
 		sut.post(0, STask());
@@ -86,6 +94,7 @@ public:
 		Assert::IsTrue(result);
 	}
 
+	/// Test for erasing task with non-existent task id
 	TEST_METHOD(DataStore_Erase_NonExistent_Test) {
 		InternalDataStore sut;
 		bool result = sut.erase(0);
