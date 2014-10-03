@@ -116,10 +116,22 @@ public:
 	/// Test for editing task with non-existent task id
 	TEST_METHOD(DataStore_Put_FalseId_Test) {
 		InternalDataStore sut;
-		sut.post(0, STask());
-		bool result = sut.put(1, STask());
+		sut.post(0, stask);
+		bool result = sut.put(1, staskAlt);
 		Assert::IsFalse(result);
-		// Check for the node being edited
+
+		// Checks if the content has not changed
+		boost::variant<bool, STask> response = sut.get(0);
+		STask task = boost::get<STask>(response);
+		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+
+		// Checks if the put does not add things to the xml tree
+		pugi::xpath_node_set nodeSet = sut.document.select_nodes(L"task");
+		Assert::AreEqual(1, static_cast<int>(nodeSet.size()));
 	}
 
 	/// Basic test for erasing a task with the specified task id
