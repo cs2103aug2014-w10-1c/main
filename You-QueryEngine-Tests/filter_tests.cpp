@@ -92,6 +92,11 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}
 
+	TEST_METHOD(implicitConversionToLambda) {
+		using F = You::QueryEngine::Filter;
+		Assert::IsTrue((F::anyTask())(getMockTask()));
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

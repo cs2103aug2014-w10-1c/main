@@ -37,6 +37,14 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsTrue(boost::get<Task>(resp).isStrictEqual(task));
 	}
 
+	TEST_METHOD(constructFilterTaskQuery) {
+		Response resp = executeQuery(FilterTask(Filter::anyTask()));
+		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
+		std::vector<Task::ID> emptyVec;
+		resp = executeQuery(FilterTask(Filter::idIsIn(emptyVec)));
+		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 
