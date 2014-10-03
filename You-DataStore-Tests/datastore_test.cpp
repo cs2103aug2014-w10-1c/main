@@ -81,9 +81,19 @@ public:
 	/// Test for adding task with an already existing task id
 	TEST_METHOD(DataStore_Post_DuplicateId_Test) {
 		InternalDataStore sut;
-		sut.post(0, STask());
+		bool init = sut.post(0, stask);
+		Assert::IsTrue(init);
 		bool result = sut.post(0, STask());
 		Assert::IsFalse(result);
+
+		// Checks if the content has not changed
+		boost::variant<bool, STask> response = sut.get(0);
+		STask task = boost::get<STask>(response);
+		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
 	/// Basic test for editing a task
