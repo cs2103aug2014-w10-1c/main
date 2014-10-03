@@ -128,7 +128,7 @@ DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 				&size);
 
 			RegCloseKey(twoDigitYearMaxKey);
-			if (result) {
+			if (result == ERROR_SUCCESS) {
 				return twoDigitYearMax;
 			}
 		}
