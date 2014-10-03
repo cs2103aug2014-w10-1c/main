@@ -20,13 +20,13 @@ public:
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			std::wstring(L"Edit task #1 (description => for the lols)"),
+			std::wstring(L"Edit task #1 (Description => the lols)"),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			std::wstring(L"Edit task #1 (description => for the lols)"),
+			std::wstring(L"Edit task #1 (Description => the lols)"),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
