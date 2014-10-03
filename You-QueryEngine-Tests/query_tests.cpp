@@ -4,6 +4,7 @@
 
 #include "internal/task_builder.h"
 #include "common.h"
+#include "exclusions.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
