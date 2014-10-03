@@ -27,6 +27,13 @@ const STask stask = {
 		{ PRIORITY, L"urgent" },
 		{ DEPENDENCIES, L"12345" }
 };
+const STask staskAlt = {
+		{ TASK_ID, L"0" },
+		{ DESCRIPTION, L"yada yada" },
+		{ DEADLINE, L"yyyyyy" },
+		{ PRIORITY, L"normal" },
+		{ DEPENDENCIES, L"4321" }
+};
 
 /// Unit Test Class for InternalDataStore class
 TEST_CLASS(DataStoreTest) {
