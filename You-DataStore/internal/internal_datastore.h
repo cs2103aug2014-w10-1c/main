@@ -12,12 +12,15 @@
 
 namespace You {
 namespace DataStore {
+namespace UnitTests {
+class DataStoreTest;
+}
 namespace Internal {
 
 /// The most primitive class that does the changes to the actual xml file
 class InternalDataStore {
 	/// Test classes
-	friend class DataStoreAPITest;
+	friend class You::DataStore::UnitTests::DataStoreTest;
 public:
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,

@@ -34,7 +34,7 @@ public:
 	/// Basic test for adding a task
 	TEST_METHOD(DataStore_Post_Basic_Test) {
 		InternalDataStore sut;
-		// Assert::IsTrue(sut.document.empty());
+		Assert::IsTrue(sut.document.empty());
 		bool result = sut.post(0, STask());
 		Assert::IsTrue(result);
 		// Assert::IsFalse(sut.document.empty());
