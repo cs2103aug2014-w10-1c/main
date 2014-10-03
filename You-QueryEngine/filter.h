@@ -9,7 +9,6 @@
 #include <stdexcept>
 #include <functional>
 #include "task_model.h"
-#include "api.h"
 
 namespace You {
 namespace QueryEngine {
@@ -25,6 +24,7 @@ public:
 	/// \name Common Filters
 	/// @{
 	static Filter anyTask();
+	static Filter idIsIn(std::vector<Task::ID> taskIDs);
 	/// @}
 
 	/// Compose an AND operation with another filter

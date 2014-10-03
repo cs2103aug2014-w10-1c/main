@@ -9,6 +9,7 @@
 #include <memory>
 #include <boost/variant.hpp>
 #include "task_model.h"
+#include "filter.h"
 
 namespace You {
 namespace QueryEngine {
@@ -38,7 +39,6 @@ std::unique_ptr<Query>
 AddTask(Task::Description description, Task::Time deadline,
 Task::Priority priority, Task::Dependencies dependencies);
 
-class Filter;  /// > \see filter.h
 std::unique_ptr<Query>
 FilterTask(const Filter& filter);
 
