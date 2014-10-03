@@ -66,8 +66,7 @@ void InternalDataStore::loadData() {
 	}
 }
 
-void InternalDataStore::serialize(const STask& stask,
-		pugi::xml_node& const node) {
+void InternalDataStore::serialize(const STask& stask, pugi::xml_node& node) {
 	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
 			node.append_child(iter->first.c_str());

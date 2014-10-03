@@ -8,6 +8,7 @@
 #include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
 #include "pugixml.hpp"
+#include "../ds_task_typedefs.h"
 
 namespace You {
 namespace DataStore {
@@ -17,16 +18,6 @@ class InternalDataStore {
 	/// Test classes
 	friend class DataStoreAPITest;
 public:
-	/// \name typedefs
-	/// typedef for Task ID
-	typedef int64_t TaskId;
-	/// Typedefs for serializing to xml
-	typedef std::wstring Key;
-	typedef std::wstring Value;
-	typedef std::pair<Key, Value> KeyValuePair;
-	typedef std::unordered_map<Key, Value> STask;
-
-
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
@@ -59,7 +50,8 @@ private:
 	/// Loads the xml file into the xml object
 	void loadData();
 	/// Serialize task to an xml node
-	void serialize(const STask&, pugi::xml_node& const);
+	void serialize(const STask&, pugi::xml_node&);
+
 	/// Deserialize task from an xml node
 	STask deserialize(const pugi::xml_node&);
 };
