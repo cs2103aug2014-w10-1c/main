@@ -5,13 +5,17 @@
 #include <boost/variant.hpp>
 
 #include "parse_tree/add_query.h"
+#include "parse_tree/edit_query.h"
 
 namespace You {
 namespace NLP {
 namespace Internal {
 
 /// Defines the synthesised value type of a query.
-typedef boost::variant<ADD_QUERY> QUERY;
+typedef boost::variant<
+	ADD_QUERY,
+	EDIT_QUERY
+> QUERY;
 
 }  // namespace Internal
 }  // namespace NLP

@@ -11,6 +11,7 @@ using Internal::QueryParser;
 using Internal::DateTimeParser;
 using Internal::QUERY;
 using Internal::ADD_QUERY;
+using Internal::EDIT_QUERY;
 using Date = boost::gregorian::date;
 
 /// The query builder that will send the query to the appropriate builder
@@ -35,11 +36,17 @@ private:
 	QueryBuilderVisitor(const QueryBuilderVisitor&) = delete;
 	QueryBuilderVisitor& operator=(const QueryBuilderVisitor&) = delete;
 
-	/// Builds a query engine query from the given syntax tree.
+	/// Builds a query engine query from the given add syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
 	static std::unique_ptr<QueryEngine::Query>
 	build(const ADD_QUERY& query);
+
+	/// Builds a query engine query from the given edit syntax tree.
+	///
+	/// \param[in] query The syntax tree to build a query from.
+	static std::unique_ptr<QueryEngine::Query>
+	build(const EDIT_QUERY& query);
 
 private:
 	/// The context for the query.
@@ -72,6 +79,12 @@ Controller::QueryBuilderVisitor::build(const ADD_QUERY& query) {
 		query.due,
 		Task::Priority::NORMAL,
 		Task::Dependencies());
+}
+
+std::unique_ptr<QueryEngine::Query>
+Controller::QueryBuilderVisitor::build(const EDIT_QUERY& query) {
+	// TODO(lowjoel): waiting for API
+	return nullptr;
 }
 
 }  // namespace NLP

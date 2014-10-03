@@ -18,6 +18,8 @@ struct EDIT_QUERY {
 	enum class FIELDS {
 		/// The description field needs to be changed
 		DESCRIPTION = 1 << 0,
+
+		/// The deadline field needs to be changed
 		DUE = 1 << 1
 	};
 

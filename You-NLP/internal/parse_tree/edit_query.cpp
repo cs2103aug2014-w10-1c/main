@@ -18,7 +18,8 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 /// The description field.
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
-std::vector<std::wstring> getChangedFields(const EDIT_QUERY& q) {
+/// Converts the changed fields to a string.
+std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields;
 	if (static_cast<size_t>(q.fieldsToChange) &
 		static_cast<size_t>(EDIT_QUERY::FIELDS::DESCRIPTION)) {
@@ -38,7 +39,7 @@ namespace NLP {
 namespace Internal {
 
 std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
-	std::vector<std::wstring> fields(getChangedFields(q));
+	std::vector<std::wstring> fields(getChangedFieldsAsString(q));
 	std::wostringstream fieldsString;
 	for (auto i = begin(fields); i != end(fields); ++i) {
 		fieldsString << *i;
@@ -51,8 +52,24 @@ std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 }
 
 bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
-	return description == rhs.description &&
-		due == rhs.due;
+	if (fieldsToChange != rhs.fieldsToChange) {
+		return false;
+	}
+
+	size_t fieldsToChangeBits = static_cast<size_t>(fieldsToChange);
+	if (fieldsToChangeBits & static_cast<size_t>(FIELDS::DESCRIPTION)) {
+		if (description != rhs.description) {
+			return false;
+		}
+	}
+
+	if (fieldsToChangeBits & static_cast<size_t>(FIELDS::DUE)) {
+		if (due != rhs.due) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 std::wstring ToString(const EDIT_QUERY& q) {
