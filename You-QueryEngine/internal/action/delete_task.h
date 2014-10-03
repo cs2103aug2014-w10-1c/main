@@ -20,7 +20,9 @@ public:
 
 	/// Disable assignment operator
 	DeleteTask& operator=(const DeleteTask&) = delete;
-
+	
+	/// Destructor
+	virtual ~DeleteTask() = default;
 private:
 	/// Execute delete task.
 	Response execute(State& const tasks) override;

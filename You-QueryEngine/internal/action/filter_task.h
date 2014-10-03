@@ -20,6 +20,8 @@ public:
 	/// Constructor
 	explicit FilterTask(const Filter& filter) : filter(filter) {}
 
+	/// Destructor
+	virtual ~FilterTask() = default;
 private:
 	/// Execute add task.
 	Response execute(State& const tasks) override;
