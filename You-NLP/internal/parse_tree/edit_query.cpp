@@ -18,15 +18,26 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 /// The description field.
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
+/// The due field.
+const std::wstring DUE_FIELD(L"Due");
+
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields;
-	if (static_cast<size_t>(q.fieldsToChange) &
-		static_cast<size_t>(EDIT_QUERY::FIELDS::DESCRIPTION)) {
+	if ((q.fieldsToChange &
+		EDIT_QUERY::FIELDS::DESCRIPTION) != EDIT_QUERY::FIELDS::NONE) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
 			DESCRIPTION_FIELD %
 			q.description).str());
+	}
+
+	if ((q.fieldsToChange &
+		EDIT_QUERY::FIELDS::DUE) != EDIT_QUERY::FIELDS::NONE) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			DUE_FIELD %
+			q.due).str());
 	}
 
 	return fields;
@@ -37,6 +48,22 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 namespace You {
 namespace NLP {
 namespace Internal {
+
+EDIT_QUERY::FIELDS operator|(
+	const EDIT_QUERY::FIELDS& lhs,
+	const EDIT_QUERY::FIELDS& rhs) {
+	return static_cast<EDIT_QUERY::FIELDS>(
+		static_cast<size_t>(lhs) | static_cast<size_t>(rhs)
+	);
+}
+
+EDIT_QUERY::FIELDS operator&(
+	const EDIT_QUERY::FIELDS& lhs,
+	const EDIT_QUERY::FIELDS& rhs) {
+	return static_cast<EDIT_QUERY::FIELDS>(
+		static_cast<size_t>(lhs) & static_cast<size_t>(rhs)
+	);
+}
 
 std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields(getChangedFieldsAsString(q));
@@ -56,14 +83,13 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 		return false;
 	}
 
-	size_t fieldsToChangeBits = static_cast<size_t>(fieldsToChange);
-	if (fieldsToChangeBits & static_cast<size_t>(FIELDS::DESCRIPTION)) {
+	if ((fieldsToChange & FIELDS::DESCRIPTION) != FIELDS::NONE) {
 		if (description != rhs.description) {
 			return false;
 		}
 	}
 
-	if (fieldsToChangeBits & static_cast<size_t>(FIELDS::DUE)) {
+	if ((fieldsToChange & FIELDS::DUE) != FIELDS::NONE) {
 		if (due != rhs.due) {
 			return false;
 		}

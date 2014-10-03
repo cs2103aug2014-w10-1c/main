@@ -16,6 +16,9 @@ struct EDIT_QUERY {
 	///
 	/// This can be binary ORed together.
 	enum class FIELDS {
+		/// Not changing anything.
+		NONE = 0,
+
 		/// The description field needs to be changed
 		DESCRIPTION = 1 << 0,
 
@@ -40,6 +43,24 @@ struct EDIT_QUERY {
 	/// The due date of the task.
 	boost::posix_time::ptime due;
 };
+
+/// Computes a bitwise OR over the two fields specification flags.
+///
+/// \param[in] lhs The left hand side of the expression.
+/// \param[in] rhs The right hand side of the expression.
+/// \return The combined fields from both fields.
+EDIT_QUERY::FIELDS operator|(
+	const EDIT_QUERY::FIELDS& lhs,
+	const EDIT_QUERY::FIELDS& rhs);
+
+/// Computes a bitwise AND over the two fields specification flags.
+///
+/// \param[in] lhs The left hand side of the expression.
+/// \param[in] rhs The right hand side of the expression.
+/// \return The common fields from both fields.
+EDIT_QUERY::FIELDS operator&(
+	const EDIT_QUERY::FIELDS& lhs,
+	const EDIT_QUERY::FIELDS& rhs);
 
 /// Defines an output formatter for EDIT_QUERY queries.
 ///
