@@ -31,6 +31,26 @@ const STask stask = {
 /// Unit Test Class for InternalDataStore class
 TEST_CLASS(DataStoreTest) {
 public:
+	/// Basic test for retrieving a task
+	TEST_METHOD(DataStore_Get_Basic_Test) {
+		InternalDataStore sut;
+		sut.post(0, stask);
+		boost::variant<bool, STask> response = sut.get(0);
+		STask task = boost::get<STask>(response);
+		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+	}
+
+	/// Test for retrieving task with non-existent task id
+	TEST_METHOD(DataStore_Get_NonExistent_Test) {
+		InternalDataStore sut;
+		boost::variant<bool, STask> response = sut.get(0);
+		Assert::IsFalse(boost::get<bool>(response));
+	}
+
 	/// Basic test for adding a task
 	TEST_METHOD(DataStore_Post_Basic_Test) {
 		InternalDataStore sut;
@@ -75,26 +95,6 @@ public:
 		bool result = sut.put(1, STask());
 		Assert::IsFalse(result);
 		// Check for the node being edited
-	}
-
-	/// Basic test for retrieving a task
-	TEST_METHOD(DataStore_Get_Basic_Test) {
-		InternalDataStore sut;
-		sut.post(0, stask);
-		boost::variant<bool, STask> response = sut.get(0);
-		STask task = boost::get<STask>(response);
-		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
-	}
-
-	/// Test for retrieving task with non-existent task id
-	TEST_METHOD(DataStore_Get_NonExistent_Test) {
-		InternalDataStore sut;
-		boost::variant<bool, STask> response = sut.get(0);
-		Assert::IsFalse(boost::get<bool>(response));
 	}
 
 	/// Basic test for erasing a task with the specified task id
