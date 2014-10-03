@@ -49,6 +49,11 @@ public:
 		EDIT_QUERY local = DUMMY;
 
 		Assert::AreEqual(DUMMY, local);
+
+		local.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
+			boost::posix_time::hours(1));
+		Assert::AreEqual(DUMMY, local, L"Changing fields not specified in the "
+			L"modified mask should not cause inequality.");
 	}
 
 	TEST_METHOD(comparesInequality) {
@@ -58,6 +63,15 @@ public:
 			L""
 		};
 
+		Assert::AreNotEqual(DUMMY, local);
+
+		local.taskID++;
+		local.description = DUMMY.description;
+		Assert::AreNotEqual(DUMMY, local);
+
+		local.taskID = DUMMY.taskID;
+		local.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
+			boost::posix_time::hours(1));
 		Assert::AreNotEqual(DUMMY, local);
 	}
 

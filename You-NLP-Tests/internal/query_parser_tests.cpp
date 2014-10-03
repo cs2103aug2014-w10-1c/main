@@ -22,6 +22,12 @@ using You::NLP::Internal::QUERY;
 
 TEST_CLASS(QueryParserTests) {
 public:
+	TEST_METHOD(throwsExceptionOnEmptyString) {
+		Assert::ExpectException<ParserException>([]() {
+			QueryParser::parse(L"");
+		}, L"Throws exception on empty string");
+	}
+
 	TEST_METHOD(throwsExceptionWhenParseFails) {
 		Assert::ExpectException<ParserException>([]() {
 				// "throw" is currently not defined, so this should work.
