@@ -131,7 +131,7 @@ public:
 
 		// Checks if the put does not add things to the xml tree
 		pugi::xpath_node_set nodeSet = sut.document.select_nodes(L"task");
-		Assert::AreEqual(1, static_cast<int>(nodeSet.size()));
+		Assert::AreEqual(1, boost::lexical_cast<int>(nodeSet.size()));
 	}
 
 	/// Basic test for erasing a task with the specified task id
