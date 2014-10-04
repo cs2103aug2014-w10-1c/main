@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_DATASTORE_DS_TASK_TYPEDEFS_H_
-#define YOU_DATASTORE_DS_TASK_TYPEDEFS_H_
+#ifndef YOU_DATASTORE_TASK_TYPEDEFS_H_
+#define YOU_DATASTORE_TASK_TYPEDEFS_H_
 
 #include <cstdint>
 #include <string>
@@ -16,9 +16,9 @@ typedef int64_t TaskId;
 typedef std::wstring Key;
 typedef std::wstring Value;
 typedef std::pair<Key, Value> KeyValuePair;
-typedef std::unordered_map<Key, Value> STask;
+typedef std::unordered_map<Key, Value> SerializedTask;
 
 }  // namespace DataStore
 }  // namespace You
 
-#endif  // YOU_DATASTORE_DS_TASK_TYPEDEFS_H_
+#endif  // YOU_DATASTORE_TASK_TYPEDEFS_H_

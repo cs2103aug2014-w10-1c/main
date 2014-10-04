@@ -30,7 +30,7 @@
     <ClInclude Include="internal\internal_datastore.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="ds_task_typedefs.h">
+    <ClInclude Include="task_typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
