@@ -12,9 +12,9 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests {
-class DataStoreTest;
-}
+namespace UnitTests { class DataStoreTest; }
+
+/// The internal components of DataStore
 namespace Internal {
 
 /// The most primitive class that does the changes to the actual xml file
