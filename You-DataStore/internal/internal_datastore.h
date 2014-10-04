@@ -8,7 +8,7 @@
 #include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
 #include "pugixml.hpp"
-#include "../ds_task_typedefs.h"
+#include "../task_typedefs.h"
 
 namespace You {
 namespace DataStore {
@@ -25,16 +25,16 @@ public:
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
-	bool post(TaskId, const STask&);
+	bool post(TaskId, const SerializedTask&);
 
 	/// Update the content of a task
 	/// \return true if update successful,
 	/// \return false if task id specified does not exist
-	bool put(TaskId, const STask&);
+	bool put(TaskId, const SerializedTask&);
 
 	/// Get a task
-	/// \return false and an empty STask if task id does not exist
-	boost::variant<bool, STask> get(TaskId);
+	/// \return false and an empty SerializedTask if task id does not exist
+	boost::variant<bool, SerializedTask> get(TaskId);
 
 	/// Delete a task
 	/// \return true if erase successful,
@@ -42,7 +42,7 @@ public:
 	bool erase(TaskId);
 
 	/// Get a list of tasks that passes the filter
-	std::vector<STask> filter(const std::function<bool(STask)>&);
+	std::vector<SerializedTask> filter(const std::function<bool(SerializedTask)>&);
 
 private:
 	static const std::wstring FILE_PATH;
@@ -54,10 +54,10 @@ private:
 	/// Loads the xml file into the xml object
 	void loadData();
 	/// Serialize task to an xml node
-	void serialize(const STask&, pugi::xml_node&);
+	void serialize(const SerializedTask&, pugi::xml_node&);
 
 	/// Deserialize task from an xml node
-	STask deserialize(const pugi::xml_node&);
+	SerializedTask deserialize(const pugi::xml_node&);
 };
 
 }  // namespace Internal

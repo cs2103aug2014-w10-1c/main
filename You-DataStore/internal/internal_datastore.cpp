@@ -7,7 +7,7 @@ namespace Internal {
 
 const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
 
-bool InternalDataStore::post(TaskId rawId, const STask& sTask) {
+bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	// Consider changing parameter to std::wstring altogether
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
@@ -21,7 +21,7 @@ bool InternalDataStore::post(TaskId rawId, const STask& sTask) {
 	return true;
 }
 
-bool InternalDataStore::put(TaskId rawId, const STask& sTask) {
+bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toEdit =
 		document.find_child_by_attribute(L"id", taskId.c_str());
@@ -32,14 +32,14 @@ bool InternalDataStore::put(TaskId rawId, const STask& sTask) {
 	return post(rawId, sTask);
 }
 
-boost::variant<bool, STask> InternalDataStore::get(TaskId rawId) {
+boost::variant<bool, SerializedTask> InternalDataStore::get(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
 	if (!toGet) {
 		return false;
 	}
-	STask stask = deserialize(toGet);
+	SerializedTask stask = deserialize(toGet);
 	return stask;
 }
 
@@ -64,7 +64,7 @@ void InternalDataStore::loadData() {
 	}
 }
 
-void InternalDataStore::serialize(const STask& stask, pugi::xml_node& node) {
+void InternalDataStore::serialize(const SerializedTask& stask, pugi::xml_node& node) {
 	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
 			node.append_child(iter->first.c_str());
@@ -74,8 +74,8 @@ void InternalDataStore::serialize(const STask& stask, pugi::xml_node& node) {
 	}
 }
 
-STask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
-	STask stask;
+SerializedTask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
+	SerializedTask stask;
 	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
 		stask.insert(KeyValuePair(Key(iter->name()),
 			Value(iter->child_value())));

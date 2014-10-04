@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "ds_task_typedefs.h"
+#include "task_typedefs.h"
 #include "internal/internal_datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -20,14 +20,14 @@ const std::wstring PRIORITY = L"priority";
 const std::wstring DEPENDENCIES = L"dependency";
 
 // Dummy serialized task
-const STask stask = {
+const SerializedTask stask = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"bla bla" },
 		{ DEADLINE, L"xxxxxx" },
 		{ PRIORITY, L"urgent" },
 		{ DEPENDENCIES, L"12345" }
 };
-const STask staskAlt = {
+const SerializedTask staskAlt = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"yada yada" },
 		{ DEADLINE, L"yyyyyy" },
@@ -42,8 +42,8 @@ public:
 	TEST_METHOD(DataStore_Get_Basic_Test) {
 		InternalDataStore sut;
 		sut.post(0, stask);
-		boost::variant<bool, STask> response = sut.get(0);
-		STask task = boost::get<STask>(response);
+		boost::variant<bool, SerializedTask> response = sut.get(0);
+		SerializedTask task = boost::get<SerializedTask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
@@ -54,7 +54,7 @@ public:
 	/// Test for retrieving task with non-existent task id
 	TEST_METHOD(DataStore_Get_NonExistent_Test) {
 		InternalDataStore sut;
-		boost::variant<bool, STask> response = sut.get(0);
+		boost::variant<bool, SerializedTask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
 
@@ -83,12 +83,12 @@ public:
 		InternalDataStore sut;
 		bool init = sut.post(0, stask);
 		Assert::IsTrue(init);
-		bool result = sut.post(0, STask());
+		bool result = sut.post(0, SerializedTask());
 		Assert::IsFalse(result);
 
 		// Checks if the content has not changed
-		boost::variant<bool, STask> response = sut.get(0);
-		STask task = boost::get<STask>(response);
+		boost::variant<bool, SerializedTask> response = sut.get(0);
+		SerializedTask task = boost::get<SerializedTask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
@@ -104,8 +104,8 @@ public:
 		Assert::IsTrue(result);
 
 		// Checks if the content has changed
-		boost::variant<bool, STask> response = sut.get(0);
-		STask task = boost::get<STask>(response);
+		boost::variant<bool, SerializedTask> response = sut.get(0);
+		SerializedTask task = boost::get<SerializedTask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
@@ -121,8 +121,8 @@ public:
 		Assert::IsFalse(result);
 
 		// Checks if the content has not changed
-		boost::variant<bool, STask> response = sut.get(0);
-		STask task = boost::get<STask>(response);
+		boost::variant<bool, SerializedTask> response = sut.get(0);
+		SerializedTask task = boost::get<SerializedTask>(response);
 		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);

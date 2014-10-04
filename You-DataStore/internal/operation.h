@@ -13,7 +13,7 @@ class IOperation {
 public:
 	/// The constructor
 	/// \param stask the serialized task the operation need to work with
-	explicit IOperation(STask& stask);
+	explicit IOperation(SerializedTask& stask);
 	virtual ~IOperation();
 
 	/// Executes the operation
