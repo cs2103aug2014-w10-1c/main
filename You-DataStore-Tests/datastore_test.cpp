@@ -39,7 +39,7 @@ const SerializedTask staskAlt = {
 TEST_CLASS(DataStoreTest) {
 public:
 	/// Basic test for retrieving a task
-	TEST_METHOD(DataStore_Get_Basic_Test) {
+	TEST_METHOD(getExistingTask) {
 		InternalDataStore sut;
 		sut.post(0, stask);
 		boost::variant<bool, SerializedTask> response = sut.get(0);
@@ -52,14 +52,14 @@ public:
 	}
 
 	/// Test for retrieving task with non-existent task id
-	TEST_METHOD(DataStore_Get_NonExistent_Test) {
+	TEST_METHOD(getNonExistentTask) {
 		InternalDataStore sut;
 		boost::variant<bool, SerializedTask> response = sut.get(0);
 		Assert::IsFalse(boost::get<bool>(response));
 	}
 
 	/// Basic test for adding a task
-	TEST_METHOD(DataStore_Post_Basic_Test) {
+	TEST_METHOD(postNewTask) {
 		InternalDataStore sut;
 
 		// Checks if the document is initially empty
@@ -79,7 +79,7 @@ public:
 	}
 
 	/// Test for adding task with an already existing task id
-	TEST_METHOD(DataStore_Post_DuplicateId_Test) {
+	TEST_METHOD(postTaskWithExistingId) {
 		InternalDataStore sut;
 		bool init = sut.post(0, stask);
 		Assert::IsTrue(init);
@@ -97,7 +97,7 @@ public:
 	}
 
 	/// Basic test for editing a task
-	TEST_METHOD(DataStore_Put_Basic_Test) {
+	TEST_METHOD(putExistingTask) {
 		InternalDataStore sut;
 		sut.post(0, staskAlt);
 		bool result = sut.put(0, stask);
@@ -114,7 +114,7 @@ public:
 	}
 
 	/// Test for editing task with non-existent task id
-	TEST_METHOD(DataStore_Put_FalseId_Test) {
+	TEST_METHOD(putNonExistentTask) {
 		InternalDataStore sut;
 		sut.post(0, stask);
 		bool result = sut.put(1, staskAlt);
@@ -135,7 +135,7 @@ public:
 	}
 
 	/// Basic test for erasing a task with the specified task id
-	TEST_METHOD(DataStore_Erase_Basic_Test) {
+	TEST_METHOD(eraseExistingTask) {
 		InternalDataStore sut;
 		sut.post(0, stask);
 		// Checks if the xml tree is modified
@@ -153,7 +153,7 @@ public:
 	}
 
 	/// Test for erasing task with non-existent task id
-	TEST_METHOD(DataStore_Erase_NonExistent_Test) {
+	TEST_METHOD(eraseNonExistentTask) {
 		InternalDataStore sut;
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
