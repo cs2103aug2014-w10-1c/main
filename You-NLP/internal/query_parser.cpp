@@ -73,14 +73,16 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Editing tasks
 	editCommand = (
 		qi::uint_ >> qi::lit(L"set") >> editCommandFields >>
-			+ParserCharTraits::char_
+			*ParserCharTraits::char_
 	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
 		qi::_1, qi::_2, qi::_3)];
 	editCommand.name("editCommand");
 
 	editCommandFields.add
 		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
-		(L"due", EDIT_QUERY::FIELDS::DUE);
+		(L"due", EDIT_QUERY::FIELDS::DUE)
+		(L"done", EDIT_QUERY::FIELDS::COMPLETE)
+		(L"complete", EDIT_QUERY::FIELDS::COMPLETE);
 	editCommandFields.name("editCommandFields");
 	#pragma endregion
 
@@ -140,13 +142,15 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	StringType newStringValue(newValue.begin(), newValue.end());
 
 	switch (field) {
-	case EDIT_QUERY::FIELDS::NONE:
-		break;
 	case EDIT_QUERY::FIELDS::DESCRIPTION:
 		result.description = newStringValue;
 		break;
 	case EDIT_QUERY::FIELDS::DUE:
 		result.due = DateTimeParser::parse(newStringValue);
+		break;
+	case EDIT_QUERY::FIELDS::NONE:
+	case EDIT_QUERY::FIELDS::COMPLETE:
+	default:
 		break;
 	}
 

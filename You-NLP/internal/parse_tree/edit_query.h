@@ -23,7 +23,10 @@ struct EDIT_QUERY {
 		DESCRIPTION = 1 << 0,
 
 		/// The deadline field needs to be changed
-		DUE = 1 << 1
+		DUE = 1 << 1,
+
+		/// The task is now complete
+		COMPLETE = 1 << 2
 	};
 
 	/// Equality comparator.
