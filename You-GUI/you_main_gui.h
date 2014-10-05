@@ -87,6 +87,7 @@ public:
 	const std::unique_ptr<NLPManager> nlpm;
 
 	You::NLP::TaskList getTaskList();
+
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
