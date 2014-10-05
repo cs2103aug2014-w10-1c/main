@@ -1,3 +1,4 @@
+//@author A0097630B
 #include "stdafx.h"
 #include "controller.h"
 #include "You-NLP/query_parser.h"
