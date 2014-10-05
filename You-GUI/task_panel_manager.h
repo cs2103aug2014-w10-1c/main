@@ -4,7 +4,10 @@
 #define YOU_GUI_TASK_PANEL_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
-
+#include "You-NLP/controller.h"
+#include "You-NLP/result.h"
+#include "You-NLP/controller_context.h"
+#include "You-NLP/task_list.h"
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
 /// It inherits from the BaseManager class.
@@ -27,6 +30,8 @@ private:
 	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
 	/// intermediate step to adding headings and tasks.
 	QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
+
+	std::vector<std::wstring> taskToStrVec(You::NLP::Task task);
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
 	void addTask(std::vector<std::wstring> rowStrings);
