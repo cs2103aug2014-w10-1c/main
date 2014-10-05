@@ -45,11 +45,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_OPENGL;QT_CORE_LIB;QT_WIDGETS_LIB;BOOST_DATE_TIME_NO_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;UNICODE;WIN32;WIN64;QT_DLL;QT_NO_OPENGL;QT_CORE_LIB;QT_WIDGETS_LIB;BOOST_DATE_TIME_NO_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;..\You-GUI\GeneratedFiles;..\;$(QTDIR)\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;..\You-GUI\GeneratedFiles;..\;$(QTDIR)\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -62,10 +62,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_OPENGL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;UNICODE;WIN32;WIN64;QT_DLL;QT_NO_OPENGL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtWidgets;..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -90,8 +90,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\You-Controller\You-Controller.vcxproj">
+      <Project>{25c49ad2-4819-4ddd-bc61-8918a71a0730}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-DataStore\You-DataStore.vcxproj">
+      <Project>{15c8cbbd-e87a-4744-8f03-658e121a8088}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\You-GUI\You-GUI.vcxproj">
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">
+      <Project>{fa205f33-9c62-45a2-b059-0f7d9afc7752}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
+      <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-Utils\You-Utils.vcxproj">
+      <Project>{bb59ad84-cde2-49e9-b32a-f8a8ebf36fc3}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

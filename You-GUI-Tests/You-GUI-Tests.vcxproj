@@ -47,7 +47,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;BOOST_DATE_TIME_NO_LIB;QT_NO_OPENGL;QT_CORE_LIB;QT_TESTLIB_LIB;YOU-GUI-TESTS_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;$(VCInstallDir)UnitTest\include;..\You-GUI\GeneratedFiles;..\;%(AdditionalIncludeDirectories);..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;$(VCInstallDir)UnitTest\include;$(VCInstallDir)UnitTest\include;..\You-GUI\GeneratedFiles;..\;%(AdditionalIncludeDirectories);..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -56,7 +56,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Testd.lib;Qt5Widgetsd.lib;Qt5Guid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -64,7 +64,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;BOOST_DATE_TIME_NO_LIB;QT_NO_OPENGL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_TESTLIB_LIB;YOU-GUI-TESTS_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;%(AdditionalIncludeDirectories);..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtTest;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories);..\You-GUI\GeneratedFiles;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -72,7 +72,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Test.lib;Qt5Widgets.lib;Qt5Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -81,6 +81,9 @@
     <ClCompile Include="you_gui_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\You-Controller\You-Controller.vcxproj">
+      <Project>{25c49ad2-4819-4ddd-bc61-8918a71a0730}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\You-GUI\You-GUI.vcxproj">
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
     </ProjectReference>
@@ -89,6 +92,9 @@
     </ProjectReference>
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
       <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-Utils\You-Utils.vcxproj">
+      <Project>{bb59ad84-cde2-49e9-b32a-f8a8ebf36fc3}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

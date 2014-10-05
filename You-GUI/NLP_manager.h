@@ -32,11 +32,11 @@ public:
 	/// Queries the NLP engine. Passes the Result and wstring input into the
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
-	You::NLP::Result queryNLP();
+	You::Controller::Result queryNLP();
 
 private:
 	/// The current result/context displayed to the user
-	std::unique_ptr<You::NLP::Result> currentResult;
+	std::unique_ptr<You::Controller::Result> currentResult;
 
 	private slots:
 	/// QT's signal/slot mechanism for input enter button.

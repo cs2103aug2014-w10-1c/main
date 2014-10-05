@@ -4,10 +4,10 @@
 #define YOU_GUI_TASK_PANEL_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
-#include "You-NLP/controller.h"
-#include "You-NLP/result.h"
-#include "You-NLP/controller_context.h"
-#include "You-NLP/task_list.h"
+#include "You-Controller/controller.h"
+#include "You-Controller/result.h"
+#include "You-Controller/controller_context.h"
+
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
 /// It inherits from the BaseManager class.
