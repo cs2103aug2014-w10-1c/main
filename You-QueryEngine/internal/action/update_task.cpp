@@ -9,6 +9,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 Response UpdateTask::execute(State& tasks) {
 	auto builder = TaskBuilder::get().id(this->id);
@@ -43,6 +44,7 @@ Response UpdateTask::execute(State& tasks) {
 	return (Task) builder;
 }
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

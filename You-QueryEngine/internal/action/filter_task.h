@@ -13,6 +13,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 /// Define action for updating task
 class FilterTask : public Query {
@@ -29,6 +30,7 @@ private:
 	const Filter& filter;
 };
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
