@@ -8,10 +8,8 @@ namespace You {
 namespace Controller {
 
 using You::NLP::QueryParser;
-using Date = boost::gregorian::date;
 using QueryParseTree = You::NLP::QUERY;
 using AbstractQuery = QueryEngine::Query;
-using QueryBuilderVisitor = Internal::QueryBuilderVisitor;
 
 Controller Controller::instance;
 
@@ -24,7 +22,7 @@ Result Controller::query(
 	const Controller::Context& context) const {
 	QueryParseTree parseTree = QueryParser::parse(query);
 
-	QueryBuilderVisitor visitor(context);
+	Internal::QueryBuilderVisitor visitor(context);
 	std::unique_ptr<AbstractQuery> queryRef =
 		boost::apply_visitor(visitor, parseTree);
 

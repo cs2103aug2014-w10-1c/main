@@ -90,7 +90,6 @@
     <ClInclude Include="parse_tree\edit_query.h" />
     <ClInclude Include="query_parser.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="task_list.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="date_time_parser.cpp" />

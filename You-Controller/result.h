@@ -2,7 +2,7 @@
 #ifndef YOU_CONTROLLER_RESULT_H_
 #define YOU_CONTROLLER_RESULT_H_
 
-#include "You-NLP/task_list.h"
+#include "You-QueryEngine/api.h"
 
 namespace You {
 namespace Controller {
@@ -14,7 +14,7 @@ typedef QueryEngine::Response Result;
 typedef QueryEngine::Task Task;
 
 /// Defines the type of a task list.
-typedef NLP::TaskList TaskList;
+typedef std::vector<Task> TaskList;
 
 }  // namespace Controller
 }  // namespace You
