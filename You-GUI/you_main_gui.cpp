@@ -23,7 +23,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	nlpm->setup();
 	tpm->setup();
 	sm->setup();
-	populateTaskPanel();
+	//populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
