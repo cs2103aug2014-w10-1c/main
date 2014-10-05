@@ -35,10 +35,14 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	);
 	start.name("start");
 
-	explicitCommand %=
-		(qi::lit(L"add") >> addCommand);
+	explicitCommand %= (
+		(qi::lit(L"add") >> addCommand) |
+		(qi::lit(L"edit") >> editCommand) |
+		(qi::lit(L"delete") >> deleteCommand)
+	);
 	explicitCommand.name("explicitCommand");
 
+	#pragma region Adding tasks
 	addCommand %= (
 		addCommandWithDeadline |
 		addCommandWithDescription
@@ -65,6 +69,30 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	)[qi::_val = phoenix::bind(
 		&QueryParser::constructAddQueryWithDeadlineTail,
 		qi::_1, qi::_2)];
+	#pragma endregion
+
+	#pragma region Editing tasks
+	editCommand = (
+		qi::uint_ >> qi::lit(L"set") >> editCommandFields >>
+			*ParserCharTraits::char_
+	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
+		qi::_1, qi::_2, qi::_3)];
+	editCommand.name("editCommand");
+
+	editCommandFields.add
+		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
+		(L"due", EDIT_QUERY::FIELDS::DUE)
+		(L"done", EDIT_QUERY::FIELDS::COMPLETE)
+		(L"complete", EDIT_QUERY::FIELDS::COMPLETE);
+	editCommandFields.name("editCommandFields");
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	deleteCommand = (
+		qi::uint_
+	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
+	deleteCommand.name("deleteCommand");
+	#pragma endregion
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
@@ -111,8 +139,40 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
 	};
 }
 
+EDIT_QUERY QueryParser::constructEditQuery(
+	const size_t offset,
+	EDIT_QUERY::FIELDS field,
+	const LexemeType& newValue) {
+	EDIT_QUERY result {
+		offset,
+		field
+	};
+	StringType newStringValue(newValue.begin(), newValue.end());
+
+	switch (field) {
+	case EDIT_QUERY::FIELDS::DESCRIPTION:
+		result.description = newStringValue;
+		break;
+	case EDIT_QUERY::FIELDS::DUE:
+		result.due = DateTimeParser::parse(newStringValue);
+		break;
+	case EDIT_QUERY::FIELDS::NONE:
+	case EDIT_QUERY::FIELDS::COMPLETE:
+	default:
+		break;
+	}
+
+	return result;
+}
+
+DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
+	return DELETE_QUERY {
+		offset
+	};
+}
+
 void QueryParser::onFailure(
-	ParserIteratorType begin,
+	ParserIteratorType /*begin*/,
 	ParserIteratorType end,
 	ParserIteratorType errorPos,
 	const spirit::info& message) {

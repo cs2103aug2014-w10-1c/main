@@ -18,10 +18,17 @@ using You::NLP::ParserException;
 
 using You::NLP::Internal::QueryParser;
 using You::NLP::Internal::ADD_QUERY;
+using You::NLP::Internal::EDIT_QUERY;
 using You::NLP::Internal::QUERY;
 
 TEST_CLASS(QueryParserTests) {
 public:
+	TEST_METHOD(throwsExceptionOnEmptyString) {
+		Assert::ExpectException<ParserException>([]() {
+			QueryParser::parse(L"");
+		}, L"Throws exception on empty string");
+	}
+
 	TEST_METHOD(throwsExceptionWhenParseFails) {
 		Assert::ExpectException<ParserException>([]() {
 				// "throw" is currently not defined, so this should work.
@@ -44,6 +51,40 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditQuery) {
+		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY{
+			10,
+			EDIT_QUERY::FIELDS::DESCRIPTION,
+			L"meh"
+		}), q);
+
+		q = QueryParser::parse(L"/edit 10 set due oct 2014");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY{
+			10,
+			EDIT_QUERY::FIELDS::DUE,
+			L"",
+			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
+		}), q);
+
+		q = QueryParser::parse(L"/edit 10 set complete");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY{
+			10,
+			EDIT_QUERY::FIELDS::COMPLETE
+		}), q);
+	}
+
+	TEST_METHOD(parsesDeleteQuery) {
+		QUERY q = QueryParser::parse(L"/delete 10");
+
+		Assert::AreEqual(QUERY(DELETE_QUERY {
+			10
 		}), q);
 	}
 };
