@@ -62,6 +62,15 @@ public:
 			EDIT_QUERY::FIELDS::DESCRIPTION,
 			L"meh"
 		}), q);
+
+		q = QueryParser::parse(L"/edit 10 set due oct 2014");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY{
+			10,
+			EDIT_QUERY::FIELDS::DUE,
+			L"",
+			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
+		}), q);
 	}
 };
 
