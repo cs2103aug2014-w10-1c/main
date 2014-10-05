@@ -23,7 +23,7 @@ public:
 	/// The type of the skipper used in this grammar.
 	typedef ParserSkipperType SkipperType;
 
-	/// The type of the lexeme buffer provided in a lexing semantic action.
+	/// The type of the lexeme buffer provided in a lexer semantic action.
 	typedef std::vector<ParserCharEncoding::char_type> LexemeType;
 
 	/// The type of input strings accepted by this parser.
