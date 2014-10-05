@@ -5,7 +5,7 @@
 #include "exception.h"
 
 namespace You {
-namespace NLP {
+namespace Controller {
 
 class ContextRequiredException : public Exception {
 };

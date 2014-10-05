@@ -5,12 +5,12 @@
 #include <stdexcept>
 
 namespace You {
-namespace NLP {
+namespace Utils {
 
 class Exception : public std::exception {
 };
 
-}  // namespace NLP
+}  // namespace Utils
 }  // namespace You
 
 #endif  // YOU_UTILS_EXCEPTIONS_EXCEPTION_H_

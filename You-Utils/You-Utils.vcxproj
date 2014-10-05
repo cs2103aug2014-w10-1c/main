@@ -71,7 +71,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="exception.h" />
+    <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

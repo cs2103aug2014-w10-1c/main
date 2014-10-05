@@ -21,7 +21,7 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exception.h">
+    <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
   </ItemGroup>
