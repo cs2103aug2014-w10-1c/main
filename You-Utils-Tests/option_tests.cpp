@@ -1,3 +1,4 @@
+//@author A0097630B
 #include "stdafx.h"
 #include "option.h"
 
