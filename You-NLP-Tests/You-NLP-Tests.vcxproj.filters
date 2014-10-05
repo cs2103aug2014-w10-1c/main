@@ -53,6 +53,12 @@
     <ClCompile Include="internal\date_time_parser_tests.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
+    <ClCompile Include="internal\parse_tree\edit_query_tests.cpp">
+      <Filter>Source Files\internal\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\parse_tree\delete_query_tests.cpp">
+      <Filter>Source Files\internal\parse_tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

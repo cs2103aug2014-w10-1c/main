@@ -21,9 +21,11 @@ public:
 	/// Disable assignment operator
 	DeleteTask& operator=(const DeleteTask&) = delete;
 
+	/// Destructor
+	virtual ~DeleteTask() = default;
 private:
 	/// Execute delete task.
-	Response execute() override;
+	Response execute(State& tasks) override;
 
 	const Task::ID id;  ///< ID of the task to delete
 };

@@ -80,7 +80,7 @@ private:
 	/// \name Deserializer for each fields.
 	/// @{
 	/// Lexical_cast back the ID to int64
-	static Task::ID deserializeID(Value id);
+	static Task::ID deserializeID(const Value& id);
 	/// Description is already the same
 	static Task::Description deserializeDescription(const Value& description);
 	/// "YYYY;MM;DD;HH;MM;SS;" to ptime object

@@ -9,7 +9,7 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-Response UpdateTask::execute() {
+Response UpdateTask::execute(State& tasks) {
 	Task newTask = TaskBuilder::get()
 		.id(this->id)
 		.description(this->description)

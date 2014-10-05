@@ -9,7 +9,7 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-Response AddTask::execute() {
+Response AddTask::execute(State& tasks) {
 	Task newTask = TaskBuilder::get()
 		.description(this->description)
 		.deadline(this->deadline)

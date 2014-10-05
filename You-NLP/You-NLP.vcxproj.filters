@@ -84,6 +84,12 @@
     <ClInclude Include="internal\parser.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="internal\parse_tree\edit_query.h">
+      <Filter>Header Files\internal\parse_tree</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\parse_tree\delete_query.h">
+      <Filter>Header Files\internal\parse_tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -106,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="internal\date_time_parser.cpp">
       <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\parse_tree\edit_query.cpp">
+      <Filter>Source Files\internal\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\parse_tree\delete_query.cpp">
+      <Filter>Source Files\internal\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-Response DeleteTask::execute() {
+Response DeleteTask::execute(State& tasks) {
 #if 0
 	queryEngine.getTaskGraph().remove(this->id)
 

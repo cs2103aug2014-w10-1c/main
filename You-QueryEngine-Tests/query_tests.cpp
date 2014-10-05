@@ -4,6 +4,7 @@
 
 #include "internal/task_builder.h"
 #include "common.h"
+#include "exclusions.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -24,16 +25,24 @@ using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 TEST_CLASS(QueryEngineTests) {
-	const Task::Description desc = L"Learn Haskell Lens";
-	const Task::Time dead = Task::NEVER;
-	const Task::Priority prio = Task::Priority::IMPORTANT;
-	const Task::Dependencies dep = Task::Dependencies();
-
 	TEST_METHOD(constructAddTaskQuery) {
-		Task task = TaskBuilder::get().description(desc)
-			.deadline(dead).priority(prio).dependencies(dep);
+		Task::Description desc = L"Learn Haskell Lens";
+		Task::Time dead = Task::NEVER;
+		Task::Priority prio = Task::Priority::IMPORTANT;
+		Task::Dependencies dep = Task::Dependencies();
+		Task task = TaskBuilder::get()
+			.description(desc).deadline(dead)
+			.priority(prio).dependencies(dep);
 		Response resp = executeQuery(AddTask(desc, dead, prio, dep));
 		Assert::IsTrue(boost::get<Task>(resp).isStrictEqual(task));
+	}
+
+	TEST_METHOD(constructFilterTaskQuery) {
+		Response resp = executeQuery(FilterTask(Filter::anyTask()));
+		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
+		std::vector<Task::ID> emptyVec;
+		resp = executeQuery(FilterTask(Filter::idIsIn(emptyVec)));
+		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;

@@ -18,12 +18,15 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="exclusions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="datastore_api_test.cpp">
+    <ClCompile Include="datastore_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

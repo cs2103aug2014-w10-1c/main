@@ -7,6 +7,7 @@
 #define YOU_QUERYENGINE_INTERNAL_ACTION_FILTER_TASK_H_
 
 #include <functional>
+#include "../../filter.h"
 #include "../../api.h"
 
 namespace You {
@@ -16,20 +17,16 @@ namespace Internal {
 /// Define action for updating task
 class FilterTask : public Query {
 public:
-	/// Type definition of a filter
-	typedef std::function<bool(const Task&)> Filter;
-
 	/// Constructor
 	explicit FilterTask(const Filter& filter) : filter(filter) {}
 
-	/// Disable assignment operator
-	FilterTask& operator=(const FilterTask&) = delete;
-
+	/// Destructor
+	virtual ~FilterTask() = default;
 private:
 	/// Execute add task.
-	Response execute() override;
-
-	const Filter filter;
+	Response execute(State& tasks) override;
+	FilterTask& operator=(const FilterTask&) = delete;
+	const Filter& filter;
 };
 
 }  // namespace Internal

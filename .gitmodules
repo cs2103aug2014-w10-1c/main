@@ -1,3 +1,3 @@
 [submodule "pugixml/pugixml"]
 	path = pugixml/pugixml
-	url = https://github.com/digawp/pugixml.git
+	url = https://github.com/zeux/pugixml.git

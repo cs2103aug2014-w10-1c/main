@@ -24,9 +24,11 @@ public:
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
 
+	/// Destructor
+	virtual ~UpdateTask() = default;
 private:
 	/// Execute add task.
-	Response execute() override;
+	Response execute(State& tasks) override;
 
 	const Task::ID id;
 	const Task::Description description;  ///< Description.

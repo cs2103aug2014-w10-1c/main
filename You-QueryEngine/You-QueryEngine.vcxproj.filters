@@ -57,6 +57,9 @@
     <ClInclude Include="internal\action\update_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
+    <ClInclude Include="filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="internal\action\filter_task.cpp">
       <Filter>Source Files\internal\action</Filter>
+    </ClCompile>
+    <ClCompile Include="filter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -23,7 +23,7 @@ public:
 	/// The type of the skipper used in this grammar.
 	typedef ParserSkipperType SkipperType;
 
-	/// The type of the lexeme buffer provided in a lexing semantic action.
+	/// The type of the lexeme buffer provided in a lexer semantic action.
 	typedef std::vector<ParserCharEncoding::char_type> LexemeType;
 
 	/// The type of input strings accepted by this parser.
@@ -39,6 +39,7 @@ public:
 	static QUERY parse(const StringType& string);
 
 private:
+	#pragma region Adding tasks
 	/// Process the nonterminal returned from the add query rule, converting it
 	/// to an appropriate \ref ADD_QUERY type.
 	///
@@ -75,6 +76,19 @@ private:
 	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
 	static ADD_QUERY constructAddQueryWithDeadlineTail(
 		const ParserCharEncoding::char_type c, const LexemeType& deadline);
+	#pragma endregion
+
+	#pragma region Editing tasks
+	/// Constructs a edit query from the given parse tree values.
+	///
+	/// \param[in] offset The task which the user is referencing
+	/// \param[in] field The field which should be edited.
+	/// \param[in] newValue The new value the user wants to change the field to.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQuery(
+		const size_t offset,
+		EDIT_QUERY::FIELDS field,
+		const LexemeType& newValue);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
 	///
@@ -85,6 +99,15 @@ private:
 		ParserIteratorType end,
 		ParserIteratorType errorPos,
 		const boost::spirit::info& message);
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	/// Constructs a delete query from the given parse tree values.
+	///
+	/// \param[in] offset The task for which the user is referencing
+	/// \return The synthesised value for the \ref deleteCommand rule.
+	static DELETE_QUERY constructDeleteQuery(const size_t offset);
+	#pragma endregion
 
 private:
 	/// The start rule.
@@ -93,6 +116,7 @@ private:
 	/// Explicit command rule.
 	boost::spirit::qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
 
+	#pragma region Adding tasks
 	/// Add command rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
 
@@ -107,6 +131,23 @@ private:
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
 		addCommandWithDeadlineTail;
 	/// }
+	#pragma endregion
+
+	#pragma region Editing tasks
+	/// Edit command rule.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+		editCommand;
+
+	/// The symbol mapping from task properties to the actual field.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		EDIT_QUERY::FIELDS> editCommandFields;
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	boost::spirit::qi::rule<IteratorType, DELETE_QUERY(), SkipperType>
+		deleteCommand;
+	#pragma endregion
 };
 
 }  // namespace Internal

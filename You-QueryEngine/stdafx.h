@@ -10,6 +10,7 @@
 #include <SDKDDKVer.h>
 
 #include <cstdint>
+#include <functional>
 #include <vector>
 #include <stdexcept>
 #include <string>

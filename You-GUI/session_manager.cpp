@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
-
+#include <memory>
 YouMainGUI::SessionManager::~SessionManager() {
 	saveSession();
 }
@@ -13,7 +13,13 @@ void YouMainGUI::SessionManager::setup() {
 }
 
 void YouMainGUI::SessionManager::loadSession() {
-	QSettings settings("You", "You");
+	QSettings settings("session.txt", QSettings::IniFormat);
+	int size = settings.beginReadArray("idList");
+	for (int i = 0; i < size; i++) {
+		settings.setArrayIndex(i);
+		taskIDs.push_back(settings.value("ID").toLongLong());
+	}
+	settings.endArray();
 	settings.beginGroup("MainWindow");
 	parentGUI->resize(settings.value("size", QSize(400, 400)).toSize());
 	parentGUI->move(settings.value("pos", QPoint(200, 200)).toPoint());
@@ -21,7 +27,13 @@ void YouMainGUI::SessionManager::loadSession() {
 }
 
 void YouMainGUI::SessionManager::saveSession() {
-	QSettings settings("You", "You");
+	QSettings settings("session.txt", QSettings::IniFormat);
+	settings.beginWriteArray("idList");
+	for (int i = 0; i < taskIDs.size(); i++) {
+		settings.setArrayIndex(i);
+		settings.setValue("ID", taskIDs.at(i));
+	}
+	settings.endArray();
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", parentGUI->size());
 	settings.setValue("pos", parentGUI->pos());
