@@ -13,14 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\internal">
-      <UniqueIdentifier>{da09483c-b07b-4013-8671-a5fe97907493}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\internal\parse_tree">
-      <UniqueIdentifier>{9524c9bd-7423-497e-9a17-b8acb469e31f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\internal">
       <UniqueIdentifier>{6ca65948-fa4e-4491-93cf-9374ecb87020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parse_tree">
+      <UniqueIdentifier>{c0ea7a73-5daf-4027-a221-6af5cd47748e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,23 +35,20 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="nlp_tests.cpp">
+    <ClCompile Include="date_time_parser_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\parse_tree\add_query_tests.cpp">
-      <Filter>Source Files\internal\parse_tree</Filter>
+    <ClCompile Include="query_parser_tests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\query_parser_tests.cpp">
-      <Filter>Source Files\internal</Filter>
+    <ClCompile Include="parse_tree\add_query_tests.cpp">
+      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
-    <ClCompile Include="internal\date_time_parser_tests.cpp">
-      <Filter>Source Files\internal</Filter>
+    <ClCompile Include="parse_tree\delete_query_tests.cpp">
+      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
-    <ClCompile Include="internal\parse_tree\edit_query_tests.cpp">
-      <Filter>Source Files\internal\parse_tree</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\parse_tree\delete_query_tests.cpp">
-      <Filter>Source Files\internal\parse_tree</Filter>
+    <ClCompile Include="parse_tree\edit_query_tests.cpp">
+      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

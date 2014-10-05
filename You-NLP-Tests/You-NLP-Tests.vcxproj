@@ -94,16 +94,15 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="internal\date_time_parser_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\add_query_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\delete_query_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\edit_query_tests.cpp" />
-    <ClCompile Include="internal\query_parser_tests.cpp" />
+    <ClCompile Include="date_time_parser_tests.cpp" />
+    <ClCompile Include="parse_tree\add_query_tests.cpp" />
+    <ClCompile Include="parse_tree\delete_query_tests.cpp" />
+    <ClCompile Include="parse_tree\edit_query_tests.cpp" />
+    <ClCompile Include="query_parser_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="nlp_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">

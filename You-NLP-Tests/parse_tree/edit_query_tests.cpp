@@ -1,8 +1,6 @@
 #include "stdafx.h"
-#include <boost/format.hpp>
-
 #include "query_parser.h"
-#include "../../internal/test_helpers.h"
+#include "../internal/test_helpers.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
