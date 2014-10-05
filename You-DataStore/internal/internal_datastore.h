@@ -7,7 +7,10 @@
 #include <unordered_map>
 #include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
+
+#define PUGIXML_WCHAR_MODE
 #include "pugixml.hpp"
+
 #include "../task_typedefs.h"
 
 namespace You {
