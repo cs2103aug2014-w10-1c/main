@@ -8,7 +8,6 @@
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 using ptime = boost::posix_time::ptime;
 namespace qi = boost::spirit::qi;
@@ -153,6 +152,5 @@ DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 #endif
 }
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

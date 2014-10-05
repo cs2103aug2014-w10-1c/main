@@ -9,10 +9,9 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests {
 
-using You::NLP::Internal::ADD_QUERY;
+using You::NLP::ADD_QUERY;
 
 TEST_CLASS(AddQueryTests) {
 public:
@@ -66,6 +65,5 @@ const boost::posix_time::ptime AddQueryTests::DUE(
 const ADD_QUERY AddQueryTests::DUMMY { DESCRIPTION, DUE };
 
 }  // namespace UnitTests
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

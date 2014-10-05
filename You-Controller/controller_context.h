@@ -1,12 +1,12 @@
 #pragma once
-#ifndef YOU_NLP_CONTROLLER_CONTEXT_H_
-#define YOU_NLP_CONTROLLER_CONTEXT_H_
+#ifndef YOU_CONTROLLER_CONTROLLER_CONTEXT_H_
+#define YOU_CONTROLLER_CONTROLLER_CONTEXT_H_
 
 #include "controller.h"
 #include "You-NLP/task_list.h"
 
 namespace You {
-namespace NLP {
+namespace Controller {
 namespace UnitTests { class ControllerContextTests; }
 
 /// Represents a context of a query. This is usually a task list so that
@@ -55,7 +55,7 @@ private:
 	Types context;
 };
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
 
-#endif  // YOU_NLP_CONTROLLER_CONTEXT_H_
+#endif  // YOU_CONTROLLER_CONTROLLER_CONTEXT_H_

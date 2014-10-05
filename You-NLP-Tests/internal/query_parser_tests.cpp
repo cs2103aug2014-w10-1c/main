@@ -9,7 +9,6 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests {
 
 using boost::gregorian::date;
@@ -17,10 +16,10 @@ using boost::posix_time::ptime;
 using boost::posix_time::hours;
 using You::NLP::ParserException;
 
-using You::NLP::Internal::QueryParser;
-using You::NLP::Internal::ADD_QUERY;
-using You::NLP::Internal::EDIT_QUERY;
-using You::NLP::Internal::QUERY;
+using You::NLP::QueryParser;
+using You::NLP::ADD_QUERY;
+using You::NLP::EDIT_QUERY;
+using You::NLP::QUERY;
 
 TEST_CLASS(QueryParserTests) {
 public:
@@ -91,6 +90,5 @@ public:
 };
 
 }  // namespace UnitTests
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

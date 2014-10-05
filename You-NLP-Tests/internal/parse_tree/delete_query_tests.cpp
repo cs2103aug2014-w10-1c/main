@@ -7,10 +7,9 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests {
 
-using You::NLP::Internal::DELETE_QUERY;
+using You::NLP::DELETE_QUERY;
 
 TEST_CLASS(DeleteQueryTests) {
 public:
@@ -52,6 +51,5 @@ const DELETE_QUERY DeleteQueryTests::DUMMY {
 };
 
 }  // namespace UnitTests
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

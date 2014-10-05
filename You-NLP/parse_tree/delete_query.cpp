@@ -10,7 +10,6 @@ const boost::wformat STRING_FORMAT(L"Delete task #%1%");
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 std::wostream& operator<<(std::wostream& s, const DELETE_QUERY& q) {
 	return s << boost::wformat(STRING_FORMAT) % q.taskID;
@@ -24,6 +23,5 @@ std::wstring ToString(const DELETE_QUERY& q) {
 	return boost::lexical_cast<std::wstring>(q);
 }
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

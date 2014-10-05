@@ -5,7 +5,7 @@
 
 #include "edit_query.h"
 
-using You::NLP::Internal::EDIT_QUERY;
+using You::NLP::EDIT_QUERY;
 
 namespace {
 
@@ -47,7 +47,6 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 EDIT_QUERY::FIELDS operator|(
 	const EDIT_QUERY::FIELDS& lhs,
@@ -103,6 +102,5 @@ std::wstring ToString(const EDIT_QUERY& q) {
 	return boost::lexical_cast<std::wstring>(q);
 }
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

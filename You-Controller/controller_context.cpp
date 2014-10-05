@@ -2,7 +2,7 @@
 #include "controller_context.h"
 
 namespace You {
-namespace NLP {
+namespace Controller {
 
 const Controller::Context Controller::Context::DEFAULT =
 	Controller::Context();
@@ -20,5 +20,5 @@ bool Controller::Context::isDefault() const {
 	return result != nullptr && *result == &DEFAULT;
 }
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You

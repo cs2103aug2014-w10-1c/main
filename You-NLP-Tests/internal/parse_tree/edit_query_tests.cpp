@@ -8,10 +8,9 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests {
 
-using You::NLP::Internal::EDIT_QUERY;
+using You::NLP::EDIT_QUERY;
 
 TEST_CLASS(EditQueryTests) {
 public:
@@ -90,6 +89,5 @@ const EDIT_QUERY EditQueryTests::DUMMY {
 };
 
 }  // namespace UnitTests
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

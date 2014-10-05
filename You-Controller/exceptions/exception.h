@@ -9,7 +9,7 @@ namespace Controller {
 
 typedef You::Utils::Exception Exception;
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
 
 #endif  // YOU_CONTROLLER_EXCEPTIONS_EXCEPTION_H_

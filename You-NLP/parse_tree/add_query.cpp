@@ -14,7 +14,6 @@ const boost::wformat STRING_FORMAT(L"%1% (due %2%)");
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 	return s << (boost::wformat(STRING_FORMAT) % q.description % q.due);
@@ -29,6 +28,5 @@ std::wstring ToString(const ADD_QUERY& q) {
 	return boost::lexical_cast<std::wstring>(q);
 }
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

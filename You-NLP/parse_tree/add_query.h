@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_PARSE_TREE_ADD_QUERY_H_
-#define YOU_NLP_INTERNAL_PARSE_TREE_ADD_QUERY_H_
+#ifndef YOU_NLP_PARSE_TREE_ADD_QUERY_H_
+#define YOU_NLP_PARSE_TREE_ADD_QUERY_H_
 
 #include <string>
 #include <boost/fusion/adapted/struct.hpp>
@@ -8,7 +8,6 @@
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 /// Defines the synthesised value type of an add query.
 struct ADD_QUERY {
@@ -37,14 +36,13 @@ std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q);
 /// \return The string representation of the current query object.
 std::wstring ToString(const ADD_QUERY& q);
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You
 
 BOOST_FUSION_ADAPT_STRUCT(
-	You::NLP::Internal::ADD_QUERY,
+	You::NLP::ADD_QUERY,
 	(std::wstring, description)
 	(std::wstring, due)
 )
 
-#endif  // YOU_NLP_INTERNAL_PARSE_TREE_ADD_QUERY_H_
+#endif  // YOU_NLP_PARSE_TREE_ADD_QUERY_H_

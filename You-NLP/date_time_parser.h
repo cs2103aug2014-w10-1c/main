@@ -1,13 +1,12 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
-#define YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
+#ifndef YOU_NLP_DATE_TIME_PARSER_H_
+#define YOU_NLP_DATE_TIME_PARSER_H_
 
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include "parser.h"
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests { class DateTimeParserTests; }
 
 /// The query parser that recognises our input syntax.
@@ -111,8 +110,7 @@ private:
 	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;
 };
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You
 
-#endif  // YOU_NLP_INTERNAL_DATE_TIME_PARSER_H_
+#endif  // YOU_NLP_DATE_TIME_PARSER_H_

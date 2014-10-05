@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_QUERY_PARSER_H_
-#define YOU_NLP_INTERNAL_QUERY_PARSER_H_
+#ifndef YOU_NLP_QUERY_PARSER_H_
+#define YOU_NLP_QUERY_PARSER_H_
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -9,7 +9,6 @@
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 /// The query parser that recognises our input syntax.
 class QueryParser : public boost::spirit::qi::grammar<
@@ -150,8 +149,7 @@ private:
 	#pragma endregion
 };
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You
 
-#endif  // YOU_NLP_INTERNAL_QUERY_PARSER_H_
+#endif  // YOU_NLP_QUERY_PARSER_H_

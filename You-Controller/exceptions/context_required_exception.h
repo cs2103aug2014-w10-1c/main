@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
-#define YOU_NLP_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
+#ifndef YOU_CONTROLLER_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
+#define YOU_CONTROLLER_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
 
 #include "exception.h"
 
@@ -10,7 +10,7 @@ namespace Controller {
 class ContextRequiredException : public Exception {
 };
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
 
-#endif  // YOU_NLP_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_
+#endif  // YOU_CONTROLLER_EXCEPTIONS_CONTEXT_REQUIRED_EXCEPTION_H_

@@ -1,10 +1,9 @@
 #pragma once
-#ifndef YOU_NLP_INTERNAL_PARSE_TREE_DELETE_QUERY_H_
-#define YOU_NLP_INTERNAL_PARSE_TREE_DELETE_QUERY_H_
+#ifndef YOU_NLP_PARSE_TREE_DELETE_QUERY_H_
+#define YOU_NLP_PARSE_TREE_DELETE_QUERY_H_
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 /// Defines the synthesised value type of a delete query.
 struct DELETE_QUERY {
@@ -30,8 +29,7 @@ std::wostream& operator<<(std::wostream& s, const DELETE_QUERY& q);
 /// \return The string representation of the current query object.
 std::wstring ToString(const DELETE_QUERY& q);
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You
 
-#endif  // YOU_NLP_INTERNAL_PARSE_TREE_DELETE_QUERY_H_
+#endif  // YOU_NLP_PARSE_TREE_DELETE_QUERY_H_

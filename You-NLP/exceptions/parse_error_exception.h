@@ -17,14 +17,14 @@ public:
 	/// \param[in] token The token being parsed.
 	ParseErrorException(
 		boost::spirit::info message,
-		Internal::QueryParser::StringType token);
+		QueryParser::StringType token);
 
 private:
 	/// The Spirit parse error.
 	boost::spirit::info message;
 
 	/// The token causing the error.
-	Internal::QueryParser::StringType token;
+	QueryParser::StringType token;
 };
 
 }  // namespace NLP

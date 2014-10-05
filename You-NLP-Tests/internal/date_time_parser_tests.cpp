@@ -7,14 +7,13 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
 namespace NLP {
-namespace Internal {
 namespace UnitTests {
 
 using boost::gregorian::date;
 using boost::posix_time::ptime;
 using boost::posix_time::hours;
 
-using You::NLP::Internal::DateTimeParser;
+using You::NLP::DateTimeParser;
 
 TEST_CLASS(DateTimeParserTests) {
 public:
@@ -89,6 +88,5 @@ private:
 };
 
 }  // namespace UnitTests
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

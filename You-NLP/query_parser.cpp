@@ -7,7 +7,6 @@
 
 namespace You {
 namespace NLP {
-namespace Internal {
 
 namespace spirit = boost::spirit;
 namespace qi = spirit::qi;
@@ -181,6 +180,5 @@ void QueryParser::onFailure(
 	throw ParseErrorException(message, lexeme);
 }
 
-}  // namespace Internal
 }  // namespace NLP
 }  // namespace You

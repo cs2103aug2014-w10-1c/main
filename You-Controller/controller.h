@@ -1,12 +1,12 @@
 #pragma once
-#ifndef YOU_NLP_CONTROLLER_H_
-#define YOU_NLP_CONTROLLER_H_
+#ifndef YOU_CONTROLLER_CONTROLLER_H_
+#define YOU_CONTROLLER_CONTROLLER_H_
 
 #include <string>
 #include "result.h"
 
 namespace You {
-namespace NLP {
+namespace Controller {
 namespace UnitTests { class ControllerContextTests; }
 
 /// The entry-point for all communications with the rest of the You
@@ -56,7 +56,7 @@ private:
 	static Controller instance;
 };
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
 
-#endif  // YOU_NLP_CONTROLLER_H_
+#endif  // YOU_CONTROLLER_CONTROLLER_H_

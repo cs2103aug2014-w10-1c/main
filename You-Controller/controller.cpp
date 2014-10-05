@@ -4,13 +4,13 @@
 #include "You-NLP/parse_tree.h"
 
 namespace You {
-namespace NLP {
+namespace Controller {
 
-using Internal::QueryParser;
-using Internal::QUERY;
-using Internal::ADD_QUERY;
-using Internal::EDIT_QUERY;
-using Internal::DELETE_QUERY;
+using You::NLP::QueryParser;
+using You::NLP::QUERY;
+using You::NLP::ADD_QUERY;
+using You::NLP::EDIT_QUERY;
+using You::NLP::DELETE_QUERY;
 using Date = boost::gregorian::date;
 using Query = QueryEngine::Query;
 
@@ -116,5 +116,5 @@ Controller::QueryBuilderVisitor::build(const DELETE_QUERY& query) {
 	return nullptr;
 }
 
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
