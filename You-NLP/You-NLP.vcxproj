@@ -85,6 +85,7 @@
     <ClInclude Include="exceptions\parse_error_exception.h" />
     <ClInclude Include="internal\date_time_parser.h" />
     <ClInclude Include="internal\parser.h" />
+    <ClInclude Include="internal\parse_tree\delete_query.h" />
     <ClInclude Include="internal\parse_tree\edit_query.h" />
     <ClInclude Include="internal\query_parser.h" />
     <ClInclude Include="internal\parse_tree.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="controller_context.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
     <ClCompile Include="internal\date_time_parser.cpp" />
+    <ClCompile Include="internal\parse_tree\delete_query.cpp" />
     <ClCompile Include="internal\parse_tree\edit_query.cpp" />
     <ClCompile Include="internal\query_parser.cpp" />
     <ClCompile Include="internal\parse_tree\add_query.cpp" />
