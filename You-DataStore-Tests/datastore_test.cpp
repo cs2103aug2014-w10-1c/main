@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "task_typedefs.h"
+#include "dummy_values.h"
 #include "internal/internal_datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -11,29 +11,6 @@ namespace DataStore {
 namespace UnitTests {
 
 using InternalDataStore = You::DataStore::Internal::InternalDataStore;
-
-// Dummy constants
-const std::wstring TASK_ID = L"id";
-const std::wstring DESCRIPTION = L"description";
-const std::wstring DEADLINE = L"deadline";
-const std::wstring PRIORITY = L"priority";
-const std::wstring DEPENDENCIES = L"dependency";
-
-// Dummy serialized task
-const SerializedTask stask = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"bla bla" },
-		{ DEADLINE, L"xxxxxx" },
-		{ PRIORITY, L"urgent" },
-		{ DEPENDENCIES, L"12345" }
-};
-const SerializedTask staskAlt = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"yada yada" },
-		{ DEADLINE, L"yyyyyy" },
-		{ PRIORITY, L"normal" },
-		{ DEPENDENCIES, L"4321" }
-};
 
 /// Unit Test Class for InternalDataStore class
 TEST_CLASS(DataStoreTest) {
