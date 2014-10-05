@@ -3,6 +3,7 @@
 #include "CppUnitTest.h"
 
 #include "internal/task_builder.h"
+#include "internal/exception.h"
 #include "common.h"
 #include "exclusions.h"
 #include "api.h"
@@ -43,6 +44,20 @@ TEST_CLASS(QueryEngineTests) {
 		std::vector<Task::ID> emptyVec;
 		resp = executeQuery(FilterTask(Filter::idIsIn(emptyVec)));
 		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
+	}
+
+	TEST_METHOD(constructDeleteTaskQuery) {
+		Response resp = executeQuery(DeleteTask(Task::DEFAULT_ID));
+		Assert::IsNotNull(&resp);
+	}
+
+	TEST_METHOD(constructEditTaskQuery) {
+		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
+		Assert::ExpectException<EmptyTaskDescriptionException>([] {
+			executeQuery(UpdateTask(Task::DEFAULT_ID,
+				Task::DEFAULT_DESCRIPTION, Task::DEFAULT_DEADLINE,
+				Task::DEFAULT_PRIORITY, Task::DEFAULT_DEPENDENCIES));
+		});
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
