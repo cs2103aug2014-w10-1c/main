@@ -2,7 +2,6 @@
 #include <boost/format.hpp>
 
 #include "internal/query_parser.h"
-#include "exception.h"
 #include "../../internal/test_helpers.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;

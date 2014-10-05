@@ -6,6 +6,7 @@
 
 #include "parse_tree/add_query.h"
 #include "parse_tree/edit_query.h"
+#include "parse_tree/delete_query.h"
 
 namespace You {
 namespace NLP {

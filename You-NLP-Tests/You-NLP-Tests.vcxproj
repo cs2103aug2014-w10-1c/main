@@ -97,6 +97,7 @@
     <ClCompile Include="controller_context_tests.cpp" />
     <ClCompile Include="internal\date_time_parser_tests.cpp" />
     <ClCompile Include="internal\parse_tree\add_query_tests.cpp" />
+    <ClCompile Include="internal\parse_tree\delete_query_tests.cpp" />
     <ClCompile Include="internal\parse_tree\edit_query_tests.cpp" />
     <ClCompile Include="internal\query_parser_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
