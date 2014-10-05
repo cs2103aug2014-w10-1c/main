@@ -15,7 +15,8 @@ namespace Internal {
 /// Defines the synthesised value type of a query.
 typedef boost::variant<
 	ADD_QUERY,
-	EDIT_QUERY
+	EDIT_QUERY,
+	DELETE_QUERY
 > QUERY;
 
 }  // namespace Internal

@@ -79,6 +79,14 @@ public:
 			EDIT_QUERY::FIELDS::COMPLETE
 		}), q);
 	}
+
+	TEST_METHOD(parsesDeleteQuery) {
+		QUERY q = QueryParser::parse(L"/delete 10");
+
+		Assert::AreEqual(QUERY(DELETE_QUERY {
+			10
+		}), q);
+	}
 };
 
 }  // namespace UnitTests

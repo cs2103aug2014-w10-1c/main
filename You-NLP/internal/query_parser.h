@@ -39,6 +39,7 @@ public:
 	static QUERY parse(const StringType& string);
 
 private:
+	#pragma region Adding tasks
 	/// Process the nonterminal returned from the add query rule, converting it
 	/// to an appropriate \ref ADD_QUERY type.
 	///
@@ -75,7 +76,9 @@ private:
 	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
 	static ADD_QUERY constructAddQueryWithDeadlineTail(
 		const ParserCharEncoding::char_type c, const LexemeType& deadline);
-	
+	#pragma endregion
+
+	#pragma region Editing tasks
 	/// Constructs a edit query from the given parse tree values.
 	///
 	///	\param[in] offset The task which the user is referencing
@@ -96,6 +99,15 @@ private:
 		ParserIteratorType end,
 		ParserIteratorType errorPos,
 		const boost::spirit::info& message);
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	/// Constructs a delete query from the given parse tree values.
+	///
+	/// \param[in] offset The task for which the user is referencing
+	/// \return The synthesised value for the \ref deleteCommand rule.
+	static DELETE_QUERY constructDeleteQuery(const size_t offset);
+	#pragma endregion
 
 private:
 	/// The start rule.
@@ -130,6 +142,11 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		EDIT_QUERY::FIELDS> editCommandFields;
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	boost::spirit::qi::rule<IteratorType, DELETE_QUERY(), SkipperType>
+		deleteCommand;
 	#pragma endregion
 };
 

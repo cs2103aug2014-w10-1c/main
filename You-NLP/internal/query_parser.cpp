@@ -37,7 +37,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	explicitCommand %= (
 		(qi::lit(L"add") >> addCommand) |
-		(qi::lit(L"edit") >> editCommand)
+		(qi::lit(L"edit") >> editCommand) |
+		(qi::lit(L"delete") >> deleteCommand)
 	);
 	explicitCommand.name("explicitCommand");
 
@@ -84,6 +85,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"done", EDIT_QUERY::FIELDS::COMPLETE)
 		(L"complete", EDIT_QUERY::FIELDS::COMPLETE);
 	editCommandFields.name("editCommandFields");
+	#pragma endregion
+
+	#pragma region Deleting tasks
+	deleteCommand = (
+		qi::uint_
+	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
+	deleteCommand.name("deleteCommand");
 	#pragma endregion
 
 	qi::on_error<qi::fail>(start,
@@ -155,6 +163,12 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	}
 
 	return result;
+}
+
+DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
+	return DELETE_QUERY {
+		offset
+	};
 }
 
 void QueryParser::onFailure(
