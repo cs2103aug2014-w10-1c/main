@@ -27,7 +27,7 @@ Response executeQuery(std::unique_ptr<Query> query) {
 	return query->execute(blank);
 }
 
-Response executeQuery(std::unique_ptr<Query> query, State& const state) {
+Response executeQuery(std::unique_ptr<Query> query, State& state) {
 	return query->execute(state);
 }
 

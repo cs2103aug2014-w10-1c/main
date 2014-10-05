@@ -8,7 +8,7 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-Response FilterTask::execute(State& const tasks) {
+Response FilterTask::execute(State& tasks) {
 	std::vector<Task> result;
 	auto filter = this->filter;
 	std::for_each(tasks.cbegin(), tasks.cend(),

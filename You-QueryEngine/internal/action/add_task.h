@@ -28,7 +28,7 @@ public:
 	virtual ~AddTask() = default;
 private:
 	/// Execute add task.
-	Response execute(State& const tasks) override;
+	Response execute(State& tasks) override;
 
 	const Task::Description description;  ///< Description.
 	const Task::Time deadline;  ///< Deadline.

@@ -25,7 +25,7 @@ public:
 	virtual ~DeleteTask() = default;
 private:
 	/// Execute delete task.
-	Response execute(State& const tasks) override;
+	Response execute(State& tasks) override;
 
 	const Task::ID id;  ///< ID of the task to delete
 };

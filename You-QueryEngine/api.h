@@ -25,10 +25,10 @@ typedef std::vector<Task> State;
 class Query {
 	friend Response executeQuery(std::unique_ptr<Query> query);
 	friend Response executeQuery(std::unique_ptr<Query> query,
-		State& const state);
+		State& state);
 private:
 	/// Execute the query.
-	virtual Response execute(State& const tasks) = 0;
+	virtual Response execute(State& tasks) = 0;
 };
 
 /// \name Query Constructors
@@ -57,7 +57,7 @@ Response executeQuery(std::unique_ptr<Query> query);
 
 /// Execute a query on a state and return a response
 ///  \return The result of the query as a response object.
-Response executeQuery(std::unique_ptr<Query> query, State& const state);
+Response executeQuery(std::unique_ptr<Query> query, State& state);
 
 }  // namespace QueryEngine
 }  // namespace You
