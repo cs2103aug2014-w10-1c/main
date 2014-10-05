@@ -66,6 +66,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="exclusions.h" />
     <ClInclude Include="pugixml\src\pugiconfig.hpp" />
     <ClInclude Include="pugixml\src\pugixml.hpp" />
   </ItemGroup>
