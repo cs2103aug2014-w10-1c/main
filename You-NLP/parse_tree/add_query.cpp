@@ -16,7 +16,9 @@ namespace You {
 namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
-	return s << (boost::wformat(STRING_FORMAT) % q.description % q.due.get());
+	return s << (boost::wformat(STRING_FORMAT) % q.description % (
+		q.due ? boost::lexical_cast<std::wstring>(q.due.get()) : L"none"
+	));
 }
 
 bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {

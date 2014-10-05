@@ -3,6 +3,7 @@
 #define YOU_UTILS_OPTION_H_
 
 #include <memory>
+#include <cassert>
 
 namespace You {
 namespace Utils {
@@ -30,10 +31,12 @@ public:
 	}
 
 	inline const T& get() const {
+		assert(operator bool());
 		return *std::shared_ptr<T>::get();
 	}
 
 	inline T& get() {
+		assert(operator bool());
 		return *std::shared_ptr<T>::get();
 	}
 
