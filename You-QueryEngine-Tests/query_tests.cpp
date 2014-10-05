@@ -34,7 +34,7 @@ TEST_CLASS(QueryEngineTests) {
 			.description(desc).deadline(dead)
 			.priority(prio).dependencies(dep);
 		Response resp = executeQuery(AddTask(desc, dead, prio, dep));
-		Assert::IsTrue(boost::get<Task>(resp).isStrictEqual(task));
+		Assert::IsTrue(boost::get<Task>(resp) == (task));
 	}
 
 	TEST_METHOD(constructFilterTaskQuery) {

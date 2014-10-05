@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -53,11 +54,6 @@ public:
 	void setPriority(Priority);
 	/// @}
 
-	/// Check if the task is strictly equal with another task
-	/// Two taks are strictly equal if all fields are equal
-	/// \returns The strict equality of two tasks.
-	bool isStrictEqual(const Task& task) const;
-
 	/// \name Default Values
 	/// @{
 	static const ID DEFAULT_ID;
@@ -68,10 +64,10 @@ public:
 	static const Priority DEFAULT_PRIORITY;
 	/// @}
 
-	/// Equality of task is determined by its unique ID
-	/// For stricter equality, \see isStrictEqual
+	/// Check equality of two tasks by comparing field by field.
+	/// \param[in] rhs The task object to be compared
 	inline bool operator==(const Task& rhs) const {
-		return id == rhs.id;
+		return isStrictEqual(rhs);
 	}
 
 	/// String representation of a task, for testing and logging.
@@ -87,6 +83,11 @@ private:
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
+
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
+	bool isStrictEqual(const Task& task) const;
 
 	/// \name Private Fields
 	/// @{
