@@ -20,7 +20,7 @@ std::unique_ptr<Query>
 QueryBuilderVisitor::build(const ADD_QUERY& query) {
 	return QueryEngine::AddTask(
 		query.description,
-		query.due,
+		query.due ? query.due.get() : Task::DEFAULT_DEADLINE,
 		Task::Priority::NORMAL,
 		Task::Dependencies());
 }

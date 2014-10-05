@@ -72,6 +72,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exceptions\exception.h" />
+    <ClInclude Include="option.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
