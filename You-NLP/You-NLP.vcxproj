@@ -79,7 +79,6 @@
   <ItemGroup>
     <ClInclude Include="date_time_parser.h" />
     <ClInclude Include="exception.h" />
-    <ClInclude Include="exceptions\context_required_exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\parser_exception.h" />
     <ClInclude Include="exceptions\parse_error_exception.h" />

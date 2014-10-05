@@ -39,9 +39,6 @@
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exceptions\context_required_exception.h">
-      <Filter>Header Files\exceptions</Filter>
-    </ClInclude>
     <ClInclude Include="exceptions\parser_exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
