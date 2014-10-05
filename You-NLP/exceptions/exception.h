@@ -2,13 +2,12 @@
 #ifndef YOU_NLP_EXCEPTIONS_EXCEPTION_H_
 #define YOU_NLP_EXCEPTIONS_EXCEPTION_H_
 
-#include <stdexcept>
+#include "You-Utils/exceptions/exception.h"
 
 namespace You {
 namespace NLP {
 
-class Exception : public std::exception {
-};
+typedef You::Utils::Exception Exception;
 
 }  // namespace NLP
 }  // namespace You

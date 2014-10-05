@@ -4,9 +4,9 @@
 #define YOU_GUI_NLP_MANAGER_H_
 #include <QApplication>
 #include <QWidget>
-#include "You-NLP/controller.h"
-#include "You-NLP/result.h"
-#include "You-NLP/controller_context.h"
+#include "You-Controller/controller.h"
+#include "You-Controller/result.h"
+#include "You-Controller/controller_context.h"
 #include "base_manager.h"
 
 /// The component that handles passing of data between the NLP parser and the
@@ -19,15 +19,21 @@ class YouMainGUI::NLPManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
 public:
+	/// Constructor inherited from BaseManager.
 	explicit NLPManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+
+	/// Destructor.
 	~NLPManager();
+
 	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
 	void setup();
+
 	/// Queries the NLP engine. Passes the Result and wstring input into the
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	You::NLP::Result queryNLP();
+
 private:
 	/// The current result/context displayed to the user
 	std::unique_ptr<You::NLP::Result> currentResult;

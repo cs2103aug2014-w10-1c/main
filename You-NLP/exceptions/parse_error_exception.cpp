@@ -5,7 +5,6 @@ namespace You {
 namespace NLP {
 
 namespace spirit = boost::spirit;
-using QueryParser = Internal::QueryParser;
 
 ParseErrorException::ParseErrorException(
 	spirit::info message,

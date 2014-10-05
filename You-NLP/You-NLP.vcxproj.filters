@@ -16,23 +16,14 @@
     <Filter Include="Header Files\exceptions">
       <UniqueIdentifier>{4f30e072-a8b1-40f9-a7a6-65d25b03b1e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\internal">
-      <UniqueIdentifier>{9f9cfe3f-7a87-45b4-8b89-e720461f7514}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\internal\parse_tree">
-      <UniqueIdentifier>{0631b946-68ab-435a-9a70-51c9d04693a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\internal">
-      <UniqueIdentifier>{757e9372-5cf7-4a23-9f33-23161531f5f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\internal\parse_tree">
-      <UniqueIdentifier>{53c82bc4-dde6-4281-b566-2bf833988490}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\internal\exceptions">
-      <UniqueIdentifier>{99a8561a-4e6d-4632-b71a-cd9f326046e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\exceptions">
       <UniqueIdentifier>{7e6382bf-2367-42f2-a0df-3a9cdc4eca46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parse_tree">
+      <UniqueIdentifier>{51bebc2d-916d-4f01-94d9-288af5499120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\parse_tree">
+      <UniqueIdentifier>{d9135070-c47f-4951-89ab-3f23770546fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,26 +33,11 @@
     <ClInclude Include="nlp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="result.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="task_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="exceptions\context_required_exception.h">
-      <Filter>Header Files\exceptions</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\parse_tree.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\parse_tree\add_query.h">
-      <Filter>Header Files\internal\parse_tree</Filter>
     </ClInclude>
     <ClInclude Include="exceptions\parser_exception.h">
       <Filter>Header Files\exceptions</Filter>
@@ -72,40 +48,49 @@
     <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
-    <ClInclude Include="internal\date_time_parser.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="parse_tree\add_query.h">
+      <Filter>Header Files\parse_tree</Filter>
     </ClInclude>
-    <ClInclude Include="internal\query_parser.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="parse_tree\delete_query.h">
+      <Filter>Header Files\parse_tree</Filter>
     </ClInclude>
-    <ClInclude Include="controller_context.h">
+    <ClInclude Include="parse_tree\edit_query.h">
+      <Filter>Header Files\parse_tree</Filter>
+    </ClInclude>
+    <ClInclude Include="date_time_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\parser.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="parse_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="query_parser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="controller_context.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\parse_tree\add_query.cpp">
-      <Filter>Source Files\internal\parse_tree</Filter>
-    </ClCompile>
     <ClCompile Include="exceptions\parse_error_exception.cpp">
       <Filter>Source Files\exceptions</Filter>
     </ClCompile>
-    <ClCompile Include="internal\query_parser.cpp">
-      <Filter>Source Files\internal</Filter>
+    <ClCompile Include="date_time_parser.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\date_time_parser.cpp">
-      <Filter>Source Files\internal</Filter>
+    <ClCompile Include="query_parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parse_tree\add_query.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="parse_tree\delete_query.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="parse_tree\edit_query.cpp">
+      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
