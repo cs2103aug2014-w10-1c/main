@@ -24,9 +24,11 @@ public:
 	/// Disable assignment operator
 	AddTask& operator=(const AddTask&) = delete;
 
+	/// Destructor
+	virtual ~AddTask() = default;
 private:
 	/// Execute add task.
-	Response execute() override;
+	Response execute(State& const tasks) override;
 
 	const Task::Description description;  ///< Description.
 	const Task::Time deadline;  ///< Deadline.

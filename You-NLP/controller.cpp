@@ -68,19 +68,14 @@ Result Controller::query(
 
 Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
 	std::unique_ptr<QueryEngine::Query> query =
-		QueryEngine::FilterTask([&taskIDs](const Task& task) {
-			return std::find(taskIDs.begin(), taskIDs.end(), task.getID()) !=
-				taskIDs.end();
-		});
+		QueryEngine::FilterTask(QueryEngine::Filter::idIsIn(taskIDs));
 
 	return QueryEngine::executeQuery(std::move(query));
 }
 
 Result Controller::getTasks() const {
 	std::unique_ptr<QueryEngine::Query> query =
-		QueryEngine::FilterTask([](const Task& task) {
-			return true;
-		});
+		QueryEngine::FilterTask(QueryEngine::Filter::anyTask());
 
 	return QueryEngine::executeQuery(std::move(query));
 }
