@@ -28,7 +28,7 @@ public:
 	virtual ~UpdateTask() = default;
 private:
 	/// Execute add task.
-	Response execute(State& const tasks) override;
+	Response execute(State& tasks) override;
 
 	const Task::ID id;
 	const Task::Description description;  ///< Description.
