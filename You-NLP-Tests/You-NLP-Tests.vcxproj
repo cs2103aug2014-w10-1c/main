@@ -54,7 +54,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\You-NLP;..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
@@ -73,7 +73,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\You-NLP;..\;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
@@ -94,17 +94,15 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="controller_context_tests.cpp" />
-    <ClCompile Include="internal\date_time_parser_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\add_query_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\delete_query_tests.cpp" />
-    <ClCompile Include="internal\parse_tree\edit_query_tests.cpp" />
-    <ClCompile Include="internal\query_parser_tests.cpp" />
+    <ClCompile Include="date_time_parser_tests.cpp" />
+    <ClCompile Include="parse_tree\add_query_tests.cpp" />
+    <ClCompile Include="parse_tree\delete_query_tests.cpp" />
+    <ClCompile Include="parse_tree\edit_query_tests.cpp" />
+    <ClCompile Include="query_parser_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="nlp_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">

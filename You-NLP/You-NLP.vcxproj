@@ -77,34 +77,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="controller_context.h" />
+    <ClInclude Include="date_time_parser.h" />
     <ClInclude Include="exception.h" />
-    <ClInclude Include="exceptions\context_required_exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\parser_exception.h" />
     <ClInclude Include="exceptions\parse_error_exception.h" />
-    <ClInclude Include="internal\date_time_parser.h" />
-    <ClInclude Include="internal\parser.h" />
-    <ClInclude Include="internal\parse_tree\delete_query.h" />
-    <ClInclude Include="internal\parse_tree\edit_query.h" />
-    <ClInclude Include="internal\query_parser.h" />
-    <ClInclude Include="internal\parse_tree.h" />
-    <ClInclude Include="internal\parse_tree\add_query.h" />
     <ClInclude Include="nlp.h" />
-    <ClInclude Include="controller.h" />
-    <ClInclude Include="result.h" />
+    <ClInclude Include="parser.h" />
+    <ClInclude Include="parse_tree.h" />
+    <ClInclude Include="parse_tree\add_query.h" />
+    <ClInclude Include="parse_tree\delete_query.h" />
+    <ClInclude Include="parse_tree\edit_query.h" />
+    <ClInclude Include="query_parser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="task_list.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="controller.cpp" />
-    <ClCompile Include="controller_context.cpp" />
+    <ClCompile Include="date_time_parser.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
-    <ClCompile Include="internal\date_time_parser.cpp" />
-    <ClCompile Include="internal\parse_tree\delete_query.cpp" />
-    <ClCompile Include="internal\parse_tree\edit_query.cpp" />
-    <ClCompile Include="internal\query_parser.cpp" />
-    <ClCompile Include="internal\parse_tree\add_query.cpp" />
+    <ClCompile Include="parse_tree\add_query.cpp" />
+    <ClCompile Include="parse_tree\delete_query.cpp" />
+    <ClCompile Include="parse_tree\edit_query.cpp" />
+    <ClCompile Include="query_parser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

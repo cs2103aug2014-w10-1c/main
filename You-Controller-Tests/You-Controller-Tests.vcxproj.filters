@@ -14,10 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\internal">
-      <UniqueIdentifier>{6ca65948-fa4e-4491-93cf-9374ecb87020}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\parse_tree">
-      <UniqueIdentifier>{c0ea7a73-5daf-4027-a221-6af5cd47748e}</UniqueIdentifier>
+      <UniqueIdentifier>{89cf00d3-337a-4d96-9195-3e6108db8c12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -35,20 +32,8 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="date_time_parser_tests.cpp">
+    <ClCompile Include="controller_context_tests.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="query_parser_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\add_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\delete_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\edit_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

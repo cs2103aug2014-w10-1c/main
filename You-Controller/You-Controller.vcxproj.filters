@@ -13,42 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\internal">
-      <UniqueIdentifier>{6ca65948-fa4e-4491-93cf-9374ecb87020}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\parse_tree">
-      <UniqueIdentifier>{c0ea7a73-5daf-4027-a221-6af5cd47748e}</UniqueIdentifier>
+    <Filter Include="Header Files\exceptions">
+      <UniqueIdentifier>{f60a0d65-b0d2-416f-9b4e-a5e8036514b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exclusions.h">
+    <ClInclude Include="controller_context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\test_helpers.h">
-      <Filter>Header Files\internal</Filter>
+    <ClInclude Include="controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\context_required_exception.h">
+      <Filter>Header Files\exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\exception.h">
+      <Filter>Header Files\exceptions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="date_time_parser_tests.cpp">
+    <ClCompile Include="controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="query_parser_tests.cpp">
+    <ClCompile Include="controller_context.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\add_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\delete_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
-    </ClCompile>
-    <ClCompile Include="parse_tree\edit_query_tests.cpp">
-      <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
