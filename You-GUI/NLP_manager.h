@@ -4,10 +4,9 @@
 #define YOU_GUI_NLP_MANAGER_H_
 #include <QApplication>
 #include <QWidget>
-#include "You-NLP/controller.h"
-#include "You-NLP/result.h"
-#include "You-NLP/controller_context.h"
-#include "You-NLP/task_list.h"
+#include "You-Controller/controller.h"
+#include "You-Controller/result.h"
+#include "You-Controller/controller_context.h"
 #include "base_manager.h"
 
 /// The component that handles passing of data between the NLP parser and the
