@@ -19,7 +19,7 @@ struct ToStringVisitor : public boost::static_visitor<std::wstring> {
 };
 
 }  // namespace UnitTests
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
 
 namespace boost {
