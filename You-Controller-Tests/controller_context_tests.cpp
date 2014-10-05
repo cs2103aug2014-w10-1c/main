@@ -43,7 +43,24 @@ public:
 	}
 
 	TEST_METHOD(atAndArrayAccessReturnsCorrectItem) {
-		
+		std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
+			L"meh",
+			QueryEngine::Task::DEFAULT_DEADLINE,
+			QueryEngine::Task::DEFAULT_PRIORITY,
+			QueryEngine::Task::Dependencies()
+		);
+
+		TaskList taskList;
+		{
+			Result r = QueryEngine::executeQuery(std::move(q));
+			Task task = boost::get<Task>(r);
+			taskList.emplace_back(task);
+		}
+		Controller::Context context(taskList);
+
+		// TODO(lowjoel): Use AreEqual when there's an accessible ToString
+		Assert::IsTrue(taskList.front() == context[0]);
+		Assert::IsTrue(taskList.front() == context.at(0));
 	}
 };
 
