@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
@@ -73,6 +74,11 @@ public:
 		return id == rhs.id;
 	}
 
+	/// String representation of a task, for testing and logging.
+	/// \param[in] The task object, assumed all fields are valid
+	/// \return A string representation of the task
+	static std::wstring ToString(const Task&);
+
 private:
 	/// Disable default constructor - use builder only
 	Task() = delete;
@@ -90,6 +96,8 @@ private:
 	Dependencies dependencies;
 	Priority priority;
 	/// @}
+
+	static const std::wstring FORMAT;
 };
 
 }  // namespace QueryEngine

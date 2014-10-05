@@ -1,5 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
+
+#include "internal/task_serializer.h"
 #include "task_model.h"
 
 using boost::posix_time::ptime;
@@ -42,5 +44,19 @@ bool Task::isStrictEqual(const Task& task) const {
 	return idIsEqual && descriptionIsEqual && priorityIsEqual
 		&& dependenciesIsEqual && deadlineIsEqual;
 }
+
+const std::wstring Task::FORMAT = L"[%1%][%2%][%3%][%4%][%5%]";
+
+std::wstring Task::ToString(const Task& task) {
+	using Serializer = Internal::TaskSerializer;
+	auto serialized = Serializer::serialize(task);
+	return (boost::wformat(FORMAT)
+		% serialized.at(Serializer::KEY_ID)
+		% serialized.at(Serializer::KEY_DESCRIPTION)
+		% serialized.at(Serializer::KEY_PRIORITY)
+		% serialized.at(Serializer::KEY_DEADLINE)
+		% serialized.at(Serializer::KEY_DEPENDENCIES)).str();
+}
+
 }  // namespace QueryEngine
 }  // namespace You
