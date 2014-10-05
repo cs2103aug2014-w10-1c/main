@@ -12,9 +12,13 @@ class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
 public:
+	/// Constructor inherited from BaseManager.
 	explicit SystemTrayManager(YouMainGUI * const parentGUI)
 		: BaseManager(parentGUI) {}
+
+	/// Destructor.
 	~SystemTrayManager();
+
 	/// Defines and sets functionality of the tray icon. Called in the
 	/// constructor.
 	void setup();
@@ -22,12 +26,16 @@ public:
 private:
 	/// Minimize action in the context menu in system tray
 	QAction *minimizeAction;
+
 	/// Maximize action in the context menu in system tray
 	QAction *maximizeAction;
+
 	/// Restore action in the context menu in system tray
 	QAction *restoreAction;
+
 	/// Quit action in the context menu in system tray
 	QAction *quitAction;
+
 	/// Tray icon context menu
 	QMenu* trayIconMenu;
 

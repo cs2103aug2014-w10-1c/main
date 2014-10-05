@@ -8,9 +8,16 @@
 class YouMainGUI::BaseManager : public QObject{
 	Q_OBJECT
 public:
+	/// Pointer to the main GUI
 	YouMainGUI * const parentGUI;
+
+	/// BaseManager constructor. Not used.
 	BaseManager();
+
+	/// The constructor that assigns to the manager the parent GUI.
 	explicit BaseManager(YouMainGUI * parentGUI);
+
+	/// Tasks needed to be run on startup
 	void setup();
 };
 
