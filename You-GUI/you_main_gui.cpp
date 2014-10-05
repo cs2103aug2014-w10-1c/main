@@ -23,7 +23,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	nlpm->setup();
 	tpm->setup();
 	sm->setup();
-	//populateTaskPanel();
+	// To fix after implementation of task handling
+	// populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -73,6 +74,7 @@ void YouMainGUI::setVisible(bool visible) {
 	stm->restoreAction->setEnabled(isMaximized() || !visible);
 	QWidget::setVisible(visible);
 }
+
 You::NLP::TaskList YouMainGUI::getTaskList() {
 	return *taskList;
 }
