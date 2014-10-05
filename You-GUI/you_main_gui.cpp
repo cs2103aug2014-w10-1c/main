@@ -44,7 +44,8 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	You::Controller::Result result = You::Controller::Controller::get().getTasks(sm->taskIDs);
+	You::Controller::Result result =
+		You::Controller::Controller::get().getTasks(sm->taskIDs);
 	You::NLP::TaskList tl = boost::get<You::NLP::TaskList>(result);
 	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
