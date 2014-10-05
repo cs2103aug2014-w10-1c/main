@@ -81,7 +81,7 @@ private:
 	#pragma region Editing tasks
 	/// Constructs a edit query from the given parse tree values.
 	///
-	///	\param[in] offset The task which the user is referencing
+	/// \param[in] offset The task which the user is referencing
 	/// \param[in] field The field which should be edited.
 	/// \param[in] newValue The new value the user wants to change the field to.
 	/// \return The synthesised value for the \ref editCommand rule.
