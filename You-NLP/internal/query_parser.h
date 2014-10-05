@@ -123,7 +123,7 @@ private:
 
 	#pragma region Editing tasks
 	/// Edit command rule.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY, SkipperType> editCommand;
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType> editCommand;
 
 	/// The symbol mapping from task properties to the actual field.
 	boost::spirit::qi::symbols<

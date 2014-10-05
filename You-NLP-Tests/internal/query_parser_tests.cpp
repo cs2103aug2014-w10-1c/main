@@ -18,6 +18,7 @@ using You::NLP::ParserException;
 
 using You::NLP::Internal::QueryParser;
 using You::NLP::Internal::ADD_QUERY;
+using You::NLP::Internal::EDIT_QUERY;
 using You::NLP::Internal::QUERY;
 
 TEST_CLASS(QueryParserTests) {
@@ -50,6 +51,16 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY{
 			L"win",
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditQuery) {
+		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY{
+			10,
+			EDIT_QUERY::FIELDS::DESCRIPTION,
+			L"meh"
 		}), q);
 	}
 };

@@ -76,10 +76,12 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 			+ParserCharTraits::char_
 	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
 		qi::_1, qi::_2, qi::_3)];
+	editCommand.name("editCommand");
 
 	editCommandFields.add
 		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
 		(L"due", EDIT_QUERY::FIELDS::DUE);
+	editCommandFields.name("editCommandFields");
 	#pragma endregion
 
 	qi::on_error<qi::fail>(start,
