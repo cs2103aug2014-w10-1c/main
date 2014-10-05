@@ -21,6 +21,9 @@
     <ClInclude Include="pugixml\src\pugixml.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="exclusions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pugixml\src\pugixml.cpp">
