@@ -24,7 +24,7 @@ public:
 				stream.str());
 		}
 
-		{
+		{  // NOLINT
 			EDIT_QUERY local = DUMMY;
 			local.fieldsToChange = EDIT_QUERY::FIELDS::DESCRIPTION |
 				EDIT_QUERY::FIELDS::DUE;

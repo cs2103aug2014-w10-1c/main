@@ -74,7 +74,7 @@ std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 			fieldsString << L", ";
 		}
 	}
-	
+
 	return s << boost::wformat(STRING_FORMAT) % q.taskID % fieldsString.str();
 }
 
