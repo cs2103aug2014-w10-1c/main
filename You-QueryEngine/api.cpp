@@ -2,6 +2,8 @@
 #include "stdafx.h"
 
 #include "internal/action/add_task.h"
+#include "internal/action/update_task.h"
+#include "internal/action/delete_task.h"
 #include "internal/action/filter_task.h"
 #include "api.h"
 
@@ -20,6 +22,20 @@ AddTask(Task::Description description, Task::Time deadline,
 	using AddTask = Internal::AddTask;
 	return std::unique_ptr<Query>(new AddTask(description, deadline,
 		priority, dependencies));
+}
+
+std::unique_ptr<Query>
+UpdateTask(Task::ID id, Task::Description description,
+Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
+	using UpdateTask = Internal::UpdateTask;
+	return std::unique_ptr<Query>(new UpdateTask(id, description, deadline,
+		priority, dependencies));
+}
+
+std::unique_ptr<Query>
+DeleteTask(Task::ID id) {
+	using DeleteTask = Internal::DeleteTask;
+	return std::unique_ptr<Query>(new DeleteTask(id));
 }
 
 Response executeQuery(std::unique_ptr<Query> query) {

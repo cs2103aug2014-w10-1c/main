@@ -43,8 +43,8 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	You::NLP::Result *result = &You::NLP::Controller::get().getTasks(sm->taskIDs);
-	You::NLP::TaskList tl = boost::get<You::NLP::TaskList>(*result);
+	You::NLP::Result result = You::NLP::Controller::get().getTasks(sm->taskIDs);
+	You::NLP::TaskList tl = boost::get<You::NLP::TaskList>(result);
 	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };

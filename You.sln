@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-Controller", "You-Contr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-Controller-Tests", "You-Controller-Tests\You-Controller-Tests.vcxproj", "{48BF2897-EFE8-49F7-8D16-722738C4C318}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "You-Utils", "You-Utils\You-Utils.vcxproj", "{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug GUI|Win32 = Debug GUI|Win32
@@ -128,6 +130,14 @@ Global
 		{48BF2897-EFE8-49F7-8D16-722738C4C318}.Release GUI|Win32.Build.0 = Release|Win32
 		{48BF2897-EFE8-49F7-8D16-722738C4C318}.Release|Win32.ActiveCfg = Release|Win32
 		{48BF2897-EFE8-49F7-8D16-722738C4C318}.Release|Win32.Build.0 = Release|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Debug GUI|Win32.ActiveCfg = Debug|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Debug GUI|Win32.Build.0 = Debug|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Debug|Win32.Build.0 = Debug|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Release GUI|Win32.ActiveCfg = Release|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Release GUI|Win32.Build.0 = Release|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Release|Win32.ActiveCfg = Release|Win32
+		{BB59AD84-CDE2-49E9-B32A-F8A8EBF36FC3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
