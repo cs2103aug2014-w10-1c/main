@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "You-QueryEngine/api.h"
+
 #include "date_time_parser.h"
-#include "../exceptions/parse_error_exception.h"
+#include "exceptions/parse_error_exception.h"
 #include "query_parser.h"
 
 namespace You {

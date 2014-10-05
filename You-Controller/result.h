@@ -2,7 +2,7 @@
 #ifndef YOU_NLP_RESULT_H_
 #define YOU_NLP_RESULT_H_
 
-#include "task_list.h"
+#include "You-NLP/task_list.h"
 
 namespace You {
 namespace NLP {

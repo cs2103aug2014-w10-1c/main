@@ -2,7 +2,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/fusion/sequence.hpp>
 #include <windows.h>
-#include "../exceptions/parser_exception.h"
+
+#include "exceptions/parser_exception.h"
 #include "date_time_parser.h"
 
 namespace You {

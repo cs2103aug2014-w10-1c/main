@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
 
-#include "internal/query_parser.h"
+#include "query_parser.h"
 #include "exception.h"
 #include "../../internal/test_helpers.h"
 

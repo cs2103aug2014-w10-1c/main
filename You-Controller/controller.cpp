@@ -1,14 +1,12 @@
 #include "stdafx.h"
 #include "controller.h"
-#include "internal/query_parser.h"
-#include "internal/parse_tree.h"
-#include "internal/date_time_parser.h"
+#include "You-NLP/query_parser.h"
+#include "You-NLP/parse_tree.h"
 
 namespace You {
 namespace NLP {
 
 using Internal::QueryParser;
-using Internal::DateTimeParser;
 using Internal::QUERY;
 using Internal::ADD_QUERY;
 using Internal::EDIT_QUERY;

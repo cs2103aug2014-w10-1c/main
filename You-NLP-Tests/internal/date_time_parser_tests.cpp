@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "exception.h"
-#include "internal/date_time_parser.h"
+#include "date_time_parser.h"
 #include "../internal/test_helpers.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;

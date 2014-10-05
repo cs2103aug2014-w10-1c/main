@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "You-QueryEngine/task_model.h"
-#include "internal/query_parser.h"
-#include "../internal/test_helpers.h"
+
 #include "exception.h"
+#include "query_parser.h"
+#include "../internal/test_helpers.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
