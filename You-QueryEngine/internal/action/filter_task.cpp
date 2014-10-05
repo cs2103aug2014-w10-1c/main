@@ -8,28 +8,17 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-Response FilterTask::execute() {
-#if 0
-	using STask = TaskSerializer::STask;
-	std::vector<STask> slist;
-	std::vector<Task> list;
+Response FilterTask::execute(State& const tasks) {
+	std::vector<Task> result;
 	auto filter = this->filter;
-	auto sfilter = [=] (const STask& s) -> bool {
-		auto deserialized = TaskSerializer::deserialize(s);
-		return filter(const_cast<Task&>(deserialized));
-	};
-#if 0
-	Transaction t(dataStorage.begin());
-	slist = t.filter(sfilter);
-	t.commit();
-#endif
-	std::for_each(slist.cbegin(), slist.cend(),
-		[&list] (const STask s) {
-			list.push_back(TaskSerializer::deserialize(s));
+	std::for_each(tasks.cbegin(), tasks.cend(),
+		[filter, &result] (const Task task) {
+			if (filter(task)) {
+				result.push_back(task);
+			}
 		}
 	);
-#endif
-	return std::wstring(L"FILTER");
+	return result;
 }
 
 }  // namespace Internal

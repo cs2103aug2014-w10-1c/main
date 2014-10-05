@@ -49,12 +49,21 @@ public:
 
 	/// Should throw an exception when trying to create
 	/// an empty task.
-	TEST_METHOD(buildEmptyDescriptionTask) {
+	TEST_METHOD(buildEmptyDescriptionShouldThrow) {
 		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
-		const Task::Time dead = Task::NEVER;
-		Assert::ExpectException<EmptyTaskDescriptionException>([=] {
-			Task task = TaskBuilder::get().deadline(dead);
-		});
+		using TB = TaskBuilder;
+		auto mustFail1 = [] { (Task) TB::get().
+			deadline(Task::DEFAULT_DEADLINE); };
+		auto mustFail2 = [] { (Task) TB::get().
+			id(Task::DEFAULT_ID); };
+		auto mustFail3 = [] { (Task) TB::get().
+			dependencies(Task::DEFAULT_DEPENDENCIES); };
+		auto mustFail4 = [] { (Task) TB::get().
+			priority(Task::DEFAULT_PRIORITY); };
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail1);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail2);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail3);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail4);
 	}
 };
 

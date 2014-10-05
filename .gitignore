@@ -70,3 +70,6 @@ Makefile*
 /doxygen
 /doxygen.zip
 /you_documentation
+
+# Code coverage test results
+/TestResults
