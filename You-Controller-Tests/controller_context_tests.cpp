@@ -9,7 +9,7 @@ namespace You {
 namespace Controller {
 namespace UnitTests {
 
-using You::NLP::ContextRequiredException;
+using You::Controller::ContextRequiredException;
 
 TEST_CLASS(ControllerContextTests) {
 public:

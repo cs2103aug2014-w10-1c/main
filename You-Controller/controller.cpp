@@ -1,10 +1,12 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "controller.h"
 #include "You-NLP/query_parser.h"
 #include "You-NLP/parse_tree.h"
 #include "internal/query_executor.h"
 #include "internal/query_executor_builder_visitor.h"
+#include "result.h"
+#include "controller_context.h"
+#include "controller.h"
 
 namespace You {
 namespace Controller {
