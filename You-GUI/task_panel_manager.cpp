@@ -41,7 +41,6 @@ void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 }
 
 std::vector<std::wstring> taskToStrVec(You::NLP::Task task) {
-
 	// Make wstringstream as helper for conversion
 	std::wstringstream wss;
 
@@ -62,7 +61,7 @@ std::vector<std::wstring> taskToStrVec(You::NLP::Task task) {
 	taskVector.push_back(deadline);
 	wss.str(L"");
 
-	//To do
+	// To do
 	/*
 	for (int i = 0; i < task.getDependencies().size(), i++) {
 

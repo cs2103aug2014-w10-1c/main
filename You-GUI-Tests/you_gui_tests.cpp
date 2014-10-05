@@ -1,12 +1,9 @@
 #include <string>
 #include "CppUnitTest.h"
 #include <QtWidgets>
-//#include "task_builder.h"
-//#include "task_model.h"
 #include "..\You-GUI\you_main_gui.h"
 #include "..\You-QueryEngine\api.h"
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
+using Logger = Microsoft::VisualStudio::CppUnitTestFramework::Logger;
 namespace MyUnitTests {
 	TEST_CLASS(MyTestClass) {
 	public:
@@ -14,7 +11,6 @@ namespace MyUnitTests {
 			char* argv[1];
 			int c = 1;
 			char** v = &argv[0];
-			
 			// This returns a Result object
 			// To do
 			/*
@@ -30,4 +26,4 @@ namespace MyUnitTests {
 			YouMainGUI w;
 		}
 	};
-} // namespace MyUnitTests
+}  // namespace MyUnitTests

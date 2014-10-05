@@ -1,4 +1,3 @@
-//#include <QtCore/QCoreApplication>
 #include "stdafx.h"
 #include <QtWidgets/QApplication>
 #include "..\You-GUI\you_main_gui.h"
