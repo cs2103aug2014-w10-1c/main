@@ -23,7 +23,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	nlpm->setup();
 	tpm->setup();
 	sm->setup();
-	populateTaskPanel();
+	// To fix after implementation of task handling
+	// populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -43,7 +44,8 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	You::NLP::Result result = You::NLP::Controller::get().getTasks(sm->taskIDs);
+	You::Controller::Result result =
+		You::Controller::Controller::get().getTasks(sm->taskIDs);
 	You::NLP::TaskList tl = boost::get<You::NLP::TaskList>(result);
 	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
@@ -73,6 +75,7 @@ void YouMainGUI::setVisible(bool visible) {
 	stm->restoreAction->setEnabled(isMaximized() || !visible);
 	QWidget::setVisible(visible);
 }
+
 You::NLP::TaskList YouMainGUI::getTaskList() {
 	return *taskList;
 }

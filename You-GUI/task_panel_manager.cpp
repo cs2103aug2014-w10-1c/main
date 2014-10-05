@@ -39,3 +39,33 @@ QTreeWidgetItem* YouMainGUI::TaskPanelManager::createItem(
 void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
+
+std::vector<std::wstring> taskToStrVec(You::NLP::Task task) {
+	// Make wstringstream as helper for conversion
+	std::wstringstream wss;
+
+	// Initialize vector
+	std::vector<std::wstring> taskVector;
+
+	// Insert id
+	wss << task.getID();
+	taskVector.push_back(wss.str());
+	wss.str(L"");
+
+	// Insert description
+	taskVector.push_back(task.getDescription());
+
+	// Insert deadline
+	wss << task.getDeadline();
+	std::wstring deadline = wss.str();
+	taskVector.push_back(deadline);
+	wss.str(L"");
+
+	// To do
+	/*
+	for (int i = 0; i < task.getDependencies().size(), i++) {
+
+	}
+	*/
+	return taskVector;
+}

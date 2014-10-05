@@ -5,6 +5,8 @@
 #include <QList>
 #include "NLP_manager.h"
 
+using Controller = You::Controller::Controller;
+
 YouMainGUI::NLPManager::~NLPManager() {
 }
 
@@ -16,13 +18,13 @@ void YouMainGUI::NLPManager::setup() {
 	// Set result to current context
 }
 
-You::NLP::Result YouMainGUI::NLPManager::queryNLP() {
+You::Controller::Result YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	// When ready, pass current context, not the default one.
-	You::NLP::Result result = You::NLP::Controller::get().query(inputString,
-		You::NLP::Controller::Context::Context(parentGUI->getTaskList()));
+	You::Controller::Result result = Controller::get().query(inputString,
+		Controller::Context::Context(parentGUI->getTaskList()));
 	return result;
 }
 
