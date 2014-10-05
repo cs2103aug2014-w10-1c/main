@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
