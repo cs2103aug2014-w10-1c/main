@@ -5,7 +5,7 @@
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
-namespace NLP {
+namespace Controller {
 namespace UnitTests {
 
 TEST_CLASS(ControllerContextTests) {
@@ -22,5 +22,5 @@ public:
 };
 
 }  // namespace UnitTests
-}  // namespace NLP
+}  // namespace Controller
 }  // namespace You
