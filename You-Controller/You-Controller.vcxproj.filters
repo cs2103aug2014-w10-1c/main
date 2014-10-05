@@ -16,6 +16,12 @@
     <Filter Include="Header Files\exceptions">
       <UniqueIdentifier>{f60a0d65-b0d2-416f-9b4e-a5e8036514b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal">
+      <UniqueIdentifier>{9d7561af-b3bd-4cc2-b20a-2467b38ba662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{6fdeab1b-f7e7-468b-a0d5-382c0a992c2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -39,6 +45,9 @@
     <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="internal\query_builder_visitor.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="controller_context.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\query_builder_visitor.cpp">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

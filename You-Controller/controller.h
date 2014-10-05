@@ -14,7 +14,6 @@ namespace UnitTests { class ControllerContextTests; }
 ///
 /// This is a singleton class.
 class Controller {
-	class QueryBuilderVisitor;
 	friend class UnitTests::ControllerContextTests;
 
 public:
