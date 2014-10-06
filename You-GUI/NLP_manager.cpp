@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QList>
 #include "NLP_manager.h"
-
+#include "variant_handler.h"
 using Controller = You::Controller::Controller;
 
 YouMainGUI::NLPManager::~NLPManager() {
@@ -18,14 +18,14 @@ void YouMainGUI::NLPManager::setup() {
 	// Set result to current context
 }
 
-You::Controller::Result YouMainGUI::NLPManager::queryNLP() {
+void YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	// When ready, pass current context, not the default one.
 	You::Controller::Result result = Controller::get().query(inputString,
 		Controller::Context::Context(parentGUI->getTaskList()));
-	return result;
+	boost::apply_visitor(*(parentGUI->vh), result);
 }
 
 void YouMainGUI::NLPManager::commandEnterButtonClicked() {

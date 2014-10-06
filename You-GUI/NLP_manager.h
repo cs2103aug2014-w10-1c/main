@@ -32,7 +32,7 @@ public:
 	/// Queries the NLP engine. Passes the Result and wstring input into the
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
-	You::Controller::Result queryNLP();
+	void queryNLP();
 
 private:
 	/// The current result/context displayed to the user

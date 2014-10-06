@@ -38,9 +38,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="you_main_gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_yougui.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="variant_handler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

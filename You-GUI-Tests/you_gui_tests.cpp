@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "..\You-GUI\you_main_gui.h"
-#include "..\You-QueryEngine\api.h"
-
 using Logger = Microsoft::VisualStudio::CppUnitTestFramework::Logger;
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace MyUnitTests {
 	TEST_CLASS(MyTestClass) {
@@ -13,17 +12,9 @@ namespace MyUnitTests {
 			char** v = &argv[0];
 			// This returns a Result object
 			// To do
-			/*
-			You::NLP::Result result = You::QueryEngine::executeQuery(
-				You::QueryEngine::AddTask(L"abc",
-				You::QueryEngine::Task::DEFAULT_DEADLINE,
-				You::QueryEngine::Task::DEFAULT_PRIORITY,
-				You::QueryEngine::Task::DEFAULT_DEPENDENCIES));
-			boost::get<You::NLP::TaskList>(result);
-			*/
-			Logger::WriteMessage("lol");
 			QApplication a(c, v);
 			YouMainGUI w;
+			Assert::AreEqual("abc", "abc", L"abc");
 		}
 	};
 }  // namespace MyUnitTests

@@ -6,7 +6,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller\result.h"
-
+struct VariantHandler;
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -87,14 +87,20 @@ public:
 	/// The NLPManager instance
 	const std::unique_ptr<NLPManager> nlpm;
 
-	You::NLP::TaskList getTaskList();
+	You::Controller::TaskList getTaskList();
+
+	std::unique_ptr<VariantHandler> vh;
+
+	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
+
+	void YouMainGUI::addTask(You::Controller::Task task);
 
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
 
-	std::unique_ptr<You::NLP::TaskList> taskList;
+	std::unique_ptr<You::Controller::TaskList> taskList;
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 

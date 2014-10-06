@@ -8,6 +8,7 @@
 /// handles basics such as the window state of the application and task sets
 /// previously displayed, saving the state on program exit, and restoring them
 /// when the program is started again. It inherits from the BaseManager class.
+typedef int64_t TypeID;
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
 	friend class YouMainGUI;
@@ -26,7 +27,8 @@ public:
 	/// session file, to be passed to the NLP manager. Mechanism to pass is
 	/// still being considered. This will also contain the list of IDs to be
 	/// written to the session file.
-	std::vector<You::NLP::Task::ID> taskIDs;
+	// std::vector<TypeID> taskIDs;
+	std::vector<You::Controller::Task::ID> taskIDs;
 
 private:
 	/// Loads the previous state of the GUI. Called during constructor.
