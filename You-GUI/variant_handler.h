@@ -10,8 +10,10 @@ struct VariantHandler : boost::static_visitor<void> {
 		parentGUI->addTask(addResult.task);
 	}
 	void operator()(You::Controller::EDIT_RESULT editResult) {
+		parentGUI->editTask(editResult.task);
 	}
 	void operator()(You::Controller::DELETE_RESULT deleteResult) {
+		parentGUI->deleteTask(deleteResult.task);
 	}
 };
 

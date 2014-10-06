@@ -60,7 +60,7 @@ void YouMainGUI::populateTaskPanel() {
 	addTaskListToPanel(tl);
 }
 
-void YouMainGUI::addTaskListToPanel(You::Controller::TaskList tl) {
+void YouMainGUI::addTaskListToPanel(TaskList tl) {
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
 	for (int i = 0; i < tl.size(); i++) {
@@ -97,6 +97,28 @@ You::Controller::TaskList YouMainGUI::getTaskList() {
 
 void YouMainGUI::addTask(You::Controller::Task task) {
 	tpm->addTask(taskToStrVec(task));
+}
+
+void YouMainGUI::deleteTask(You::Controller::Task::ID task) {
+	QList<QTreeWidgetItem*> items =
+		ui.taskTreePanel->findItems(QString::fromStdWString(std::to_wstring(task)), 0);
+	if (items.length() != 1) {
+		qDebug() << "deleteTask items.length() != 1" << endl;
+	} else {
+		tpm->deleteTask(items.at(0));
+	}
+}
+
+void YouMainGUI::editTask(You::Controller::Task task) {
+	QList<QTreeWidgetItem*> items =
+		ui.taskTreePanel->findItems(QString::fromStdWString(std::to_wstring(task.getID())), 0);
+	if (items.length() != 1) {
+		qDebug() << "editTask items.length() != 1" << endl;
+	} else {
+		QTreeWidgetItem item = *items.at(0);
+		std::vector<std::wstring> wstr = taskToStrVec(task);
+		*items.at(0) = *tpm->createItem(wstr);
+	}
 }
 
 std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
