@@ -17,12 +17,13 @@ void TaskGraph::deleteTask(const Task::ID id) {
 	VIterator next;
 	bool removed = false;
 	boost::tie(begin, end) = boost::vertices(graph);
-	for (next = begin; next != end; begin = next) {
-		++next;
-		if (graph[*next].getID() == id) {
+	for (next = begin; !removed && next != end; begin = next) {
+		const Task::ID idInVertex = graph[*next].getID();
+		if (idInVertex == id) {
 			removed = true;
 			boost::remove_vertex(*begin, graph);
 		}
+		++next;
 	}
 	if (!removed) {
 		throw TaskNotFoundException();
