@@ -12,6 +12,24 @@ using You::NLP::EDIT_QUERY;
 
 TEST_CLASS(EditQueryTests) {
 public:
+	TEST_METHOD(fieldsBinaryOr) {
+		EDIT_QUERY::FIELDS lhs;
+		EDIT_QUERY::FIELDS rhs;
+
+		Assert::AreEqual(
+			static_cast<size_t>(lhs) | static_cast<size_t>(rhs),
+			static_cast<size_t>(lhs | rhs));
+	}
+
+	TEST_METHOD(fieldsBinaryAnd) {
+		EDIT_QUERY::FIELDS lhs;
+		EDIT_QUERY::FIELDS rhs;
+
+		Assert::AreEqual(
+			static_cast<size_t>(lhs) & static_cast<size_t>(rhs),
+			static_cast<size_t>(lhs & rhs));
+	}
+
 	TEST_METHOD(convertsToStream) {
 		{
 			std::wostringstream stream;
