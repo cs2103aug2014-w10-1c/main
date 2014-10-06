@@ -11,6 +11,8 @@ QueryExecutor::QueryExecutor(std::unique_ptr<You::QueryEngine::Query>&& query)
 }
 
 Result QueryExecutor::execute() {
+	assert(query.get() &&
+		"QueryExecutors are single-use only.");
 	QueryEngine::Response response = QueryEngine::executeQuery(
 		std::move(query));
 	return processResponse(response);

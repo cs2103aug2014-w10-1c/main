@@ -58,7 +58,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		EDIT_RESULT result(
 			boost::get<EDIT_RESULT>(executor->execute()));
 
-		Assert::AreEqual(taskList.front().getID(),
+		Assert::AreEqual(taskList.front(),
 			result.task);
 
 		You::NLP::EDIT_QUERY queryWithoutDeadline(Mocks::Queries::EDIT_QUERY);
@@ -68,7 +68,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<EDIT_RESULT>(executor->execute());
 
-		Assert::AreEqual(taskList.front().getID(),
+		Assert::AreEqual(taskList.front(),
 			result.task);
 
 		queryWithoutDeadline = Mocks::Queries::EDIT_QUERY;
@@ -78,7 +78,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<EDIT_RESULT>(executor->execute());
 
-		Assert::AreEqual(taskList.front().getID(),
+		Assert::AreEqual(taskList.front(),
 			result.task);
 	}
 
