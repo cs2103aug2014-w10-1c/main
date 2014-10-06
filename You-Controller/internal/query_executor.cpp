@@ -6,7 +6,8 @@ namespace You {
 namespace Controller {
 namespace Internal {
 
-QueryExecutor::QueryExecutor(std::unique_ptr<You::QueryEngine::Query>&& query) {
+QueryExecutor::QueryExecutor(std::unique_ptr<You::QueryEngine::Query>&& query)
+: query(std::move(query)) {
 }
 
 Result QueryExecutor::execute() {
