@@ -106,7 +106,7 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 		Result processResponse(
 			const You::QueryEngine::Response& response) override {
 			return DELETE_RESULT {
-				boost::get<Task>(response)
+				boost::get<Task::ID>(response)
 			};
 		}
 	};

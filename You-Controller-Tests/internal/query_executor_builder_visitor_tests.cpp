@@ -74,6 +74,20 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(taskList.front().getID(),
 			result.task);
 	}
+
+	TEST_METHOD(getsCorrectTypeForDeleteQueries) {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::DELETE_QUERY);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		DELETE_RESULT result(
+			boost::get<DELETE_RESULT>(executor->execute()));
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task);
+	}
 };
 
 }  // namespace UnitTests
