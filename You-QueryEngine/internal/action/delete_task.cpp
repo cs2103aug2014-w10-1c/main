@@ -6,6 +6,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 Response DeleteTask::execute(State& tasks) {
 #if 0
@@ -18,6 +19,7 @@ Response DeleteTask::execute(State& tasks) {
 	return this->id;
 }
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
