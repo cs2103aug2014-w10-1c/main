@@ -57,7 +57,7 @@ private:
 
 private:
 	/// The context for the query.
-	const You::Controller::Controller::Context& context;
+	You::Controller::Controller::Context context;
 };
 
 

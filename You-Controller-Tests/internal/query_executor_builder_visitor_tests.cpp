@@ -24,13 +24,55 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::QUERY query(Mocks::Queries::ADD_QUERY);
-		boost::apply_visitor(visitor, query);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		ADD_RESULT result(
+			boost::get<ADD_RESULT>(executor->execute()));
+
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.description,
+			result.task.getDescription()
+		);
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.due.get(),
+			result.task.getDeadline()
+		);
 
 		You::NLP::ADD_QUERY queryWithoutDeadline(Mocks::Queries::ADD_QUERY);
 		queryWithoutDeadline.due =
 			You::Utils::Option<boost::posix_time::ptime>();
 		query = queryWithoutDeadline;
-		boost::apply_visitor(visitor, query);
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
+
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.description,
+			result.task.getDescription()
+		);
+	}
+
+	TEST_METHOD(getsCorrectTypeForEditQueries) {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::EDIT_QUERY);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task);
+
+		You::NLP::EDIT_QUERY queryWithoutDeadline(Mocks::Queries::EDIT_QUERY);
+		queryWithoutDeadline.due =
+			You::Utils::Option<boost::posix_time::ptime>();
+		query = queryWithoutDeadline;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<EDIT_RESULT>(executor->execute());
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task);
 	}
 };
 

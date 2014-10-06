@@ -65,7 +65,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 		Result processResponse(
 			const You::QueryEngine::Response& response) override {
 			return EDIT_RESULT {
-				boost::get<Task>(response)
+				boost::get<Task::ID>(response)
 			};
 		}
 	};
