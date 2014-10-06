@@ -9,9 +9,10 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests {}
+namespace UnitTests { class DataStoreApiTest; }
 
 class DataStore {
+	friend class UnitTests::DataStoreApiTest;
 public:
 	Transaction& begin();
 
