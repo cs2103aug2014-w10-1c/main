@@ -52,12 +52,11 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(constructEditTaskQuery) {
-		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
-		Assert::ExpectException<EmptyTaskDescriptionException>([] {
-			executeQuery(UpdateTask(Task::DEFAULT_ID,
+		Task t = TaskBuilder::get().description(L"Not implemented");
+		Response resp = executeQuery(UpdateTask(t.getID(),
 				Task::DEFAULT_DESCRIPTION, Task::DEFAULT_DEADLINE,
 				Task::DEFAULT_PRIORITY, Task::DEFAULT_DEPENDENCIES));
-		});
+		Assert::AreEqual(boost::get<Task>(resp), t);
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;

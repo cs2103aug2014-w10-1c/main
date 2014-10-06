@@ -13,25 +13,22 @@ namespace Action {
 
 Response UpdateTask::execute(State& tasks) {
 	auto builder = TaskBuilder::get().id(this->id);
-	try {
-		if (this->description == Task::DEFAULT_DESCRIPTION) {
-			builder.description(this->description);
-		} else {
-			throw EmptyTaskDescriptionException();
-		}
-		if (this->deadline != Task::DEFAULT_DEADLINE) {
-			builder.deadline(this->deadline);
-		}
-		if (this->priority != Task::DEFAULT_PRIORITY) {
-			builder.priority(this->priority);
-		}
-		if (this->dependencies != Task::DEFAULT_DEPENDENCIES) {
-			builder.dependencies(this->dependencies);
-		}
-	} catch (EmptyTaskDescriptionException e) {
-		return std::wstring(L"Empty Description");
+	if (this->description == Task::DEFAULT_DESCRIPTION) {
+		/// This should get the description of the
+		/// current id of the task
+		builder.description(L"Not implemented");
+	} else {
+		builder.description(this->description);
 	}
-
+	if (this->deadline != Task::DEFAULT_DEADLINE) {
+		builder.deadline(this->deadline);
+	}
+	if (this->priority != Task::DEFAULT_PRIORITY) {
+		builder.priority(this->priority);
+	}
+	if (this->dependencies != Task::DEFAULT_DEPENDENCIES) {
+		builder.dependencies(this->dependencies);
+	}
 #if 0
 	queryEngine.getTaskGraph().update(this->id, newTask);
 #endif
