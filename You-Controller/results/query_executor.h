@@ -20,6 +20,15 @@ namespace Internal {
 /// controller.
 class QueryExecutor {
 public:
+	/// Default virtual constructor.
+	virtual ~QueryExecutor() = default;
+
+	/// Executes the query, returning the concrete result.
+	///
+	/// \return The concrete result of the query.
+	Result execute() const;
+
+protected:
 	/// Constructor.
 	///
 	/// \param[in] query The query which was retrieved from the Query Engine.
