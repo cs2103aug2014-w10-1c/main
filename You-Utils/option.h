@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	/// Inverse of \ref operator==
+	/// Inverse of \ref Option<T>::operator==
 	inline bool operator!=(const Option<T>& rhs) const {
 		bool leftIsNull = !operator bool();
 		bool rightIsNull = !rhs.operator bool();
