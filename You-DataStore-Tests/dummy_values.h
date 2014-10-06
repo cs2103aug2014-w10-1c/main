@@ -35,4 +35,4 @@ const SerializedTask task2 = {
 }  // namespace DataStore
 }  // namespace You
 
-#endif YOU_DATASTORE_TESTS_DUMMY_VALUES_H_
+#endif  // YOU_DATASTORE_TESTS_DUMMY_VALUES_H_
