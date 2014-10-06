@@ -22,14 +22,15 @@ std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 	class AddTaskQueryExecutor : public QueryExecutor {
 	public:
-		AddTaskQueryExecutor(std::unique_ptr<QueryEngine::Query>&& query)
+		explicit AddTaskQueryExecutor(
+			std::unique_ptr<QueryEngine::Query>&& query)
 			: QueryExecutor(std::move(query)) {
 		}
 
 		virtual ~AddTaskQueryExecutor() = default;
 
 	protected:
-		virtual Result processResponse(
+		Result processResponse(
 			const You::QueryEngine::Response& response) override {
 			return ADD_RESULT {
 				boost::get<Task>(response)

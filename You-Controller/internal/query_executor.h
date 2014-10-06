@@ -50,4 +50,4 @@ private:
 }  // namespace Controller
 }  // namespace You
 
-#endif // YOU_CONTROLLER_INTERNAL_QUERY_EXECUTOR_H_
+#endif  // YOU_CONTROLLER_INTERNAL_QUERY_EXECUTOR_H_

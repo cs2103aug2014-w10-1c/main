@@ -14,7 +14,7 @@ Result QueryExecutor::execute() {
 		std::move(query));
 	return processResponse(response);
 }
-		
+
 }  // namespace Internal
 }  // namespace Controller
 }  // namespace You
