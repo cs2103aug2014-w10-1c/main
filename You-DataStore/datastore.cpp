@@ -4,13 +4,13 @@
 namespace You {
 namespace DataStore {
 
-DataStore& DataStore::getInstance() {
+DataStore& DataStore::get() {
 	static DataStore ds;
 	return ds;
 }
 
 bool DataStore::begin() {
-	return getInstance().isServing;
+	return get().isServing;
 }
 
 }  // namespace DataStore

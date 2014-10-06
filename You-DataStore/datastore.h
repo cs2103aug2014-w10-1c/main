@@ -26,7 +26,7 @@ public:
 	static std::vector<SerializedTask>
 		filter(const std::function<bool(SerializedTask)>&);
 private:
-	static DataStore& getInstance();
+	static DataStore& get();
 	bool isServing = false;
 	std::deque<Internal::IOperation> operationsQueue;
 };
