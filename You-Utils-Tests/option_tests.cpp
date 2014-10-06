@@ -52,6 +52,6 @@ TEST_CLASS(OptionTests) {
 	}
 };
 
-}  // UnitTests
-}  // Utils
-}  // you
+}  // namespace UnitTests
+}  // namespace Utils
+}  // namespace you
