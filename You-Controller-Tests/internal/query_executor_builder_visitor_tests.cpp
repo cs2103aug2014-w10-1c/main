@@ -90,11 +90,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 #if 0
 		// TODO(evansb): Properly implement UpdateTask
-		Assert::AreEqual(taskList.front().getDescription(),
+		Assert::AreEqual(taskList.front().getDescription().get(),
 			result.task.getDescription());
 #endif
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.due.get(),
 			result.task.getDeadline());
 	}
