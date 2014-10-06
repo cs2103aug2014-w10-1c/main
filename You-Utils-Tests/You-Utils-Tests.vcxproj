@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="test_helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="option_tests.cpp" />

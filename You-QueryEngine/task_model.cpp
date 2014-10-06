@@ -9,6 +9,10 @@ using boost::posix_time::hours;
 using boost::gregorian::date;
 using boost::gregorian::max_date_time;
 
+namespace {
+	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%]";
+}  // namespace
+
 namespace You {
 namespace QueryEngine {
 
@@ -49,12 +53,10 @@ bool Task::isStrictEqual(const Task& task) const {
 		&& dependenciesIsEqual && deadlineIsEqual;
 }
 
-const std::wstring Task::FORMAT = L"[%1%][%2%][%3%][%4%][%5%]";
-
-std::wstring Task::ToString(const Task& task) {
+std::wstring ToString(const Task& task) {
 	using Serializer = Internal::TaskSerializer;
 	auto serialized = Serializer::serialize(task);
-	return (boost::wformat(FORMAT)
+	return (boost::wformat(TASK_FORMAT)
 		% serialized.at(Serializer::KEY_ID)
 		% serialized.at(Serializer::KEY_DESCRIPTION)
 		% serialized.at(Serializer::KEY_PRIORITY)

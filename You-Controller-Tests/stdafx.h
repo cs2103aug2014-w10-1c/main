@@ -12,6 +12,7 @@
 #include <CppUnitTest.h>
 
 #include "../You-Controller/stdafx.h"
+#include "../You-Utils-Tests/test_helpers.h"
 
 #include "exclusions.h"
 

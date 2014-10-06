@@ -1,7 +1,7 @@
 //@author A0097630B
 #pragma once
-#ifndef YOU_NLP_TESTS_INTERNAL_TEST_HELPERS_H_
-#define YOU_NLP_TESTS_INTERNAL_TEST_HELPERS_H_
+#ifndef YOU_UTILS_TESTS_TEST_HELPERS_H_
+#define YOU_UTILS_TESTS_TEST_HELPERS_H_
 
 #include <string>
 #include <boost/variant/static_visitor.hpp>
@@ -33,4 +33,4 @@ std::wstring ToString(const variant<T1, T2, T3>& t) {
 
 }  // namespace boost
 
-#endif  // YOU_NLP_TESTS_INTERNAL_TEST_HELPERS_H_
+#endif  // YOU_UTILS_TESTS_TEST_HELPERS_H_

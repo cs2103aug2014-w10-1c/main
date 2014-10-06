@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\internal">
-      <UniqueIdentifier>{89cf00d3-337a-4d96-9195-3e6108db8c12}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -23,9 +20,6 @@
     </ClInclude>
     <ClInclude Include="exclusions.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\test_helpers.h">
-      <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

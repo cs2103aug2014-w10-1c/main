@@ -19,7 +19,7 @@ class Controller::Context {
 
 public:
 	/// Task List conversion constructor.
-	Context(const TaskList& taskList);  // NOLINT
+	Context(const TaskList& taskList);  // NOLINT(runtime/explicit)
 
 	/// Checks if the given context is the default context.
 	///

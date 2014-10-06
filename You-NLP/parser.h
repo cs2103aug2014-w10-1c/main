@@ -10,7 +10,8 @@ namespace NLP {
 
 /// Import the entire character traits namespace from Spirit.
 namespace ParserCharTraits {
-	using namespace boost::spirit::qi::standard_wide; // NOLINT
+	// NOLINTNEXTLINE(build/namespaces)
+	using namespace boost::spirit::qi::standard_wide;
 }
 
 /// The type of one character in the lexer stream.
