@@ -11,6 +11,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 /// Define action for adding task
 class AddTask : public Query {
@@ -36,6 +37,7 @@ private:
 	const Task::Dependencies dependencies;  ///< Dependencies.
 };
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
+#include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
@@ -52,11 +54,6 @@ public:
 	void setPriority(Priority);
 	/// @}
 
-	/// Check if the task is strictly equal with another task
-	/// Two taks are strictly equal if all fields are equal
-	/// \returns The strict equality of two tasks.
-	bool isStrictEqual(const Task& task) const;
-
 	/// \name Default Values
 	/// @{
 	static const ID DEFAULT_ID;
@@ -67,11 +64,16 @@ public:
 	static const Priority DEFAULT_PRIORITY;
 	/// @}
 
-	/// Equality of task is determined by its unique ID
-	/// For stricter equality, \see isStrictEqual
+	/// Check equality of two tasks by comparing field by field.
+	/// \param[in] rhs The task object to be compared
 	inline bool operator==(const Task& rhs) const {
-		return id == rhs.id;
+		return isStrictEqual(rhs);
 	}
+
+	/// String representation of a task, for testing and logging.
+	/// \param[in] The task object, assumed all fields are valid
+	/// \return A string representation of the task
+	static std::wstring ToString(const Task&);
 
 private:
 	/// Disable default constructor - use builder only
@@ -82,6 +84,11 @@ private:
 		id(id), description(description), deadline(deadline),
 		dependencies(dependencies), priority(priority) {}
 
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
+	bool isStrictEqual(const Task& task) const;
+
 	/// \name Private Fields
 	/// @{
 	ID id;
@@ -90,6 +97,8 @@ private:
 	Dependencies dependencies;
 	Priority priority;
 	/// @}
+
+	static const std::wstring FORMAT;
 };
 
 }  // namespace QueryEngine

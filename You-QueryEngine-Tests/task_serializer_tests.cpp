@@ -53,7 +53,7 @@ public:
 		Task task = getMockTask();
 		auto serialized = TaskSerializer::serialize(task);
 		auto deserialized = TaskSerializer::deserialize(serialized);
-		Assert::IsTrue(deserialized.isStrictEqual(task));
+		Assert::IsTrue(deserialized == task);
 	}
 };
 }  // namespace UnitTests
