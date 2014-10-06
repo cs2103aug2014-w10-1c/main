@@ -60,6 +60,9 @@
     <ClInclude Include="results\delete_result.h">
       <Filter>Header Files\results</Filter>
     </ClInclude>
+    <ClInclude Include="results\query_executor.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
