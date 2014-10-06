@@ -7,6 +7,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 Response FilterTask::execute(State& tasks) {
 	std::vector<Task> result;
@@ -21,6 +22,7 @@ Response FilterTask::execute(State& tasks) {
 	return result;
 }
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
