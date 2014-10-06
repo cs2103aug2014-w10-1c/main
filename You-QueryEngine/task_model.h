@@ -13,6 +13,7 @@
 #include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 namespace You {
 namespace QueryEngine {
@@ -25,6 +26,9 @@ namespace Internal { class TaskBuilder; }
 class Task {
 	friend class Internal::TaskBuilder;
 public:
+	/// Constructor
+	Task();
+
 	/// \name Type Declarations for Task Fields
 	/// @{
 	typedef int64_t ID;
@@ -73,8 +77,6 @@ public:
 	static std::wstring ToString(const Task&);
 
 private:
-	/// Disable default constructor - use builder only
-	Task() = delete;
 	/// Called by nextNewTask()
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :

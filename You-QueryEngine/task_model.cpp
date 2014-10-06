@@ -12,6 +12,9 @@ using boost::gregorian::max_date_time;
 namespace You {
 namespace QueryEngine {
 
+Task::Task() {
+}
+
 void Task::setDescription(const Task::Description &description) {
 	this->description = description;
 }
