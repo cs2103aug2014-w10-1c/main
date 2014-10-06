@@ -13,7 +13,7 @@ namespace UnitTests {
 using InternalDataStore = You::DataStore::Internal::InternalDataStore;
 
 /// Unit Test Class for InternalDataStore class
-TEST_CLASS(DataStoreTest) {
+TEST_CLASS(InternalDataStoreTest) {
 public:
 	/// Basic test for retrieving a task
 	TEST_METHOD(getExistingTask) {
