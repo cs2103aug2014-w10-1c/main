@@ -25,6 +25,12 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		You::NLP::QUERY query(Mocks::Queries::ADD_QUERY);
 		boost::apply_visitor(visitor, query);
+
+		You::NLP::ADD_QUERY queryWithoutDeadline(Mocks::Queries::ADD_QUERY);
+		queryWithoutDeadline.due =
+			You::Utils::Option<boost::posix_time::ptime>();
+		query = queryWithoutDeadline;
+		boost::apply_visitor(visitor, query);
 	}
 };
 
