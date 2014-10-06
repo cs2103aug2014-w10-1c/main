@@ -39,6 +39,21 @@ TEST_CLASS(QueryExecutorTests) {
 		DummyQueryExecutor executor(std::move(query));
 		Assert::IsNotNull(executor.query.get());
 	}
+
+	TEST_METHOD(addTasksGetsTask) {
+		std::unique_ptr<QueryEngine::Query> query(
+			QueryEngine::AddTask(
+				L"yay",
+				QueryEngine::Task::DEFAULT_DEADLINE,
+				QueryEngine::Task::DEFAULT_PRIORITY,
+				QueryEngine::Task::Dependencies()
+			)
+		);
+
+		DummyQueryExecutor executor(std::move(query));
+		ADD_RESULT result = boost::get<ADD_RESULT>(executor.execute());
+		Assert::AreEqual(std::wstring(L"yay"), result.task.getDescription());
+	}
 };
 
 }  // namespace UnitTests
