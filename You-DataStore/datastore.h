@@ -22,7 +22,7 @@ public:
 	static bool put(TaskId, SerializedTask&);
 	static bool erase(TaskId);
 
-	static boost::variant<bool, SerializedTask> get(TaskId);
+	static std::vector<SerializedTask> getAllTask();
 	static std::vector<SerializedTask>
 		filter(const std::function<bool(SerializedTask)>&);
 private:
