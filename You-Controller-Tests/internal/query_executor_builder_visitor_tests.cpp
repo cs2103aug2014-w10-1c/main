@@ -73,6 +73,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task);
+
+		queryWithoutDeadline = Mocks::Queries::EDIT_QUERY;
+		queryWithoutDeadline.description =
+			You::Utils::Option<std::wstring>();
+		query = queryWithoutDeadline;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<EDIT_RESULT>(executor->execute());
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task);
 	}
 
 	TEST_METHOD(getsCorrectTypeForDeleteQueries) {
