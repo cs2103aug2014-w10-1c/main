@@ -93,8 +93,33 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 
 std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
-	// TODO(lowjoel): waiting for API
-	return nullptr;
+	class DeleteTaskQueryExecutor : public QueryExecutor {
+	public:
+		explicit DeleteTaskQueryExecutor(
+			std::unique_ptr<QueryEngine::Query>&& query)
+			: QueryExecutor(std::move(query)) {
+		}
+
+		virtual ~DeleteTaskQueryExecutor() = default;
+
+	protected:
+		Result processResponse(
+			const You::QueryEngine::Response& response) override {
+			return DELETE_RESULT {
+				boost::get<Task>(response)
+			};
+		}
+	};
+
+	const Task& task = context.at(query.taskID);
+
+	return std::unique_ptr<QueryExecutor>(
+		new DeleteTaskQueryExecutor(
+			QueryEngine::DeleteTask(
+				task.getID()
+			)
+		)
+	);
 }
 
 }  // namespace Internal
