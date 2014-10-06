@@ -39,6 +39,15 @@
     <ClInclude Include="transaction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="internal\operations\post_operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\operations\put_operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\operations\erase_operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +60,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="transaction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\operations\post_operation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\operations\put_operation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\operations\erase_operation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
