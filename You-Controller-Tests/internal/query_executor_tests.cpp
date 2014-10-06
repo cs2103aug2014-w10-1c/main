@@ -33,8 +33,7 @@ protected:
 TEST_CLASS(QueryExecutorTests) {
 	TEST_METHOD(storesQuery) {
 		std::unique_ptr<QueryEngine::Query> query(
-			QueryEngine::FilterTask(QueryEngine::Filter::anyTask())
-		);
+			QueryEngine::FilterTask(QueryEngine::Filter::anyTask()));
 
 		DummyQueryExecutor executor(std::move(query));
 		Assert::IsNotNull(executor.query.get());
