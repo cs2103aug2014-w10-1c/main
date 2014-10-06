@@ -1,6 +1,5 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "../internal/test_helpers.h"
 #include "internal/query_executor.h"
 #include "internal/query_executor_builder_visitor.h"
 
@@ -15,7 +14,8 @@ namespace Internal {
 namespace UnitTests {
 
 namespace Mocks {
-	using namespace You::Controller::UnitTests::Mocks;  // NOLINT
+	// NOLINTNEXTLINE(build/namespaces)
+	using namespace You::Controller::UnitTests::Mocks;
 }
 
 TEST_CLASS(QueryExecutorBuilderVisitorTests) {
