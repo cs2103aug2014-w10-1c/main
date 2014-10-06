@@ -58,7 +58,7 @@ void YouMainGUI::populateTaskPanel() {
 	}
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < tl.size(); i++) {
 		std::vector<std::wstring> rowStrings;
 		rowStrings.push_back(std::to_wstring(taskList->at(i).getID()));
 		rowStrings.push_back(taskList->at(i).getDescription());
