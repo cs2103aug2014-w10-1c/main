@@ -21,7 +21,7 @@ public:
 				stream.str());
 		}
 
-		{  // NOLINT
+		{  // NOLINT(whitespace/braces)
 			EDIT_QUERY local = DUMMY;
 			local.fieldsToChange = EDIT_QUERY::FIELDS::DESCRIPTION |
 				EDIT_QUERY::FIELDS::DUE;
