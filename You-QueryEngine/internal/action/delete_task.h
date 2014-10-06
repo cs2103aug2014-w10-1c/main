@@ -11,6 +11,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 /// Define action for deleting task
 class DeleteTask : public Query {
@@ -30,6 +31,7 @@ private:
 	const Task::ID id;  ///< ID of the task to delete
 };
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
