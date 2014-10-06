@@ -28,6 +28,9 @@ public:
 	/// \return A builder object.
 	static TaskBuilder get();
 
+	/// Start building from a current task object
+	static TaskBuilder fromTask(const Task& task);
+
 	/// Initialize task id.
 	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
