@@ -1,6 +1,7 @@
+//@author A0094446X
 #pragma once
-#ifndef YOU_GUI_VARIANT_HANDLER
-#define YOU_GUI_VARIANT_HANDLER
+#ifndef YOU_GUI_VARIANT_HANDLER_H_
+#define YOU_GUI_VARIANT_HANDLER_H_
 #include "you_main_gui.h"
 struct VariantHandler : boost::static_visitor<void> {
 	YouMainGUI* parentGUI;
@@ -8,11 +9,9 @@ struct VariantHandler : boost::static_visitor<void> {
 		parentGUI->addTask(addResult.result);
 	}
 	void operator()(You::Controller::EDIT_RESULT editResult) {
-
 	}
 	void operator()(You::Controller::DELETE_RESULT deleteResult) {
-
 	}
 };
 
-#endif  // YOU_GUI_VARIANT_HANDLER
+#endif  // YOU_GUI_VARIANT_HANDLER_H_

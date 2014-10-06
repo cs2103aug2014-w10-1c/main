@@ -29,6 +29,7 @@ public:
 	/// written to the session file.
 	// std::vector<TypeID> taskIDs;
 	std::vector<You::Controller::Task::ID> taskIDs;
+
 private:
 	/// Loads the previous state of the GUI. Called during constructor.
 	void loadSession();

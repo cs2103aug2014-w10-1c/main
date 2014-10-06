@@ -18,14 +18,14 @@ void YouMainGUI::NLPManager::setup() {
 	// Set result to current context
 }
 
-You::Controller::Result YouMainGUI::NLPManager::queryNLP() {
+void YouMainGUI::NLPManager::queryNLP() {
 	/// Feed query and context into NLP engine
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	// When ready, pass current context, not the default one.
 	You::Controller::Result result = Controller::get().query(inputString,
 		Controller::Context::Context(parentGUI->getTaskList()));
-	boost::apply_visitor(VariantHandler(), result);
+	boost::apply_visitor(*(parentGUI->vh), result);
 }
 
 void YouMainGUI::NLPManager::commandEnterButtonClicked() {

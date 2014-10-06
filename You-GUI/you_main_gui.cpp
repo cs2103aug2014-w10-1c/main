@@ -8,14 +8,14 @@
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
-
+typedef int64_t TaskID;
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
 		taskList(new You::Controller::TaskList),
-		vh(new VariantHandler){
+		vh(new VariantHandler) {
 	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
@@ -25,12 +25,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 	// To fix after implementation of task handling
-	//populateTaskPanel();
-	//std::vector<std::wstring> taskRow;
-	//taskRow.push_back(L"lol");
-	//taskRow.push_back(L"lol1");
-	//taskRow.push_back(L"lol2");
-	//tpm->addTask(taskRow);
+	populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -50,9 +45,10 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	/*
-	std::vector<You::Controller::Task::ID> IDs = sm->taskIDs;
+	/* To fix
+	std::vector<TaskID> IDs = sm->taskIDs;
 	You::Controller::Result result;
+
 	if (IDs.size() != 0) {
 		result = You::Controller::Controller::get().getTasks(sm->taskIDs);
 	} else {
@@ -75,8 +71,8 @@ void YouMainGUI::populateTaskPanel() {
 		}
 		// To do: Deal with dependencies
 		tpm->addTask(rowStrings);
-	}*/
-	
+	}
+	*/
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
@@ -94,5 +90,35 @@ You::Controller::TaskList YouMainGUI::getTaskList() {
 }
 
 void YouMainGUI::addTask(You::Controller::Task task) {
-	this->tpm->addTask(this->tpm->taskToStrVec(task));
+	tpm->addTask(taskToStrVec(task));
+}
+
+std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
+	// Make wstringstream as helper for conversion
+	std::wstringstream wss;
+
+	// Initialize vector
+	std::vector<std::wstring> taskVector;
+
+	// Insert id
+	wss << task.getID();
+	taskVector.push_back(wss.str());
+	wss.str(L"");
+
+	// Insert description
+	taskVector.push_back(task.getDescription());
+
+	// Insert deadline
+	wss << task.getDeadline();
+	std::wstring deadline = wss.str();
+	taskVector.push_back(deadline);
+	wss.str(L"");
+
+	// To do
+	/*
+	for (int i = 0; i < task.getDependencies().size(), i++) {
+
+	}
+	*/
+	return taskVector;
 }
