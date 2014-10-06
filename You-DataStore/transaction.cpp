@@ -6,9 +6,7 @@ namespace You {
 namespace DataStore {
 
 Transaction::Transaction(bool busy) {
-	while (busy) {
-		busy = DataStore::begin();
-	}
+	// while (DataStore::begin()) {}  // for multithreading
 	DataStore::getInstance().isServing = true;
 }
 
