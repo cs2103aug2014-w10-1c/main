@@ -31,6 +31,38 @@ std::wstring ToString(const variant<T1, T2, T3>& t) {
 	return apply_visitor(visitor, t);
 }
 
+inline std::wstring ToString(const boost::gregorian::date& date) {
+	return boost::lexical_cast<std::wstring>(date);
+}
+
+inline std::wstring ToString(const boost::posix_time::ptime& time) {
+	return boost::lexical_cast<std::wstring>(time);
+}
+
 }  // namespace boost
+
+namespace Microsoft {
+namespace VisualStudio {
+namespace CppUnitTestFramework {
+
+/// Missing overloads.
+/// @{
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<long long>(const long long& t) {
+	RETURN_WIDE_STRING(t);
+}
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<long long>(const long long* t) {
+	RETURN_WIDE_STRING(t);
+}
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<long long>(long long* t) {
+	RETURN_WIDE_STRING(t);
+}
+/// }
+
+}  // namespace CppUnitTestFramework
+}  // namespace VisualStudio
+}  // namespace Microsoft
 
 #endif  // YOU_UTILS_TESTS_TEST_HELPERS_H_

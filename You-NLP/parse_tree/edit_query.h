@@ -7,6 +7,8 @@
 #include <boost/fusion/adapted/struct.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "You-Utils/option.h"
+
 namespace You {
 namespace NLP {
 
@@ -37,14 +39,11 @@ struct EDIT_QUERY {
 	/// The task offset which should be changed
 	size_t taskID;
 
-	/// The fields which need to be changed.
-	FIELDS fieldsToChange;
-
 	/// The description of the task.
-	std::wstring description;
+	You::Utils::Option<std::wstring> description;
 
 	/// The due date of the task.
-	boost::posix_time::ptime due;
+	You::Utils::Option<boost::posix_time::ptime> due;
 };
 
 /// Computes a bitwise OR over the two fields specification flags.

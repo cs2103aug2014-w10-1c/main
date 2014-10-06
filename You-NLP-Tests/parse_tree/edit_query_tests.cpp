@@ -12,6 +12,24 @@ using You::NLP::EDIT_QUERY;
 
 TEST_CLASS(EditQueryTests) {
 public:
+	TEST_METHOD(fieldsBinaryOr) {
+		EDIT_QUERY::FIELDS lhs;
+		EDIT_QUERY::FIELDS rhs;
+
+		Assert::AreEqual(
+			static_cast<size_t>(lhs) | static_cast<size_t>(rhs),
+			static_cast<size_t>(lhs | rhs));
+	}
+
+	TEST_METHOD(fieldsBinaryAnd) {
+		EDIT_QUERY::FIELDS lhs;
+		EDIT_QUERY::FIELDS rhs;
+
+		Assert::AreEqual(
+			static_cast<size_t>(lhs) & static_cast<size_t>(rhs),
+			static_cast<size_t>(lhs & rhs));
+	}
+
 	TEST_METHOD(convertsToStream) {
 		{
 			std::wostringstream stream;
@@ -23,8 +41,9 @@ public:
 
 		{  // NOLINT(whitespace/braces)
 			EDIT_QUERY local = DUMMY;
-			local.fieldsToChange = EDIT_QUERY::FIELDS::DESCRIPTION |
-				EDIT_QUERY::FIELDS::DUE;
+			local.due = boost::posix_time::ptime(
+				boost::gregorian::date(1970, boost::gregorian::Jan, 1),
+				boost::posix_time::hours(0));
 
 			std::wostringstream stream;
 			stream << local;
@@ -45,17 +64,11 @@ public:
 		EDIT_QUERY local = DUMMY;
 
 		Assert::AreEqual(DUMMY, local);
-
-		local.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
-			boost::posix_time::hours(1));
-		Assert::AreEqual(DUMMY, local, L"Changing fields not specified in the "
-			L"modified mask should not cause inequality.");
 	}
 
 	TEST_METHOD(comparesInequality) {
 		EDIT_QUERY local {
 			1,
-			EDIT_QUERY::FIELDS::DESCRIPTION,
 			L""
 		};
 
@@ -66,7 +79,6 @@ public:
 		Assert::AreNotEqual(DUMMY, local);
 
 		local.taskID = DUMMY.taskID;
-		local.fieldsToChange = local.fieldsToChange | EDIT_QUERY::FIELDS::DUE;
 		EDIT_QUERY local2 = local;
 		local2.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));
@@ -80,10 +92,7 @@ private:
 
 const EDIT_QUERY EditQueryTests::DUMMY {
 	1,
-	EDIT_QUERY::FIELDS::DESCRIPTION,
-	L"the lols",
-	boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
-		boost::posix_time::hours(0))
+	L"the lols"
 };
 
 }  // namespace UnitTests

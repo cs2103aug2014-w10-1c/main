@@ -9,7 +9,7 @@ namespace Controller {
 /// Defines the result of an Add query.
 struct ADD_RESULT {
 	/// The task which was added.
-	Task result;
+	Task task;
 };
 
 }  // namespace Controller

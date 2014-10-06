@@ -14,7 +14,7 @@
 #pragma managed(push, off)
 
 ExcludeFromCodeCoverage(boost, L"boost::*");
-ExcludeFromCodeCoverage(You_QueryEngine, L"You::QueryEngine::*");
+ExcludeFromCodeCoverage(boost_meta, L"??@*@");
 ExcludeFromCodeCoverage(You_Utils, L"You::Utils::*");
 
 #pragma managed(pop)

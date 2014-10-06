@@ -8,6 +8,8 @@ namespace Controller {
 
 /// Defines the result of an Edit query.
 struct EDIT_RESULT {
+	/// The new, modified task. The task ID is guaranteed to be the same.
+	Task task;
 };
 
 }  // namespace Controller
