@@ -9,7 +9,7 @@ namespace DataStore {
 namespace Internal {
 class EraseOperation : public IOperation {
 public:
-	EraseOperation(TaskId);
+	explicit EraseOperation(TaskId);
 	bool run();
 };
 }  // namespace Internal
