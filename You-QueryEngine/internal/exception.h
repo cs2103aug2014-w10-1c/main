@@ -22,6 +22,11 @@ class Exception : public You::Utils::Exception {
 class EmptyTaskDescriptionException : public Exception {
 };
 
+/// An exception thrown when trying to access a task
+/// that does not exists
+class TaskNotFoundException : public Exception {
+};
+
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

@@ -16,6 +16,9 @@ namespace {
 namespace You {
 namespace QueryEngine {
 
+Task::Task() {
+}
+
 void Task::setDescription(const Task::Description &description) {
 	this->description = description;
 }
