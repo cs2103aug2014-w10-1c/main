@@ -28,7 +28,7 @@ public:
 private:
 	static DataStore& getInstance();
 	bool isServing = false;
-	std::deque<IOperation> operationsQueue;
+	std::deque<Internal::IOperation> operationsQueue;
 };
 }  // namespace DataStore
 }  // namespace You
