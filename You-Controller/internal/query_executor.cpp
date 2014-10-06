@@ -7,7 +7,6 @@ namespace Controller {
 namespace Internal {
 
 QueryExecutor::QueryExecutor(std::unique_ptr<You::QueryEngine::Query>&& query) {
-
 }
 
 Result QueryExecutor::execute() {
