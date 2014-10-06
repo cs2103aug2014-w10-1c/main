@@ -16,6 +16,10 @@ namespace Internal {
 
 /// The query builder that will send the query to the appropriate builder
 /// in the controller class.
+///
+/// This translates a given syntax tree returned by the \ref QueryParser and
+/// then constructs the corresponding query object that can be used by the
+/// Query Engine.
 class QueryBuilderVisitor : public boost::static_visitor<
 	std::unique_ptr<You::QueryEngine::Query>> {
 public:
