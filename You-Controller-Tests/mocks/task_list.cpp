@@ -11,15 +11,14 @@ TaskList::TaskList() {
 		L"meh",
 		QueryEngine::Task::DEFAULT_DEADLINE,
 		QueryEngine::Task::DEFAULT_PRIORITY,
-		QueryEngine::Task::Dependencies()
-		);
+		QueryEngine::Task::Dependencies());
 
 	QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
 	Task task = boost::get<Task>(r);
 	emplace_back(task);
 }
 
-}
-}
-}
-}
+}  // namespace Mocks
+}  // namespace UnitTests
+}  // namespace Controller
+}  // namespace You

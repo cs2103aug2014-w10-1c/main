@@ -31,12 +31,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.description,
-			result.task.getDescription()
-		);
+			result.task.getDescription());
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.due.get(),
-			result.task.getDeadline()
-		);
+			result.task.getDeadline());
 
 		You::NLP::ADD_QUERY queryWithoutDeadline(Mocks::Queries::ADD_QUERY);
 		queryWithoutDeadline.due =
@@ -47,8 +45,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.description,
-			result.task.getDescription()
-		);
+			result.task.getDescription());
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {

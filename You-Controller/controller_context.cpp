@@ -26,7 +26,7 @@ const Task& Controller::Context::at(size_t offset) const {
 	if (isDefault()) {
 		throw ContextRequiredException();
 	}
-	
+
 	return boost::get<TaskList>(context).at(offset);
 }
 
