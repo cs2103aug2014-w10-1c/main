@@ -16,14 +16,14 @@ namespace Utils {
 template<typename T>
 class Option : protected std::shared_ptr<T> {
 public:
-	inline Option() {  // NOLINT(runtime/explicit)
+	inline Option() {
 	}
 
 	inline Option(T&& value)  // NOLINT(runtime/explicit)
 	: std::shared_ptr<T>(new T(value)) {
 	}
 
-	inline Option(const T& value)
+	inline Option(const T& value)  // NOLINT(runtime/explicit)
 	: std::shared_ptr<T>(new T(value)) {
 	}
 
