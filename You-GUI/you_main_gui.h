@@ -99,7 +99,7 @@ private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
-	
+
 	std::unique_ptr<You::Controller::TaskList> taskList;
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
