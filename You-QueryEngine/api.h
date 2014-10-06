@@ -13,6 +13,7 @@
 
 namespace You {
 namespace QueryEngine {
+namespace UnitTests { class QueryEngineTests; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,

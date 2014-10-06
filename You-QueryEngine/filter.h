@@ -12,6 +12,7 @@
 
 namespace You {
 namespace QueryEngine {
+namespace UnitTests { class FilterTests; }
 
 /// Base task filterer class
 /// New instances of the filter can only be create

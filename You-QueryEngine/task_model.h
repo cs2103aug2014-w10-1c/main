@@ -16,11 +16,8 @@
 
 namespace You {
 namespace QueryEngine {
-
-// Forward declaration on TaskBuilder
-namespace Internal {
-class TaskBuilder;
-}
+namespace UnitTests { class TaskBuilderTests; }
+namespace Internal { class TaskBuilder; }
 
 /// \brief The task model
 /// The task instances must be created using builder pattern.

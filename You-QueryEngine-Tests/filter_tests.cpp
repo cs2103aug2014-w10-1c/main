@@ -27,7 +27,7 @@ using You::QueryEngine::executeQuery;
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(QueryEngineTests) {
+TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 100;
 
 	static Task getMockTask() {
