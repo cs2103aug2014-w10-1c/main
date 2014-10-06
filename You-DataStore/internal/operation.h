@@ -11,6 +11,7 @@ namespace DataStore {
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
+	virtual ~IOperation();
 	/// Executes the operation
 	virtual bool run() = 0;
 protected:
