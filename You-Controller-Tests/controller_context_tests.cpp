@@ -1,6 +1,5 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "internal/test_helpers.h"
 #include "controller_context.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
