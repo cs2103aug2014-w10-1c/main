@@ -1,9 +1,9 @@
-#include <string>
-#include "CppUnitTest.h"
-#include <QtWidgets>
+#include "stdafx.h"
 #include "..\You-GUI\you_main_gui.h"
 #include "..\You-QueryEngine\api.h"
+
 using Logger = Microsoft::VisualStudio::CppUnitTestFramework::Logger;
+
 namespace MyUnitTests {
 	TEST_CLASS(MyTestClass) {
 	public:
