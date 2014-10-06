@@ -7,6 +7,7 @@ namespace You {
 namespace Controller {
 
 struct ADD_RESULT {
+	Task result;
 };
 
 }  // namespace Controller

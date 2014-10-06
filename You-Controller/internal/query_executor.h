@@ -26,7 +26,7 @@ public:
 	/// Executes the query, returning the concrete result.
 	///
 	/// \return The concrete result of the query.
-	Result execute() const;
+	Result execute();
 
 protected:
 	/// Constructor.

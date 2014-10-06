@@ -22,6 +22,9 @@
     <Filter Include="Source Files\internal">
       <UniqueIdentifier>{6fdeab1b-f7e7-468b-a0d5-382c0a992c2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\results">
+      <UniqueIdentifier>{45a7f48f-5f88-46e4-9a46-f12866ff6b2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,6 +54,18 @@
     <ClInclude Include="internal\query_executor_builder_visitor.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="results\add_result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
+    <ClInclude Include="results\delete_result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
+    <ClInclude Include="results\edit_result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
+    <ClInclude Include="results\result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="internal\query_executor_builder_visitor.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\query_executor.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>

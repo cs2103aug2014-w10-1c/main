@@ -1,6 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
 #include "query_executor.h"
+#include "../result.h"
 #include "query_executor_builder_visitor.h"
 
 namespace You {
@@ -19,12 +20,33 @@ QueryExecutorBuilderVisitor::QueryExecutorBuilderVisitor(
 
 std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
-	QueryEngine::AddTask(
-		query.description,
-		query.due ? query.due.get() : Task::DEFAULT_DEADLINE,
-		Task::Priority::NORMAL,
-		Task::Dependencies());
-	return nullptr;
+	class AddTaskQueryExecutor : public QueryExecutor {
+	public:
+		AddTaskQueryExecutor(std::unique_ptr<QueryEngine::Query>&& query)
+			: QueryExecutor(std::move(query)) {
+		}
+
+		virtual ~AddTaskQueryExecutor() = default;
+
+	protected:
+		virtual Result processResponse(
+			const You::QueryEngine::Response& response) override {
+			return ADD_RESULT {
+				boost::get<Task>(response)
+			};
+		}
+	};
+
+	return std::unique_ptr<QueryExecutor>(
+		new AddTaskQueryExecutor(
+			QueryEngine::AddTask(
+				query.description,
+				query.due ? query.due.get() : Task::DEFAULT_DEADLINE,
+				Task::Priority::NORMAL,
+				Task::Dependencies()
+			)
+		)
+	);
 }
 
 std::unique_ptr<QueryExecutor>

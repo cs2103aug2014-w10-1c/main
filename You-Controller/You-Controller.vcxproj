@@ -84,11 +84,16 @@
     <ClInclude Include="internal\query_executor.h" />
     <ClInclude Include="internal\query_executor_builder_visitor.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="results\add_result.h" />
+    <ClInclude Include="results\delete_result.h" />
+    <ClInclude Include="results\edit_result.h" />
+    <ClInclude Include="results\result.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="controller_context.cpp" />
+    <ClCompile Include="internal\query_executor.cpp" />
     <ClCompile Include="internal\query_executor_builder_visitor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
