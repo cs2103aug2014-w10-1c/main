@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{7b87d704-c48d-4591-8937-43c2795ed318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mocks">
+      <UniqueIdentifier>{cb92e026-83b7-45d5-a5fa-34486e1c1a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mocks">
+      <UniqueIdentifier>{0e8bb079-8c70-4601-8cd7-fb5f8c42ca13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -21,6 +30,9 @@
     <ClInclude Include="exclusions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\task_list.h">
+      <Filter>Header Files\mocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -28,6 +40,18 @@
     </ClCompile>
     <ClCompile Include="controller_context_tests.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controller_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\query_executor_tests.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\query_executor_builder_visitor_tests.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="mocks\task_list.cpp">
+      <Filter>Source Files\mocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

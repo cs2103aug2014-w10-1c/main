@@ -11,6 +11,7 @@
 namespace You {
 namespace Controller {
 namespace Internal {
+namespace UnitTests { class QueryExecutorTests; }
 
 /// Forms an abstract base class for all query executors.
 ///
@@ -19,6 +20,8 @@ namespace Internal {
 /// Query Builder, returning the appropriate result to the consumers of the
 /// controller.
 class QueryExecutor {
+	friend class UnitTests::QueryExecutorTests;
+
 public:
 	/// Default virtual constructor.
 	virtual ~QueryExecutor() = default;

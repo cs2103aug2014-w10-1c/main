@@ -88,10 +88,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exclusions.h" />
+    <ClInclude Include="mocks\task_list.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="controller_context_tests.cpp" />
+    <ClCompile Include="controller_tests.cpp" />
+    <ClCompile Include="internal\query_executor_tests.cpp" />
+    <ClCompile Include="internal\query_executor_builder_visitor_tests.cpp" />
+    <ClCompile Include="mocks\task_list.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -100,6 +105,9 @@
   <ItemGroup>
     <ProjectReference Include="..\You-Controller\You-Controller.vcxproj">
       <Project>{25c49ad2-4819-4ddd-bc61-8918a71a0730}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">
+      <Project>{fa205f33-9c62-45a2-b059-0f7d9afc7752}</Project>
     </ProjectReference>
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
       <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>

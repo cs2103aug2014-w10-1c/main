@@ -1,7 +1,8 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "controller_context.h"
 #include "exception.h"
+#include "controller_context.h"
+#include "mocks/task_list.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -43,19 +44,7 @@ public:
 	}
 
 	TEST_METHOD(atAndArrayAccessReturnsCorrectItem) {
-		std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
-			L"meh",
-			QueryEngine::Task::DEFAULT_DEADLINE,
-			QueryEngine::Task::DEFAULT_PRIORITY,
-			QueryEngine::Task::Dependencies()
-		);
-
-		TaskList taskList;
-		{
-			QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
-			Task task = boost::get<Task>(r);
-			taskList.emplace_back(task);
-		}
+		Mocks::TaskList taskList;
 		Controller::Context context(taskList);
 
 		// TODO(lowjoel): Use AreEqual when there's an accessible ToString
