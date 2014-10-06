@@ -75,17 +75,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="datastore.h" />
     <ClInclude Include="task_typedefs.h" />
     <ClInclude Include="internal\internal_datastore.h" />
     <ClInclude Include="internal\operation.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="transaction.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="datastore.cpp" />
     <ClCompile Include="internal\internal_datastore.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
