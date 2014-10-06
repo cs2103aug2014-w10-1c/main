@@ -7,7 +7,7 @@ namespace DataStore {
 
 Transaction::Transaction(bool busy) {
 	// while (DataStore::begin()) {}  // for multithreading
-	DataStore::getInstance().isServing = true;
+	DataStore::get().isServing = true;
 }
 
 }  // namespace DataStore
