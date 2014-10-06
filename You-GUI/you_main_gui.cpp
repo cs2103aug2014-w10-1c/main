@@ -2,20 +2,21 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
+#include "variant_handler.h"
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
 
-
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
-		taskList(new You::Controller::TaskList) {
+		taskList(new You::Controller::TaskList),
+		vh(new VariantHandler){
+	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
@@ -24,7 +25,12 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 	// To fix after implementation of task handling
-	// populateTaskPanel();
+	//populateTaskPanel();
+	//std::vector<std::wstring> taskRow;
+	//taskRow.push_back(L"lol");
+	//taskRow.push_back(L"lol1");
+	//taskRow.push_back(L"lol2");
+	//tpm->addTask(taskRow);
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -45,8 +51,13 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
 	/*
-	You::Controller::Result result =
-		You::Controller::Controller::get().getTasks(sm->taskIDs);
+	std::vector<You::Controller::Task::ID> IDs = sm->taskIDs;
+	You::Controller::Result result;
+	if (IDs.size() != 0) {
+		result = You::Controller::Controller::get().getTasks(sm->taskIDs);
+	} else {
+		result = You::Controller::Controller::get().getTasks();
+	}
 	You::Controller::TaskList tl = boost::get<You::Controller::TaskList>(result);
 	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
@@ -59,13 +70,13 @@ void YouMainGUI::populateTaskPanel() {
 		wss << taskList->at(i).getDeadline();
 		rowStrings.push_back(wss.str());
 		switch (taskList->at(i).getPriority()) {
-			case You::Controller::Task::Priority::IMPORTANT: rowStrings.push_back(priority[0]);
-			case You::Controller::Task::Priority::NORMAL: rowStrings.push_back(priority[1]);
+		case You::Controller::Task::Priority::IMPORTANT: rowStrings.push_back(priority[0]);
+		case You::Controller::Task::Priority::NORMAL: rowStrings.push_back(priority[1]);
 		}
 		// To do: Deal with dependencies
 		tpm->addTask(rowStrings);
-	}
-	*/
+	}*/
+	
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
@@ -80,4 +91,8 @@ void YouMainGUI::setVisible(bool visible) {
 
 You::Controller::TaskList YouMainGUI::getTaskList() {
 	return *taskList;
+}
+
+void YouMainGUI::addTask(You::Controller::Task task) {
+	this->tpm->addTask(this->tpm->taskToStrVec(task));
 }

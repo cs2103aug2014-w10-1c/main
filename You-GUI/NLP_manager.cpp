@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QList>
 #include "NLP_manager.h"
-
+#include "variant_handler.h"
 using Controller = You::Controller::Controller;
 
 YouMainGUI::NLPManager::~NLPManager() {
@@ -25,7 +25,7 @@ You::Controller::Result YouMainGUI::NLPManager::queryNLP() {
 	// When ready, pass current context, not the default one.
 	You::Controller::Result result = Controller::get().query(inputString,
 		Controller::Context::Context(parentGUI->getTaskList()));
-	return result;
+	boost::apply_visitor(VariantHandler(), result);
 }
 
 void YouMainGUI::NLPManager::commandEnterButtonClicked() {
