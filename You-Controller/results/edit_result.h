@@ -6,6 +6,7 @@
 namespace You {
 namespace Controller {
 
+/// Defines the result of an Edit query.
 struct EDIT_RESULT {
 };
 

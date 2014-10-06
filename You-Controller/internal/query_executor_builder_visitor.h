@@ -15,7 +15,7 @@ namespace Controller {
 namespace Internal {
 
 /// The query executor builder that will convert a syntax tree from the
-/// \ref QueryParser into a \ref QueryExecutor object.
+/// \ref You::NLP::QueryParser into a \ref QueryExecutor object.
 class QueryExecutorBuilderVisitor : public boost::static_visitor<
 	std::unique_ptr<class QueryExecutor>> {
 public:
