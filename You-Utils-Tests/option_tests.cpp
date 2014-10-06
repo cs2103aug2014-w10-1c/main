@@ -17,9 +17,9 @@ std::wstring ToString(const You::Utils::Option<T>& value) {
 	}
 }
 
-}
-}
-}
+}  // namespace CppUnitTestFramework
+}  // namespace VisualStudio
+}  // namespace Microsoft
 
 namespace You {
 namespace Utils {
