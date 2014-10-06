@@ -31,7 +31,7 @@ private:
 	/// intermediate step to adding headings and tasks.
 	QTreeWidgetItem* createItem(std::vector<std::wstring> rowStrings);
 
-	std::vector<std::wstring> taskToStrVec(You::NLP::Task task);
+	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
 	void addTask(std::vector<std::wstring> rowStrings);

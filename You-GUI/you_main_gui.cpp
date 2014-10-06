@@ -15,7 +15,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
-		taskList(new You::NLP::TaskList) {
+		taskList(new You::Controller::TaskList) {
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);
@@ -44,9 +44,10 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
+	/*
 	You::Controller::Result result =
 		You::Controller::Controller::get().getTasks(sm->taskIDs);
-	You::NLP::TaskList tl = boost::get<You::NLP::TaskList>(result);
+	You::Controller::TaskList tl = boost::get<You::Controller::TaskList>(result);
 	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
@@ -58,12 +59,13 @@ void YouMainGUI::populateTaskPanel() {
 		wss << taskList->at(i).getDeadline();
 		rowStrings.push_back(wss.str());
 		switch (taskList->at(i).getPriority()) {
-			case You::NLP::Task::Priority::IMPORTANT: rowStrings.push_back(priority[0]);
-			case You::NLP::Task::Priority::NORMAL: rowStrings.push_back(priority[1]);
+			case You::Controller::Task::Priority::IMPORTANT: rowStrings.push_back(priority[0]);
+			case You::Controller::Task::Priority::NORMAL: rowStrings.push_back(priority[1]);
 		}
 		// To do: Deal with dependencies
 		tpm->addTask(rowStrings);
 	}
+	*/
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
@@ -76,6 +78,6 @@ void YouMainGUI::setVisible(bool visible) {
 	QWidget::setVisible(visible);
 }
 
-You::NLP::TaskList YouMainGUI::getTaskList() {
+You::Controller::TaskList YouMainGUI::getTaskList() {
 	return *taskList;
 }

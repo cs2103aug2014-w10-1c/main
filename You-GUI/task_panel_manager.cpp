@@ -40,7 +40,7 @@ void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-std::vector<std::wstring> taskToStrVec(You::NLP::Task task) {
+std::vector<std::wstring> taskToStrVec(You::Controller::Task task) {
 	// Make wstringstream as helper for conversion
 	std::wstringstream wss;
 
