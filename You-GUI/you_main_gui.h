@@ -6,7 +6,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller\result.h"
-
 struct VariantHandler;
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all

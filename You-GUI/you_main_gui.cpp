@@ -9,6 +9,9 @@
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
 typedef int64_t TaskID;
+typedef You::Controller::Task Task;
+typedef You::Controller::Result Result;
+
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
@@ -45,17 +48,14 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	/* To fix
-	std::vector<TaskID> IDs = sm->taskIDs;
-	You::Controller::Result result;
 
+	std::vector<TaskID> IDs = sm->taskIDs;
+	You::Controller::TaskList tl;
 	if (IDs.size() != 0) {
-		result = You::Controller::Controller::get().getTasks(sm->taskIDs);
+		tl = You::Controller::Controller::get().getTasks(sm->taskIDs);
 	} else {
-		result = You::Controller::Controller::get().getTasks();
+		tl = You::Controller::Controller::get().getTasks();
 	}
-	You::Controller::TaskList tl = boost::get<You::Controller::TaskList>(result);
-	taskList.reset(&tl);
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
 	for (int i = 0; i < 10; i++) {
@@ -66,13 +66,14 @@ void YouMainGUI::populateTaskPanel() {
 		wss << taskList->at(i).getDeadline();
 		rowStrings.push_back(wss.str());
 		switch (taskList->at(i).getPriority()) {
-		case You::Controller::Task::Priority::IMPORTANT: rowStrings.push_back(priority[0]);
-		case You::Controller::Task::Priority::NORMAL: rowStrings.push_back(priority[1]);
+		case You::Controller::Task::Priority::IMPORTANT:
+			rowStrings.push_back(priority[0]);
+		case You::Controller::Task::Priority::NORMAL:
+			rowStrings.push_back(priority[1]);
 		}
 		// To do: Deal with dependencies
 		tpm->addTask(rowStrings);
 	}
-	*/
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
