@@ -142,8 +142,7 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	EDIT_QUERY::FIELDS field,
 	const LexemeType& newValue) {
 	EDIT_QUERY result {
-		offset,
-		field
+		offset
 	};
 	StringType newStringValue(newValue.begin(), newValue.end());
 

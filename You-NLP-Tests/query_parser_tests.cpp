@@ -58,7 +58,6 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
-			EDIT_QUERY::FIELDS::DESCRIPTION,
 			L"meh"
 		}), q);
 
@@ -66,16 +65,14 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
-			EDIT_QUERY::FIELDS::DUE,
-			L"",
+			Utils::Option<std::wstring>(),
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
 		}), q);
 
 		q = QueryParser::parse(L"/edit 10 set complete");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
-			10,
-			EDIT_QUERY::FIELDS::COMPLETE
+			10
 		}), q);
 	}
 

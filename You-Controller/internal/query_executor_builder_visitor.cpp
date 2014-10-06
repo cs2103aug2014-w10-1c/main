@@ -71,17 +71,12 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	};
 
 	const Task& task = context.at(query.taskID);
-	std::wstring description =
-		(query.fieldsToChange & EDIT_QUERY::FIELDS::DESCRIPTION) ==
-			EDIT_QUERY::FIELDS::NONE ?
-				Task::DEFAULT_DESCRIPTION :
-				query.description;
-	boost::posix_time::ptime due =
-		(query.fieldsToChange & EDIT_QUERY::FIELDS::DUE) ==
-			EDIT_QUERY::FIELDS::NONE ?
-				Task::DEFAULT_DEADLINE :
-				query.due;
-
+	std::wstring description = query.description ?
+		query.description.get() :
+		Task::DEFAULT_DESCRIPTION;
+	boost::posix_time::ptime due = query.due ?
+		query.due.get() :
+		Task::DEFAULT_DEADLINE;
 
 	return std::unique_ptr<QueryExecutor>(
 		new EditTaskQueryExecutor(

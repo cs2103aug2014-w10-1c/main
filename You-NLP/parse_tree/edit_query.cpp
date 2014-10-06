@@ -25,20 +25,18 @@ const std::wstring DUE_FIELD(L"Due");
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields;
-	if ((q.fieldsToChange &
-		EDIT_QUERY::FIELDS::DESCRIPTION) != EDIT_QUERY::FIELDS::NONE) {
+	if (q.description) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
 			DESCRIPTION_FIELD %
-			q.description).str());
+			q.description.get()).str());
 	}
 
-	if ((q.fieldsToChange &
-		EDIT_QUERY::FIELDS::DUE) != EDIT_QUERY::FIELDS::NONE) {
+	if (q.due) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
 			DUE_FIELD %
-			q.due).str());
+			q.due.get()).str());
 	}
 
 	return fields;
@@ -79,24 +77,12 @@ std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 }
 
 bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
-	if (fieldsToChange != rhs.fieldsToChange ||
-		taskID != rhs.taskID) {
+	if (taskID != rhs.taskID) {
 		return false;
 	}
 
-	if ((fieldsToChange & FIELDS::DESCRIPTION) != FIELDS::NONE) {
-		if (description != rhs.description) {
-			return false;
-		}
-	}
-
-	if ((fieldsToChange & FIELDS::DUE) != FIELDS::NONE) {
-		if (due != rhs.due) {
-			return false;
-		}
-	}
-
-	return true;
+	return description == rhs.description &&
+		due == rhs.due;
 }
 
 std::wstring ToString(const EDIT_QUERY& q) {
