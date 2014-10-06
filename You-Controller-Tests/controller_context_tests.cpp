@@ -52,7 +52,7 @@ public:
 
 		TaskList taskList;
 		{
-			Result r = QueryEngine::executeQuery(std::move(q));
+			QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
 			Task task = boost::get<Task>(r);
 			taskList.emplace_back(task);
 		}
