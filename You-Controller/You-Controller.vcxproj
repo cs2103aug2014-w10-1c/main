@@ -83,6 +83,9 @@
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="internal\query_builder_visitor.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="results\add_result.h" />
+    <ClInclude Include="results\delete_result.h" />
+    <ClInclude Include="results\edit_result.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

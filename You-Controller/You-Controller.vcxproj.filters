@@ -22,6 +22,9 @@
     <Filter Include="Source Files\internal">
       <UniqueIdentifier>{6fdeab1b-f7e7-468b-a0d5-382c0a992c2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\results">
+      <UniqueIdentifier>{34ecc7e3-e571-4b0c-a961-ee48657d46af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -47,6 +50,15 @@
     </ClInclude>
     <ClInclude Include="internal\query_builder_visitor.h">
       <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="results\add_result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
+    <ClInclude Include="results\edit_result.h">
+      <Filter>Header Files\results</Filter>
+    </ClInclude>
+    <ClInclude Include="results\delete_result.h">
+      <Filter>Header Files\results</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
