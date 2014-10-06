@@ -70,11 +70,6 @@ public:
 		return isStrictEqual(rhs);
 	}
 
-	/// String representation of a task, for testing and logging.
-	/// \param[in] The task object, assumed all fields are valid
-	/// \return A string representation of the task
-	static std::wstring ToString(const Task&);
-
 private:
 	/// Disable default constructor - use builder only
 	Task() = delete;
@@ -97,9 +92,13 @@ private:
 	Dependencies dependencies;
 	Priority priority;
 	/// @}
-
-	static const std::wstring FORMAT;
 };
+
+/// String representation of a task, for testing and logging.
+///
+/// \param[in] The task object, assumed all fields are valid
+/// \return A string representation of the task
+std::wstring ToString(const Task&);
 
 }  // namespace QueryEngine
 }  // namespace You

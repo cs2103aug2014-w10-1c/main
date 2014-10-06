@@ -86,8 +86,8 @@ public:
 			.description(desc)
 			.deadline(dead)
 			.dependencies(dep);
-		Assert::AreEqual(Task::ToString(task), Task::ToString(task2));
-		Assert::AreNotEqual(Task::ToString(task), Task::ToString(task3));
+		Assert::AreEqual(ToString(task), ToString(task2));
+		Assert::AreNotEqual(ToString(task), ToString(task3));
 	}
 };
 
