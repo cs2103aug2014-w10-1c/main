@@ -15,6 +15,7 @@
 
 namespace You {
 namespace QueryEngine {
+namespace UnitTests { class TaskSerializerTests;  }
 namespace Internal {
 
 ///   Utility class to serialize and deserialize tasks.

@@ -10,6 +10,7 @@
 
 namespace You {
 namespace QueryEngine {
+namespace UnitTests { class TaskBuilderTests;  }
 namespace Internal {
 
 ///   Builder for tasks
