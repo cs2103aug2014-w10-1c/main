@@ -8,6 +8,7 @@
 namespace You {
 namespace Controller {
 
+/// Defines the type of the result from running a string query.
 typedef boost::variant<
 	ADD_RESULT,
 	EDIT_RESULT,

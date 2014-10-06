@@ -6,6 +6,7 @@
 namespace You {
 namespace Controller {
 
+/// Defines the result of a Delete query.
 struct DELETE_RESULT {
 };
 
