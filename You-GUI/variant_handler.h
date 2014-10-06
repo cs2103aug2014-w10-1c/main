@@ -3,6 +3,7 @@
 #ifndef YOU_GUI_VARIANT_HANDLER_H_
 #define YOU_GUI_VARIANT_HANDLER_H_
 #include "you_main_gui.h"
+
 struct VariantHandler : boost::static_visitor<void> {
 	YouMainGUI* parentGUI;
 	void operator()(You::Controller::ADD_RESULT addResult) {

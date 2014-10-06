@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include "task_panel_manager.h"
+
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 

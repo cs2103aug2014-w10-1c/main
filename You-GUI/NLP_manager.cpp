@@ -6,9 +6,12 @@
 #include "NLP_manager.h"
 #include "variant_handler.h"
 #include "You-QueryEngine\internal\task_builder.h"
-using Controller = You::Controller::Controller;
+
 using Task = You::Controller::Task;
+using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
+using Controller = You::Controller::Controller;
+
 YouMainGUI::NLPManager::~NLPManager() {
 }
 
@@ -33,7 +36,7 @@ void YouMainGUI::NLPManager::queryNLP() {
 	tl.push_back(newTask);
 	*/
 	Controller::Context ct = Controller::Context::Context(tl);
-	You::Controller::Result result = Controller::get().query(inputString, ct);
+	Result result = Controller::get().query(inputString, ct);
 	boost::apply_visitor(*(parentGUI->vh), result);
 }
 

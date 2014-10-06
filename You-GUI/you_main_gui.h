@@ -94,7 +94,9 @@ public:
 	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
 
 	void YouMainGUI::addTask(You::Controller::Task task);
+
 	void addTaskListToPanel(You::Controller::TaskList tl);
+
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.

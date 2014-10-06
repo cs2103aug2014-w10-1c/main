@@ -8,16 +8,18 @@
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
-typedef You::Controller::Task::ID TaskID;
-typedef You::Controller::Task Task;
-typedef You::Controller::Result Result;
+
+using Task = You::Controller::Task;
+using Result = You::Controller::Result;
+using TaskList = You::Controller::TaskList;
+using Controller = You::Controller::Controller;
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
-		taskList(new You::Controller::TaskList),
+		taskList(new TaskList),
 		vh(new VariantHandler) {
 	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
@@ -48,12 +50,12 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	std::vector<TaskID> IDs = sm->taskIDs;
-	You::Controller::TaskList tl;
+	std::vector<Task::ID> IDs = sm->taskIDs;
+	TaskList tl;
 	if (IDs.size() != 0) {
-		tl = You::Controller::Controller::get().getTasks(sm->taskIDs);
+		tl = Controller::get().getTasks(sm->taskIDs);
 	} else {
-		tl = You::Controller::Controller::get().getTasks();
+		tl = Controller::get().getTasks();
 	}
 	addTaskListToPanel(tl);
 }
@@ -69,9 +71,9 @@ void YouMainGUI::addTaskListToPanel(You::Controller::TaskList tl) {
 		wss << taskList->at(i).getDeadline();
 		rowStrings.push_back(wss.str());
 		switch (taskList->at(i).getPriority()) {
-		case You::Controller::Task::Priority::IMPORTANT:
+		case Task::Priority::IMPORTANT:
 			rowStrings.push_back(priority[0]);
-		case You::Controller::Task::Priority::NORMAL:
+		case Task::Priority::NORMAL:
 			rowStrings.push_back(priority[1]);
 		}
 		// To do: Deal with dependencies
@@ -108,6 +110,9 @@ std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
 	wss << task.getID();
 	taskVector.push_back(wss.str());
 	wss.str(L"");
+
+	// Insert count
+	taskVector.push_back(L"0");
 
 	// Insert description
 	taskVector.push_back(task.getDescription());
