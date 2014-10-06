@@ -8,7 +8,7 @@
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
-typedef int64_t TaskID;
+typedef You::Controller::Task::ID TaskID;
 typedef You::Controller::Task Task;
 typedef You::Controller::Result Result;
 

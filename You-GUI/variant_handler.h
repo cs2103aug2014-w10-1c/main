@@ -6,7 +6,7 @@
 struct VariantHandler : boost::static_visitor<void> {
 	YouMainGUI* parentGUI;
 	void operator()(You::Controller::ADD_RESULT addResult) {
-		parentGUI->addTask(addResult.result);
+		parentGUI->addTask(addResult.task);
 	}
 	void operator()(You::Controller::EDIT_RESULT editResult) {
 	}
