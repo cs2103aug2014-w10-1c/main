@@ -101,7 +101,8 @@ void YouMainGUI::addTask(You::Controller::Task task) {
 
 void YouMainGUI::deleteTask(You::Controller::Task::ID task) {
 	QList<QTreeWidgetItem*> items =
-		ui.taskTreePanel->findItems(QString::fromStdWString(std::to_wstring(task)), 0);
+		ui.taskTreePanel->findItems(
+		QString::fromStdWString(std::to_wstring(task)), 0);
 	if (items.length() != 1) {
 		qDebug() << "deleteTask items.length() != 1" << endl;
 	} else {
@@ -111,7 +112,8 @@ void YouMainGUI::deleteTask(You::Controller::Task::ID task) {
 
 void YouMainGUI::editTask(You::Controller::Task task) {
 	QList<QTreeWidgetItem*> items =
-		ui.taskTreePanel->findItems(QString::fromStdWString(std::to_wstring(task.getID())), 0);
+		ui.taskTreePanel->findItems(
+		QString::fromStdWString(std::to_wstring(task.getID())), 0);
 	if (items.length() != 1) {
 		qDebug() << "editTask items.length() != 1" << endl;
 	} else {

@@ -98,7 +98,7 @@ public:
 	void deleteTask(You::Controller::Task::ID task);
 
 	void addTaskListToPanel(You::Controller::TaskList tl);
-	
+
 	void editTask(You::Controller::Task task);
 
 	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
