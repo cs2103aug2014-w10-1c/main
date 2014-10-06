@@ -17,7 +17,10 @@ public:
 	virtual ~IOperation();
 
 	/// Executes the operation
-	virtual void run() = 0;
+	virtual bool run() = 0;
+protected:
+	TaskId taskId;
+	SerializedTask task;
 };
 
 }   // namespace DataStore
