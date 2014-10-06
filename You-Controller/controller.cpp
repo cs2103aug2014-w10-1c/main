@@ -3,7 +3,8 @@
 #include "controller.h"
 #include "You-NLP/query_parser.h"
 #include "You-NLP/parse_tree.h"
-#include "internal/query_builder_visitor.h"
+#include "internal/query_executor.h"
+#include "internal/query_executor_builder_visitor.h"
 
 namespace You {
 namespace Controller {
@@ -23,27 +24,25 @@ Result Controller::query(
 	const Controller::Context& context) const {
 	QueryParseTree parseTree = QueryParser::parse(query);
 
-	Internal::QueryBuilderVisitor visitor(context);
-	std::unique_ptr<AbstractQuery> queryRef =
-		boost::apply_visitor(visitor, parseTree);
+	Internal::QueryExecutorBuilderVisitor visitor(context);
+	std::unique_ptr<Internal::QueryExecutor> executor(
+		boost::apply_visitor(visitor, parseTree));
 
-	QueryEngine::Response response = QueryEngine::executeQuery(
-		std::move(queryRef));
-	return response;
+	return executor->execute();
 }
 
-Result Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
+TaskList Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
 	std::unique_ptr<AbstractQuery> query =
 		QueryEngine::FilterTask(QueryEngine::Filter::idIsIn(taskIDs));
 
-	return QueryEngine::executeQuery(std::move(query));
+	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }
 
-Result Controller::getTasks() const {
+TaskList Controller::getTasks() const {
 	std::unique_ptr<AbstractQuery> query =
 		QueryEngine::FilterTask(QueryEngine::Filter::anyTask());
 
-	return QueryEngine::executeQuery(std::move(query));
+	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }
 
 }  // namespace Controller

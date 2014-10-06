@@ -14,48 +14,45 @@ namespace QueryEngine { class Query; }
 namespace Controller {
 namespace Internal {
 
-/// The query builder that will send the query to the appropriate builder
-/// in the controller class.
-///
-/// This translates a given syntax tree returned by the \ref QueryParser and
-/// then constructs the corresponding query object that can be used by the
-/// Query Engine.
-class QueryBuilderVisitor : public boost::static_visitor<
-	std::unique_ptr<You::QueryEngine::Query>> {
+/// The query executor builder that will convert a syntax tree from the
+/// \ref QueryParser into a \ref QueryExecutor object.
+class QueryExecutorBuilderVisitor : public boost::static_visitor<
+	std::unique_ptr<class QueryExecutor>> {
 public:
 	/// Constructor. Specify the context for which the query is to be built
 	/// with.
-	explicit QueryBuilderVisitor(const Controller::Context& context);
+	explicit QueryExecutorBuilderVisitor(const Controller::Context& context);
 
 	/// Visitor implementation.
 	///
 	/// \param[in] query The actual query from the parse tree.
 	template<typename QueryType>
-	std::unique_ptr<You::QueryEngine::Query> operator()(
+	std::unique_ptr<QueryExecutor> operator()(
 		const QueryType& query) const {
 		return build(query);
 	}
 
 private:
-	QueryBuilderVisitor(const QueryBuilderVisitor&) = delete;
-	QueryBuilderVisitor& operator=(const QueryBuilderVisitor&) = delete;
+	QueryExecutorBuilderVisitor(const QueryExecutorBuilderVisitor&) = delete;
+	QueryExecutorBuilderVisitor& operator=(
+		const QueryExecutorBuilderVisitor&) = delete;
 
 	/// Builds a query engine query from the given add syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<You::QueryEngine::Query>
+	static std::unique_ptr<QueryExecutor>
 		build(const You::NLP::ADD_QUERY& query);
 
 	/// Builds a query engine query from the given edit syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<You::QueryEngine::Query>
+	static std::unique_ptr<QueryExecutor>
 		build(const You::NLP::EDIT_QUERY& query);
 
 	/// Builds a query engine query from the given delete syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<You::QueryEngine::Query>
+	static std::unique_ptr<QueryExecutor>
 		build(const You::NLP::DELETE_QUERY& query);
 
 private:
