@@ -5,6 +5,18 @@
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
+namespace Microsoft {
+namespace VisualStudio {
+namespace CppUnitTestFramework {
+
+std::wstring ToString(const You::Controller::Controller& value) {
+	return ToString(static_cast<const void*>(&value));
+}
+
+}  // namespace CppUnitTestFramework
+}  // namespace VisualStudio
+}  // namespace Microsoft
+
 namespace You {
 namespace Controller {
 namespace UnitTests {
@@ -12,8 +24,8 @@ namespace UnitTests {
 TEST_CLASS(ControllerTests) {
 	TEST_METHOD(controllerIsSingleton) {
 		Assert::AreSame(
-			reinterpret_cast<uintptr_t>(&Controller::get()),
-			reinterpret_cast<uintptr_t>(&Controller::get()));
+			Controller::get(),
+			Controller::get());
 	}
 };
 
