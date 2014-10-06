@@ -8,6 +8,9 @@ namespace Controller {
 
 /// Defines the result of a Delete query.
 struct DELETE_RESULT {
+	/// The deleted task. The properties of the task correct as at the time of
+	/// deletion.
+	Task result;
 };
 
 }  // namespace Controller

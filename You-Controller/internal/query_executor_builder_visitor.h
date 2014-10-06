@@ -46,14 +46,14 @@ private:
 	/// Builds a query engine query from the given edit syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<QueryExecutor>
-		build(const You::NLP::EDIT_QUERY& query);
+	std::unique_ptr<QueryExecutor>
+		build(const You::NLP::EDIT_QUERY& query) const;
 
 	/// Builds a query engine query from the given delete syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
-	static std::unique_ptr<QueryExecutor>
-		build(const You::NLP::DELETE_QUERY& query);
+	std::unique_ptr<QueryExecutor>
+		build(const You::NLP::DELETE_QUERY& query) const;
 
 private:
 	/// The context for the query.
