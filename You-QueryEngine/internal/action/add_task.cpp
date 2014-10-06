@@ -8,6 +8,7 @@
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+namespace Action {
 
 Response AddTask::execute(State& tasks) {
 	Task newTask = TaskBuilder::get()
@@ -24,6 +25,7 @@ Response AddTask::execute(State& tasks) {
 	return newTask;
 }
 
+}  // namespace Action
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

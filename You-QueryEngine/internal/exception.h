@@ -7,13 +7,14 @@
 #define YOU_QUERYENGINE_INTERNAL_EXCEPTION_H_
 
 #include <stdexcept>
+#include "../../You-Utils/exceptions/exception.h"
 
 namespace You {
 namespace QueryEngine {
 namespace Internal {
 
 /// Base exception class.
-class Exception : public std::exception {
+class Exception : public You::Utils::Exception {
 };
 
 /// An exception thrown when trying to create task

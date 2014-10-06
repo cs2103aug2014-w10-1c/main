@@ -65,6 +65,30 @@ public:
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail3);
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail4);
 	}
+
+	TEST_METHOD(convertTaskToString) {
+		const Task::Description desc = L"Learn Haskell Lens";
+		const Task::Time dead = Task::NEVER;
+		const Task::Dependencies dep = { 1, 2, 3 };
+		const Task::Dependencies dep2 = { 2, 1, 3};
+		const Task::Priority prio = Task::Priority::IMPORTANT;
+		Task task = TaskBuilder::get()
+			.description(desc)
+			.deadline(dead)
+			.priority(prio)
+			.dependencies(dep);
+		Task task2 = TaskBuilder::get()
+			.description(desc)
+			.deadline(dead)
+			.priority(prio)
+			.dependencies(dep);
+		Task task3 = TaskBuilder::get()
+			.description(desc)
+			.deadline(dead)
+			.dependencies(dep);
+		Assert::AreEqual(Task::ToString(task), Task::ToString(task2));
+		Assert::AreNotEqual(Task::ToString(task), Task::ToString(task3));
+	}
 };
 
 }  // namespace UnitTests
