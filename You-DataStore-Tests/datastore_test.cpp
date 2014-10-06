@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "task_typedefs.h"
+#include "dummy_values.h"
 #include "internal/internal_datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -12,43 +12,20 @@ namespace UnitTests {
 
 using InternalDataStore = You::DataStore::Internal::InternalDataStore;
 
-// Dummy constants
-const std::wstring TASK_ID = L"id";
-const std::wstring DESCRIPTION = L"description";
-const std::wstring DEADLINE = L"deadline";
-const std::wstring PRIORITY = L"priority";
-const std::wstring DEPENDENCIES = L"dependency";
-
-// Dummy serialized task
-const SerializedTask stask = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"bla bla" },
-		{ DEADLINE, L"xxxxxx" },
-		{ PRIORITY, L"urgent" },
-		{ DEPENDENCIES, L"12345" }
-};
-const SerializedTask staskAlt = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"yada yada" },
-		{ DEADLINE, L"yyyyyy" },
-		{ PRIORITY, L"normal" },
-		{ DEPENDENCIES, L"4321" }
-};
-
 /// Unit Test Class for InternalDataStore class
 TEST_CLASS(DataStoreTest) {
 public:
 	/// Basic test for retrieving a task
 	TEST_METHOD(getExistingTask) {
 		InternalDataStore sut;
-		sut.post(0, stask);
+		sut.post(0, task1);
 		boost::variant<bool, SerializedTask> response = sut.get(0);
 		SerializedTask task = boost::get<SerializedTask>(response);
-		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
 	/// Test for retrieving task with non-existent task id
@@ -68,7 +45,7 @@ public:
 		Assert::IsTrue(isEmptyDoc);
 
 		// Checks for post return value
-		bool result = sut.post(0, stask);
+		bool result = sut.post(0, task1);
 		Assert::IsTrue(result);
 
 		// Updates the boolean
@@ -81,7 +58,7 @@ public:
 	/// Test for adding task with an already existing task id
 	TEST_METHOD(postTaskWithExistingId) {
 		InternalDataStore sut;
-		bool init = sut.post(0, stask);
+		bool init = sut.post(0, task1);
 		Assert::IsTrue(init);
 		bool result = sut.post(0, SerializedTask());
 		Assert::IsFalse(result);
@@ -89,45 +66,45 @@ public:
 		// Checks if the content has not changed
 		boost::variant<bool, SerializedTask> response = sut.get(0);
 		SerializedTask task = boost::get<SerializedTask>(response);
-		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
 	/// Basic test for editing a task
 	TEST_METHOD(putExistingTask) {
 		InternalDataStore sut;
-		sut.post(0, staskAlt);
-		bool result = sut.put(0, stask);
+		sut.post(0, task2);
+		bool result = sut.put(0, task1);
 		Assert::IsTrue(result);
 
 		// Checks if the content has changed
 		boost::variant<bool, SerializedTask> response = sut.get(0);
 		SerializedTask task = boost::get<SerializedTask>(response);
-		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 	}
 
 	/// Test for editing task with non-existent task id
 	TEST_METHOD(putNonExistentTask) {
 		InternalDataStore sut;
-		sut.post(0, stask);
-		bool result = sut.put(1, staskAlt);
+		sut.post(0, task1);
+		bool result = sut.put(1, task2);
 		Assert::IsFalse(result);
 
 		// Checks if the content has not changed
 		boost::variant<bool, SerializedTask> response = sut.get(0);
 		SerializedTask task = boost::get<SerializedTask>(response);
-		Assert::AreEqual(stask.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(stask.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(stask.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(stask.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(stask.at(DEPENDENCIES), task[DEPENDENCIES]);
+		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
+		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
+		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
+		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
+		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 
 		// Checks if the put does not add things to the xml tree
 		pugi::xpath_node_set nodeSet = sut.document.select_nodes(L"task");
@@ -137,7 +114,7 @@ public:
 	/// Basic test for erasing a task with the specified task id
 	TEST_METHOD(eraseExistingTask) {
 		InternalDataStore sut;
-		sut.post(0, stask);
+		sut.post(0, task1);
 		// Checks if the xml tree is modified
 		bool isEmptyDoc = sut.document.children().begin() ==
 			sut.document.children().end();
