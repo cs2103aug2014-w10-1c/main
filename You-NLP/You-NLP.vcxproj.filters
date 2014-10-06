@@ -33,9 +33,6 @@
     <ClInclude Include="nlp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="task_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>

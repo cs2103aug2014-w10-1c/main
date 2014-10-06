@@ -1,10 +1,12 @@
+//@author A0097630B
 #pragma once
 #ifndef YOU_NLP_PARSE_TREE_ADD_QUERY_H_
 #define YOU_NLP_PARSE_TREE_ADD_QUERY_H_
 
 #include <string>
-#include <boost/fusion/adapted/struct.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+
+#include "You-Utils/option.h"
 
 namespace You {
 namespace NLP {
@@ -20,7 +22,7 @@ struct ADD_QUERY {
 	std::wstring description;
 
 	/// The due date of the task.
-	boost::posix_time::ptime due;
+	You::Utils::Option<boost::posix_time::ptime> due;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.
@@ -38,11 +40,5 @@ std::wstring ToString(const ADD_QUERY& q);
 
 }  // namespace NLP
 }  // namespace You
-
-BOOST_FUSION_ADAPT_STRUCT(
-	You::NLP::ADD_QUERY,
-	(std::wstring, description)
-	(std::wstring, due)
-)
 
 #endif  // YOU_NLP_PARSE_TREE_ADD_QUERY_H_

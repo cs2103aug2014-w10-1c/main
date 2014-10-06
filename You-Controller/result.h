@@ -1,22 +1,26 @@
+//@author A0097630B
 #pragma once
 #ifndef YOU_CONTROLLER_RESULT_H_
 #define YOU_CONTROLLER_RESULT_H_
 
-#include "You-NLP/task_list.h"
+#include <vector>
+#include "You-QueryEngine/api.h"
 
 namespace You {
 namespace Controller {
-
-/// Defines the result of a natural language query.
-typedef QueryEngine::Response Result;
 
 /// Defines the type of a task.
 typedef QueryEngine::Task Task;
 
 /// Defines the type of a task list.
-typedef NLP::TaskList TaskList;
+typedef std::vector<Task> TaskList;
 
 }  // namespace Controller
 }  // namespace You
+
+#include "results/add_result.h"
+#include "results/delete_result.h"
+#include "results/edit_result.h"
+#include "results/result.h"
 
 #endif  // YOU_CONTROLLER_RESULT_H_

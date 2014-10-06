@@ -1,9 +1,9 @@
+//@author A0097630B
 #pragma once
 #ifndef YOU_CONTROLLER_CONTROLLER_CONTEXT_H_
 #define YOU_CONTROLLER_CONTROLLER_CONTEXT_H_
 
 #include "controller.h"
-#include "You-NLP/task_list.h"
 
 namespace You {
 namespace Controller {

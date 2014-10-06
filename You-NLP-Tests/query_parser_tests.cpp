@@ -1,3 +1,4 @@
+//@author A0097630B
 #include "stdafx.h"
 #include "You-QueryEngine/task_model.h"
 
@@ -39,16 +40,15 @@ public:
 	TEST_METHOD(parsesStringAsTask) {
 		QUERY q = QueryParser::parse(L"win");
 
-		Assert::AreEqual(QUERY(ADD_QUERY{
-			L"win",
-			QueryEngine::Task::DEFAULT_DEADLINE
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win"
 		}), q);
 	}
 
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
 		QUERY q = QueryParser::parse(L"win by may 2014");
 
-		Assert::AreEqual(QUERY(ADD_QUERY{
+		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
@@ -57,7 +57,7 @@ public:
 	TEST_METHOD(parsesEditQuery) {
 		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
 
-		Assert::AreEqual(QUERY(EDIT_QUERY{
+		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			EDIT_QUERY::FIELDS::DESCRIPTION,
 			L"meh"
@@ -65,7 +65,7 @@ public:
 
 		q = QueryParser::parse(L"/edit 10 set due oct 2014");
 
-		Assert::AreEqual(QUERY(EDIT_QUERY{
+		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			EDIT_QUERY::FIELDS::DUE,
 			L"",
@@ -74,7 +74,7 @@ public:
 
 		q = QueryParser::parse(L"/edit 10 set complete");
 
-		Assert::AreEqual(QUERY(EDIT_QUERY{
+		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			EDIT_QUERY::FIELDS::COMPLETE
 		}), q);

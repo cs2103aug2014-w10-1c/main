@@ -1,6 +1,5 @@
+//@author A0097630B
 #include "stdafx.h"
-#include "You-QueryEngine/api.h"
-
 #include "date_time_parser.h"
 #include "exceptions/parse_error_exception.h"
 #include "query_parser.h"
@@ -100,8 +99,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
 	return ADD_QUERY {
-		std::wstring(lexeme.begin(), lexeme.end()),
-		QueryEngine::Task::DEFAULT_DEADLINE
+		std::wstring(lexeme.begin(), lexeme.end())
 	};
 }
 

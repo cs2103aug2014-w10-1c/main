@@ -1,3 +1,4 @@
+//@author A0097630B
 #pragma once
 #ifndef YOU_CONTROLLER_CONTROLLER_H_
 #define YOU_CONTROLLER_CONTROLLER_H_
@@ -14,7 +15,6 @@ namespace UnitTests { class ControllerContextTests; }
 ///
 /// This is a singleton class.
 class Controller {
-	class QueryBuilderVisitor;
 	friend class UnitTests::ControllerContextTests;
 
 public:
@@ -39,12 +39,12 @@ public:
 	/// \remarks Order is preserved when returned.
 	/// \param[in] taskIDs The task IDs to return.
 	/// \return The tasks with the given ID.
-	Result getTasks(const std::vector<Task::ID>& taskIDs) const;
+	TaskList getTasks(const std::vector<Task::ID>& taskIDs) const;
 
 	/// Gets all tasks.
 	///
 	/// \return The tasks currently in the data store.
-	Result getTasks() const;
+	TaskList getTasks() const;
 
 private:
 	Controller(const Controller&) = delete;
