@@ -40,20 +40,6 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
 		description, deadline, priority, dependencies));
 }
 
-std::unique_ptr<Query>
-UpdateTask(Task::ID id, Task::Description description,
-Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
-	using UpdateTask = Internal::UpdateTask;
-	return std::unique_ptr<Query>(new UpdateTask(id, description, deadline,
-		priority, dependencies));
-}
-
-std::unique_ptr<Query>
-DeleteTask(Task::ID id) {
-	using DeleteTask = Internal::DeleteTask;
-	return std::unique_ptr<Query>(new DeleteTask(id));
-}
-
 Response executeQuery(std::unique_ptr<Query> query) {
 	State blank;
 	return query->execute(blank);
