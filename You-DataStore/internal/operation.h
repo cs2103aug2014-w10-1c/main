@@ -7,7 +7,7 @@
 
 namespace You {
 namespace DataStore {
-
+namespace Internal {
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
@@ -18,7 +18,7 @@ protected:
 	TaskId taskId;
 	SerializedTask task;
 };
-
+}  // namespace Internal
 }   // namespace DataStore
 }   // namespace You
 
