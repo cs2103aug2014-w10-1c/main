@@ -28,7 +28,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 	// To fix after implementation of task handling
-	populateTaskPanel();
+	// populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -48,7 +48,6 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-
 	std::vector<TaskID> IDs = sm->taskIDs;
 	You::Controller::TaskList tl;
 	if (IDs.size() != 0) {
@@ -56,6 +55,10 @@ void YouMainGUI::populateTaskPanel() {
 	} else {
 		tl = You::Controller::Controller::get().getTasks();
 	}
+	addTaskListToPanel(tl);
+}
+
+void YouMainGUI::addTaskListToPanel(You::Controller::TaskList tl) {
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
 	for (int i = 0; i < tl.size(); i++) {
