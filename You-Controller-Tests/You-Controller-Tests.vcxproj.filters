@@ -33,6 +33,9 @@
     <ClInclude Include="mocks\task_list.h">
       <Filter>Header Files\mocks</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\query.h">
+      <Filter>Header Files\mocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="mocks\task_list.cpp">
+      <Filter>Source Files\mocks</Filter>
+    </ClCompile>
+    <ClCompile Include="mocks\query.cpp">
       <Filter>Source Files\mocks</Filter>
     </ClCompile>
   </ItemGroup>

@@ -88,6 +88,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exclusions.h" />
+    <ClInclude Include="mocks\query.h" />
     <ClInclude Include="mocks\task_list.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -96,6 +97,7 @@
     <ClCompile Include="controller_tests.cpp" />
     <ClCompile Include="internal\query_executor_tests.cpp" />
     <ClCompile Include="internal\query_executor_builder_visitor_tests.cpp" />
+    <ClCompile Include="mocks\query.cpp" />
     <ClCompile Include="mocks\task_list.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
