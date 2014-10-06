@@ -23,8 +23,7 @@ public:
 	static bool erase(TaskId);
 
 	static std::vector<SerializedTask> getAllTask();
-	static std::vector<SerializedTask>
-		filter(const std::function<bool(SerializedTask)>&);
+
 private:
 	static DataStore& get();
 	bool isServing = false;
