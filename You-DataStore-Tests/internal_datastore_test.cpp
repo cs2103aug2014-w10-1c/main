@@ -19,20 +19,12 @@ public:
 	TEST_METHOD(getExistingTask) {
 		InternalDataStore sut;
 		sut.post(0, task1);
-		boost::variant<bool, SerializedTask> response = sut.get(0);
-		SerializedTask task = boost::get<SerializedTask>(response);
+		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
 		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
-	}
-
-	/// Test for retrieving task with non-existent task id
-	TEST_METHOD(getNonExistentTask) {
-		InternalDataStore sut;
-		boost::variant<bool, SerializedTask> response = sut.get(0);
-		Assert::IsFalse(boost::get<bool>(response));
 	}
 
 	/// Basic test for adding a task
@@ -64,8 +56,7 @@ public:
 		Assert::IsFalse(result);
 
 		// Checks if the content has not changed
-		boost::variant<bool, SerializedTask> response = sut.get(0);
-		SerializedTask task = boost::get<SerializedTask>(response);
+		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
@@ -81,8 +72,7 @@ public:
 		Assert::IsTrue(result);
 
 		// Checks if the content has changed
-		boost::variant<bool, SerializedTask> response = sut.get(0);
-		SerializedTask task = boost::get<SerializedTask>(response);
+		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
@@ -98,8 +88,7 @@ public:
 		Assert::IsFalse(result);
 
 		// Checks if the content has not changed
-		boost::variant<bool, SerializedTask> response = sut.get(0);
-		SerializedTask task = boost::get<SerializedTask>(response);
+		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
 		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
