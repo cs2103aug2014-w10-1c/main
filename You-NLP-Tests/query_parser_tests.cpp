@@ -93,7 +93,7 @@ public:
 			L"meh"
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set due oct 2014");
+		q = QueryParser::parse(L"/edit 10 set deadline oct 2014");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,

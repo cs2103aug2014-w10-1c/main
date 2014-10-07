@@ -16,14 +16,14 @@ public:
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (due %2%, normal priority)") %
+			(boost::wformat(L"%1% (deadline %2%, normal priority)") %
 				DESCRIPTION % DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (due %2%, normal priority)") %
+			(boost::wformat(L"%1% (deadline %2%, normal priority)") %
 				DESCRIPTION % DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}

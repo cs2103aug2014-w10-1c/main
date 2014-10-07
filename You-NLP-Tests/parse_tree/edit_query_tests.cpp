@@ -49,7 +49,7 @@ public:
 			stream << local;
 			Assert::AreEqual(
 				std::wstring(L"Edit task #1 (Description => the lols, "
-					L"Due => 1970-Jan-01 00:00:00)"),
+					L"Deadline => 1970-Jan-01 00:00:00)"),
 				stream.str());
 		}
 	}

@@ -20,7 +20,7 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
 /// The deadline field.
-const std::wstring DEADLINE_FIELD(L"Due");
+const std::wstring DEADLINE_FIELD(L"Deadline");
 
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {

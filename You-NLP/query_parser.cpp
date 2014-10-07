@@ -89,7 +89,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	editCommandFields.add
 		(L"description", EDIT_QUERY::Fields::DESCRIPTION)
-		(L"due", EDIT_QUERY::Fields::DEADLINE)
+		(L"deadline", EDIT_QUERY::Fields::DEADLINE)
 		(L"done", EDIT_QUERY::Fields::COMPLETE)
 		(L"complete", EDIT_QUERY::Fields::COMPLETE);
 	editCommandFields.name("editCommandFields");

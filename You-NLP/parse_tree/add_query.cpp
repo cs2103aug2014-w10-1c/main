@@ -9,7 +9,7 @@
 namespace {
 
 /// The format for displaying an ADD_QUERY
-const boost::wformat STRING_FORMAT(L"%1% (due %2%, %3% priority)");
+const boost::wformat STRING_FORMAT(L"%1% (deadline %2%, %3% priority)");
 
 }  // namespace
 
