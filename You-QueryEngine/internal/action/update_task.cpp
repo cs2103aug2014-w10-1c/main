@@ -13,12 +13,9 @@ namespace Action {
 
 Response UpdateTask::execute(State& tasks) {
 	auto builder = TaskBuilder::get().id(this->id);
+	auto current = tasks.get().graph().getTask(this->id);
 	if (this->description == Task::DEFAULT_DESCRIPTION) {
-		/// This should get the description of the
-		/// current id of the task
-		auto description = tasks.get().graph().getTask(this->id)
-			.getDescription();
-		builder.description(description);
+		builder.description(current.getDescription());
 	} else {
 		builder.description(this->description);
 	}
@@ -32,8 +29,8 @@ Response UpdateTask::execute(State& tasks) {
 		builder.dependencies(this->dependencies);
 	}
 	Task newTask = builder;
+	newTask.setCompleted(this->completed);
 	tasks.get().graph().updateTask(newTask);
-
 	return newTask;
 }
 

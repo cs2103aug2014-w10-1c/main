@@ -87,6 +87,29 @@ TEST_CLASS(QueryEngineTests) {
 		Internal::State::clear();
 	}
 
+	TEST_METHOD(executeMarkTaskQuery) {
+		Internal::State::clear();
+		auto query = AddTask(desc, dead, prio, dep);
+		auto response = executeQuery(std::move(query));
+		auto task = boost::get<Task>(response);
+		Assert::IsFalse(task.isCompleted());
+
+		query = UpdateTask(task.getID(), true);
+		response = executeQuery(std::move(query));
+		task = boost::get<Task>(response);
+		Assert::IsTrue(task.isCompleted());
+		Assert::IsTrue(Internal::State::get().graph()
+			.getTask(task.getID()).isCompleted());
+
+		query = UpdateTask(task.getID(), false);
+		response = executeQuery(std::move(query));
+		task = boost::get<Task>(response);
+		Assert::IsFalse(task.isCompleted());
+		Assert::IsFalse(Internal::State::get().graph()
+			.getTask(task.getID()).isCompleted());
+		Internal::State::clear();
+	}
+
 	TEST_METHOD(executeDeleteQuery) {
 		Internal::State::clear();
 		auto query = AddTask(desc, dead, prio, dep);

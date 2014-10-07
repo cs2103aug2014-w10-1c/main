@@ -45,14 +45,16 @@ public:
 	inline Time getDeadline() const { return deadline; }
 	inline Dependencies getDependencies() const { return dependencies; }
 	inline Priority getPriority() const { return priority; }
+	inline bool isCompleted() const { return completed; }
 	/// @}
 
 	/// \name Setters for Field Values
 	/// @{
-	void setDescription(const Description&);
-	void setDeadline(Time);
-	void setDependencies(const Dependencies&);
-	void setPriority(Priority);
+	void setDescription(const Description& description);
+	void setDeadline(Time deadline);
+	void setDependencies(const Dependencies& dependencies);
+	void setPriority(Priority priority);
+	void setCompleted(bool completed);
 	/// @}
 
 	/// \name Default Values
@@ -76,7 +78,7 @@ private:
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),
-		dependencies(dependencies), priority(priority) {}
+		dependencies(dependencies), priority(priority), completed(false) {}
 
 	/// Check if the task is strictly equal with another task
 	/// Two taks are strictly equal if all fields are equal
@@ -90,6 +92,7 @@ private:
 	Time deadline;
 	Dependencies dependencies;
 	Priority priority;
+	bool completed;
 	/// @}
 };
 

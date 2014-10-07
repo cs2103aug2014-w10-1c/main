@@ -41,6 +41,12 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
 		description, deadline, priority, dependencies));
 }
 
+std::unique_ptr<Query>
+UpdateTask(Task::ID id, bool completed) {
+	using UpdateTask = Internal::Action::UpdateTask;
+	return std::unique_ptr<Query>(new UpdateTask(id, completed));
+}
+
 Response executeQuery(std::unique_ptr<Query> query) {
 	return query->execute(Internal::State::get());
 }

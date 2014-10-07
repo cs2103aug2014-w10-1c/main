@@ -35,6 +35,10 @@ void Task::setPriority(Task::Priority priority) {
 	this->priority = priority;
 }
 
+void Task::setCompleted(bool completed) {
+	this->completed = completed;
+}
+
 const Task::ID Task::DEFAULT_ID = 0L;
 const Task::Description Task::DEFAULT_DESCRIPTION = L"";
 const Task::Time Task::NEVER = ptime(date(max_date_time), hours(0));
