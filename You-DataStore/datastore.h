@@ -6,7 +6,6 @@
 #include <functional>
 #include "boost/variant.hpp"
 #include "task_typedefs.h"
-#include "internal/operation.h"
 #include "transaction.h"
 
 namespace You {
@@ -27,7 +26,6 @@ public:
 private:
 	static DataStore& get();
 	bool isServing = false;
-	std::deque<Internal::IOperation> operationsQueue;
 };
 }  // namespace DataStore
 }  // namespace You
