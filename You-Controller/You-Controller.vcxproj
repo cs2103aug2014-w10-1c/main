@@ -79,6 +79,7 @@
     <ClInclude Include="controller.h" />
     <ClInclude Include="controller_context.h" />
     <ClInclude Include="exception.h" />
+    <ClInclude Include="exceptions\context_index_out_of_range_exception.h" />
     <ClInclude Include="exceptions\context_required_exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="internal\query_executor.h" />

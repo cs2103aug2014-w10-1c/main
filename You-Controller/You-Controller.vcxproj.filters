@@ -66,6 +66,9 @@
     <ClInclude Include="results\result.h">
       <Filter>Header Files\results</Filter>
     </ClInclude>
+    <ClInclude Include="exceptions\context_index_out_of_range_exception.h">
+      <Filter>Header Files\exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="controller_context_tests.cpp" />
     <ClCompile Include="controller_tests.cpp" />
+    <ClCompile Include="exceptions\context_index_out_of_range_exception_tests.cpp" />
     <ClCompile Include="internal\query_executor_tests.cpp" />
     <ClCompile Include="internal\query_executor_builder_visitor_tests.cpp" />
     <ClCompile Include="mocks\query.cpp" />

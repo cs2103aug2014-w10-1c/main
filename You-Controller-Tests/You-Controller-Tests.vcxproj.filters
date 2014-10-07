@@ -22,6 +22,9 @@
     <Filter Include="Header Files\mocks">
       <UniqueIdentifier>{0e8bb079-8c70-4601-8cd7-fb5f8c42ca13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\exceptions">
+      <UniqueIdentifier>{112428d5-d382-42b0-a1e3-a50fb5d599a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -58,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="mocks\query.cpp">
       <Filter>Source Files\mocks</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions\context_index_out_of_range_exception_tests.cpp">
+      <Filter>Source Files\exceptions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
