@@ -47,17 +47,16 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	return stask;
 }
 
-std::vector<SerializedTask>& InternalDataStore::getAllTask() {
+std::vector<SerializedTask> InternalDataStore::getAllTask() {
 	// loadData();
 	std::vector<SerializedTask> allTask;
-	pugi::xpath_node_set xmlAllTask = document.select_nodes(L"task");
-	for (auto i = xmlAllTask.begin(); i != xmlAllTask.end(); i++) {
-		pugi::xml_node test = i->node();
+	for (auto i = document.begin(); i != document.end(); ++i) {
+		pugi::xml_node test = *i;
 		// FOR SOME REASON IT IS A PCDATA
 		if (test.type() == pugi::xml_node_type::node_pcdata) {
 			throw "Fffff";
 		}
-		allTask.push_back(deserialize(i->node()));
+		allTask.push_back(deserialize(*i));
 	}
 	return allTask;
 }

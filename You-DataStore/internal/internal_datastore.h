@@ -45,7 +45,7 @@ public:
 
 	/// Get all tasks
 	/// \return a vector of all tasks in unordered map form
-	std::vector<SerializedTask>& getAllTask();
+	std::vector<SerializedTask> getAllTask();
 
 private:
 	static const std::wstring FILE_PATH;
