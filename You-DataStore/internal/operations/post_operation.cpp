@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../../datastore.h"
 #include "post_operation.h"
 
 namespace You {
@@ -11,8 +12,7 @@ PostOperation::PostOperation(TaskId id, const SerializedTask& stask) {
 }
 
 bool PostOperation::run() {
-	InternalDataStore ids;
-	return ids.post(taskId, task);
+	return DataStore::get().getInternal().post(taskId, task);
 }
 
 }  // namespace Internal

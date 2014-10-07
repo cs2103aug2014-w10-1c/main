@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../../datastore.h"
 #include "put_operation.h"
 
 namespace You {
@@ -11,8 +12,7 @@ PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
 }
 
 bool PutOperation::run() {
-	InternalDataStore ids;
-	return ids.put(taskId, task);
+	return DataStore::get().getInternal().put(taskId, task);
 }
 
 }  // namespace Internal
