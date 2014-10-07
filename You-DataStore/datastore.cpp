@@ -14,8 +14,9 @@ DataStore& DataStore::get() {
 }
 
 Transaction& DataStore::begin() {
-	while (this->isServing) { }
+	while (this->isServing) { }  // for thread-safety
 	isServing = true;
+	internalDataStore.loadData();
 	transactionStack.push(std::shared_ptr<Transaction>(new Transaction()));
 	return *(transactionStack.top());
 }
@@ -43,7 +44,11 @@ std::vector<SerializedTask> DataStore::getAllTask() {
 }
 
 void DataStore::notify() {
-	isServing = false;
+	bool isSaved = internalDataStore.saveData();
+	if (isSaved) {
+		isServing = false;
+	}
+	// TODO(digawp): else throw exception?
 }
 
 }  // namespace DataStore
