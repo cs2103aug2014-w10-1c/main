@@ -55,7 +55,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	addCommandWithDeadline = (
 		addCommandWithDeadlineTail |
-		(ParserCharTraits::char_ >> addCommandWithDeadline)
+		(qi::no_skip[ParserCharTraits::char_] >> addCommandWithDeadline)
 	)[qi::_val = phoenix::bind(
 		&QueryParser::constructAddQueryWithDeadline,
 		qi::_1)];

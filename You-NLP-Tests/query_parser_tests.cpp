@@ -51,6 +51,13 @@ public:
 			L"win",
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
+
+		q = QueryParser::parse(L"win lottery by dec 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
 	}
 
 	TEST_METHOD(parsesEditQuery) {
