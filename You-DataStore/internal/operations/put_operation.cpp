@@ -5,6 +5,11 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+bool PutOperation::run() {
+	InternalDataStore ids;
+	return ids.put(taskId, task);
+}
+
 }  // namespace Internal
 }   // namespace DataStore
 }   // namespace You

@@ -5,6 +5,11 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+bool EraseOperation::run() {
+	InternalDataStore ids;
+	return ids.erase(taskId);
+}
+
 }  // namespace Internal
 }   // namespace DataStore
 }   // namespace You
