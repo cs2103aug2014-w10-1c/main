@@ -33,7 +33,7 @@ public:
 		sut.push(eraseOp);
 		Assert::AreEqual(boost::lexical_cast<size_t>(3), sut.operationsQueue.size());
 	}
-	
+
 	TEST_METHOD(transactionRollback) {
 		Transaction sut;
 
