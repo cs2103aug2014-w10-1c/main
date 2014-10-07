@@ -30,21 +30,13 @@ using State = Internal::State;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 TEST_CLASS(FilterTests) {
-	static const std::size_t N_TASK = 100;
-
-	static Task getMockTask() {
-		const Task::Description desc = L"Learn Haskell Lens";
-		const Task::Time dead = Task::NEVER;
-		const Task::Priority prio = Task::Priority::IMPORTANT;
-		const Task::Dependencies dep = Task::Dependencies();
-		return TaskBuilder::get().description(desc)
-			.deadline(dead).priority(prio).dependencies(dep);
-	}
+	static const std::size_t N_TASK = 10;
 
 	static void populateStateWithMockedTasks() {
 		State::clear();
 		for (std::size_t i = 1; i <= N_TASK; i++) {
-			State::get().graph().addTask(getMockTask());
+			State::get().graph().addTask((Task)
+				TaskBuilder::get().id(i).description(L"Clone"));
 		}
 	}
 
@@ -59,10 +51,10 @@ TEST_CLASS(FilterTests) {
 	TEST_METHOD(filterIdIsIn) {
 		populateStateWithMockedTasks();
 		std::size_t N_FILTERED = 5;
-		Task::ID TEST_ID = 42L;
-		std::vector<Task::ID> mustBeHere = { TEST_ID, TEST_ID + 1};
+		std::vector<Task::ID> mustBeHere;
 		for (int i = 1; i <= N_FILTERED; i++) {
-			State::get().graph().addTask(TaskBuilder::get().id(TEST_ID)
+			mustBeHere.push_back((Task::ID) i);
+			State::get().graph().addTask(TaskBuilder::get().id(i)
 				.description(L"Dummy"));
 		}
 		using F = You::QueryEngine::Filter;
@@ -92,7 +84,7 @@ TEST_CLASS(FilterTests) {
 
 	TEST_METHOD(implicitConversionToLambda) {
 		using F = You::QueryEngine::Filter;
-		Assert::IsTrue((F::anyTask())(getMockTask()));
+		Assert::IsTrue((F::anyTask())(TaskBuilder::get().description(L"Hello")));
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;

@@ -13,7 +13,7 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// Singleton class to store \ref TaskGraph instances.
+/// Static class to store \ref DataStore and \ref TaskGraph instances.
 class State {
 public:
 	/// Get the current instance.
@@ -24,10 +24,10 @@ public:
 	static void clear();
 
 	/// Get the graph of the current instance
-	inline TaskGraph graph() const { return this->innerGraph;  }
+	inline TaskGraph& graph() const { return get().innerGraph;  }
 
 private:
-	explicit State() : innerGraph(TaskGraph()) {}
+	State() : innerGraph(std::move(TaskGraph())) {}
 	State(const State&) = delete;
 	State& operator=(const State&) = delete;
 

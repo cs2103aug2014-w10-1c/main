@@ -36,14 +36,17 @@ void TaskGraph::deleteTask(const Task::ID id) {
 Task TaskGraph::getTask(const Task::ID id) {
 	try {
 		Task get = taskTable.at(id);
-	} catch (const std::out_of_range& error) {
+	} catch (const std::out_of_range&) {
 		throw TaskNotFoundException();
 	}
 }
 
 std::vector<Task> TaskGraph::getTaskList() const {
-	std::vector<Task> result(taskTable.begin(),
-		taskTable.end());
+	std::vector<Task> result;
+	for (auto pair = taskTable.cbegin(); pair != taskTable.cend();
+			++pair) {
+		result.push_back(pair->second);
+	}
 	return result;
 }
 

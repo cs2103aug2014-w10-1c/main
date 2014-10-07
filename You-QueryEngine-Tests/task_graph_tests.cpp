@@ -20,6 +20,7 @@ using You::QueryEngine::Task;
 using You::QueryEngine::Internal::TaskGraph;
 using You::QueryEngine::Internal::TaskBuilder;
 
+
 TEST_CLASS(TaskGraphTests) {
 	TEST_METHOD(createTaskGraph) {
 		TaskGraph graph;
@@ -28,15 +29,16 @@ TEST_CLASS(TaskGraphTests) {
 
 	TEST_METHOD(addTaskToGraph) {
 		TaskGraph graph;
-		graph.addTask(TaskBuilder::get().description(L"Hello World"));
+		graph.addTask(TaskBuilder::get().id(10L).description(L"Hello World"));
 		Assert::AreEqual(graph.getTaskList().size(), std::size_t(1));
-		graph.addTask(TaskBuilder::get().description(L"Hello Warld"));
+		graph.addTask(TaskBuilder::get().id(11L).description(L"Hello Warld"));
 		Assert::AreEqual(graph.getTaskList().size(), std::size_t(2));
+		Assert::IsTrue(graph.getTaskList().at(1).getID() <= (Task::ID) 11);
 	}
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
 		TaskGraph graph;
-		Task task = TaskBuilder::get().description(L"Hello Warld");
+		Task task = TaskBuilder::get().id(10L).description(L"Hello Warld");
 		graph.addTask(task);
 		Assert::AreEqual(graph.getTaskList().size(), std::size_t(1));
 		graph.deleteTask(task.getID());
@@ -47,7 +49,7 @@ TEST_CLASS(TaskGraphTests) {
 		using Internal::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
 			TaskGraph graph;
-			graph.deleteTask(Task::DEFAULT_ID);
+			graph.deleteTask(10L);
 		});
 	}
 
