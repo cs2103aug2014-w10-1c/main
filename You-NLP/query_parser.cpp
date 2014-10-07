@@ -81,18 +81,47 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Editing tasks
 	editCommand = (
-		qi::uint_ >> qi::lit(L"set") >> editCommandFields >>
-			*ParserCharTraits::char_
+		qi::uint_ >> qi::lit(L"set") >> editCommandRule
 	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
-		qi::_1, qi::_2, qi::_3)];
+		qi::_1, qi::_2)];
 	editCommand.name("editCommand");
 
-	editCommandFields.add
+	editCommandRule %= (
+		editCommandRuleNullary | 
+		editCommandRuleUnary |
+		editCommandRulePriorities
+	);
+	editCommandRule.name("editCommandRule");
+
+	editCommandRuleNullary = (
+		editCommandFieldsNullary
+	)[qi::_val = phoenix::bind(&constructEditQueryNullary, qi::_1)];
+	editCommandRuleNullary.name("editCommandRuleNullary");
+
+	editCommandRuleUnary = (
+		editCommandFieldsUnary >> *ParserCharTraits::char_
+		)[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
+	editCommandRuleUnary.name("editCommandRuleUnary");
+
+	editCommandRulePriorities = (
+		qi::lit(L"priority") >> editCommandFieldPriorities
+	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
+	editCommandRulePriorities.name("editCommandRulePriorities");
+
+	editCommandFieldsUnary.add
 		(L"description", EDIT_QUERY::Fields::DESCRIPTION)
-		(L"deadline", EDIT_QUERY::Fields::DEADLINE)
+		(L"deadline", EDIT_QUERY::Fields::DEADLINE);
+	editCommandFieldsUnary.name("editCommandFieldsUnary");
+
+	editCommandFieldsNullary.add
 		(L"done", EDIT_QUERY::Fields::COMPLETE)
 		(L"complete", EDIT_QUERY::Fields::COMPLETE);
-	editCommandFields.name("editCommandFields");
+	editCommandFieldsNullary.name("editCommandFieldsNullary");
+
+	editCommandFieldPriorities.add
+		(L"normal", TaskPriority::NORMAL)
+		(L"high", TaskPriority::HIGH);
+	editCommandFieldPriorities.name("editCommandFieldPriorities");
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -140,12 +169,32 @@ ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
 
 EDIT_QUERY QueryParser::constructEditQuery(
 	const size_t offset,
+	const EDIT_QUERY& query) {
+	EDIT_QUERY result(query);
+	result.taskID = offset;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
+	EDIT_QUERY result;
+
+	switch (field) {
+	case EDIT_QUERY::Fields::COMPLETE:
+		// TODO(lowjoel): mark complete
+		break;
+	default:
+		assert(false);
+	}
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryUnary(
 	EDIT_QUERY::Fields field,
 	const LexemeType& newValue) {
-	EDIT_QUERY result {
-		offset
-	};
 	StringType newStringValue(newValue.begin(), newValue.end());
+	EDIT_QUERY result;
 
 	switch (field) {
 	case EDIT_QUERY::Fields::DESCRIPTION:
@@ -154,11 +203,16 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	case EDIT_QUERY::Fields::DEADLINE:
 		result.deadline = DateTimeParser::parse(newStringValue);
 		break;
-	case EDIT_QUERY::Fields::NONE:
-	case EDIT_QUERY::Fields::COMPLETE:
 	default:
-		break;
+		assert(false);
 	}
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
+	EDIT_QUERY result;
+	result.priority = priority;
 
 	return result;
 }

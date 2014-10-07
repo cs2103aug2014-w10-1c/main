@@ -19,6 +19,9 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 /// The description field.
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
+/// The priority field.
+const std::wstring PRIORITY_FIELD(L"Priority");
+
 /// The deadline field.
 const std::wstring DEADLINE_FIELD(L"Deadline");
 
@@ -30,6 +33,13 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
 			DESCRIPTION_FIELD %
 			q.description.get()).str());
+	}
+
+	if (q.priority) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			PRIORITY_FIELD %
+			q.priority.get()).str());
 	}
 
 	if (q.deadline) {
@@ -82,6 +92,7 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 	}
 
 	return description == rhs.description &&
+		priority == rhs.priority &&
 		deadline == rhs.deadline;
 }
 

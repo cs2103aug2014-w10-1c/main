@@ -98,6 +98,7 @@ public:
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			Utils::Option<std::wstring>(),
+			Utils::Option<TaskPriority>(),
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
 		}), q);
 
@@ -105,6 +106,14 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10
+		}), q);
+
+		q = QueryParser::parse(L"/edit 10 set priority high");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			Utils::Option<std::wstring>(),
+			TaskPriority::HIGH
 		}), q);
 	}
 

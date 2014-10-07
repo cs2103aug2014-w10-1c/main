@@ -52,6 +52,18 @@ public:
 					L"Deadline => 1970-Jan-01 00:00:00)"),
 				stream.str());
 		}
+
+		{  // NOLINT(whitespace/braces)
+			EDIT_QUERY local = DUMMY;
+			local.priority = TaskPriority::HIGH;
+
+			std::wostringstream stream;
+			stream << local;
+			Assert::AreEqual(
+				std::wstring(L"Edit task #1 (Description => the lols, "
+				L"Priority => 1)"),
+				stream.str());
+		}
 	}
 
 	TEST_METHOD(convertsToString) {

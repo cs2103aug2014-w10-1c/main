@@ -84,16 +84,36 @@ private:
 	#pragma endregion
 
 	#pragma region Editing tasks
+	/// Sets the edit query's task ID.
+	///
+	/// \param[in] offset The task which the user is referencing.
+	static EDIT_QUERY constructEditQuery(
+		const size_t offset,
+		const EDIT_QUERY& query);
+
 	/// Constructs a edit query from the given parse tree values.
 	///
-	/// \param[in] offset The task which the user is referencing
+	/// \param[in] field The field which should be edited.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQueryNullary(
+		EDIT_QUERY::Fields field);
+
+	/// Constructs a edit query from the given parse tree values.
+	///
 	/// \param[in] field The field which should be edited.
 	/// \param[in] newValue The new value the user wants to change the field to.
 	/// \return The synthesised value for the \ref editCommand rule.
-	static EDIT_QUERY constructEditQuery(
-		const size_t offset,
+	static EDIT_QUERY constructEditQueryUnary(
 		EDIT_QUERY::Fields field,
 		const LexemeType& newValue);
+
+	/// Constructs a edit query from the given parse tree values.
+	///
+	/// \param[in] field The field which should be edited.
+	/// \param[in] priority The new value the user wants to change the field to.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQueryPriority(
+		TaskPriority priority);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
 	///
@@ -149,10 +169,38 @@ private:
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
 		editCommand;
 
-	/// The symbol mapping from task properties to the actual field.
+	/// Edit command nonterminal rule for the fields to set.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+		editCommandRule;
+
+	/// Edit command nonterminal rule for unary fields to set.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+		editCommandRuleUnary;
+
+	/// Edit command nonterminal rule for nullary fields to set.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+		editCommandRuleNullary;
+
+	/// Edit command nonterminal rule for the priority to set.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+		editCommandRulePriorities;
+
+	/// The symbol mapping from task properties to the actual field taking an
+	/// argument (hence unary).
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::Fields> editCommandFields;
+		EDIT_QUERY::Fields> editCommandFieldsUnary;
+
+	/// The symbol mapping from task properties to the actual field taking no
+	/// arguments (hence nullary).
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		EDIT_QUERY::Fields> editCommandFieldsNullary;
+
+	/// The symbol mapping from priority strings to task priorities.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		TaskPriority> editCommandFieldPriorities;
 	#pragma endregion
 
 	#pragma region Deleting tasks

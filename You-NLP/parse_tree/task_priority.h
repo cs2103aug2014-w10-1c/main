@@ -14,6 +14,15 @@ enum class TaskPriority {
 	HIGH
 };
 
+/// Formats the given task priority to stream.
+///
+/// \param[in] stream The stream to write to.
+/// \param[in] priority The priority to display.
+/// \return The stream given.
+inline std::wostream& operator<<(std::wostream& stream, TaskPriority priority) {
+	return stream << static_cast<int>(priority);
+}
+
 }  // namespace NLP
 }  // namespace You
 

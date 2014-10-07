@@ -8,6 +8,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "You-Utils/option.h"
+#include "task_priority.h"
 
 namespace You {
 namespace NLP {
@@ -24,11 +25,14 @@ struct EDIT_QUERY {
 		/// The description field needs to be changed
 		DESCRIPTION = 1 << 0,
 
+		/// The priority of the task
+		PRIORITY = 1 << 1,
+
 		/// The deadline field needs to be changed
-		DEADLINE = 1 << 1,
+		DEADLINE = 1 << 2,
 
 		/// The task is now complete
-		COMPLETE = 1 << 2
+		COMPLETE = 1 << 3
 	};
 
 	/// Equality comparator.
@@ -41,6 +45,9 @@ struct EDIT_QUERY {
 
 	/// The description of the task.
 	You::Utils::Option<std::wstring> description;
+
+	/// The priority of the task.
+	You::Utils::Option<TaskPriority> priority;
 
 	/// The deadline of the task.
 	You::Utils::Option<boost::posix_time::ptime> deadline;
