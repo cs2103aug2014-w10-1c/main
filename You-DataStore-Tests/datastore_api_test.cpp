@@ -67,6 +67,17 @@ public:
 
 		DataStore::get().erase(0);
 		Assert::AreEqual(boost::lexical_cast<size_t>(3), sut.operationsQueue.size());
+		sut.commit();
+	}
+
+	TEST_METHOD(commitTransaction) {
+		Transaction& sut(DataStore::get().begin());
+		DataStore::get().post(0, task1);
+		DataStore::get().post(1, task2);
+		DataStore::get().erase(0);
+		sut.commit();
+		int size = DataStore::get().getAllTask().size();
+		Assert::AreEqual(1, size);
 	}
 };
 
