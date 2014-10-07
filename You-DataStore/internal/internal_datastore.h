@@ -44,9 +44,6 @@ public:
 	/// \return false if task id specified does not exist
 	bool erase(TaskId);
 
-	/// Get a list of tasks that passes the filter
-	std::vector<SerializedTask> filter(const std::function<bool(SerializedTask)>&);
-
 private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
