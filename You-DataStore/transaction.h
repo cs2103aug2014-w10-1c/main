@@ -19,7 +19,7 @@ public:
 
 private:
 	Transaction();
-	std::deque<std::shared_ptr<Internal::IOperation> > operationsQueue;
+	std::deque<std::shared_ptr<Internal::IOperation>> operationsQueue;
 };
 }  // namespace DataStore
 }  // namespace You

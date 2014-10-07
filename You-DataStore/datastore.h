@@ -29,7 +29,7 @@ public:
 private:
 	bool isServing = false;
 	std::shared_ptr<Transaction> activeTransaction;
-	std::stack<std::shared_ptr<Transaction> > transactionStack;
+	std::stack<std::shared_ptr<Transaction>> transactionStack;
 };
 }  // namespace DataStore
 }  // namespace You
