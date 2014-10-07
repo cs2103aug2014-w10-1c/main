@@ -2,9 +2,7 @@
 #ifndef YOU_DATASTORE_DATASTORE_H_
 #define YOU_DATASTORE_DATASTORE_H_
 
-#include <deque>
-#include <functional>
-#include "boost/variant.hpp"
+#include <memory>
 #include "task_typedefs.h"
 #include "transaction.h"
 

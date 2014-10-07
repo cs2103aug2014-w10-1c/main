@@ -2,6 +2,7 @@
 #ifndef YOU_DATASTORE_TRANSACTION_H_
 #define YOU_DATASTORE_TRANSACTION_H_
 
+#include <deque>
 #include <memory>
 #include "internal/operation.h"
 
