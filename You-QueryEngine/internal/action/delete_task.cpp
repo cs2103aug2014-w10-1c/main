@@ -11,13 +11,6 @@ namespace Action {
 
 Response DeleteTask::execute(State& tasks) {
 	tasks.graph().deleteTask(this->id);
-#if 0
-	queryEngine.getTaskGraph().remove(this->id)
-
-	Transaction t(dataStorage.begin());
-	dataStorage.remove(this->id);
-	t.commit();
-#endif
 	return this->id;
 }
 

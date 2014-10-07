@@ -20,14 +20,6 @@ Response AddTask::execute(State& tasks) {
 		.dependencies(this->dependencies)
 		.priority(this->priority);
 	tasks.graph().addTask(newTask);
-
-#if 0
-	auto serialized = TaskSerializer::serialize(newTask);
-	DataStorage::Transaction t(DataStorage::begin());
-	DataStorage::post(serialized);
-	t.commit();
-#endif
-
 	return newTask;
 }
 
