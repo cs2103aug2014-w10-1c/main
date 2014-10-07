@@ -20,28 +20,6 @@ public:
 	/// Destructor for the GUI.
 	~YouMainGUI();
 
-	/// String/numeric constants for the GUI
-	/// Number of columns in task panel
-	int TASK_COLUMN_COUNT = 4;
-
-	/// Header string for column 1
-	const QString TASK_COLUMN_1 = "Hidden ID Column";
-
-	/// Header string for column 2
-	const QString TASK_COLUMN_2 = "Index";
-
-	/// Header string for column 3
-	const QString TASK_COLUMN_3 = "Description";
-
-	/// Header string for column 4
-	const QString TASK_COLUMN_4 = "Deadline";
-
-	/// Header string for column 5
-	const QString TASK_COLUMN_5 = "Priority";
-
-	/// Vector of strings for the headers of the columns
-	QStringList columnHeaders;
-
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();

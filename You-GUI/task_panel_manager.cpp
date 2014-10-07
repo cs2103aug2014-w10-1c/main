@@ -4,13 +4,31 @@
 #include <QList>
 #include "task_panel_manager.h"
 
+const int YouMainGUI::TaskPanelManager::TASK_COLUMN_COUNT = 4;
+const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
+const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_2 = "Index";
+const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_3 = "Description";
+const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
+const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_5 = "Priority";
+
+YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI* const parentGUI)
+: BaseManager(parentGUI) {
+}
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
 void YouMainGUI::TaskPanelManager::setup() {
+	QStringList columnHeaders({
+		TASK_COLUMN_1,
+		TASK_COLUMN_2,
+		TASK_COLUMN_3,
+		TASK_COLUMN_4,
+		TASK_COLUMN_5,
+	});
+
 	parentGUI->ui.taskTreePanel->setColumnCount(4);
 	parentGUI->ui.taskTreePanel->setHeaderItem(
-		createItem(parentGUI->columnHeaders).release());
+		createItem(columnHeaders).release());
 	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
 }
 

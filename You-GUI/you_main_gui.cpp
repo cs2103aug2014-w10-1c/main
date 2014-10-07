@@ -20,8 +20,6 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		taskList(new TaskList) {
 	Q_INIT_RESOURCE(yougui);
 
-	columnHeaders.fromStdList(std::list<QString>({ TASK_COLUMN_1,
-		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 }));
 	ui.setupUi(this);
 	stm->setup();
 	nlpm->setup();

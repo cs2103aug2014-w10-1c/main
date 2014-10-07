@@ -16,8 +16,7 @@ class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager{
 	friend class YouMainGUI;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit TaskPanelManager(YouMainGUI * const parentGUI)
-		: BaseManager(parentGUI) {}
+	explicit TaskPanelManager(YouMainGUI* const parentGUI);
 
 	/// Destructor.
 	~TaskPanelManager();
@@ -42,6 +41,27 @@ private:
 	/// with by QT's parent/child structure, so all child objects are
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
+
+private:
+	/// String/numeric constants for the GUI
+	/// Number of columns in task panel
+	static const int TASK_COLUMN_COUNT;
+
+	/// Header string for column 1
+	static const QString TASK_COLUMN_1;
+
+	/// Header string for column 2
+	static const QString TASK_COLUMN_2;
+
+	/// Header string for column 3
+	static const QString TASK_COLUMN_3;
+
+	/// Header string for column 4
+	static const QString TASK_COLUMN_4;
+
+	/// Header string for column 5
+	static const QString TASK_COLUMN_5;
+
 };
 
 #endif  // YOU_GUI_TASK_PANEL_MANAGER_H_
