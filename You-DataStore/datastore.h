@@ -14,6 +14,8 @@ class DataStore {
 public:
 	Transaction && begin();
 
+	static DataStore& get();
+
 	// Modifying methods
 	void post(TaskId, SerializedTask&);
 	void put(TaskId, SerializedTask&);
@@ -22,7 +24,6 @@ public:
 	std::vector<SerializedTask> getAllTask();
 
 private:
-	static DataStore& get();
 	bool isServing = false;
 };
 }  // namespace DataStore
