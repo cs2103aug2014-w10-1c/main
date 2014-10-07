@@ -15,7 +15,7 @@ namespace UnitTests {}
 
 class DataStore {
 public:
-	Transaction&& begin();
+	Transaction && begin();
 
 	// Modifying methods
 	bool post(TaskId, SerializedTask&);
