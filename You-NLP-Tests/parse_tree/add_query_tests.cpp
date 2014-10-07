@@ -16,19 +16,22 @@ public:
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (due %2%)") % DESCRIPTION % DUE).str(),
+			(boost::wformat(L"%1% (due %2%, normal priority)") %
+				DESCRIPTION % DUE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (due %2%)") % DESCRIPTION % DUE).str(),
+			(boost::wformat(L"%1% (due %2%, normal priority)") %
+				DESCRIPTION % DUE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
 	TEST_METHOD(comparesEquality) {
 		ADD_QUERY local {
 			DESCRIPTION,
+			TASK_PRIORITY::NORMAL,
 			DUE
 		};
 
@@ -38,9 +41,18 @@ public:
 	TEST_METHOD(comparesInequality) {
 		ADD_QUERY local {
 			L"x" + DESCRIPTION,
+			TASK_PRIORITY::NORMAL,
 			DUE
 		};
 
+		Assert::AreNotEqual(DUMMY, local);
+
+		local.description = DUMMY.description;
+		local.priority = TASK_PRIORITY::HIGH;
+		Assert::AreNotEqual(DUMMY, local);
+
+		local.priority = DUMMY.priority;
+		local.due = DUMMY.due.get() + boost::posix_time::hours(1);
 		Assert::AreNotEqual(DUMMY, local);
 	}
 
@@ -59,7 +71,11 @@ const std::wstring AddQueryTests::DESCRIPTION(L"Hello world");
 const boost::posix_time::ptime AddQueryTests::DUE(
 	boost::gregorian::date(2010, boost::gregorian::Dec, 4),
 	boost::posix_time::hours(0));
-const ADD_QUERY AddQueryTests::DUMMY { DESCRIPTION, DUE };
+const ADD_QUERY AddQueryTests::DUMMY {
+	DESCRIPTION,
+	TASK_PRIORITY::NORMAL,
+	DUE
+};
 
 }  // namespace UnitTests
 }  // namespace NLP

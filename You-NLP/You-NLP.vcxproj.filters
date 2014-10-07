@@ -66,6 +66,9 @@
     <ClInclude Include="query_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parse_tree\task_priority.h">
+      <Filter>Header Files\parse_tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
