@@ -12,10 +12,10 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 namespace Microsoft {
 namespace VisualStudio {
 namespace CppUnitTestFramework {
-	
-	std::wstring ToString(You::Controller::Task::Priority priority) {
-		return ToString(static_cast<int>(priority));
-	}
+
+std::wstring ToString(You::Controller::Task::Priority priority) {
+	return ToString(static_cast<int>(priority));
+}
 
 }
 }
@@ -103,13 +103,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
+		Assert::AreEqual(nlpPriorityToTaskPriority(
+				Mocks::Queries::EDIT_QUERY.priority.get()),
+			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
 
-		You::NLP::EDIT_QUERY queryWithoutDeadline(Mocks::Queries::EDIT_QUERY);
-		queryWithoutDeadline.deadline =
+		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
+		query2.deadline =
 			You::Utils::Option<boost::posix_time::ptime>();
-		query = queryWithoutDeadline;
+		query = query2;
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<EDIT_RESULT>(executor->execute());
 
@@ -117,13 +120,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
+		Assert::AreEqual(nlpPriorityToTaskPriority(
+				Mocks::Queries::EDIT_QUERY.priority.get()),
+			result.task.getPriority());
 		Assert::AreEqual(taskList.front().getDeadline(),
 			result.task.getDeadline());
 
-		queryWithoutDeadline = Mocks::Queries::EDIT_QUERY;
-		queryWithoutDeadline.description =
+		query2 = Mocks::Queries::EDIT_QUERY;
+		query2.description =
 			You::Utils::Option<std::wstring>();
-		query = queryWithoutDeadline;
+		query = query2;
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<EDIT_RESULT>(executor->execute());
 
@@ -134,6 +140,25 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(taskList.front().getDescription(),
 			result.task.getDescription());
 #endif
+		Assert::AreEqual(nlpPriorityToTaskPriority(
+				Mocks::Queries::EDIT_QUERY.priority.get()),
+			result.task.getPriority());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
+			result.task.getDeadline());
+
+		query2 = Mocks::Queries::EDIT_QUERY;
+		query2.priority =
+			You::Utils::Option<You::NLP::TaskPriority>();
+		query = query2;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<EDIT_RESULT>(executor->execute());
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task.getID());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
+			result.task.getDescription());
+		Assert::AreEqual(taskList.front().getPriority(),
+			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
 	}
@@ -150,6 +175,18 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task);
+	}
+
+private:
+	Task::Priority nlpPriorityToTaskPriority(NLP::TaskPriority priority) {
+		switch (priority) {
+		case NLP::TaskPriority::NORMAL:
+			return Task::Priority::NORMAL;
+		case NLP::TaskPriority::HIGH:
+			return Task::Priority::IMPORTANT;
+		default:
+			assert(false);
+		}
 	}
 };
 

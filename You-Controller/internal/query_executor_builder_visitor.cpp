@@ -78,6 +78,10 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	boost::posix_time::ptime deadline = query.deadline ?
 		query.deadline.get() :
 		Task::DEFAULT_DEADLINE;
+	Task::Priority priority = query.priority ?
+		(query.priority == You::NLP::TaskPriority::HIGH ?
+			Task::Priority::IMPORTANT : Task::Priority::NORMAL) :
+		Task::DEFAULT_PRIORITY;
 
 	return std::unique_ptr<QueryExecutor>(
 		new EditTaskQueryExecutor(
@@ -85,7 +89,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				task.getID(),
 				description,
 				deadline,
-				Task::DEFAULT_PRIORITY,
+				priority,
 				Task::Dependencies()
 			)
 		)
