@@ -16,6 +16,7 @@ const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_5 = "Priority";
 YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI* const parentGUI)
 : BaseManager(parentGUI) {
 }
+
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
@@ -85,7 +86,8 @@ void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-QStringList YouMainGUI::TaskPanelManager::taskToStrVec(const You::Controller::Task& task) {
+QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
+	const You::Controller::Task& task) {
 	QStringList result;
 
 	// Insert id

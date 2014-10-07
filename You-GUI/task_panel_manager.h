@@ -35,16 +35,18 @@ public:
 	void deleteTask(You::Controller::Task::ID taskID);
 
 private:
-	QStringList taskToStrVec(const You::Controller::Task& task);
+	/// Converts the properties of a task into a set of cells for display
+	/// in a QTreeWidget
+	static QStringList taskToStrVec(const You::Controller::Task& task);
 
 	/// Produces a generic QTreeWidgetItem from a task. It is an
 	/// intermediate step to adding headings and tasks.
-	std::unique_ptr<QTreeWidgetItem> createItem(
+	static std::unique_ptr<QTreeWidgetItem> createItem(
 		const You::Controller::Task& task);
 
 	/// Produces a generic QTreeWidgetItem from an item. It is an
 	/// intermediate step to adding headings and tasks.
-	std::unique_ptr<QTreeWidgetItem> createItem(
+	static std::unique_ptr<QTreeWidgetItem> createItem(
 		const QStringList& cells);
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
