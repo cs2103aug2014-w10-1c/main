@@ -63,9 +63,7 @@ private:
 
 private:
 	/// String/numeric constants for the GUI
-	/// Number of columns in task panel
-	static const int TASK_COLUMN_COUNT;
-
+	/// @{
 	/// Header string for column 1
 	static const QString TASK_COLUMN_1;
 
@@ -80,7 +78,7 @@ private:
 
 	/// Header string for column 5
 	static const QString TASK_COLUMN_5;
-
+	/// @}
 };
 
 #endif  // YOU_GUI_TASK_PANEL_MANAGER_H_

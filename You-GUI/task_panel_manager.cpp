@@ -6,7 +6,6 @@
 
 using Task = You::Controller::Task;
 
-const int YouMainGUI::TaskPanelManager::TASK_COLUMN_COUNT = 4;
 const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
 const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_2 = "Index";
 const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_3 = "Description";
@@ -29,7 +28,7 @@ void YouMainGUI::TaskPanelManager::setup() {
 		TASK_COLUMN_5,
 	});
 
-	parentGUI->ui.taskTreePanel->setColumnCount(4);
+	parentGUI->ui.taskTreePanel->setColumnCount(columnHeaders.size());
 	parentGUI->ui.taskTreePanel->setHeaderItem(
 		createItem(columnHeaders).release());
 	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
