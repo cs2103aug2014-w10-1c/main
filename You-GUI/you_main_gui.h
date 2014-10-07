@@ -91,6 +91,9 @@ private:
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 
+	/// Updates row numbers
+	void updateRowNumbers();
+
 private slots:
 	/// Qt's slot for hitting enter in the input box.
 	void commandEnterPressed();
