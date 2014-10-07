@@ -12,8 +12,8 @@ namespace Internal {
 namespace Action {
 
 Response UpdateTask::execute(State& tasks) {
-	auto builder = TaskBuilder::get().id(this->id);
 	auto current = tasks.get().graph().getTask(this->id);
+	auto builder = TaskBuilder::fromTask(current);
 	if (this->description == Task::DEFAULT_DESCRIPTION) {
 		builder.description(current.getDescription());
 	} else {
