@@ -40,42 +40,36 @@ public:
 
 private:
 	#pragma region Adding tasks
-	/// Process the nonterminal returned from the add query rule, converting it
-	/// to an appropriate \ref ADD_QUERY type.
+	/// Process the terminal returned from the add query character parse rule,
+	/// stringing characters together to form the description.
 	///
 	/// \param[in] lexeme The lexeme from the parser.
+	/// \param[in] query The \ref ADD_QUERY parse tree to the right of the
+	///                  current character.
 	/// \return The synthesised value for the \ref addCommand rule.
-	static ADD_QUERY constructAddQuery(const LexemeType& lexeme);
+	static ADD_QUERY constructAddQuery(ParserCharEncoding::char_type lexeme,
+		const ADD_QUERY& query);
 
-	/// Process the nonterminal returned from the add query rule, when a
-	/// deadline is specified, converting it to an appropriate \ref ADD_QUERY
-	/// type.
+	/// Process the nonterminal indicating a deadline, converting it to an
+	/// appropriate \ref ADD_QUERY type.
 	///
-	/// \see constructAddQueryWithDeadlineTail
-	/// This rule is two-part, because we need exhaustive backtracking.
+	/// \see addQueryDeadline
+	/// The production rule associated with this semantic action.
 	///
-	/// \param[in] lexeme The lexeme from the parser. This is either the tail,
-	///                   which contains the deadline and the rest of the
-	///                   description; or the tail and one character of the
-	///                   description.
-	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
-	static ADD_QUERY constructAddQueryWithDeadline(const boost::variant<
-		ADD_QUERY,
-		boost::fusion::vector<ParserCharEncoding::char_type, ADD_QUERY>
-	>& lexeme);
+	/// \param[in] lexeme The deadline from the parser.
+	/// \return The synthesised value for the \ref addCommandDeadline rule.
+	static ADD_QUERY constructAddQueryWithDeadline(const LexemeType& lexeme);
 
-	/// Process the nonterminal returned from the add query rule, when a
-	/// deadline is specified, converting it to an appropriate \ref ADD_QUERY
-	/// type.
+	/// Process the end-of-input nonterminal, potentially including a deadline.
+	/// This captures the deadline, if one is present.
 	///
-	/// \see constructAddQueryWithDeadline
-	/// This rule is two-part, because we need exhaustive backtracking.
+	/// \see addQueryDeadline
+	/// The production rule associated with this semantic action.
 	///
-	/// \param[in] c The last character of the description.
-	/// \param[in] deadline The deadline from the parser.
-	/// \return The synthesised value for the \ref addCommandWithDeadline rule.
-	static ADD_QUERY constructAddQueryWithDeadlineTail(
-		const ParserCharEncoding::char_type c, const LexemeType& deadline);
+	/// \param[in] query The nonterminal from the parser.
+	/// \return The synthesised value for the \ref addCommandDeadline rule.
+	static ADD_QUERY constructAddQueryWithOptionalDeadline(
+		const boost::optional<ADD_QUERY>& query);
 	#pragma endregion
 
 	#pragma region Editing tasks
@@ -120,17 +114,23 @@ private:
 	/// Add command rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
 
-	/// Add command rule.
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
-		addCommandWithDescription;
+	/// Add command description rule.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDescription;
+
+	/// Add command description tail rule.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDescriptionTail;
+
+	/// Add command priority rule.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandPriority;
 
 	/// Add command's deadline rule.
-	/// {
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
-		addCommandWithDeadline;
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType>
-		addCommandWithDeadlineTail;
-	/// }
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDeadline;
+
+	/// Add command's optional deadline rule. This acts as the terminal for the
+	/// add query parser.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDeadlineOptional;
 	#pragma endregion
 
 	#pragma region Editing tasks

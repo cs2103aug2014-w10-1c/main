@@ -31,7 +31,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
-	);
+	) >> qi::eoi;
 	start.name("start");
 
 	explicitCommand %= (
@@ -42,32 +42,33 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	explicitCommand.name("explicitCommand");
 
 	#pragma region Adding tasks
-	addCommand %= (
-		addCommandWithDeadline |
-		addCommandWithDescription
-	);
+	addCommand = (
+		ParserCharTraits::char_ >> qi::no_skip[addCommandDescription]
+	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
 	addCommand.name("addCommand");
 
-	addCommandWithDescription = (
+	addCommandDescription = (
+		ParserCharTraits::char_ >> addCommandDescriptionTail
+	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
+	addCommandDescription.name("addCommandDescription");
+
+	addCommandDescriptionTail %= (
+		(qi::omit[*ParserCharTraits::blank] >> qi::skip[addCommandDeadline]) |
+		addCommandDescription
+	);
+	addCommandDescriptionTail.name("addCommandDescriptionTail");
+
+	addCommandDeadline = (
+		(qi::lit("by") | qi::lit("before")) >>
 		qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(&QueryParser::constructAddQuery, qi::_1)];
-	addCommandWithDescription.name("addCommandWithDescription");
-
-	addCommandWithDeadline = (
-		addCommandWithDeadlineTail |
-		(qi::no_skip[ParserCharTraits::char_] >> addCommandWithDeadline)
 	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadline,
-		qi::_1)];
-	addCommand.name("addCommandWithDeadline");
+		&QueryParser::constructAddQueryWithDeadline, qi::_1)];
+	addCommandDeadline.name("addCommandDeadline");
 
-	addCommandWithDeadlineTail = (
-		ParserCharTraits::char_
-		>> (qi::lit("by") | qi::lit("before"))
-		>> qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadlineTail,
-		qi::_1, qi::_2)];
+	addCommandDeadlineOptional = (
+		addCommandDeadline || qi::eoi
+	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
+	
 	#pragma endregion
 
 	#pragma region Editing tasks
@@ -97,44 +98,29 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
 }
 
-ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
-	return ADD_QUERY {
-		std::wstring(lexeme.begin(), lexeme.end())
-	};
+ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
+	const ADD_QUERY& query) {
+	ADD_QUERY result(query);
+	result.description.insert(result.description.begin(), lexeme);
+
+	return result;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(
-	const boost::variant<
-		ADD_QUERY,
-		boost::fusion::vector<ParserCharEncoding::char_type, ADD_QUERY>
-	>& lexeme) {
-	typedef ADD_QUERY HeadType;
-	const HeadType* head = boost::get<HeadType>(&lexeme);
-
-	typedef boost::fusion::vector<
-			ParserCharEncoding::char_type,
-			ADD_QUERY
-		> TailType;
-	const TailType* tail = boost::get<TailType>(&lexeme);
-
-	if (head) {
-		return *head;
-	} else {
-		ParserCharEncoding::char_type char_ = boost::fusion::at_c<0>(*tail);
-		const ADD_QUERY& query(boost::fusion::at_c<1>(*tail));
-		return ADD_QUERY {
-			std::wstring(1, char_) + query.description,
-			query.due
-		};
-	}
-}
-
-ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
-	const ParserCharEncoding::char_type c, const LexemeType& lexeme) {
+ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
 	return ADD_QUERY {
-		std::wstring(1, c),
+		std::wstring(),
 		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
+}
+
+ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
+	const boost::optional<ADD_QUERY>& query) {
+	if (query) {
+		return query.get();
+	} else {
+		return ADD_QUERY {
+		};
+	}
 }
 
 EDIT_QUERY QueryParser::constructEditQuery(

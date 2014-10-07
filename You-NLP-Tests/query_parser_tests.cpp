@@ -42,6 +42,12 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win"
 		}), q);
+
+		q = QueryParser::parse(L"win lottery");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery"
+		}), q);
 	}
 
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
