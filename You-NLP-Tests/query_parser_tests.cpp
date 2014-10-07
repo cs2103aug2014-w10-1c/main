@@ -93,6 +93,13 @@ public:
 			L"meh"
 		}), q);
 
+		q = QueryParser::parse(L"/edit 10 set description meh with spaces");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			L"meh with spaces"
+		}), q);
+
 		q = QueryParser::parse(L"/edit 10 set deadline oct 2014");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
