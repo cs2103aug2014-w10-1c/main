@@ -124,6 +124,14 @@ public:
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
 	}
+
+	TEST_METHOD(getAllTasks) {
+		InternalDataStore sut;
+		sut.post(0, task1);
+		sut.post(1, task2);
+		std::vector<SerializedTask> result = sut.getAllTask();
+		Assert::AreEqual(2, boost::lexical_cast<int>(result.size()));
+	}
 };
 }  // namespace UnitTests
 }  // namespace DataStore
