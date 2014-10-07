@@ -10,7 +10,6 @@ namespace Internal {
 class EraseOperation : public IOperation {
 public:
 	explicit EraseOperation(TaskId);
-	~EraseOperation() = default;
 	bool run();
 };
 }  // namespace Internal

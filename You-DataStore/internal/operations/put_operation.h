@@ -10,7 +10,6 @@ namespace Internal {
 class PutOperation : public IOperation {
 public:
 	PutOperation(TaskId, const SerializedTask&);
-	~PutOperation() = default;
 	bool run();
 };
 }  // namespace Internal
