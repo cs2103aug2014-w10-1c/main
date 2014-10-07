@@ -54,10 +54,10 @@ void YouMainGUI::populateTaskPanel() {
 	} else {
 		tl = Controller::get().getTasks();
 	}
-	addTaskListToPanel(tl);
+	addTasks(tl);
 }
 
-void YouMainGUI::addTaskListToPanel(TaskList tl) {
+void YouMainGUI::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
 }
@@ -76,14 +76,14 @@ You::Controller::TaskList YouMainGUI::getTaskList() {
 	return *taskList;
 }
 
-void YouMainGUI::addTask(You::Controller::Task task) {
+void YouMainGUI::addTask(const Task& task) {
 	tpm->addTask(task);
 }
 
-void YouMainGUI::deleteTask(You::Controller::Task::ID taskID) {
+void YouMainGUI::deleteTask(Task::ID taskID) {
 	tpm->deleteTask(taskID);
 }
 
-void YouMainGUI::editTask(You::Controller::Task task) {
+void YouMainGUI::editTask(const Task& task) {
 	tpm->editTask(task);
 }

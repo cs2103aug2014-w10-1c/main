@@ -26,7 +26,7 @@ namespace MyUnitTests {
 			Task newTask =
 				You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
 			tl.push_back(newTask);
-			w.addTaskListToPanel(tl);
+			w.addTasks(tl);
 			Assert::AreEqual("abc", "abc", L"abc");
 		}
 	};

@@ -53,15 +53,15 @@ public:
 	/// from the BaseManager class.
 	class NLPManager;
 
-	void addTask(You::Controller::Task task);
+	void addTask(const You::Controller::Task& task);
 
-	void editTask(You::Controller::Task task);
+	void addTasks(const You::Controller::TaskList& tl);
+
+	void editTask(const You::Controller::Task& task);
 
 	void deleteTask(You::Controller::Task::ID taskID);
 
-	void addTaskListToPanel(You::Controller::TaskList tl);
-
-	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
+	//QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
 
 	You::Controller::TaskList getTaskList();
 
