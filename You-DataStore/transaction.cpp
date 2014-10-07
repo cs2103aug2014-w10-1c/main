@@ -5,9 +5,10 @@
 namespace You {
 namespace DataStore {
 
-Transaction::Transaction(bool busy) {
-	// while (DataStore::begin()) {}  // for multithreading
-	DataStore::get().isServing = true;
+Transaction::Transaction() { }
+
+Transaction::Transaction(Transaction&& t) {
+	*this = std::move(t);
 }
 
 }  // namespace DataStore

@@ -6,7 +6,8 @@ namespace You {
 namespace DataStore {
 class Transaction {
 public:
-	explicit Transaction(bool busy);
+	Transaction();
+	Transaction(Transaction&&);
 	void commit();
 	void rollback();
 };
