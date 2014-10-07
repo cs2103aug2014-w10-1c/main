@@ -60,8 +60,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	addCommandPriority %= qi::skip(ParserCharTraits::blank)[(
 		(
-			qi::lit('!') >> addCommandDeadlineOptional
-		)[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
+			qi::lit('!') >> addCommandDeadlineOptional)
+		[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
 		addCommandDeadlineOptional
 	)];
 	addCommandPriority.name("addCommandPriority");
@@ -99,8 +99,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> *ParserCharTraits::char_
-	)[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
+		editCommandFieldsUnary >> *ParserCharTraits::char_)
+	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (
