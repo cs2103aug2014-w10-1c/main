@@ -17,9 +17,9 @@ std::wstring ToString(You::Controller::Task::Priority priority) {
 	return ToString(static_cast<int>(priority));
 }
 
-}
-}
-}
+}  // namespace CppUnitTestFramework
+}  // namespace VisualStudio
+}  // namespace Microsoft
 
 namespace You {
 namespace Controller {

@@ -76,7 +76,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	addCommandDeadlineOptional = (
 		addCommandDeadline || qi::eoi
 	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
-	
+
 	#pragma endregion
 
 	#pragma region Editing tasks
@@ -87,7 +87,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommand.name("editCommand");
 
 	editCommandRule %= (
-		editCommandRuleNullary | 
+		editCommandRuleNullary |
 		editCommandRuleUnary |
 		editCommandRulePriorities
 	);
@@ -100,7 +100,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	editCommandRuleUnary = (
 		editCommandFieldsUnary >> *ParserCharTraits::char_
-		)[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
+	)[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (

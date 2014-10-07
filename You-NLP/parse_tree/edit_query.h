@@ -51,7 +51,7 @@ struct EDIT_QUERY {
 
 	/// The deadline of the task.
 	You::Utils::Option<boost::posix_time::ptime> deadline;
-	
+
 	/// Whether the task is complete
 	You::Utils::Option<bool> complete;
 };

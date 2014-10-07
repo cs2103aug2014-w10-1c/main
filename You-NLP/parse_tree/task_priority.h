@@ -4,7 +4,7 @@
 
 namespace You {
 namespace NLP {
-		
+
 /// The possible priorities for tasks.
 enum class TaskPriority {
 	/// Normal task priority
