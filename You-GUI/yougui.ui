@@ -69,6 +69,12 @@ p, li { white-space: pre-wrap; }
         <property name="text">
          <string>Enter</string>
         </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -97,7 +103,44 @@ p, li { white-space: pre-wrap; }
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="yougui.qrc"/>
+  <include location="Resources/yougui.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>commandInputBox</sender>
+   <signal>returnPressed()</signal>
+   <receiver>YouMainGUIClass</receiver>
+   <slot>commandEnterPressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>commandEnterButton</sender>
+   <signal>released()</signal>
+   <receiver>YouMainGUIClass</receiver>
+   <slot>commandEnterButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>549</x>
+     <y>445</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>commandEnterButtonClicked()</slot>
+  <slot>commandEnterPressed()</slot>
+ </slots>
 </ui>

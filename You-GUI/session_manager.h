@@ -13,7 +13,7 @@ using Task = You::Controller::Task;
 /// when the program is started again. It inherits from the BaseManager class.
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
-	friend class YouMainGUI;
+
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SessionManager(YouMainGUI * const parentGUI)
@@ -29,7 +29,7 @@ public:
 	/// session file, to be passed to the NLP manager. Mechanism to pass is
 	/// still being considered. This will also contain the list of IDs to be
 	/// written to the session file.
-	std::vector<Task::ID> taskIDs;
+	QList<Task::ID> taskIDs;
 
 private:
 	/// Loads the previous state of the GUI. Called during constructor.

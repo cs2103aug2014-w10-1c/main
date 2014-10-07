@@ -5,8 +5,8 @@
 #include <memory>
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
-#include "You-Controller\result.h"
-struct VariantHandler;
+#include "You-Controller/result.h"
+
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -19,28 +19,6 @@ public:
 
 	/// Destructor for the GUI.
 	~YouMainGUI();
-
-	/// String/numeric constants for the GUI
-	/// Number of columns in task panel
-	int TASK_COLUMN_COUNT = 4;
-
-	/// Header string for column 1
-	const std::wstring TASK_COLUMN_1 = L"Hidden ID Column";
-
-	/// Header string for column 2
-	const std::wstring TASK_COLUMN_2 = L"Index";
-
-	/// Header string for column 3
-	const std::wstring TASK_COLUMN_3 = L"Description";
-
-	/// Header string for column 4
-	const std::wstring TASK_COLUMN_4 = L"Deadline";
-
-	/// Header string for column 5
-	const std::wstring TASK_COLUMN_5 = L"Priority";
-
-	/// Vector of strings for the headers of the columns
-	std::vector<std::wstring> columnHeaders;
 
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
@@ -61,9 +39,9 @@ public:
 	/// engine. It inherits from the BaseManager class.
 	class TaskPanelManager;
 
-	/// The component that handles all interactions with the tray icon. It handles
-	/// the window state of the application based on commands sent to the tray
-	/// manager. It inherits from the BaseManager class.
+	/// The component that handles all interactions with the tray icon. It
+	/// handles the window state of the application based on commands sent to
+	/// the tray manager. It inherits from the BaseManager class.
 	class SystemTrayManager;
 
 	/// The component that handles passing of data between the NLP parser and
@@ -75,6 +53,17 @@ public:
 	/// from the BaseManager class.
 	class NLPManager;
 
+	void addTask(const You::Controller::Task& task);
+
+	void addTasks(const You::Controller::TaskList& tl);
+
+	void editTask(const You::Controller::Task& task);
+
+	void deleteTask(You::Controller::Task::ID taskID);
+
+	const You::Controller::TaskList& getTaskList() const;
+
+private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;
 
@@ -87,22 +76,6 @@ public:
 	/// The NLPManager instance
 	const std::unique_ptr<NLPManager> nlpm;
 
-	You::Controller::TaskList getTaskList();
-
-	std::unique_ptr<VariantHandler> vh;
-
-	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
-
-	void addTask(You::Controller::Task task);
-
-	void deleteTask(You::Controller::Task::ID task);
-
-	void addTaskListToPanel(You::Controller::TaskList tl);
-
-	void editTask(You::Controller::Task task);
-
-	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
-
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
@@ -114,6 +87,16 @@ private:
 
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
+
+	/// Sends the current query to the NLP manager.
+	void sendQuery();
+
+private slots:
+	/// Qt's slot for hitting enter in the input box.
+	void commandEnterPressed();
+
+	/// Qt's signal/slot mechanism for input enter button.
+	void commandEnterButtonClicked();
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_

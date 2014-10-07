@@ -15,6 +15,7 @@ PRECOMPILED_HEADER = stdafx.h
 DEPENDPATH += .
 MOC_DIR += ./GeneratedFiles/debug
 OBJECTS_DIR += debug
+RESOURCES = Resources/yougui.qrc
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 include(You-GUI.pri)
