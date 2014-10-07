@@ -105,7 +105,11 @@ public:
 		q = QueryParser::parse(L"/edit 10 set complete");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
-			10
+			10,
+			Utils::Option<std::wstring>(),
+			Utils::Option<TaskPriority>(),
+			Utils::Option<boost::posix_time::ptime>(),
+			true
 		}), q);
 
 		q = QueryParser::parse(L"/edit 10 set priority high");

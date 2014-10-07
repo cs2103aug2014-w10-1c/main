@@ -181,7 +181,7 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
 
 	switch (field) {
 	case EDIT_QUERY::Fields::COMPLETE:
-		// TODO(lowjoel): mark complete
+		result.complete = true;
 		break;
 	default:
 		assert(false);
