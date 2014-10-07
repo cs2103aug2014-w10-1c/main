@@ -53,6 +53,19 @@ public:
 	/// from the BaseManager class.
 	class NLPManager;
 
+	void addTask(You::Controller::Task task);
+
+	void deleteTask(You::Controller::Task::ID task);
+
+	void addTaskListToPanel(You::Controller::TaskList tl);
+
+	void editTask(You::Controller::Task task);
+
+	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
+
+	You::Controller::TaskList getTaskList();
+
+private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;
 
@@ -65,19 +78,7 @@ public:
 	/// The NLPManager instance
 	const std::unique_ptr<NLPManager> nlpm;
 
-	You::Controller::TaskList getTaskList();
-
 	QStringList taskToStrVec(const You::Controller::Task& task);
-
-	void addTask(You::Controller::Task task);
-
-	void deleteTask(You::Controller::Task::ID task);
-
-	void addTaskListToPanel(You::Controller::TaskList tl);
-
-	void editTask(You::Controller::Task task);
-
-	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
 
 private:
 	/// The QT object that holds all items that are defined when building the
