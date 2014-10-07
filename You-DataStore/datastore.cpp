@@ -9,8 +9,10 @@ DataStore& DataStore::get() {
 	return ds;
 }
 
-bool DataStore::begin() {
-	return get().isServing;
+Transaction&& DataStore::begin() {
+	while (this->isServing) { }
+	Transaction t;
+	return std::move(t);
 }
 
 }  // namespace DataStore

@@ -7,15 +7,16 @@
 #include "boost/variant.hpp"
 #include "task_typedefs.h"
 #include "internal/operation.h"
+#include "transaction.h"
 
 namespace You {
 namespace DataStore {
 namespace UnitTests {}
-class Transaction;
+
 class DataStore {
 	friend class Transaction;
 public:
-	static bool begin();
+	Transaction&& begin();
 
 	// Modifying methods
 	static bool post(TaskId, SerializedTask&);
