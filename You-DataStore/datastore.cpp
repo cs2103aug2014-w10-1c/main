@@ -51,5 +51,9 @@ void DataStore::notify() {
 	// TODO(digawp): else throw exception?
 }
 
+Internal::InternalDataStore& DataStore::getInternal() {
+	return internalDataStore;
+}
+
 }  // namespace DataStore
 }  // namespace You

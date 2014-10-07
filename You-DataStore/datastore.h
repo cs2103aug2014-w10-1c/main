@@ -38,6 +38,9 @@ public:
 	/// To be used only by Transaction object
 	void notify();
 
+	/// Get the instance of InternalDataStore
+	Internal::InternalDataStore& getInternal();
+
 private:
 	/// Boolean to ensure mutual exclusion
 	bool isServing = false;
