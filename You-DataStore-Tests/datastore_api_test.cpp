@@ -54,6 +54,22 @@ public:
 		sut.rollback();
 		Assert::AreEqual(boost::lexical_cast<size_t>(0), sut.operationsQueue.size());
 	}
+
+	TEST_METHOD(constructTransactionWithDataStoreBegin) {
+		Transaction sut(DataStore::get().begin());
+
+		
+		Assert::IsTrue(DataStore::get().transactionStack.size() == 1);
+
+		DataStore::get().post(0, task1);
+		Assert::AreEqual(boost::lexical_cast<size_t>(1), sut.operationsQueue.size());
+
+		DataStore::get().put(0, task2);
+		Assert::AreEqual(boost::lexical_cast<size_t>(2), sut.operationsQueue.size());
+
+		DataStore::get().erase(0);
+		Assert::AreEqual(boost::lexical_cast<size_t>(3), sut.operationsQueue.size());
+	}
 };
 
 }  // namespace UnitTests
