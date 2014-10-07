@@ -28,10 +28,21 @@ void YouMainGUI::TaskPanelManager::setup() {
 		TASK_COLUMN_5,
 	});
 
-	parentGUI->ui.taskTreePanel->setColumnCount(columnHeaders.size());
-	parentGUI->ui.taskTreePanel->setHeaderItem(
-		createItem(columnHeaders).release());
-	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
+	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
+	taskTreePanel->setColumnCount(columnHeaders.size());
+	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
+
+	// TODO(angathorion): remove magic constants.
+	QHeaderView* header = taskTreePanel->header();
+	header->setStretchLastSection(false);
+	for (size_t i = 1; i < columnHeaders.size(); ++i) {
+		if (i == 2) {
+			continue;
+		}
+		header->resizeSection(i, header->defaultSectionSize());
+	}
+
+	taskTreePanel->setColumnHidden(0, true);
 }
 
 void YouMainGUI::TaskPanelManager::addTask(const Task& task) {
