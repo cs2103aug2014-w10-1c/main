@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "internal/internal_datastore.h"
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/operations/erase_operation.h"
@@ -35,6 +36,11 @@ void DataStore::erase(TaskId taskId) {
 	std::shared_ptr<Internal::IOperation> operation =
 		std::make_shared<Internal::EraseOperation>(taskId);
 	transactionStack.top()->push(operation);
+}
+
+std::vector<SerializedTask> DataStore::getAllTask() {
+	Internal::InternalDataStore ids;
+	return ids.getAllTask();
 }
 
 void DataStore::notify() {
