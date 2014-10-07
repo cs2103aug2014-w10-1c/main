@@ -5,11 +5,11 @@
 namespace You {
 namespace DataStore {
 
-Transaction::Transaction() { }
-
 Transaction::Transaction(Transaction&& t) {
 	*this = std::move(t);
 }
+
+Transaction::Transaction() {}
 
 }  // namespace DataStore
 }  // namespace You

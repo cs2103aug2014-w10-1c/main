@@ -4,12 +4,16 @@
 
 namespace You {
 namespace DataStore {
+class DataStore;
 class Transaction {
+	friend class DataStore;
 public:
-	Transaction();
 	Transaction(Transaction&&);
 	void commit();
 	void rollback();
+
+private:
+	Transaction();
 };
 }  // namespace DataStore
 }  // namespace You
