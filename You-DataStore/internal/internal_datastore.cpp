@@ -48,7 +48,7 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 }
 
 std::vector<SerializedTask> InternalDataStore::getAllTask() {
-	// loadData();
+	loadData();
 	std::vector<SerializedTask> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
 		pugi::xml_node test = *i;
