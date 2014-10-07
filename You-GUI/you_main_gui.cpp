@@ -1,5 +1,6 @@
 //@author A0094446X
 #include "stdafx.h"
+#include <functional>
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
@@ -57,33 +58,8 @@ void YouMainGUI::populateTaskPanel() {
 }
 
 void YouMainGUI::addTaskListToPanel(TaskList tl) {
-	// Iterate through task list and add it to the task panel
-	std::wstring priority[] { L"Important", L"Normal" };
-	for (int i = 0; i < tl.size(); i++) {
-		std::vector<std::wstring> rowStrings;
-		rowStrings.push_back(std::to_wstring(taskList->at(i).getID()));
-		rowStrings.push_back(taskList->at(i).getDescription());
-		std::wstringstream wss;
-		wss << taskList->at(i).getDeadline();
-		rowStrings.push_back(wss.str());
-		switch (taskList->at(i).getPriority()) {
-		case Task::Priority::IMPORTANT:
-			rowStrings.push_back(priority[0]);
-		case Task::Priority::NORMAL:
-			rowStrings.push_back(priority[1]);
-		}
-
-		// To do: Deal with dependencies
-		QStringList tempList;
-		std::transform(
-			rowStrings.begin(),
-			rowStrings.end(),
-			std::back_inserter(tempList),
-			[](const std::wstring& str) {
-			return QString::fromStdWString(str);
-		});
-		tpm->addTask(tempList);
-	}
+	std::for_each(tl.begin(), tl.end(),
+		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
@@ -132,7 +108,7 @@ QStringList YouMainGUI::taskToStrVec(const You::Controller::Task& task) {
 	QStringList result;
 	
 	// Insert id
-	result.push_back(QString::fromStdWString(boost::lexical_cast<std::wstring>(task.getID())));
+	result.push_back(boost::lexical_cast<QString>(task.getID()));
 
 	// Insert count
 	result.push_back("0");
@@ -141,13 +117,21 @@ QStringList YouMainGUI::taskToStrVec(const You::Controller::Task& task) {
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	result.push_back(QString::fromStdWString(boost::lexical_cast<std::wstring>(task.getDeadline())));
+	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
 
-	// To do
-	/*
-	for (int i = 0; i < task.getDependencies().size(), i++) {
+#if 0
+	// Iterate through task list and add it to the task panel
+	std::wstring priority[] { L"Important", L"Normal" };
 
+	switch (taskList->at(i).getPriority()) {
+	case Task::Priority::IMPORTANT:
+		rowStrings.push_back(priority[0]);
+	case Task::Priority::NORMAL:
+		rowStrings.push_back(priority[1]);
 	}
-	*/
+
+	// TODO(angathorion): Deal with dependencies
+#endif
+
 	return result;
 }

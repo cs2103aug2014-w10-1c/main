@@ -4,6 +4,8 @@
 #define YOU_GUI_STDAFX_H_
 
 #include <memory>
+#include <functional>
+
 #include <QApplication>
 #include <QList>
 #include <QWidget>
@@ -11,5 +13,8 @@
 
 #include <boost/date_time/gregorian/greg_month.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include "qt_helpers.h"
 
 #endif  // YOU_GUI_STDAFX_H_
