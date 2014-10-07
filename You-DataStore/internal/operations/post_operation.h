@@ -10,6 +10,7 @@ namespace Internal {
 class PostOperation : public IOperation {
 public:
 	PostOperation(TaskId, const SerializedTask&);
+	~PostOperation() = default;
 	bool run();
 };
 }  // namespace Internal
