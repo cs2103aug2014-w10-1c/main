@@ -43,12 +43,17 @@ std::vector<SerializedTask> DataStore::getAllTask() {
 	return internalDataStore.getAllTask();
 }
 
-void DataStore::notify() {
+void DataStore::notifyCommit() {
 	bool isSaved = internalDataStore.saveData();
 	if (isSaved) {
 		isServing = false;
 	}
 	// TODO(digawp): else throw exception?
+}
+
+void DataStore::notifyRollback() {
+	transactionStack.pop();
+	isServing = false;
 }
 
 Internal::InternalDataStore& DataStore::getInternal() {

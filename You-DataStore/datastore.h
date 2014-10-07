@@ -36,7 +36,11 @@ public:
 
 	/// Notify DataStore that a transaction is committed
 	/// To be used only by Transaction object
-	void notify();
+	void notifyCommit();
+
+	/// Notify DataStore that a transaction is rolled back
+	/// To be used only by Transaction object
+	void notifyRollback();
 
 	/// Get the instance of InternalDataStore
 	Internal::InternalDataStore& getInternal();
