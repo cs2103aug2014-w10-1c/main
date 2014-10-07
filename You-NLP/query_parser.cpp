@@ -88,10 +88,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommand.name("editCommand");
 
 	editCommandFields.add
-		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
-		(L"due", EDIT_QUERY::FIELDS::DUE)
-		(L"done", EDIT_QUERY::FIELDS::COMPLETE)
-		(L"complete", EDIT_QUERY::FIELDS::COMPLETE);
+		(L"description", EDIT_QUERY::Fields::DESCRIPTION)
+		(L"due", EDIT_QUERY::Fields::DUE)
+		(L"done", EDIT_QUERY::Fields::COMPLETE)
+		(L"complete", EDIT_QUERY::Fields::COMPLETE);
 	editCommandFields.name("editCommandFields");
 	#pragma endregion
 
@@ -140,7 +140,7 @@ ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
 
 EDIT_QUERY QueryParser::constructEditQuery(
 	const size_t offset,
-	EDIT_QUERY::FIELDS field,
+	EDIT_QUERY::Fields field,
 	const LexemeType& newValue) {
 	EDIT_QUERY result {
 		offset
@@ -148,14 +148,14 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	StringType newStringValue(newValue.begin(), newValue.end());
 
 	switch (field) {
-	case EDIT_QUERY::FIELDS::DESCRIPTION:
+	case EDIT_QUERY::Fields::DESCRIPTION:
 		result.description = newStringValue;
 		break;
-	case EDIT_QUERY::FIELDS::DUE:
+	case EDIT_QUERY::Fields::DUE:
 		result.due = DateTimeParser::parse(newStringValue);
 		break;
-	case EDIT_QUERY::FIELDS::NONE:
-	case EDIT_QUERY::FIELDS::COMPLETE:
+	case EDIT_QUERY::Fields::NONE:
+	case EDIT_QUERY::Fields::COMPLETE:
 	default:
 		break;
 	}

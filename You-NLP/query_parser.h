@@ -92,7 +92,7 @@ private:
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQuery(
 		const size_t offset,
-		EDIT_QUERY::FIELDS field,
+		EDIT_QUERY::Fields field,
 		const LexemeType& newValue);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
@@ -152,7 +152,7 @@ private:
 	/// The symbol mapping from task properties to the actual field.
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::FIELDS> editCommandFields;
+		EDIT_QUERY::Fields> editCommandFields;
 	#pragma endregion
 
 	#pragma region Deleting tasks

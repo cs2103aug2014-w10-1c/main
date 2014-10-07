@@ -17,7 +17,7 @@ struct EDIT_QUERY {
 	/// A bitfield specifying which fields need to be updated
 	///
 	/// This can be binary ORed together.
-	enum class FIELDS {
+	enum class Fields {
 		/// Not changing anything.
 		NONE = 0,
 
@@ -51,18 +51,18 @@ struct EDIT_QUERY {
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The combined fields from both fields.
-EDIT_QUERY::FIELDS operator|(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs);
+EDIT_QUERY::Fields operator|(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs);
 
 /// Computes a bitwise AND over the two fields specification flags.
 ///
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The common fields from both fields.
-EDIT_QUERY::FIELDS operator&(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs);
+EDIT_QUERY::Fields operator&(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs);
 
 /// Defines an output formatter for EDIT_QUERY queries.
 ///
@@ -82,7 +82,7 @@ std::wstring ToString(const EDIT_QUERY& q);
 
 BOOST_FUSION_ADAPT_STRUCT(
 	You::NLP::EDIT_QUERY,
-	(You::NLP::EDIT_QUERY::FIELDS, fields)
+	(You::NLP::EDIT_QUERY::Fields, fields)
 	(std::wstring, description)
 	(std::wstring, due)
 )
