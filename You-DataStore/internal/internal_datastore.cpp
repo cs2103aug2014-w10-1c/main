@@ -32,6 +32,13 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	return post(rawId, sTask);
 }
 
+bool InternalDataStore::erase(TaskId rawId) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toErase =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	return document.remove_child(toErase);
+}
+
 SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
@@ -40,11 +47,19 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	return stask;
 }
 
-bool InternalDataStore::erase(TaskId rawId) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-	return document.remove_child(toErase);
+std::vector<SerializedTask>& InternalDataStore::getAllTask() {
+	// loadData();
+	std::vector<SerializedTask> allTask;
+	pugi::xpath_node_set xmlAllTask = document.select_nodes(L"task");
+	for (auto i = xmlAllTask.begin(); i != xmlAllTask.end(); i++) {
+		pugi::xml_node test = i->node();
+		// FOR SOME REASON IT IS A PCDATA
+		if (test.type() == pugi::xml_node_type::node_pcdata) {
+			throw "Fffff";
+		}
+		allTask.push_back(deserialize(i->node()));
+	}
+	return allTask;
 }
 
 bool InternalDataStore::saveData() {
