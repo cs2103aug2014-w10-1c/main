@@ -127,10 +127,9 @@ public:
 
 	TEST_METHOD(getAllTasks) {
 		InternalDataStore sut;
-		sut.post(0, task1);
-		sut.post(1, task2);
+		sut.document.append_child(L"task").append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		std::vector<SerializedTask> result = sut.getAllTask();
-		Assert::AreEqual(2, boost::lexical_cast<int>(result.size()));
+		Assert::AreEqual(1, boost::lexical_cast<int>(result.size()));
 	}
 };
 }  // namespace UnitTests
