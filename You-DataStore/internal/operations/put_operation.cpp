@@ -5,6 +5,11 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
+	taskId = id;
+	task = stask;
+}
+
 bool PutOperation::run() {
 	InternalDataStore ids;
 	return ids.put(taskId, task);
