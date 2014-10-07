@@ -57,7 +57,6 @@ public:
 
 	TEST_METHOD(constructTransactionWithDataStoreBegin) {
 		Transaction& sut(DataStore::get().begin());
-		Assert::IsTrue(DataStore::get().transactionStack.size() == 1);
 
 		DataStore::get().post(0, task1);
 		Assert::AreEqual(boost::lexical_cast<size_t>(1), sut.operationsQueue.size());
