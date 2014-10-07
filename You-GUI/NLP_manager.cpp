@@ -62,3 +62,19 @@ void YouMainGUI::NLPManager::commandEnterButtonClicked() {
 	// For demonstration purposes
 	// parentGUI->populateTaskPanel();
 }
+
+TaskList YouMainGUI::NLPManager::getTasks(
+	const QList<Task::ID>& taskIDs) {
+	std::vector<Task::ID> taskIDVector;
+	std::copy(
+		taskIDs.begin(),
+		taskIDs.end(),
+		std::back_inserter(taskIDVector)
+	);
+
+	return Controller::get().getTasks(taskIDVector);
+}
+
+TaskList YouMainGUI::NLPManager::getTasks() {
+	return Controller::get().getTasks();
+}

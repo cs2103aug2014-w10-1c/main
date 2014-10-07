@@ -47,12 +47,13 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-	std::vector<Task::ID> IDs = sm->taskIDs;
+	QList<Task::ID> IDs = sm->taskIDs;
 	TaskList tl;
+
 	if (IDs.size() != 0) {
-		tl = Controller::get().getTasks(sm->taskIDs);
+		tl = nlpm->getTasks(IDs);
 	} else {
-		tl = Controller::get().getTasks();
+		tl = nlpm->getTasks();
 	}
 	addTasks(tl);
 }

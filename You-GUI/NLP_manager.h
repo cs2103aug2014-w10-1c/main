@@ -8,7 +8,6 @@
 #include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
 #include "base_manager.h"
-using Result = You::Controller::Result;
 
 /// The component that handles passing of data between the NLP parser and the
 /// rest of the GUI. It has two primary operations: on setup it passes a list
@@ -31,6 +30,13 @@ public:
 	/// NLP engine, and gets a Result object. Called by user's confirmation to
 	/// send entry in commandInputBox, via signal/slots.
 	void queryNLP();
+
+	/// Gets the tasks with the given task IDs.
+	You::Controller::TaskList getTasks(
+		const QList<You::Controller::Task::ID>& taskIDs);
+
+	/// Gets all tasks.
+	You::Controller::TaskList getTasks();
 
 private:
 	/// The current result/context displayed to the user
