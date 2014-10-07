@@ -87,16 +87,19 @@ void YouMainGUI::editTask(const Task& task) {
 	tpm->editTask(task);
 }
 
-void YouMainGUI::commandEnterPressed() {
+void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
 
 	nlpm->query(inputString, getTaskList());
+	ui.commandInputBox->setText(QString());
+}
+
+void YouMainGUI::commandEnterPressed() {
+	sendQuery();
 }
 
 void YouMainGUI::commandEnterButtonClicked() {
-	QString inputString = ui.commandInputBox->text();
-
-	nlpm->query(inputString, getTaskList());
+	sendQuery();
 	// For demonstration purposes
 	// parentGUI->populateTaskPanel();
 }

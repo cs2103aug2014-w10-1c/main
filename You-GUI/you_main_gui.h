@@ -88,6 +88,9 @@ private:
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
+	/// Sends the current query to the NLP manager.
+	void sendQuery();
+
 private slots:
 	/// Qt's slot for hitting enter in the input box.
 	void commandEnterPressed();
