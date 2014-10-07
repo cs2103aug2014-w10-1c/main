@@ -114,19 +114,19 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 	// Insert deadline
 	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
 
-#if 0
+
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
 
-	switch (taskList->at(i).getPriority()) {
+	switch (task.getPriority()) {
 	case Task::Priority::IMPORTANT:
-		rowStrings.push_back(priority[0]);
+		result.push_back(boost::lexical_cast<QString>(priority[0]));
 	case Task::Priority::NORMAL:
-		rowStrings.push_back(priority[1]);
+		result.push_back(boost::lexical_cast<QString>(priority[1]));
 	}
 
 	// TODO(angathorion): Deal with dependencies
-#endif
+
 
 	return result;
 }
