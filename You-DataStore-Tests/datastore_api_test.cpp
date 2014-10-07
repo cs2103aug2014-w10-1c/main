@@ -17,6 +17,7 @@ public:
 		Transaction sut;
 		Internal::PostOperation postOp(0, task1);
 		sut.push(std::shared_ptr<Internal::IOperation>(&postOp));
+		Assert::AreEqual(boost::lexical_cast<size_t>(1), sut.operationsQueue.size());
 	}
 };
 
