@@ -27,7 +27,7 @@ private:
 	/// Execute add task.
 	Response execute(State& tasks) override;
 	FilterTask& operator=(const FilterTask&) = delete;
-	const Filter& filter;
+	Filter filter;
 };
 
 }  // namespace Action

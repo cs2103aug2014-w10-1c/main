@@ -14,22 +14,18 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
+namespace Internal { class State; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
 	Task::ID, std::wstring> Response;
 
-/// This is temporary fix, state should be a more complex class instead
-typedef std::vector<Task> State;
-
 /// Base class for all queries.
 class Query {
 	friend Response executeQuery(std::unique_ptr<Query> query);
-	friend Response executeQuery(std::unique_ptr<Query> query,
-		State& state);
 private:
 	/// Execute the query.
-	virtual Response execute(State& tasks) = 0;
+	virtual Response execute(Internal::State& tasks) = 0;
 };
 
 /// \name Query Constructors
@@ -55,10 +51,6 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies);
 ///  \return The result of the query as a response object.
 ///  \deprecated
 Response executeQuery(std::unique_ptr<Query> query);
-
-/// Execute a query on a state and return a response
-///  \return The result of the query as a response object.
-Response executeQuery(std::unique_ptr<Query> query, State& state);
 
 }  // namespace QueryEngine
 }  // namespace You
