@@ -4,6 +4,7 @@
 
 #include <unordered_map>
 #include "../task_typedefs.h"
+#include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {
