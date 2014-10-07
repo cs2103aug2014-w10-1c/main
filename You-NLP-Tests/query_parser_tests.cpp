@@ -42,6 +42,12 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win"
 		}), q);
+
+		q = QueryParser::parse(L"win lottery");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery"
+		}), q);
 	}
 
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
@@ -49,6 +55,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
+			TaskPriority::NORMAL,
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 
@@ -56,6 +63,24 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesStringWithPriorityAsTask) {
+		QUERY q = QueryParser::parse(L"win!");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TaskPriority::HIGH
+		}), q);
+
+		q = QueryParser::parse(L"win lottery! by dec 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TaskPriority::HIGH,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -68,18 +93,31 @@ public:
 			L"meh"
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set due oct 2014");
+		q = QueryParser::parse(L"/edit 10 set deadline oct 2014");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			Utils::Option<std::wstring>(),
+			Utils::Option<TaskPriority>(),
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
 		}), q);
 
 		q = QueryParser::parse(L"/edit 10 set complete");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
-			10
+			10,
+			Utils::Option<std::wstring>(),
+			Utils::Option<TaskPriority>(),
+			Utils::Option<boost::posix_time::ptime>(),
+			true
+		}), q);
+
+		q = QueryParser::parse(L"/edit 10 set priority high");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			Utils::Option<std::wstring>(),
+			TaskPriority::HIGH
 		}), q);
 	}
 

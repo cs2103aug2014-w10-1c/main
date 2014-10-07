@@ -31,7 +31,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
-	);
+	) >> qi::eoi;
 	start.name("start");
 
 	explicitCommand %= (
@@ -42,48 +42,86 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	explicitCommand.name("explicitCommand");
 
 	#pragma region Adding tasks
-	addCommand %= (
-		addCommandWithDeadline |
-		addCommandWithDescription
-	);
+	addCommand = (
+		ParserCharTraits::char_ >> addCommandDescription
+	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
 	addCommand.name("addCommand");
 
-	addCommandWithDescription = (
+	addCommandDescription = (
+		ParserCharTraits::char_ >> addCommandDescriptionTail
+	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
+	addCommandDescription.name("addCommandDescription");
+
+	addCommandDescriptionTail %= (
+		(qi::omit[*ParserCharTraits::blank] >> addCommandPriority) |
+		addCommandDescription
+	);
+	addCommandDescriptionTail.name("addCommandDescriptionTail");
+
+	addCommandPriority %= qi::skip(ParserCharTraits::blank)[(
+		(
+			qi::lit('!') >> addCommandDeadlineOptional)
+		[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
+		addCommandDeadlineOptional
+	)];
+	addCommandPriority.name("addCommandPriority");
+
+	addCommandDeadline = (
+		(qi::lit("by") | qi::lit("before")) >>
 		qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(&QueryParser::constructAddQuery, qi::_1)];
-	addCommandWithDescription.name("addCommandWithDescription");
-
-	addCommandWithDeadline = (
-		addCommandWithDeadlineTail |
-		(qi::no_skip[ParserCharTraits::char_] >> addCommandWithDeadline)
 	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadline,
-		qi::_1)];
-	addCommand.name("addCommandWithDeadline");
+		&QueryParser::constructAddQueryWithDeadline, qi::_1)];
+	addCommandDeadline.name("addCommandDeadline");
 
-	addCommandWithDeadlineTail = (
-		ParserCharTraits::char_
-		>> (qi::lit("by") | qi::lit("before"))
-		>> qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadlineTail,
-		qi::_1, qi::_2)];
+	addCommandDeadlineOptional = (
+		addCommandDeadline || qi::eoi
+	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
+
 	#pragma endregion
 
 	#pragma region Editing tasks
 	editCommand = (
-		qi::uint_ >> qi::lit(L"set") >> editCommandFields >>
-			*ParserCharTraits::char_
+		qi::uint_ >> qi::lit(L"set") >> editCommandRule
 	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
-		qi::_1, qi::_2, qi::_3)];
+		qi::_1, qi::_2)];
 	editCommand.name("editCommand");
 
-	editCommandFields.add
-		(L"description", EDIT_QUERY::FIELDS::DESCRIPTION)
-		(L"due", EDIT_QUERY::FIELDS::DUE)
-		(L"done", EDIT_QUERY::FIELDS::COMPLETE)
-		(L"complete", EDIT_QUERY::FIELDS::COMPLETE);
-	editCommandFields.name("editCommandFields");
+	editCommandRule %= (
+		editCommandRuleNullary |
+		editCommandRuleUnary |
+		editCommandRulePriorities
+	);
+	editCommandRule.name("editCommandRule");
+
+	editCommandRuleNullary = (
+		editCommandFieldsNullary
+	)[qi::_val = phoenix::bind(&constructEditQueryNullary, qi::_1)];
+	editCommandRuleNullary.name("editCommandRuleNullary");
+
+	editCommandRuleUnary = (
+		editCommandFieldsUnary >> *ParserCharTraits::char_)
+	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
+	editCommandRuleUnary.name("editCommandRuleUnary");
+
+	editCommandRulePriorities = (
+		qi::lit(L"priority") >> editCommandFieldPriorities
+	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
+	editCommandRulePriorities.name("editCommandRulePriorities");
+
+	editCommandFieldsUnary.add
+		(L"description", EDIT_QUERY::Fields::DESCRIPTION)
+		(L"deadline", EDIT_QUERY::Fields::DEADLINE);
+	editCommandFieldsUnary.name("editCommandFieldsUnary");
+
+	editCommandFieldsNullary.add
+		(L"done", EDIT_QUERY::Fields::COMPLETE)
+		(L"complete", EDIT_QUERY::Fields::COMPLETE);
+	editCommandFieldsNullary.name("editCommandFieldsNullary");
+
+	editCommandFieldPriorities.add
+		(L"normal", TaskPriority::NORMAL)
+		(L"high", TaskPriority::HIGH);
+	editCommandFieldPriorities.name("editCommandFieldPriorities");
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -97,67 +135,84 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
 }
 
-ADD_QUERY QueryParser::constructAddQuery(const LexemeType& lexeme) {
-	return ADD_QUERY {
-		std::wstring(lexeme.begin(), lexeme.end())
-	};
+ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
+	const ADD_QUERY& query) {
+	ADD_QUERY result(query);
+	result.description.insert(result.description.begin(), lexeme);
+
+	return result;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(
-	const boost::variant<
-		ADD_QUERY,
-		boost::fusion::vector<ParserCharEncoding::char_type, ADD_QUERY>
-	>& lexeme) {
-	typedef ADD_QUERY HeadType;
-	const HeadType* head = boost::get<HeadType>(&lexeme);
-
-	typedef boost::fusion::vector<
-			ParserCharEncoding::char_type,
-			ADD_QUERY
-		> TailType;
-	const TailType* tail = boost::get<TailType>(&lexeme);
-
-	if (head) {
-		return *head;
-	} else {
-		ParserCharEncoding::char_type char_ = boost::fusion::at_c<0>(*tail);
-		const ADD_QUERY& query(boost::fusion::at_c<1>(*tail));
-		return ADD_QUERY {
-			std::wstring(1, char_) + query.description,
-			query.due
-		};
-	}
+ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
+	ADD_QUERY result(query);
+	result.priority = TaskPriority::HIGH;
+	return result;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadlineTail(
-	const ParserCharEncoding::char_type c, const LexemeType& lexeme) {
+ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
 	return ADD_QUERY {
-		std::wstring(1, c),
+		std::wstring(),
+		TaskPriority::NORMAL,
 		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
 }
 
+ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
+	const boost::optional<ADD_QUERY>& query) {
+	if (query) {
+		return query.get();
+	} else {
+		return ADD_QUERY {
+		};
+	}
+}
+
 EDIT_QUERY QueryParser::constructEditQuery(
 	const size_t offset,
-	EDIT_QUERY::FIELDS field,
-	const LexemeType& newValue) {
-	EDIT_QUERY result {
-		offset
-	};
-	StringType newStringValue(newValue.begin(), newValue.end());
+	const EDIT_QUERY& query) {
+	EDIT_QUERY result(query);
+	result.taskID = offset;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
+	EDIT_QUERY result;
 
 	switch (field) {
-	case EDIT_QUERY::FIELDS::DESCRIPTION:
+	case EDIT_QUERY::Fields::COMPLETE:
+		result.complete = true;
+		break;
+	default:
+		assert(false);
+	}
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryUnary(
+	EDIT_QUERY::Fields field,
+	const LexemeType& newValue) {
+	StringType newStringValue(newValue.begin(), newValue.end());
+	EDIT_QUERY result;
+
+	switch (field) {
+	case EDIT_QUERY::Fields::DESCRIPTION:
 		result.description = newStringValue;
 		break;
-	case EDIT_QUERY::FIELDS::DUE:
-		result.due = DateTimeParser::parse(newStringValue);
+	case EDIT_QUERY::Fields::DEADLINE:
+		result.deadline = DateTimeParser::parse(newStringValue);
 		break;
-	case EDIT_QUERY::FIELDS::NONE:
-	case EDIT_QUERY::FIELDS::COMPLETE:
 	default:
-		break;
+		assert(false);
 	}
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
+	EDIT_QUERY result;
+	result.priority = priority;
 
 	return result;
 }

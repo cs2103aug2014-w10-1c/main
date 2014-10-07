@@ -13,8 +13,8 @@ using You::NLP::EDIT_QUERY;
 TEST_CLASS(EditQueryTests) {
 public:
 	TEST_METHOD(fieldsBinaryOr) {
-		EDIT_QUERY::FIELDS lhs;
-		EDIT_QUERY::FIELDS rhs;
+		EDIT_QUERY::Fields lhs;
+		EDIT_QUERY::Fields rhs;
 
 		Assert::AreEqual(
 			static_cast<size_t>(lhs) | static_cast<size_t>(rhs),
@@ -22,8 +22,8 @@ public:
 	}
 
 	TEST_METHOD(fieldsBinaryAnd) {
-		EDIT_QUERY::FIELDS lhs;
-		EDIT_QUERY::FIELDS rhs;
+		EDIT_QUERY::Fields lhs;
+		EDIT_QUERY::Fields rhs;
 
 		Assert::AreEqual(
 			static_cast<size_t>(lhs) & static_cast<size_t>(rhs),
@@ -41,7 +41,7 @@ public:
 
 		{  // NOLINT(whitespace/braces)
 			EDIT_QUERY local = DUMMY;
-			local.due = boost::posix_time::ptime(
+			local.deadline = boost::posix_time::ptime(
 				boost::gregorian::date(1970, boost::gregorian::Jan, 1),
 				boost::posix_time::hours(0));
 
@@ -49,7 +49,19 @@ public:
 			stream << local;
 			Assert::AreEqual(
 				std::wstring(L"Edit task #1 (Description => the lols, "
-					L"Due => 1970-Jan-01 00:00:00)"),
+					L"Deadline => 1970-Jan-01 00:00:00)"),
+				stream.str());
+		}
+
+		{  // NOLINT(whitespace/braces)
+			EDIT_QUERY local = DUMMY;
+			local.priority = TaskPriority::HIGH;
+
+			std::wostringstream stream;
+			stream << local;
+			Assert::AreEqual(
+				std::wstring(L"Edit task #1 (Description => the lols, "
+				L"Priority => 1)"),
 				stream.str());
 		}
 	}
@@ -68,20 +80,32 @@ public:
 
 	TEST_METHOD(comparesInequality) {
 		EDIT_QUERY local {
-			1,
-			L""
+			DUMMY.taskID,
+			DUMMY.description
 		};
 
-		Assert::AreNotEqual(DUMMY, local);
+		Assert::AreEqual(DUMMY, local);
 
-		local.taskID++;
-		local.description = DUMMY.description;
-		Assert::AreNotEqual(DUMMY, local);
-
-		local.taskID = DUMMY.taskID;
 		EDIT_QUERY local2 = local;
-		local2.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
+		local2.taskID++;
+		Assert::AreNotEqual(DUMMY, local2);
+
+		local2 = local;
+		local2.description = std::wstring(L"");
+		Assert::AreNotEqual(DUMMY, local2);
+
+		local2 = local;
+		local2.deadline = boost::posix_time::ptime(
+			boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.priority = TaskPriority::HIGH;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.complete = true;
 		Assert::AreNotEqual(local, local2);
 	}
 

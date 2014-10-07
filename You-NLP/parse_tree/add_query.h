@@ -7,6 +7,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "You-Utils/option.h"
+#include "task_priority.h"
 
 namespace You {
 namespace NLP {
@@ -21,8 +22,11 @@ struct ADD_QUERY {
 	/// The description of the task.
 	std::wstring description;
 
-	/// The due date of the task.
-	You::Utils::Option<boost::posix_time::ptime> due;
+	/// The priority of the task.
+	TaskPriority priority;
+
+	/// The deadline of the task.
+	You::Utils::Option<boost::posix_time::ptime> deadline;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.

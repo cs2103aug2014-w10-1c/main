@@ -8,6 +8,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "You-Utils/option.h"
+#include "task_priority.h"
 
 namespace You {
 namespace NLP {
@@ -17,18 +18,21 @@ struct EDIT_QUERY {
 	/// A bitfield specifying which fields need to be updated
 	///
 	/// This can be binary ORed together.
-	enum class FIELDS {
+	enum class Fields {
 		/// Not changing anything.
 		NONE = 0,
 
 		/// The description field needs to be changed
 		DESCRIPTION = 1 << 0,
 
+		/// The priority of the task
+		PRIORITY = 1 << 1,
+
 		/// The deadline field needs to be changed
-		DUE = 1 << 1,
+		DEADLINE = 1 << 2,
 
 		/// The task is now complete
-		COMPLETE = 1 << 2
+		COMPLETE = 1 << 3
 	};
 
 	/// Equality comparator.
@@ -42,8 +46,14 @@ struct EDIT_QUERY {
 	/// The description of the task.
 	You::Utils::Option<std::wstring> description;
 
-	/// The due date of the task.
-	You::Utils::Option<boost::posix_time::ptime> due;
+	/// The priority of the task.
+	You::Utils::Option<TaskPriority> priority;
+
+	/// The deadline of the task.
+	You::Utils::Option<boost::posix_time::ptime> deadline;
+
+	/// Whether the task is complete
+	You::Utils::Option<bool> complete;
 };
 
 /// Computes a bitwise OR over the two fields specification flags.
@@ -51,18 +61,18 @@ struct EDIT_QUERY {
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The combined fields from both fields.
-EDIT_QUERY::FIELDS operator|(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs);
+EDIT_QUERY::Fields operator|(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs);
 
 /// Computes a bitwise AND over the two fields specification flags.
 ///
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The common fields from both fields.
-EDIT_QUERY::FIELDS operator&(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs);
+EDIT_QUERY::Fields operator&(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs);
 
 /// Defines an output formatter for EDIT_QUERY queries.
 ///
@@ -79,12 +89,5 @@ std::wstring ToString(const EDIT_QUERY& q);
 
 }  // namespace NLP
 }  // namespace You
-
-BOOST_FUSION_ADAPT_STRUCT(
-	You::NLP::EDIT_QUERY,
-	(You::NLP::EDIT_QUERY::FIELDS, fields)
-	(std::wstring, description)
-	(std::wstring, due)
-)
 
 #endif  // YOU_NLP_PARSE_TREE_EDIT_QUERY_H_

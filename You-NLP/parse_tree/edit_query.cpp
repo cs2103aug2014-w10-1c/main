@@ -19,8 +19,14 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 /// The description field.
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
-/// The due field.
-const std::wstring DUE_FIELD(L"Due");
+/// The priority field.
+const std::wstring PRIORITY_FIELD(L"Priority");
+
+/// The deadline field.
+const std::wstring DEADLINE_FIELD(L"Deadline");
+
+/// The completion field.
+const std::wstring COMPLETE_FIELD(L"Complete");
 
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
@@ -32,13 +38,26 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			q.description.get()).str());
 	}
 
-	if (q.due) {
+	if (q.priority) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
-			DUE_FIELD %
-			q.due.get()).str());
+			PRIORITY_FIELD %
+			q.priority.get()).str());
 	}
 
+	if (q.deadline) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			DEADLINE_FIELD %
+			q.deadline.get()).str());
+	}
+
+	if (q.complete) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			COMPLETE_FIELD %
+			q.complete.get()).str());
+	}
 	return fields;
 }
 
@@ -47,18 +66,18 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 namespace You {
 namespace NLP {
 
-EDIT_QUERY::FIELDS operator|(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs) {
-	return static_cast<EDIT_QUERY::FIELDS>(
+EDIT_QUERY::Fields operator|(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs) {
+	return static_cast<EDIT_QUERY::Fields>(
 		static_cast<size_t>(lhs) | static_cast<size_t>(rhs)
 	);
 }
 
-EDIT_QUERY::FIELDS operator&(
-	const EDIT_QUERY::FIELDS& lhs,
-	const EDIT_QUERY::FIELDS& rhs) {
-	return static_cast<EDIT_QUERY::FIELDS>(
+EDIT_QUERY::Fields operator&(
+	const EDIT_QUERY::Fields& lhs,
+	const EDIT_QUERY::Fields& rhs) {
+	return static_cast<EDIT_QUERY::Fields>(
 		static_cast<size_t>(lhs) & static_cast<size_t>(rhs)
 	);
 }
@@ -82,7 +101,9 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 	}
 
 	return description == rhs.description &&
-		due == rhs.due;
+		priority == rhs.priority &&
+		deadline == rhs.deadline &&
+		complete == rhs.complete;
 }
 
 std::wstring ToString(const EDIT_QUERY& q) {
