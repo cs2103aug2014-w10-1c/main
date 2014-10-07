@@ -45,6 +45,9 @@ DeleteTask(Task::ID id);
 std::unique_ptr<Query>
 UpdateTask(Task::ID id, Task::Description description,
 Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies);
+
+std::unique_ptr<Query>
+UpdateTask(Task::ID id, bool completed);
 /// @}
 
 /// Execute a query and return a response
