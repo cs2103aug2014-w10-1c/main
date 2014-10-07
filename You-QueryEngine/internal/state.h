@@ -26,6 +26,9 @@ public:
 	/// Get the graph of the current instance
 	inline TaskGraph& graph() const { return get().innerGraph;  }
 
+	/// Inquire a new, unique task id.
+	Task::ID inquireNewID();
+
 private:
 	State() : innerGraph(std::move(TaskGraph())) {}
 	State(const State&) = delete;

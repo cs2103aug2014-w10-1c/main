@@ -14,6 +14,7 @@ namespace Action {
 
 Response AddTask::execute(State& tasks) {
 	Task newTask = TaskBuilder::get()
+		.id(tasks.inquireNewID())
 		.description(this->description)
 		.deadline(this->deadline)
 		.dependencies(this->dependencies)

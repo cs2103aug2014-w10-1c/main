@@ -14,6 +14,10 @@ void State::clear() {
 	get().innerGraph = TaskGraph();
 }
 
+Task::ID State::inquireNewID() {
+	return innerGraph.getTaskTable().size();
+}
+
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
