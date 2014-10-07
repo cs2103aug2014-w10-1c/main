@@ -46,20 +46,8 @@ void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	parent->addChild(item.release());
 }
 
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
-	const Task& task) {
-	return createItem(taskToStrVec(task));
-}
-
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
-	const QStringList& rowStrings) {
-	return std::make_unique<QTreeWidgetItem>(rowStrings);
-}
-
 void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
-	QList<QTreeWidgetItem*> items =
-		parentGUI->ui.taskTreePanel->findItems(
-			boost::lexical_cast<QString>(task.getID()), 0);
+	QList<QTreeWidgetItem*> items = findItems(task.getID());
 
 	if (items.length() != 1) {
 		qDebug() << "editTask items.length() != 1" << endl;
@@ -71,9 +59,7 @@ void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
 }
 
 void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
-	QList<QTreeWidgetItem*> items =
-		parentGUI->ui.taskTreePanel->findItems(
-			boost::lexical_cast<QString>(taskID), 0);
+	QList<QTreeWidgetItem*> items = findItems(taskID);
 
 	if (items.length() != 1) {
 		qDebug() << "deleteTask items.length() != 1" << endl;
@@ -84,6 +70,22 @@ void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
 
 void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
+}
+
+std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+	const Task& task) {
+	return createItem(taskToStrVec(task));
+}
+
+std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+	const QStringList& rowStrings) {
+	return std::make_unique<QTreeWidgetItem>(rowStrings);
+}
+
+QList<QTreeWidgetItem*> YouMainGUI::TaskPanelManager::findItems(
+	You::Controller::Task::ID taskID) const {
+	return parentGUI->ui.taskTreePanel->findItems(
+		boost::lexical_cast<QString>(taskID), 0);
 }
 
 QStringList YouMainGUI::TaskPanelManager::taskToStrVec(

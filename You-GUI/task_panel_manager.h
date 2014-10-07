@@ -49,6 +49,9 @@ private:
 	static std::unique_ptr<QTreeWidgetItem> createItem(
 		const QStringList& cells);
 
+	/// Finds the items which display the given task ID.
+	QList<QTreeWidgetItem*> findItems(You::Controller::Task::ID taskID) const;
+
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
 	void addSubtask(QTreeWidgetItem* parent, const QStringList& rowStrings);
