@@ -81,6 +81,32 @@ public:
 		Assert::AreEqual(1, static_cast<int>(d.day()));
 	}
 
+	TEST_METHOD(parsesYearMonthDay) {
+		date d = DateTimeParser::parse(L"2014-Oct-7").date();
+		Assert::AreEqual(date(2014, boost::gregorian::Oct, 7), d);
+
+		d = DateTimeParser::parse(L"2014-11-7").date();
+		Assert::AreEqual(date(2014, boost::gregorian::Nov, 7), d);
+	}
+
+	TEST_METHOD(parsesDayWithMonth) {
+		date d = boost::posix_time::second_clock::local_time().date();
+		date actualTomorrow = d + boost::gregorian::days(1);
+
+		date tomorrow = DateTimeParser::parse((
+			boost::wformat(L"%1% %2%") %
+				actualTomorrow.day() %
+				actualTomorrow.month()).str()).date();
+		Assert::AreEqual(actualTomorrow, tomorrow);
+
+		date nextYear = d + boost::gregorian::years(1) - boost::gregorian::days(1);
+		date yesterday = DateTimeParser::parse((
+			boost::wformat(L"%1% %2%") %
+			nextYear.day() %
+			nextYear.month()).str()).date();
+		Assert::AreEqual(nextYear, yesterday);
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);

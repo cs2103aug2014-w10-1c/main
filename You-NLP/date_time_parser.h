@@ -53,16 +53,12 @@ private:
 	DateTimeParser();
 
 	/// Parses a date into its boost::posix_time form.
-	///
-	/// \param[in] dateParts the parts from the various sub-parsers.
 	static DateTime buildDateTime(Date);
 
 	/// Parses a partial date into its boost::date_time form.
 	///
 	/// The prototype is nasty because these are the kinds of dates that we
 	/// support.
-	///
-	/// \param[in] dateParts the parts from the various sub-parsers.
 	static Date buildDate(Year, Month, Day);
 
 	/// Parses the given year string into a full year. If this has only 2 digits
@@ -81,6 +77,11 @@ private:
 	/// \return The actual year referenced.
 	static Year parseTwoDigitYear(Year year);
 
+	/// Constructs a date from the given day and month. This is the next day and
+	/// month that will occur. If the month is before the current month, it will
+	/// be the following year.
+	static Date constructDayMonthDate(Day, Month);
+
 private:
 	/// The start rule.
 	start_type start;
@@ -94,6 +95,7 @@ private:
 	DateRule dateYearMonth;
 	DateRule dateYear;
 	DateRule dateMonthYear;
+	DateRule dateDayMonth;
 	/// }
 
 	/// Parsing years.

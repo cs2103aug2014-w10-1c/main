@@ -61,6 +61,10 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		qi::int_ |
 		ParserCharTraits::no_case[monthNames]
 	);
+
+	day %= (
+		qi::int_
+	);
 	#pragma endregion
 
 	#pragma region Supported Date Formats
@@ -80,11 +84,16 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		month >> year
 	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
 
+	dateDayMonth = (
+		day >> month
+	)[qi::_val = phoenix::bind(&constructDayMonthDate, qi::_1, qi::_2)];
+
 	date %= (
 		dateYearMonthDay |
 		dateYearMonth |
-		dateYear |
-		dateMonthYear
+		dateMonthYear |
+		dateDayMonth |
+		dateYear
 	);
 	#pragma endregion
 }
@@ -151,6 +160,19 @@ DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
 		return 2000 + year;
 	}
 #endif
+}
+
+DateTimeParser::Date DateTimeParser::constructDayMonthDate(
+	Day day, Month month) {
+	ptime now = boost::posix_time::second_clock::local_time();
+	Date today = now.date();
+
+	Date result = Date(today.year(), month, day);
+	if (result < today) {
+		result = Date(today.year() + 1, result.month(), result.day());
+	}
+
+	return result;
 }
 
 }  // namespace NLP
