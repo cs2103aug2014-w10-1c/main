@@ -19,8 +19,8 @@ const boost::wformat CHANGE_FIELD_FORMAT(L"%1% => %2%");
 /// The description field.
 const std::wstring DESCRIPTION_FIELD(L"Description");
 
-/// The due field.
-const std::wstring DUE_FIELD(L"Due");
+/// The deadline field.
+const std::wstring DEADLINE_FIELD(L"Due");
 
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
@@ -32,11 +32,11 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			q.description.get()).str());
 	}
 
-	if (q.due) {
+	if (q.deadline) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
-			DUE_FIELD %
-			q.due.get()).str());
+			DEADLINE_FIELD %
+			q.deadline.get()).str());
 	}
 
 	return fields;
@@ -82,7 +82,7 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 	}
 
 	return description == rhs.description &&
-		due == rhs.due;
+		deadline == rhs.deadline;
 }
 
 std::wstring ToString(const EDIT_QUERY& q) {

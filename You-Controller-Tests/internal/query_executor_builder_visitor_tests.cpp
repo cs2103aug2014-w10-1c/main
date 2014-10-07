@@ -52,11 +52,11 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Task::Priority::NORMAL,
 			result.task.getPriority());
 		Assert::AreEqual(
-			Mocks::Queries::ADD_QUERY.due.get(),
+			Mocks::Queries::ADD_QUERY.deadline.get(),
 			result.task.getDeadline());
 
 		You::NLP::ADD_QUERY queryWithoutDeadline(Mocks::Queries::ADD_QUERY);
-		queryWithoutDeadline.due =
+		queryWithoutDeadline.deadline =
 			You::Utils::Option<boost::posix_time::ptime>();
 		query = queryWithoutDeadline;
 		executor = boost::apply_visitor(visitor, query);
@@ -85,7 +85,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Task::Priority::IMPORTANT,
 			result.task.getPriority());
 		Assert::AreEqual(
-			Mocks::Queries::ADD_QUERY.due.get(),
+			Mocks::Queries::ADD_QUERY.deadline.get(),
 			result.task.getDeadline());
 	}
 
@@ -103,11 +103,11 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.due.get(),
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
 
 		You::NLP::EDIT_QUERY queryWithoutDeadline(Mocks::Queries::EDIT_QUERY);
-		queryWithoutDeadline.due =
+		queryWithoutDeadline.deadline =
 			You::Utils::Option<boost::posix_time::ptime>();
 		query = queryWithoutDeadline;
 		executor = boost::apply_visitor(visitor, query);
@@ -131,10 +131,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 #if 0
 		// TODO(evansb): Properly implement UpdateTask
-		Assert::AreEqual(taskList.front().getDescription().get(),
+		Assert::AreEqual(taskList.front().getDescription(),
 			result.task.getDescription());
 #endif
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.due.get(),
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
 	}
 

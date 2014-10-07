@@ -41,7 +41,7 @@ public:
 
 		{  // NOLINT(whitespace/braces)
 			EDIT_QUERY local = DUMMY;
-			local.due = boost::posix_time::ptime(
+			local.deadline = boost::posix_time::ptime(
 				boost::gregorian::date(1970, boost::gregorian::Jan, 1),
 				boost::posix_time::hours(0));
 
@@ -80,7 +80,8 @@ public:
 
 		local.taskID = DUMMY.taskID;
 		EDIT_QUERY local2 = local;
-		local2.due = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1),
+		local2.deadline = boost::posix_time::ptime(
+			boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));
 		Assert::AreNotEqual(local, local2);
 	}

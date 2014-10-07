@@ -42,7 +42,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 		new AddTaskQueryExecutor(
 			QueryEngine::AddTask(
 				query.description,
-				query.due ? query.due.get() : Task::DEFAULT_DEADLINE,
+				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 				query.priority == You::NLP::TaskPriority::HIGH ?
 					Task::Priority::IMPORTANT : Task::Priority::NORMAL,
 				Task::Dependencies()
@@ -75,8 +75,8 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	std::wstring description = query.description ?
 		query.description.get() :
 		Task::DEFAULT_DESCRIPTION;
-	boost::posix_time::ptime due = query.due ?
-		query.due.get() :
+	boost::posix_time::ptime deadline = query.deadline ?
+		query.deadline.get() :
 		Task::DEFAULT_DEADLINE;
 
 	return std::unique_ptr<QueryExecutor>(
@@ -84,7 +84,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 			QueryEngine::UpdateTask(
 				task.getID(),
 				description,
-				due,
+				deadline,
 				Task::DEFAULT_PRIORITY,
 				Task::Dependencies()
 			)

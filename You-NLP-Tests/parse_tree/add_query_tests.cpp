@@ -17,14 +17,14 @@ public:
 		stream << DUMMY;
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (due %2%, normal priority)") %
-				DESCRIPTION % DUE).str(),
+				DESCRIPTION % DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (due %2%, normal priority)") %
-				DESCRIPTION % DUE).str(),
+				DESCRIPTION % DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
@@ -32,7 +32,7 @@ public:
 		ADD_QUERY local {
 			DESCRIPTION,
 			TaskPriority::NORMAL,
-			DUE
+			DEADLINE
 		};
 
 		Assert::AreEqual(DUMMY, local);
@@ -42,7 +42,7 @@ public:
 		ADD_QUERY local {
 			L"x" + DESCRIPTION,
 			TaskPriority::NORMAL,
-			DUE
+			DEADLINE
 		};
 
 		Assert::AreNotEqual(DUMMY, local);
@@ -52,7 +52,7 @@ public:
 		Assert::AreNotEqual(DUMMY, local);
 
 		local.priority = DUMMY.priority;
-		local.due = DUMMY.due.get() + boost::posix_time::hours(1);
+		local.deadline = DUMMY.deadline.get() + boost::posix_time::hours(1);
 		Assert::AreNotEqual(DUMMY, local);
 	}
 
@@ -61,20 +61,20 @@ private:
 	static const std::wstring DESCRIPTION;
 
 	/// The dummy deadline.
-	static const boost::posix_time::ptime DUE;
+	static const boost::posix_time::ptime DEADLINE;
 
 	/// A dummy object.
 	static const ADD_QUERY DUMMY;
 };
 
 const std::wstring AddQueryTests::DESCRIPTION(L"Hello world");
-const boost::posix_time::ptime AddQueryTests::DUE(
+const boost::posix_time::ptime AddQueryTests::DEADLINE(
 	boost::gregorian::date(2010, boost::gregorian::Dec, 4),
 	boost::posix_time::hours(0));
 const ADD_QUERY AddQueryTests::DUMMY {
 	DESCRIPTION,
 	TaskPriority::NORMAL,
-	DUE
+	DEADLINE
 };
 
 }  // namespace UnitTests

@@ -18,7 +18,8 @@ namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 	return s << (boost::wformat(STRING_FORMAT) % q.description % (
-		q.due ? boost::lexical_cast<std::wstring>(q.due.get()) : L"none"
+		q.deadline ?
+			boost::lexical_cast<std::wstring>(q.deadline.get()) : L"none"
 	) % (
 		q.priority == TaskPriority::HIGH ? L"high" : L"normal"
 	));
@@ -27,7 +28,7 @@ std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {
 	return description == rhs.description &&
 		priority == rhs.priority &&
-		due == rhs.due;
+		deadline == rhs.deadline;
 }
 
 std::wstring ToString(const ADD_QUERY& q) {

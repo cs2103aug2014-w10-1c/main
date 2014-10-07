@@ -25,8 +25,8 @@ struct ADD_QUERY {
 	/// The priority of the task.
 	TaskPriority priority;
 
-	/// The due date of the task.
-	You::Utils::Option<boost::posix_time::ptime> due;
+	/// The deadline of the task.
+	You::Utils::Option<boost::posix_time::ptime> deadline;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.

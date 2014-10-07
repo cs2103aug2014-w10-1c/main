@@ -25,7 +25,7 @@ struct EDIT_QUERY {
 		DESCRIPTION = 1 << 0,
 
 		/// The deadline field needs to be changed
-		DUE = 1 << 1,
+		DEADLINE = 1 << 1,
 
 		/// The task is now complete
 		COMPLETE = 1 << 2
@@ -42,8 +42,8 @@ struct EDIT_QUERY {
 	/// The description of the task.
 	You::Utils::Option<std::wstring> description;
 
-	/// The due date of the task.
-	You::Utils::Option<boost::posix_time::ptime> due;
+	/// The deadline of the task.
+	You::Utils::Option<boost::posix_time::ptime> deadline;
 };
 
 /// Computes a bitwise OR over the two fields specification flags.
@@ -79,12 +79,5 @@ std::wstring ToString(const EDIT_QUERY& q);
 
 }  // namespace NLP
 }  // namespace You
-
-BOOST_FUSION_ADAPT_STRUCT(
-	You::NLP::EDIT_QUERY,
-	(You::NLP::EDIT_QUERY::Fields, fields)
-	(std::wstring, description)
-	(std::wstring, due)
-)
 
 #endif  // YOU_NLP_PARSE_TREE_EDIT_QUERY_H_
