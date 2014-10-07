@@ -9,10 +9,14 @@ namespace Controller {
 namespace Internal {
 namespace UnitTests {
 
+/// A dummy query executor which works like a AddQueryExecutor. This is just
+/// for testing.
 class DummyQueryExecutor : public QueryExecutor {
 	friend class QueryExecutorTests;
 
 public:
+	/// Constructor. This creates an executor from a query returned by
+	/// the Query Engine.
 	explicit DummyQueryExecutor(
 		std::unique_ptr<QueryEngine::Query>&& query)
 		: QueryExecutor(std::move(query)) {

@@ -62,7 +62,8 @@ public:
 		}
 	}
 
-	/// Inverse of \ref Option<T>::operator==
+	/// Checks for inequality with another Option value. Equality is defined as
+	/// none-ness, and if both are not none, then equality of the value.
 	inline bool operator!=(const Option<T>& rhs) const {
 		bool leftIsNull = !operator bool();
 		bool rightIsNull = !rhs.operator bool();
