@@ -33,7 +33,7 @@ void YouMainGUI::NLPManager::query(
 		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
 		: parentGUI(parentGUI) {
 		}
-		
+
 		void operator()(You::Controller::ADD_RESULT addResult) {
 			parentGUI->addTask(addResult.task);
 		}
