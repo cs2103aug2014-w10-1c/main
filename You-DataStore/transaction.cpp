@@ -17,11 +17,12 @@ void Transaction::commit() {
 			return rollback();
 		}
 	}
-	DataStore::get().notify();
+	DataStore::get().notifyCommit();
 }
 
 void Transaction::rollback() {
 	operationsQueue.clear();
+	DataStore::get().notifyRollback();
 }
 
 void Transaction::push(std::shared_ptr<Internal::IOperation> op) {
