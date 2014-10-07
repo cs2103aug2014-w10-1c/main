@@ -29,16 +29,14 @@ public:
 private:
 	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
 	/// intermediate step to adding headings and tasks.
-	std::unique_ptr<QTreeWidgetItem> createItem(
-		const std::vector<std::wstring>& rowStrings);
+	std::unique_ptr<QTreeWidgetItem> createItem(const QStringList& rowStrings);
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(const std::vector<std::wstring>& rowStrings);
+	void addTask(const QStringList& rowStrings);
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
-	void addSubtask(QTreeWidgetItem* parent,
-		const std::vector<std::wstring>& rowStrings);
+	void addSubtask(QTreeWidgetItem* parent, const QStringList& rowStrings);
 
 	/// Deletes a task or subtask. Memory management is automagically dealt
 	/// with by QT's parent/child structure, so all child objects are

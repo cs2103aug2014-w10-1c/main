@@ -25,22 +25,22 @@ public:
 	int TASK_COLUMN_COUNT = 4;
 
 	/// Header string for column 1
-	const std::wstring TASK_COLUMN_1 = L"Hidden ID Column";
+	const QString TASK_COLUMN_1 = "Hidden ID Column";
 
 	/// Header string for column 2
-	const std::wstring TASK_COLUMN_2 = L"Index";
+	const QString TASK_COLUMN_2 = "Index";
 
 	/// Header string for column 3
-	const std::wstring TASK_COLUMN_3 = L"Description";
+	const QString TASK_COLUMN_3 = "Description";
 
 	/// Header string for column 4
-	const std::wstring TASK_COLUMN_4 = L"Deadline";
+	const QString TASK_COLUMN_4 = "Deadline";
 
 	/// Header string for column 5
-	const std::wstring TASK_COLUMN_5 = L"Priority";
+	const QString TASK_COLUMN_5 = "Priority";
 
 	/// Vector of strings for the headers of the columns
-	std::vector<std::wstring> columnHeaders;
+	QStringList columnHeaders;
 
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
@@ -89,7 +89,7 @@ public:
 
 	You::Controller::TaskList getTaskList();
 
-	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
+	QStringList taskToStrVec(const You::Controller::Task& task);
 
 	void addTask(You::Controller::Task task);
 

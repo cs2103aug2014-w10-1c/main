@@ -20,8 +20,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		taskList(new TaskList) {
 	Q_INIT_RESOURCE(yougui);
 
-	columnHeaders = { TASK_COLUMN_1,
-		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
+	columnHeaders.fromStdList(std::list<QString>({ TASK_COLUMN_1,
+		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 }));
 	ui.setupUi(this);
 	stm->setup();
 	nlpm->setup();
@@ -74,8 +74,17 @@ void YouMainGUI::addTaskListToPanel(TaskList tl) {
 		case Task::Priority::NORMAL:
 			rowStrings.push_back(priority[1]);
 		}
+
 		// To do: Deal with dependencies
-		tpm->addTask(rowStrings);
+		QStringList tempList;
+		std::transform(
+			rowStrings.begin(),
+			rowStrings.end(),
+			std::back_inserter(tempList),
+			[](const std::wstring& str) {
+			return QString::fromStdWString(str);
+		});
+		tpm->addTask(tempList);
 	}
 }
 
@@ -116,34 +125,25 @@ void YouMainGUI::editTask(You::Controller::Task task) {
 		qDebug() << "editTask items.length() != 1" << endl;
 	} else {
 		QTreeWidgetItem item = *items.at(0);
-		std::vector<std::wstring> wstr = taskToStrVec(task);
+		QStringList wstr = taskToStrVec(task);
 		*items.at(0) = *tpm->createItem(wstr);
 	}
 }
 
-std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
-	// Make wstringstream as helper for conversion
-	std::wstringstream wss;
-
-	// Initialize vector
-	std::vector<std::wstring> taskVector;
-
+QStringList YouMainGUI::taskToStrVec(const You::Controller::Task& task) {
+	QStringList result;
+	
 	// Insert id
-	wss << task.getID();
-	taskVector.push_back(wss.str());
-	wss.str(L"");
+	result.push_back(QString::fromStdWString(boost::lexical_cast<std::wstring>(task.getID())));
 
 	// Insert count
-	taskVector.push_back(L"0");
+	result.push_back("0");
 
 	// Insert description
-	taskVector.push_back(task.getDescription());
+	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	wss << task.getDeadline();
-	std::wstring deadline = wss.str();
-	taskVector.push_back(deadline);
-	wss.str(L"");
+	result.push_back(QString::fromStdWString(boost::lexical_cast<std::wstring>(task.getDeadline())));
 
 	// To do
 	/*
@@ -151,5 +151,5 @@ std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
 
 	}
 	*/
-	return taskVector;
+	return result;
 }
