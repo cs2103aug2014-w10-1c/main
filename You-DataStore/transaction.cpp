@@ -17,6 +17,7 @@ void Transaction::commit() {
 			return rollback();
 		}
 	}
+	DataStore::get().notify();
 }
 
 void Transaction::rollback() {

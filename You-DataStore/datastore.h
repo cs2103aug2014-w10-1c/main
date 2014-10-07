@@ -23,6 +23,8 @@ public:
 
 	std::vector<SerializedTask> getAllTask();
 
+	void notify();
+
 private:
 	bool isServing = false;
 	std::unique_ptr<Transaction> activeTransaction;
