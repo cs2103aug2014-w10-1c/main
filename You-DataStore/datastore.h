@@ -14,7 +14,6 @@ namespace DataStore {
 namespace UnitTests {}
 
 class DataStore {
-	friend class Transaction;
 public:
 	Transaction&& begin();
 
