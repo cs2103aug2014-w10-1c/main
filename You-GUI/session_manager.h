@@ -13,7 +13,7 @@ using Task = You::Controller::Task;
 /// when the program is started again. It inherits from the BaseManager class.
 class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
-	friend class YouMainGUI;
+
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SessionManager(YouMainGUI * const parentGUI)

@@ -39,9 +39,9 @@ public:
 	/// engine. It inherits from the BaseManager class.
 	class TaskPanelManager;
 
-	/// The component that handles all interactions with the tray icon. It handles
-	/// the window state of the application based on commands sent to the tray
-	/// manager. It inherits from the BaseManager class.
+	/// The component that handles all interactions with the tray icon. It
+	/// handles the window state of the application based on commands sent to
+	/// the tray manager. It inherits from the BaseManager class.
 	class SystemTrayManager;
 
 	/// The component that handles passing of data between the NLP parser and

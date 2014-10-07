@@ -5,8 +5,8 @@
 #include <QApplication>
 #include "base_manager.h"
 #include "You-Controller/controller.h"
-#include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
+#include "You-Controller/result.h"
 
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
