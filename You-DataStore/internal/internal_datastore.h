@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
-#include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
 
 #define PUGIXML_WCHAR_MODE
@@ -15,7 +14,7 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreTest; }
+namespace UnitTests { class InternalDataStoreTest; }
 
 /// The internal components of DataStore
 namespace Internal {
@@ -23,7 +22,7 @@ namespace Internal {
 /// The most primitive class that does the changes to the actual xml file
 class InternalDataStore {
 	/// Test classes
-	friend class You::DataStore::UnitTests::DataStoreTest;
+	friend class You::DataStore::UnitTests::InternalDataStoreTest;
 public:
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
@@ -37,15 +36,12 @@ public:
 
 	/// Get a task
 	/// \return false and an empty SerializedTask if task id does not exist
-	boost::variant<bool, SerializedTask> get(TaskId);
+	SerializedTask getTask(TaskId);
 
 	/// Delete a task
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist
 	bool erase(TaskId);
-
-	/// Get a list of tasks that passes the filter
-	std::vector<SerializedTask> filter(const std::function<bool(SerializedTask)>&);
 
 private:
 	static const std::wstring FILE_PATH;
