@@ -26,6 +26,7 @@ public:
 	/// @{
 	static Filter anyTask();
 	static Filter idIsIn(std::vector<Task::ID> taskIDs);
+	static Filter completed();
 	/// @}
 
 	/// Compose an AND operation with another filter
