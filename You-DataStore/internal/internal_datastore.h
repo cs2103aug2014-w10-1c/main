@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
-#include "boost/variant.hpp"
 #include "boost/lexical_cast.hpp"
 
 #define PUGIXML_WCHAR_MODE
@@ -37,7 +36,7 @@ public:
 
 	/// Get a task
 	/// \return false and an empty SerializedTask if task id does not exist
-	boost::variant<bool, SerializedTask> get(TaskId);
+	SerializedTask getTask(TaskId);
 
 	/// Delete a task
 	/// \return true if erase successful,

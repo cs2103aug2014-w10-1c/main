@@ -32,13 +32,10 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	return post(rawId, sTask);
 }
 
-boost::variant<bool, SerializedTask> InternalDataStore::get(TaskId rawId) {
+SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
-	if (!toGet) {
-		return false;
-	}
 	SerializedTask stask = deserialize(toGet);
 	return stask;
 }
