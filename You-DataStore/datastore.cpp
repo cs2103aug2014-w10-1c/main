@@ -16,5 +16,9 @@ Transaction& DataStore::begin() {
 	return *(transactionStack.top());
 }
 
+void DataStore::notify() {
+	isServing = false;
+}
+
 }  // namespace DataStore
 }  // namespace You
