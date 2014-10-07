@@ -10,31 +10,34 @@ YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 void YouMainGUI::TaskPanelManager::setup() {
 	parentGUI->ui.taskTreePanel->setColumnCount(4);
 	parentGUI->ui.taskTreePanel->setHeaderItem(
-		createItem(parentGUI->columnHeaders));
+		createItem(parentGUI->columnHeaders).release());
 	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
 }
 
 void YouMainGUI::TaskPanelManager::addTask(
-	std::vector<std::wstring> rowStrings) {
-	QTreeWidgetItem* item = createItem(rowStrings);
-	parentGUI->ui.taskTreePanel->addTopLevelItem(item);
+	const std::vector<std::wstring>& rowStrings) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
+	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
 }
 
 void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
-	std::vector<std::wstring> rowStrings) {
-	QTreeWidgetItem* item = createItem(rowStrings);
-	parent->addChild(item);
+	const std::vector<std::wstring>& rowStrings) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
+	parent->addChild(item.release());
 }
 
-QTreeWidgetItem* YouMainGUI::TaskPanelManager::createItem(
-	std::vector<std::wstring> rowStrings) {
+std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+	const std::vector<std::wstring>& rowStrings) {
 	QStringList tempList;
-	std::vector<std::wstring>::iterator it;
-	for (auto it = rowStrings.begin(); it != rowStrings.end(); it++) {
-		tempList << QString::fromStdWString(*it);
-	}
-	QTreeWidgetItem *item = new QTreeWidgetItem(tempList);
-	return item;
+	std::transform(
+		rowStrings.begin(),
+		rowStrings.end(),
+		std::back_inserter(tempList),
+		[](const std::wstring& str) {
+			return QString::fromStdWString(str);
+		});
+
+	return std::make_unique<QTreeWidgetItem>(tempList);
 }
 
 void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
