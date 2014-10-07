@@ -35,7 +35,7 @@ void YouMainGUI::TaskPanelManager::setup() {
 	// TODO(angathorion): remove magic constants.
 	QHeaderView* header = taskTreePanel->header();
 	header->setStretchLastSection(false);
-	for (size_t i = 1; i < columnHeaders.size(); ++i) {
+	for (int i = 1; i < columnHeaders.size(); ++i) {
 		if (i == 2) {
 			continue;
 		}

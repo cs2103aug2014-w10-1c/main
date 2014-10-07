@@ -19,7 +19,10 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
 		taskList(new TaskList) {
+	#pragma warning(push)
+	#pragma warning(disable: 4127)
 	Q_INIT_RESOURCE(yougui);
+	#pragma warning(pop)
 
 	ui.setupUi(this);
 	stm->setup();
