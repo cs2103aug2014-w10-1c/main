@@ -9,7 +9,7 @@ namespace DataStore {
 namespace Internal {
 class PutOperation : public IOperation {
 public:
-	PutOperation(TaskId, SerializedTask&);
+	PutOperation(TaskId, const SerializedTask&);
 	bool run();
 };
 }  // namespace Internal
