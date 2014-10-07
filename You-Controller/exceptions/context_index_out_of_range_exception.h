@@ -22,7 +22,8 @@ public:
 	/// Constructs the exception from an existing std::out_of_range
 	///
 	/// \param[in] exception The exception to construct the new exception from.
-	inline explicit ContextIndexOutOfRangeException(const std::out_of_range& exception)
+	inline explicit ContextIndexOutOfRangeException(
+		const std::out_of_range& exception)
 	: std::out_of_range(exception) {
 	}
 
