@@ -130,7 +130,6 @@
     <ClCompile Include="you_main_gui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="variant_handler.h" />
     <CustomBuild Include="system_tray_manager.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing system_tray_manager.h...</Message>

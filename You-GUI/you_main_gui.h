@@ -6,7 +6,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
-struct VariantHandler;
+
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -88,8 +88,6 @@ public:
 	const std::unique_ptr<NLPManager> nlpm;
 
 	You::Controller::TaskList getTaskList();
-
-	std::unique_ptr<VariantHandler> vh;
 
 	std::vector<std::wstring> taskToStrVec(You::Controller::Task task);
 

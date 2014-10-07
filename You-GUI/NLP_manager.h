@@ -21,11 +21,8 @@ class YouMainGUI::NLPManager : public YouMainGUI::BaseManager{
 	friend class YouMainGUI;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit NLPManager(YouMainGUI * const parentGUI)
+	explicit NLPManager(YouMainGUI* const parentGUI)
 		: BaseManager(parentGUI) {}
-
-	/// Destructor.
-	~NLPManager();
 
 	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
 	void setup();

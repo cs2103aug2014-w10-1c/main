@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "variant_handler.h"
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
@@ -18,11 +17,9 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
-		taskList(new TaskList),
-		vh(new VariantHandler) {
+		taskList(new TaskList) {
 	Q_INIT_RESOURCE(yougui);
 
-	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };
 	ui.setupUi(this);

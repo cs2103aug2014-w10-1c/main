@@ -4,16 +4,12 @@
 #include <QApplication>
 #include <QList>
 #include "NLP_manager.h"
-#include "variant_handler.h"
 #include "You-QueryEngine/internal/task_builder.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
-
-YouMainGUI::NLPManager::~NLPManager() {
-}
 
 void YouMainGUI::NLPManager::setup() {
 	connect(parentGUI->ui.commandEnterButton,
@@ -37,7 +33,28 @@ void YouMainGUI::NLPManager::queryNLP() {
 	*/
 	Controller::Context ct = Controller::Context::Context(tl);
 	Result result = Controller::get().query(inputString, ct);
-	boost::apply_visitor(*(parentGUI->vh), result);
+
+	struct ResultProcessorVisitor : boost::static_visitor<void> {
+		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
+		: parentGUI(parentGUI) {
+		}
+		
+		void operator()(You::Controller::ADD_RESULT addResult) {
+			parentGUI->addTask(addResult.task);
+		}
+		void operator()(You::Controller::EDIT_RESULT editResult) {
+			parentGUI->editTask(editResult.task);
+		}
+		void operator()(You::Controller::DELETE_RESULT deleteResult) {
+			parentGUI->deleteTask(deleteResult.task);
+		}
+
+	private:
+		YouMainGUI* parentGUI;
+	};
+
+	ResultProcessorVisitor visitor(parentGUI);
+	boost::apply_visitor(visitor, result);
 }
 
 void YouMainGUI::NLPManager::commandEnterButtonClicked() {
