@@ -38,6 +38,10 @@ public:
 	/// \return false and an empty SerializedTask if task id does not exist
 	SerializedTask getTask(TaskId);
 
+	/// Get all tasks
+	/// \return a vector of all tasks in unordered map form
+	std::vector<SerializedTask>& getAllTask();
+
 	/// Delete a task
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist

@@ -40,6 +40,16 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	return stask;
 }
 
+std::vector<SerializedTask>& InternalDataStore::getAllTask() {
+	loadData();
+	std::vector<SerializedTask> allTask;
+	pugi::xpath_node_set xmlAllTask = document.select_nodes(L"task");
+	for (auto i = xmlAllTask.begin(); i != xmlAllTask.end(); i++) {
+		allTask.push_back(deserialize(i->node()));
+	}
+	return allTask;
+}
+
 bool InternalDataStore::erase(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toErase =
