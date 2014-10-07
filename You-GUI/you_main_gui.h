@@ -61,9 +61,7 @@ public:
 
 	void deleteTask(You::Controller::Task::ID taskID);
 
-	//QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
-
-	You::Controller::TaskList getTaskList();
+	const You::Controller::TaskList& getTaskList() const;
 
 private:
 	/// The SessionManager instance

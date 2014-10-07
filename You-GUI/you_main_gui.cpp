@@ -72,7 +72,7 @@ void YouMainGUI::setVisible(bool visible) {
 	QWidget::setVisible(visible);
 }
 
-You::Controller::TaskList YouMainGUI::getTaskList() {
+const You::Controller::TaskList& YouMainGUI::getTaskList() const {
 	return *taskList;
 }
 
