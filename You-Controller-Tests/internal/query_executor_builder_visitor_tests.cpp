@@ -90,6 +90,13 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
+		getsCorrectTypeForEditQueries1();
+		getsCorrectTypeForEditQueries2();
+		getsCorrectTypeForEditQueries3();
+		getsCorrectTypeForEditQueries4();
+	}
+
+	void getsCorrectTypeForEditQueries1() {
 		Mocks::TaskList taskList;
 		QueryExecutorBuilderVisitor visitor(taskList);
 
@@ -104,54 +111,72 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
 		Assert::AreEqual(nlpPriorityToTaskPriority(
-				Mocks::Queries::EDIT_QUERY.priority.get()),
+			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+	}
+
+	void getsCorrectTypeForEditQueries2() {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
 		query2.deadline =
 			You::Utils::Option<boost::posix_time::ptime>();
-		query = query2;
-		executor = boost::apply_visitor(visitor, query);
-		result = boost::get<EDIT_RESULT>(executor->execute());
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
 		Assert::AreEqual(nlpPriorityToTaskPriority(
-				Mocks::Queries::EDIT_QUERY.priority.get()),
+			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(taskList.front().getDeadline(),
 			result.task.getDeadline());
+	}
 
-		query2 = Mocks::Queries::EDIT_QUERY;
+	void getsCorrectTypeForEditQueries3() {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
 		query2.description =
 			You::Utils::Option<std::wstring>();
-		query = query2;
-		executor = boost::apply_visitor(visitor, query);
-		result = boost::get<EDIT_RESULT>(executor->execute());
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task.getID());
-#if 0
-		// TODO(evansb): Properly implement UpdateTask
 		Assert::AreEqual(taskList.front().getDescription(),
 			result.task.getDescription());
-#endif
 		Assert::AreEqual(nlpPriorityToTaskPriority(
-				Mocks::Queries::EDIT_QUERY.priority.get()),
+			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+	}
 
-		query2 = Mocks::Queries::EDIT_QUERY;
+	void getsCorrectTypeForEditQueries4() {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
 		query2.priority =
 			You::Utils::Option<You::NLP::TaskPriority>();
-		query = query2;
-		executor = boost::apply_visitor(visitor, query);
-		result = boost::get<EDIT_RESULT>(executor->execute());
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task.getID());
@@ -186,6 +211,7 @@ private:
 			return Task::Priority::IMPORTANT;
 		default:
 			assert(false);
+			abort();
 		}
 	}
 };
