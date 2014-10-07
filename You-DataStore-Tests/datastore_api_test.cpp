@@ -15,8 +15,9 @@ TEST_CLASS(DataStoreApiTest) {
 public:
 	TEST_METHOD(pushOperationToTransaction) {
 		Transaction sut;
-		Internal::PostOperation postOp(0, task1);
-		sut.push(std::shared_ptr<Internal::IOperation>(&postOp));
+		std::shared_ptr<Internal::IOperation> postOp =
+			std::make_shared<Internal::PostOperation>(0, task1);
+		sut.push(postOp);
 		Assert::AreEqual(boost::lexical_cast<size_t>(1), sut.operationsQueue.size());
 	}
 };
