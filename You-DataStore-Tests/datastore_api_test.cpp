@@ -33,7 +33,27 @@ public:
 		sut.push(eraseOp);
 		Assert::AreEqual(boost::lexical_cast<size_t>(3), sut.operationsQueue.size());
 	}
+	
+	TEST_METHOD(transactionRollback) {
+		Transaction sut;
 
+		std::shared_ptr<Internal::IOperation> postOp =
+			std::make_shared<Internal::PostOperation>(0, task1);
+		sut.push(postOp);
+
+		std::shared_ptr<Internal::IOperation> putOp =
+			std::make_shared<Internal::PutOperation>(0, task2);
+		sut.push(putOp);
+
+		std::shared_ptr<Internal::IOperation> eraseOp =
+			std::make_shared<Internal::EraseOperation>(0);
+		sut.push(eraseOp);
+
+		Assert::AreEqual(boost::lexical_cast<size_t>(3), sut.operationsQueue.size());
+
+		sut.rollback();
+		Assert::AreEqual(boost::lexical_cast<size_t>(0), sut.operationsQueue.size());
+	}
 };
 
 }  // namespace UnitTests
