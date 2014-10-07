@@ -8,9 +8,11 @@
 
 namespace You {
 namespace DataStore {
+namespace UnitTests { class DataStoreApiTest; }
 class DataStore;
 class Transaction {
 	friend class DataStore;
+	friend class UnitTests::DataStoreApiTest;
 public:
 	Transaction(Transaction&);
 	void commit();

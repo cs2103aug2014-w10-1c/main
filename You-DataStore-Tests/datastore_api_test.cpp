@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "datastore.h"
+#include "transaction.h"
+
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
 namespace You {
