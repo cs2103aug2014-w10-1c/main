@@ -16,8 +16,12 @@ namespace Internal {
 /// Singleton class to store \ref TaskGraph instances.
 class State {
 public:
-	/// Get the current instance
+	/// Get the current instance.
 	static State& get();
+
+	/// Reset the state to empty.
+	/// Be careful!
+	static void clear();
 
 	/// Get the graph of the current instance
 	inline TaskGraph graph() const { return this->innerGraph;  }

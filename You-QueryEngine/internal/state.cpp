@@ -10,6 +10,10 @@ State& State::get() {
 	return instance;
 }
 
+void State::clear() {
+	get().innerGraph = TaskGraph();
+}
+
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
