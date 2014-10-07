@@ -2,6 +2,7 @@
 #ifndef YOU_DATASTORE_TRANSACTION_H_
 #define YOU_DATASTORE_TRANSACTION_H_
 
+#include <memory>
 #include "internal/operation.h"
 
 namespace You {
@@ -13,11 +14,11 @@ public:
 	Transaction(Transaction&&);
 	void commit();
 	void rollback();
-	void push(Internal::IOperation&);
+	void push(std::shared_ptr<Internal::IOperation>);
 
 private:
 	Transaction();
-	std::deque<Internal::IOperation> operationsQueue;
+	std::deque<std::shared_ptr<Internal::IOperation> > operationsQueue;
 };
 }  // namespace DataStore
 }  // namespace You

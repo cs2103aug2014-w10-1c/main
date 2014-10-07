@@ -10,13 +10,12 @@ Transaction::Transaction(Transaction&& t) {
 }
 
 void Transaction::commit() {
-	while (!operationsQueue.empty()) {
-		Internal::IOperation& op = operationsQueue.front();
-		bool success = op.run();
+	for (auto iter = operationsQueue.begin(); iter != operationsQueue.end();
+		++iter) {
+		bool success = (*iter)->run();
 		if (!success) {
 			return rollback();
 		}
-		operationsQueue.pop_front();
 	}
 }
 
@@ -24,7 +23,7 @@ void Transaction::rollback() {
 	operationsQueue.clear();
 }
 
-void Transaction::push(Internal::IOperation& op) {
+void Transaction::push(std::shared_ptr<Internal::IOperation> op) {
 	operationsQueue.push_back(op);
 }
 
