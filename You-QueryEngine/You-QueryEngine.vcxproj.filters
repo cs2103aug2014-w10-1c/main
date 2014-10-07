@@ -63,6 +63,9 @@
     <ClInclude Include="internal\task_graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="internal\state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="internal\task_graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
