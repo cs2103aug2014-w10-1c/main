@@ -25,6 +25,9 @@ const std::wstring PRIORITY_FIELD(L"Priority");
 /// The deadline field.
 const std::wstring DEADLINE_FIELD(L"Deadline");
 
+/// The completion field.
+const std::wstring COMPLETE_FIELD(L"Complete");
+
 /// Converts the changed fields to a string.
 std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields;
@@ -49,6 +52,12 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			q.deadline.get()).str());
 	}
 
+	if (q.complete) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			COMPLETE_FIELD %
+			q.complete.get()).str());
+	}
 	return fields;
 }
 
@@ -93,7 +102,8 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 
 	return description == rhs.description &&
 		priority == rhs.priority &&
-		deadline == rhs.deadline;
+		deadline == rhs.deadline &&
+		complete == rhs.complete;
 }
 
 std::wstring ToString(const EDIT_QUERY& q) {

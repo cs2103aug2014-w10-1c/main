@@ -80,21 +80,31 @@ public:
 
 	TEST_METHOD(comparesInequality) {
 		EDIT_QUERY local {
-			1,
-			L""
+			DUMMY.taskID
 		};
 
-		Assert::AreNotEqual(DUMMY, local);
+		Assert::AreEqual(DUMMY, local);
 
-		local.taskID++;
-		local.description = DUMMY.description;
-		Assert::AreNotEqual(DUMMY, local);
-
-		local.taskID = DUMMY.taskID;
 		EDIT_QUERY local2 = local;
+		local2.taskID++;
+		Assert::AreNotEqual(DUMMY, local);
+
+		local2 = local;
+		local2.description = std::wstring(L"");
+		Assert::AreNotEqual(DUMMY, local);
+
+		local2 = local;
 		local2.deadline = boost::posix_time::ptime(
 			boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.priority = TaskPriority::HIGH;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.complete = true;
 		Assert::AreNotEqual(local, local2);
 	}
 
