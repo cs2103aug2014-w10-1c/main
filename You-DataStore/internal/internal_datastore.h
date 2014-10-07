@@ -34,6 +34,11 @@ public:
 	/// \return false if task id specified does not exist
 	bool put(TaskId, const SerializedTask&);
 
+	/// Delete a task
+	/// \return true if erase successful,
+	/// \return false if task id specified does not exist
+	bool erase(TaskId);
+
 	/// Get a task
 	/// \return false and an empty SerializedTask if task id does not exist
 	SerializedTask getTask(TaskId);
@@ -41,11 +46,6 @@ public:
 	/// Get all tasks
 	/// \return a vector of all tasks in unordered map form
 	std::vector<SerializedTask>& getAllTask();
-
-	/// Delete a task
-	/// \return true if erase successful,
-	/// \return false if task id specified does not exist
-	bool erase(TaskId);
 
 private:
 	static const std::wstring FILE_PATH;

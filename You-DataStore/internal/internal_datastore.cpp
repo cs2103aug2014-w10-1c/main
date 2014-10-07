@@ -32,6 +32,13 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	return post(rawId, sTask);
 }
 
+bool InternalDataStore::erase(TaskId rawId) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toErase =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	return document.remove_child(toErase);
+}
+
 SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
@@ -48,13 +55,6 @@ std::vector<SerializedTask>& InternalDataStore::getAllTask() {
 		allTask.push_back(deserialize(i->node()));
 	}
 	return allTask;
-}
-
-bool InternalDataStore::erase(TaskId rawId) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-	return document.remove_child(toErase);
 }
 
 bool InternalDataStore::saveData() {
