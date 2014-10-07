@@ -2,8 +2,8 @@
 #include "You-Controller/controller.h"
 #include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
-#include "You-QueryEngine\internal\task_builder.h"
-#include "..\You-GUI\you_main_gui.h"
+#include "You-QueryEngine/internal/task_builder.h"
+#include "You-GUI/you_main_gui.h"
 using Logger = Microsoft::VisualStudio::CppUnitTestFramework::Logger;
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 typedef You::Controller::Task Task;

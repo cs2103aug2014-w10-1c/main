@@ -7,7 +7,7 @@
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
-#include <boost\date_time\gregorian\greg_month.hpp>
+#include <boost/date_time/gregorian/greg_month.hpp>
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
