@@ -8,6 +8,7 @@ namespace Controller {
 
 /// Defines the result of a Delete query.
 struct DELETE_RESULT {
+	/// The Task ID which was deleted.
 	Task::ID task;
 };
 

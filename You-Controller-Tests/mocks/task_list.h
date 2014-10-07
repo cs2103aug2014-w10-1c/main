@@ -9,6 +9,7 @@ namespace Controller {
 namespace UnitTests {
 namespace Mocks {
 
+/// A dummy task list. This contains one task.
 class TaskList : public You::Controller::TaskList {
 public:
 	TaskList();
