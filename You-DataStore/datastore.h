@@ -43,6 +43,8 @@ private:
 	bool isServing = false;
 
 	std::stack<std::shared_ptr<Transaction>> transactionStack;
+
+	Internal::InternalDataStore internalDataStore;
 };
 }  // namespace DataStore
 }  // namespace You

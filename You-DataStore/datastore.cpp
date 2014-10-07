@@ -39,8 +39,7 @@ void DataStore::erase(TaskId taskId) {
 }
 
 std::vector<SerializedTask> DataStore::getAllTask() {
-	Internal::InternalDataStore ids;
-	return ids.getAllTask();
+	return internalDataStore.getAllTask();
 }
 
 void DataStore::notify() {
