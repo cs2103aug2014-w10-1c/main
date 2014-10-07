@@ -57,14 +57,6 @@ void YouMainGUI::populateTaskPanel() {
 	addTasks(tl);
 }
 
-void YouMainGUI::addTasks(const TaskList& tl) {
-	std::for_each(tl.begin(), tl.end(),
-		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
-}
-
-YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
-	: parentGUI(parentGUI) {}
-
 void YouMainGUI::setVisible(bool visible) {
 	stm->minimizeAction->setEnabled(visible);
 	stm->maximizeAction->setEnabled(!isMaximized());
@@ -80,10 +72,19 @@ void YouMainGUI::addTask(const Task& task) {
 	tpm->addTask(task);
 }
 
+void YouMainGUI::addTasks(const TaskList& tl) {
+	std::for_each(tl.begin(), tl.end(),
+		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
+}
+
 void YouMainGUI::deleteTask(Task::ID taskID) {
 	tpm->deleteTask(taskID);
 }
 
 void YouMainGUI::editTask(const Task& task) {
 	tpm->editTask(task);
+}
+
+YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
+	: parentGUI(parentGUI) {
 }
