@@ -2,6 +2,7 @@
 #ifndef YOU_DATASTORE_DATASTORE_H_
 #define YOU_DATASTORE_DATASTORE_H_
 
+#include <stack>
 #include <memory>
 #include "task_typedefs.h"
 #include "transaction.h"
@@ -27,7 +28,8 @@ public:
 
 private:
 	bool isServing = false;
-	std::unique_ptr<Transaction> activeTransaction;
+	std::shared_ptr<Transaction> activeTransaction;
+	std::stack<std::shared_ptr<Transaction> > transactionStack;
 };
 }  // namespace DataStore
 }  // namespace You
