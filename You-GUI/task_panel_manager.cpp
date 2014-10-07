@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include "task_panel_manager.h"
+
 YouMainGUI::TaskPanelManager::~TaskPanelManager() {
 }
 
@@ -10,7 +11,7 @@ void YouMainGUI::TaskPanelManager::setup() {
 	parentGUI->ui.taskTreePanel->setColumnCount(4);
 	parentGUI->ui.taskTreePanel->setHeaderItem(
 		createItem(parentGUI->columnHeaders));
-	parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
+	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
 }
 
 void YouMainGUI::TaskPanelManager::addTask(

@@ -1,9 +1,10 @@
 //@author A0094446X
 #include "stdafx.h"
+#include <memory>
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
-#include <memory>
+
 YouMainGUI::SessionManager::~SessionManager() {
 	saveSession();
 }
@@ -28,6 +29,8 @@ void YouMainGUI::SessionManager::loadSession() {
 
 void YouMainGUI::SessionManager::saveSession() {
 	QSettings settings("session.txt", QSettings::IniFormat);
+	// To do: Add a function in main gui that calls fills taskIDs array
+	// on close.
 	settings.beginWriteArray("idList");
 	for (int i = 0; i < taskIDs.size(); i++) {
 		settings.setArrayIndex(i);

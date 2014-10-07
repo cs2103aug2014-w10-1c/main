@@ -8,16 +8,18 @@
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 #include <boost\date_time\gregorian\greg_month.hpp>
-typedef int64_t TaskID;
-typedef You::Controller::Task Task;
-typedef You::Controller::Result Result;
+
+using Task = You::Controller::Task;
+using Result = You::Controller::Result;
+using TaskList = You::Controller::TaskList;
+using Controller = You::Controller::Controller;
 
 YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
 		nlpm(new YouMainGUI::NLPManager(this)),
-		taskList(new You::Controller::TaskList),
+		taskList(new TaskList),
 		vh(new VariantHandler) {
 	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
@@ -28,7 +30,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 	// To fix after implementation of task handling
-	populateTaskPanel();
+	// populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -48,14 +50,17 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 
 void YouMainGUI::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
-
-	std::vector<TaskID> IDs = sm->taskIDs;
-	You::Controller::TaskList tl;
+	std::vector<Task::ID> IDs = sm->taskIDs;
+	TaskList tl;
 	if (IDs.size() != 0) {
-		tl = You::Controller::Controller::get().getTasks(sm->taskIDs);
+		tl = Controller::get().getTasks(sm->taskIDs);
 	} else {
-		tl = You::Controller::Controller::get().getTasks();
+		tl = Controller::get().getTasks();
 	}
+	addTaskListToPanel(tl);
+}
+
+void YouMainGUI::addTaskListToPanel(TaskList tl) {
 	// Iterate through task list and add it to the task panel
 	std::wstring priority[] { L"Important", L"Normal" };
 	for (int i = 0; i < tl.size(); i++) {
@@ -66,9 +71,9 @@ void YouMainGUI::populateTaskPanel() {
 		wss << taskList->at(i).getDeadline();
 		rowStrings.push_back(wss.str());
 		switch (taskList->at(i).getPriority()) {
-		case You::Controller::Task::Priority::IMPORTANT:
+		case Task::Priority::IMPORTANT:
 			rowStrings.push_back(priority[0]);
-		case You::Controller::Task::Priority::NORMAL:
+		case Task::Priority::NORMAL:
 			rowStrings.push_back(priority[1]);
 		}
 		// To do: Deal with dependencies
@@ -94,6 +99,30 @@ void YouMainGUI::addTask(You::Controller::Task task) {
 	tpm->addTask(taskToStrVec(task));
 }
 
+void YouMainGUI::deleteTask(You::Controller::Task::ID task) {
+	QList<QTreeWidgetItem*> items =
+		ui.taskTreePanel->findItems(
+		QString::fromStdWString(std::to_wstring(task)), 0);
+	if (items.length() != 1) {
+		qDebug() << "deleteTask items.length() != 1" << endl;
+	} else {
+		tpm->deleteTask(items.at(0));
+	}
+}
+
+void YouMainGUI::editTask(You::Controller::Task task) {
+	QList<QTreeWidgetItem*> items =
+		ui.taskTreePanel->findItems(
+		QString::fromStdWString(std::to_wstring(task.getID())), 0);
+	if (items.length() != 1) {
+		qDebug() << "editTask items.length() != 1" << endl;
+	} else {
+		QTreeWidgetItem item = *items.at(0);
+		std::vector<std::wstring> wstr = taskToStrVec(task);
+		*items.at(0) = *tpm->createItem(wstr);
+	}
+}
+
 std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
 	// Make wstringstream as helper for conversion
 	std::wstringstream wss;
@@ -105,6 +134,9 @@ std::vector<std::wstring> YouMainGUI::taskToStrVec(You::Controller::Task task) {
 	wss << task.getID();
 	taskVector.push_back(wss.str());
 	wss.str(L"");
+
+	// Insert count
+	taskVector.push_back(L"0");
 
 	// Insert description
 	taskVector.push_back(task.getDescription());

@@ -8,6 +8,7 @@
 #include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
 #include "base_manager.h"
+using Result = You::Controller::Result;
 
 /// The component that handles passing of data between the NLP parser and the
 /// rest of the GUI. It has two primary operations: on setup it passes a list

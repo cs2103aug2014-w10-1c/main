@@ -5,6 +5,11 @@
 #include <QList>
 #include "NLP_manager.h"
 #include "variant_handler.h"
+#include "You-QueryEngine\internal\task_builder.h"
+
+using Task = You::Controller::Task;
+using Result = You::Controller::Result;
+using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
 YouMainGUI::NLPManager::~NLPManager() {
@@ -23,8 +28,15 @@ void YouMainGUI::NLPManager::queryNLP() {
 	std::wstring inputString =
 		parentGUI->ui.commandInputBox->text().toStdWString();
 	// When ready, pass current context, not the default one.
-	You::Controller::Result result = Controller::get().query(inputString,
-		Controller::Context::Context(parentGUI->getTaskList()));
+	TaskList tl = parentGUI->getTaskList();
+	/*
+	TaskList tl;
+	Task newTask =
+		You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
+	tl.push_back(newTask);
+	*/
+	Controller::Context ct = Controller::Context::Context(tl);
+	Result result = Controller::get().query(inputString, ct);
 	boost::apply_visitor(*(parentGUI->vh), result);
 }
 
