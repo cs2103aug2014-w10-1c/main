@@ -7,6 +7,7 @@
 #define YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
 
 #include <vector>
+#include <stdexcept>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include "task_builder.h"
@@ -39,12 +40,22 @@ public:
 	/// \return true if success, false otherwise.
 	void deleteTask(const Task::ID id);
 
+	/// Retrieve a single task from the graph
+	/// May throw TaskNotFoundException
+	/// \return The task with id \ref id
+	Task getTask(const Task::ID id);
+
 	/// Get the list of all tasks.
 	/// \return Vector of all tasks.
 	std::vector<Task> getTaskList() const;
 
+	inline std::unordered_map<Task::ID, Task> getTaskTable() const {
+		return taskTable;
+	}
+
 private:
 	Graph graph;
+	std::unordered_map<Task::ID, Task> taskTable;
 };
 
 }  // namespace Internal

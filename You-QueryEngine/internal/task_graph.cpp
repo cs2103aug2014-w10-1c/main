@@ -9,6 +9,7 @@ namespace Internal {
 void TaskGraph::addTask(const Task& task) {
 	Vertex v = boost::add_vertex(graph);
 	graph[v] = (Task) Internal::TaskBuilder::fromTask(task);
+	taskTable.insert({ task.getID(), task });
 }
 
 void TaskGraph::deleteTask(const Task::ID id) {
@@ -27,18 +28,22 @@ void TaskGraph::deleteTask(const Task::ID id) {
 	}
 	if (!removed) {
 		throw TaskNotFoundException();
+	} else {
+		taskTable.erase(id);
+	}
+}
+
+Task TaskGraph::getTask(const Task::ID id) {
+	try {
+		Task get = taskTable.at(id);
+	} catch (const std::out_of_range& error) {
+		throw TaskNotFoundException();
 	}
 }
 
 std::vector<Task> TaskGraph::getTaskList() const {
-	std::vector<Task> result;
-	VIterator begin;
-	VIterator end;
-	VIterator next;
-	boost::tie(begin, end) = boost::vertices(graph);
-	for (next = begin; next != end; ++next) {
-		result.push_back(graph[*next]);
-	}
+	std::vector<Task> result(taskTable.begin(),
+		taskTable.end());
 	return result;
 }
 

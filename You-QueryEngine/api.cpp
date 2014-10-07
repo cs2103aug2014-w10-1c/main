@@ -7,6 +7,7 @@
 #include "internal/action/filter_task.h"
 #include "internal/action/delete_task.h"
 #include "internal/action/update_task.h"
+#include "internal/state.h"
 #include "api.h"
 
 namespace You {
@@ -41,12 +42,7 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
 }
 
 Response executeQuery(std::unique_ptr<Query> query) {
-	State blank;
-	return query->execute(blank);
-}
-
-Response executeQuery(std::unique_ptr<Query> query, State& state) {
-	return query->execute(state);
+	return query->execute(Internal::State::get());
 }
 
 }  // namespace QueryEngine

@@ -1,9 +1,11 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
-#include "add_task.h"
 #include "../task_builder.h"
 #include "../task_serializer.h"
+#include "../task_serializer.h"
+#include "../state.h"
+#include "add_task.h"
 
 namespace You {
 namespace QueryEngine {
@@ -16,12 +18,15 @@ Response AddTask::execute(State& tasks) {
 		.deadline(this->deadline)
 		.dependencies(this->dependencies)
 		.priority(this->priority);
-	auto serialized = TaskSerializer::serialize(newTask);
+	tasks.graph().addTask(newTask);
+
 #if 0
+	auto serialized = TaskSerializer::serialize(newTask);
 	DataStorage::Transaction t(DataStorage::begin());
 	DataStorage::post(serialized);
 	t.commit();
 #endif
+
 	return newTask;
 }
 
