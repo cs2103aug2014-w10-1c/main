@@ -13,7 +13,7 @@
 /// It inherits from the BaseManager class.
 class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager{
 	Q_OBJECT
-	friend class YouMainGUI;
+
 public:
 	/// Constructor inherited from BaseManager.
 	explicit TaskPanelManager(YouMainGUI* const parentGUI);
@@ -24,6 +24,9 @@ public:
 	/// Initializes the taskTreePanel by setting column count and headers.
 	/// Called in the constructor of YouMainGUI.
 	void setup();
+
+	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
+	void addTask(const You::Controller::Task& task);
 
 	/// Edits a task.
 	void editTask(const You::Controller::Task& task);
@@ -43,9 +46,6 @@ private:
 	/// intermediate step to adding headings and tasks.
 	std::unique_ptr<QTreeWidgetItem> createItem(
 		const QStringList& cells);
-
-	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(const You::Controller::Task& task);
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
