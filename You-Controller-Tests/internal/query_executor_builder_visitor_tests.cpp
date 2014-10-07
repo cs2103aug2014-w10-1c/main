@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "You-NLP/parse_tree/task_priority.h"
 #include "internal/query_executor.h"
 #include "internal/query_executor_builder_visitor.h"
 
@@ -7,6 +8,18 @@
 #include "../mocks/query.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace Microsoft {
+namespace VisualStudio {
+namespace CppUnitTestFramework {
+	
+	std::wstring ToString(You::Controller::Task::Priority priority) {
+		return ToString(static_cast<int>(priority));
+	}
+
+}
+}
+}
 
 namespace You {
 namespace Controller {
@@ -17,6 +30,9 @@ namespace Mocks {
 	// NOLINTNEXTLINE(build/namespaces)
 	using namespace You::Controller::UnitTests::Mocks;
 }
+
+using Task = You::Controller::Task;
+using TaskPriority = You::NLP::TASK_PRIORITY;
 
 TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 	TEST_METHOD(getsCorrectTypeForAddQueries) {
@@ -33,6 +49,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Mocks::Queries::ADD_QUERY.description,
 			result.task.getDescription());
 		Assert::AreEqual(
+			Task::Priority::NORMAL,
+			result.task.getPriority());
+		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.due.get(),
 			result.task.getDeadline());
 
@@ -46,6 +65,28 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.description,
 			result.task.getDescription());
+		Assert::AreEqual(
+			Task::Priority::NORMAL,
+			result.task.getPriority());
+		Assert::AreEqual(
+			Task::DEFAULT_DEADLINE,
+			result.task.getDeadline());
+
+		You::NLP::ADD_QUERY queryWithPriority(Mocks::Queries::ADD_QUERY);
+		queryWithPriority.priority = TaskPriority::HIGH;
+		query = queryWithPriority;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
+
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.description,
+			result.task.getDescription());
+		Assert::AreEqual(
+			Task::Priority::IMPORTANT,
+			result.task.getPriority());
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.due.get(),
+			result.task.getDeadline());
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
