@@ -55,7 +55,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
-			TASK_PRIORITY::NORMAL,
+			TaskPriority::NORMAL,
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 
@@ -63,7 +63,7 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
-			TASK_PRIORITY::NORMAL,
+			TaskPriority::NORMAL,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -73,14 +73,14 @@ public:
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
-			TASK_PRIORITY::HIGH
+			TaskPriority::HIGH
 		}), q);
 
 		q = QueryParser::parse(L"win lottery! by dec 2014");
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
-			TASK_PRIORITY::HIGH,
+			TaskPriority::HIGH,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}

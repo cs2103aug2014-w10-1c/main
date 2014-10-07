@@ -32,7 +32,7 @@ namespace Mocks {
 }
 
 using Task = You::Controller::Task;
-using TaskPriority = You::NLP::TASK_PRIORITY;
+using TaskPriority = You::NLP::TaskPriority;
 
 TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 	TEST_METHOD(getsCorrectTypeForAddQueries) {

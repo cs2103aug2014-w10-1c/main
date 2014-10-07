@@ -23,7 +23,7 @@ struct ADD_QUERY {
 	std::wstring description;
 
 	/// The priority of the task.
-	TASK_PRIORITY priority;
+	TaskPriority priority;
 
 	/// The due date of the task.
 	You::Utils::Option<boost::posix_time::ptime> due;

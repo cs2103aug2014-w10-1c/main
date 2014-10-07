@@ -43,7 +43,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 			QueryEngine::AddTask(
 				query.description,
 				query.due ? query.due.get() : Task::DEFAULT_DEADLINE,
-				query.priority == You::NLP::TASK_PRIORITY::HIGH ?
+				query.priority == You::NLP::TaskPriority::HIGH ?
 					Task::Priority::IMPORTANT : Task::Priority::NORMAL,
 				Task::Dependencies()
 			)

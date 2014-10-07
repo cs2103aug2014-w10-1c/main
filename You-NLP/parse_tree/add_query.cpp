@@ -20,7 +20,7 @@ std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 	return s << (boost::wformat(STRING_FORMAT) % q.description % (
 		q.due ? boost::lexical_cast<std::wstring>(q.due.get()) : L"none"
 	) % (
-		q.priority == TASK_PRIORITY::HIGH ? L"high" : L"normal"
+		q.priority == TaskPriority::HIGH ? L"high" : L"normal"
 	));
 }
 

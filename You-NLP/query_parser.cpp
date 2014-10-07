@@ -116,14 +116,14 @@ ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
 
 ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
 	ADD_QUERY result(query);
-	result.priority = TASK_PRIORITY::HIGH;
+	result.priority = TaskPriority::HIGH;
 	return result;
 }
 
 ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(),
-		TASK_PRIORITY::NORMAL,
+		TaskPriority::NORMAL,
 		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
 }

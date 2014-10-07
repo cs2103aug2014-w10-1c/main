@@ -31,7 +31,7 @@ public:
 	TEST_METHOD(comparesEquality) {
 		ADD_QUERY local {
 			DESCRIPTION,
-			TASK_PRIORITY::NORMAL,
+			TaskPriority::NORMAL,
 			DUE
 		};
 
@@ -41,14 +41,14 @@ public:
 	TEST_METHOD(comparesInequality) {
 		ADD_QUERY local {
 			L"x" + DESCRIPTION,
-			TASK_PRIORITY::NORMAL,
+			TaskPriority::NORMAL,
 			DUE
 		};
 
 		Assert::AreNotEqual(DUMMY, local);
 
 		local.description = DUMMY.description;
-		local.priority = TASK_PRIORITY::HIGH;
+		local.priority = TaskPriority::HIGH;
 		Assert::AreNotEqual(DUMMY, local);
 
 		local.priority = DUMMY.priority;
@@ -73,7 +73,7 @@ const boost::posix_time::ptime AddQueryTests::DUE(
 	boost::posix_time::hours(0));
 const ADD_QUERY AddQueryTests::DUMMY {
 	DESCRIPTION,
-	TASK_PRIORITY::NORMAL,
+	TaskPriority::NORMAL,
 	DUE
 };
 
