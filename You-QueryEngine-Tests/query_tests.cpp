@@ -31,32 +31,28 @@ TEST_CLASS(QueryEngineTests) {
 		Task::Time dead = Task::NEVER;
 		Task::Priority prio = Task::Priority::IMPORTANT;
 		Task::Dependencies dep = Task::Dependencies();
-		Task task = TaskBuilder::get()
-			.description(desc).deadline(dead)
-			.priority(prio).dependencies(dep);
-		Response resp = executeQuery(AddTask(desc, dead, prio, dep));
-		Assert::AreEqual(boost::get<Task>(resp), task);
+		auto query = AddTask(desc, dead, prio, dep);
+		Assert::IsNotNull(&query);
 	}
 
 	TEST_METHOD(constructFilterTaskQuery) {
-		Response resp = executeQuery(FilterTask(Filter::anyTask()));
-		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
 		std::vector<Task::ID> emptyVec;
-		resp = executeQuery(FilterTask(Filter::idIsIn(emptyVec)));
-		Assert::IsTrue(boost::get<std::vector<Task>>(resp).empty());
+		auto query = FilterTask(Filter::idIsIn(emptyVec));
+		Assert::IsNotNull(&query);
+		query = FilterTask(Filter::anyTask());
+		Assert::IsNotNull(&query);
 	}
 
 	TEST_METHOD(constructDeleteTaskQuery) {
-		Response resp = executeQuery(DeleteTask(Task::DEFAULT_ID));
-		Assert::IsNotNull(&resp);
+		auto query = DeleteTask(Task::DEFAULT_ID);
+		Assert::IsNotNull(&query);
 	}
 
 	TEST_METHOD(constructEditTaskQuery) {
-		Task t = TaskBuilder::get().description(L"Not implemented");
-		Response resp = executeQuery(UpdateTask(t.getID(),
+		auto query = UpdateTask(Task::DEFAULT_ID,
 				Task::DEFAULT_DESCRIPTION, Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY, Task::DEFAULT_DEPENDENCIES));
-		Assert::AreEqual(boost::get<Task>(resp), t);
+				Task::DEFAULT_PRIORITY, Task::DEFAULT_DEPENDENCIES);
+		Assert::IsNotNull(&query);
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
