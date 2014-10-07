@@ -17,9 +17,9 @@ public:
 	Transaction && begin();
 
 	// Modifying methods
-	bool post(TaskId, SerializedTask&);
-	bool put(TaskId, SerializedTask&);
-	bool erase(TaskId);
+	void post(TaskId, SerializedTask&);
+	void put(TaskId, SerializedTask&);
+	void erase(TaskId);
 
 	std::vector<SerializedTask> getAllTask();
 
