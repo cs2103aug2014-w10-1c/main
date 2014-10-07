@@ -16,7 +16,7 @@ YouMainGUI::NLPManager::~NLPManager() {
 }
 
 void YouMainGUI::NLPManager::setup() {
-    connect(parentGUI->ui.commandEnterButton,
+	connect(parentGUI->ui.commandEnterButton,
 		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
