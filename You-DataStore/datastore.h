@@ -18,8 +18,8 @@ public:
 	static DataStore& get();
 
 	// Modifying methods
-	void post(TaskId, SerializedTask&);
-	void put(TaskId, SerializedTask&);
+	void post(TaskId, const SerializedTask&);
+	void put(TaskId, const SerializedTask&);
 	void erase(TaskId);
 
 	std::vector<SerializedTask> getAllTask();
