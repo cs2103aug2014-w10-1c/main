@@ -76,6 +76,7 @@ const You::Controller::TaskList& YouMainGUI::getTaskList() const {
 }
 
 void YouMainGUI::addTask(const Task& task) {
+	taskList->push_back(task);
 	tpm->addTask(task);
 }
 
@@ -85,6 +86,14 @@ void YouMainGUI::addTasks(const TaskList& tl) {
 }
 
 void YouMainGUI::deleteTask(Task::ID taskID) {
+	TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+		[=](Task& task) {
+			return task.getID() == taskID;
+		});
+
+	assert(i != taskList->end());
+	taskList->erase(i);
+
 	tpm->deleteTask(taskID);
 }
 
