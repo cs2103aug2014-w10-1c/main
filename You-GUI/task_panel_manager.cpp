@@ -4,6 +4,8 @@
 #include <QList>
 #include "task_panel_manager.h"
 
+using Task = You::Controller::Task;
+
 const int YouMainGUI::TaskPanelManager::TASK_COLUMN_COUNT = 4;
 const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
 const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_2 = "Index";
@@ -32,9 +34,8 @@ void YouMainGUI::TaskPanelManager::setup() {
 	// parentGUI->ui.taskTreePanel->setColumnHidden(0, true);
 }
 
-void YouMainGUI::TaskPanelManager::addTask(
-	const QStringList& rowStrings) {
-	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
+void YouMainGUI::TaskPanelManager::addTask(const Task& task) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
 	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
 }
 
@@ -45,10 +46,73 @@ void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 }
 
 std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+	const Task& task) {
+	return createItem(taskToStrVec(task));
+}
+
+std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
 	const QStringList& rowStrings) {
 	return std::make_unique<QTreeWidgetItem>(rowStrings);
 }
 
+void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
+	QList<QTreeWidgetItem*> items =
+		parentGUI->ui.taskTreePanel->findItems(
+			boost::lexical_cast<QString>(task.getID()), 0);
+
+	if (items.length() != 1) {
+		qDebug() << "editTask items.length() != 1" << endl;
+	} else {
+		QTreeWidgetItem item = *items.at(0);
+		QStringList wstr = taskToStrVec(task);
+		*items.at(0) = *createItem(wstr);
+	}
+}
+
+void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
+	QList<QTreeWidgetItem*> items =
+		parentGUI->ui.taskTreePanel->findItems(
+			boost::lexical_cast<QString>(taskID), 0);
+
+	if (items.length() != 1) {
+		qDebug() << "deleteTask items.length() != 1" << endl;
+	} else {
+		deleteTask(items.at(0));
+	}
+}
+
 void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
+}
+
+QStringList YouMainGUI::TaskPanelManager::taskToStrVec(const You::Controller::Task& task) {
+	QStringList result;
+
+	// Insert id
+	result.push_back(boost::lexical_cast<QString>(task.getID()));
+
+	// Insert count
+	result.push_back("0");
+
+	// Insert description
+	result.push_back(QString::fromStdWString(task.getDescription()));
+
+	// Insert deadline
+	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
+
+#if 0
+	// Iterate through task list and add it to the task panel
+	std::wstring priority[] { L"Important", L"Normal" };
+
+	switch (taskList->at(i).getPriority()) {
+	case Task::Priority::IMPORTANT:
+		rowStrings.push_back(priority[0]);
+	case Task::Priority::NORMAL:
+		rowStrings.push_back(priority[1]);
+	}
+
+	// TODO(angathorion): Deal with dependencies
+#endif
+
+	return result;
 }

@@ -55,11 +55,11 @@ public:
 
 	void addTask(You::Controller::Task task);
 
-	void deleteTask(You::Controller::Task::ID task);
+	void editTask(You::Controller::Task task);
+
+	void deleteTask(You::Controller::Task::ID taskID);
 
 	void addTaskListToPanel(You::Controller::TaskList tl);
-
-	void editTask(You::Controller::Task task);
 
 	QList<QTreeWidgetItem*> findTasks(You::Controller::Task task);
 
@@ -77,8 +77,6 @@ private:
 
 	/// The NLPManager instance
 	const std::unique_ptr<NLPManager> nlpm;
-
-	QStringList taskToStrVec(const You::Controller::Task& task);
 
 private:
 	/// The QT object that holds all items that are defined when building the

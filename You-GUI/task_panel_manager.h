@@ -25,13 +25,27 @@ public:
 	/// Called in the constructor of YouMainGUI.
 	void setup();
 
+	/// Edits a task.
+	void editTask(const You::Controller::Task& task);
+
+	/// Deletes a task.
+	void deleteTask(You::Controller::Task::ID taskID);
+
 private:
-	/// Produces a generic QTreeWidgetItem from a vector of wstrings. It is an
+	QStringList taskToStrVec(const You::Controller::Task& task);
+
+	/// Produces a generic QTreeWidgetItem from a task. It is an
 	/// intermediate step to adding headings and tasks.
-	std::unique_ptr<QTreeWidgetItem> createItem(const QStringList& rowStrings);
+	std::unique_ptr<QTreeWidgetItem> createItem(
+		const You::Controller::Task& task);
+
+	/// Produces a generic QTreeWidgetItem from an item. It is an
+	/// intermediate step to adding headings and tasks.
+	std::unique_ptr<QTreeWidgetItem> createItem(
+		const QStringList& cells);
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(const QStringList& rowStrings);
+	void addTask(const You::Controller::Task& task);
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.

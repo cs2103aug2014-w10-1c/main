@@ -77,61 +77,13 @@ You::Controller::TaskList YouMainGUI::getTaskList() {
 }
 
 void YouMainGUI::addTask(You::Controller::Task task) {
-	tpm->addTask(taskToStrVec(task));
+	tpm->addTask(task);
 }
 
-void YouMainGUI::deleteTask(You::Controller::Task::ID task) {
-	QList<QTreeWidgetItem*> items =
-		ui.taskTreePanel->findItems(
-		QString::fromStdWString(std::to_wstring(task)), 0);
-	if (items.length() != 1) {
-		qDebug() << "deleteTask items.length() != 1" << endl;
-	} else {
-		tpm->deleteTask(items.at(0));
-	}
+void YouMainGUI::deleteTask(You::Controller::Task::ID taskID) {
+	tpm->deleteTask(taskID);
 }
 
 void YouMainGUI::editTask(You::Controller::Task task) {
-	QList<QTreeWidgetItem*> items =
-		ui.taskTreePanel->findItems(
-		QString::fromStdWString(std::to_wstring(task.getID())), 0);
-	if (items.length() != 1) {
-		qDebug() << "editTask items.length() != 1" << endl;
-	} else {
-		QTreeWidgetItem item = *items.at(0);
-		QStringList wstr = taskToStrVec(task);
-		*items.at(0) = *tpm->createItem(wstr);
-	}
-}
-
-QStringList YouMainGUI::taskToStrVec(const You::Controller::Task& task) {
-	QStringList result;
-	
-	// Insert id
-	result.push_back(boost::lexical_cast<QString>(task.getID()));
-
-	// Insert count
-	result.push_back("0");
-
-	// Insert description
-	result.push_back(QString::fromStdWString(task.getDescription()));
-
-	// Insert deadline
-	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
-
-#if 0
-	// Iterate through task list and add it to the task panel
-	std::wstring priority[] { L"Important", L"Normal" };
-
-	switch (taskList->at(i).getPriority()) {
-	case Task::Priority::IMPORTANT:
-		rowStrings.push_back(priority[0]);
-	case Task::Priority::NORMAL:
-		rowStrings.push_back(priority[1]);
-	}
-
-	// TODO(angathorion): Deal with dependencies
-#endif
-
-	return result;
+	tpm->editTask(task);
 }
