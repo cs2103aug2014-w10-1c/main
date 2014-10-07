@@ -37,6 +37,7 @@ TEST_CLASS(TaskGraphTests) {
 	}
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
+		using Internal::TaskNotFoundException;
 		TaskGraph graph;
 		Task task = TaskBuilder::get().id(10L).description(L"Hello Warld");
 		graph.addTask(task);
@@ -50,6 +51,41 @@ TEST_CLASS(TaskGraphTests) {
 		Assert::ExpectException<TaskNotFoundException>([] {
 			TaskGraph graph;
 			graph.deleteTask(10L);
+		});
+	}
+
+	TEST_METHOD(getExistingTaskFromGraph) {
+		TaskGraph graph;
+		Task task = TaskBuilder::get().id(10L).description(L"Hello Warld");
+		graph.addTask(task);
+		Assert::AreEqual(graph.getTask(task.getID()).getDescription(),
+			std::wstring(L"Hello Warld"));
+	}
+
+	TEST_METHOD(getNonExistingTaskFromGraph) {
+		using Internal::TaskNotFoundException;
+		Assert::ExpectException<TaskNotFoundException>([=] {
+			TaskGraph graph;
+			graph.getTask(10L);
+		});
+	}
+
+	TEST_METHOD(updateExistingTaskInGraph) {
+		Task t = TaskBuilder::get().id(10L).description(L"Hello World");
+		TaskGraph graph;
+		graph.addTask(t);
+		Task u = TaskBuilder::get().id(10L).description(L"Hello Marnie");
+		graph.updateTask(u);
+		Assert::AreEqual(graph.getTask(t.getID()).getDescription(),
+			std::wstring(L"Hello Marnie"));
+	}
+
+	TEST_METHOD(updateNonExistingTaskInGraph) {
+		using Internal::TaskNotFoundException;
+		Task t = TaskBuilder::get().id(10L).description(L"Hello World");
+		Assert::ExpectException<TaskNotFoundException>([=] {
+			TaskGraph graph;
+			graph.updateTask(t);
 		});
 	}
 

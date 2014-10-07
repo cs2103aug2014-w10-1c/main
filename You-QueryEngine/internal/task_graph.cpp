@@ -30,13 +30,25 @@ void TaskGraph::deleteTask(const Task::ID id) {
 		throw TaskNotFoundException();
 	} else {
 		taskTable.erase(id);
+		rebuildGraph();
+	}
+}
+
+void TaskGraph::updateTask(const Task& task) {
+	auto found = taskTable.find(task.getID());
+	if (found != taskTable.end()) {
+		found->second = task;
+		rebuildGraph();
+	} else {
+		throw TaskNotFoundException();
 	}
 }
 
 Task TaskGraph::getTask(const Task::ID id) {
-	try {
-		Task get = taskTable.at(id);
-	} catch (const std::out_of_range&) {
+	auto get = taskTable.find(id);
+	if (get != taskTable.end()) {
+		return get->second;
+	} else {
 		throw TaskNotFoundException();
 	}
 }
@@ -48,6 +60,15 @@ std::vector<Task> TaskGraph::getTaskList() const {
 		result.push_back(pair->second);
 	}
 	return result;
+}
+
+void TaskGraph::rebuildGraph() {
+	graph = Graph();
+	for (auto pair = taskTable.cbegin(); pair != taskTable.cend();
+		++pair) {
+		Vertex v = boost::add_vertex(graph);
+		graph[v] = pair->first;
+	}
 }
 
 }  // namespace Internal

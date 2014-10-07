@@ -36,9 +36,17 @@ public:
 
 	/// Delete a task from the graph
 	/// May throw TaskNotFoundException
-	/// \param [id] id The id of the to-be deleted task
+	/// \param [in] id The id of the to-be deleted task
 	/// \return true if success, false otherwise.
 	void deleteTask(const Task::ID id);
+
+	/// Update a task from the graph
+	/// This means rebuilding the graph since dependencies
+	/// may change.
+	/// May throw TaskNotFoundException if trying to update
+	/// non existent task.
+	/// \param [in] task The updated task
+	void updateTask(const Task& task);
 
 	/// Retrieve a single task from the graph
 	/// May throw TaskNotFoundException
@@ -54,6 +62,8 @@ public:
 	}
 
 private:
+	void rebuildGraph();
+
 	Graph graph;
 	std::unordered_map<Task::ID, Task> taskTable;
 };
