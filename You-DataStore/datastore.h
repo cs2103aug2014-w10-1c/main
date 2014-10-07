@@ -19,11 +19,11 @@ public:
 	Transaction&& begin();
 
 	// Modifying methods
-	static bool post(TaskId, SerializedTask&);
-	static bool put(TaskId, SerializedTask&);
-	static bool erase(TaskId);
+	bool post(TaskId, SerializedTask&);
+	bool put(TaskId, SerializedTask&);
+	bool erase(TaskId);
 
-	static std::vector<SerializedTask> getAllTask();
+	std::vector<SerializedTask> getAllTask();
 
 private:
 	static DataStore& get();
