@@ -16,8 +16,6 @@
 /// as input string is sent to the parser. The Result is a vector of tasks, and
 /// this replaces the existing Result. It inherits from the BaseManager class.
 class YouMainGUI::NLPManager : public YouMainGUI::BaseManager{
-	Q_OBJECT
-	friend class YouMainGUI;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit NLPManager(YouMainGUI* const parentGUI)
@@ -26,10 +24,9 @@ public:
 	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
 	void setup();
 
-	/// Queries the NLP engine. Passes the Result and wstring input into the
-	/// NLP engine, and gets a Result object. Called by user's confirmation to
-	/// send entry in commandInputBox, via signal/slots.
-	void queryNLP();
+	/// Queries the NLP engine. Sends the query into the NLP engine, and gets a
+	/// Result which it will process.
+	void query(const QString& query, const You::Controller::TaskList& taskList);
 
 	/// Gets the tasks with the given task IDs.
 	You::Controller::TaskList getTasks(
@@ -41,10 +38,6 @@ public:
 private:
 	/// The current result/context displayed to the user
 	std::unique_ptr<You::Controller::Result> currentResult;
-
-	private slots:
-	/// QT's signal/slot mechanism for input enter button.
-	void commandEnterButtonClicked();
 };
 
 #endif  // YOU_GUI_NLP_MANAGER_H_

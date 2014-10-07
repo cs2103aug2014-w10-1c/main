@@ -87,6 +87,10 @@ private:
 
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
+
+private slots:
+	/// QT's signal/slot mechanism for input enter button.
+	void commandEnterButtonClicked();
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_

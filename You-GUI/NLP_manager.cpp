@@ -12,27 +12,22 @@ using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
 void YouMainGUI::NLPManager::setup() {
-	connect(parentGUI->ui.commandEnterButton,
-		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
 	// Set result to current context
 }
 
-void YouMainGUI::NLPManager::queryNLP() {
-	/// Feed query and context into NLP engine
-	std::wstring inputString =
-		parentGUI->ui.commandInputBox->text().toStdWString();
-	// When ready, pass current context, not the default one.
-	TaskList tl = parentGUI->getTaskList();
+void YouMainGUI::NLPManager::query(
+	const QString& query,
+	const You::Controller::TaskList& taskList) {
 	/*
 	TaskList tl;
 	Task newTask =
 		You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
 	tl.push_back(newTask);
 	*/
-	Controller::Context ct = Controller::Context::Context(tl);
-	Result result = Controller::get().query(inputString, ct);
+
+	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
 		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
@@ -55,12 +50,6 @@ void YouMainGUI::NLPManager::queryNLP() {
 
 	ResultProcessorVisitor visitor(parentGUI);
 	boost::apply_visitor(visitor, result);
-}
-
-void YouMainGUI::NLPManager::commandEnterButtonClicked() {
-	YouMainGUI::NLPManager::queryNLP();
-	// For demonstration purposes
-	// parentGUI->populateTaskPanel();
 }
 
 TaskList YouMainGUI::NLPManager::getTasks(
