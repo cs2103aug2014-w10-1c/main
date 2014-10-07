@@ -13,7 +13,7 @@ namespace UnitTests {}
 
 class DataStore {
 public:
-	Transaction && begin();
+	Transaction& begin();
 
 	static DataStore& get();
 

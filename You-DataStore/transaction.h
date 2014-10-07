@@ -12,7 +12,7 @@ class DataStore;
 class Transaction {
 	friend class DataStore;
 public:
-	Transaction(Transaction&&);
+	Transaction(Transaction&);
 	void commit();
 	void rollback();
 	void push(std::shared_ptr<Internal::IOperation>);

@@ -9,12 +9,11 @@ DataStore& DataStore::get() {
 	return ds;
 }
 
-Transaction&& DataStore::begin() {
+Transaction& DataStore::begin() {
 	while (this->isServing) { }
 	isServing = true;
-	Transaction t;
-	transactionStack.push(std::shared_ptr<Transaction>(&t));
-	return std::move(t);
+	transactionStack.push(std::shared_ptr<Transaction>(new Transaction()));
+	return *(transactionStack.top());
 }
 
 }  // namespace DataStore

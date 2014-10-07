@@ -5,7 +5,7 @@
 namespace You {
 namespace DataStore {
 
-Transaction::Transaction(Transaction&& t) {
+Transaction::Transaction(Transaction& t) {
 	*this = std::move(t);
 }
 
