@@ -27,9 +27,6 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 
-	connect(ui.commandEnterButton,
-		SIGNAL(clicked()), this, SLOT(commandEnterButtonClicked()));
-
 	// TODO(angathorion): To fix after implementation of task handling
 	// populateTaskPanel();
 }
@@ -88,6 +85,12 @@ void YouMainGUI::deleteTask(Task::ID taskID) {
 
 void YouMainGUI::editTask(const Task& task) {
 	tpm->editTask(task);
+}
+
+void YouMainGUI::commandEnterPressed() {
+	QString inputString = ui.commandInputBox->text();
+
+	nlpm->query(inputString, getTaskList());
 }
 
 void YouMainGUI::commandEnterButtonClicked() {

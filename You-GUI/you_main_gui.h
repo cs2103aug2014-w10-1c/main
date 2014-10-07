@@ -89,7 +89,10 @@ private:
 	void closeEvent(QCloseEvent *event);
 
 private slots:
-	/// QT's signal/slot mechanism for input enter button.
+	/// Qt's slot for hitting enter in the input box.
+	void commandEnterPressed();
+
+	/// Qt's signal/slot mechanism for input enter button.
 	void commandEnterButtonClicked();
 };
 
