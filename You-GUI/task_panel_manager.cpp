@@ -114,21 +114,20 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 	// Insert deadline
 	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
 
+
 	// Iterate through task list and add it to the task panel
 	QString priority[] { "High", "Normal" };
 
 	switch (task.getPriority()) {
 	case Task::Priority::IMPORTANT:
 		result.push_back(priority[0]);
-		break;
 	case Task::Priority::NORMAL:
 		result.push_back(priority[1]);
-		break;
-	default:
-		assert(false);
 	}
 
 	// TODO(angathorion): Deal with dependencies
 
+
 	return result;
 }
+
