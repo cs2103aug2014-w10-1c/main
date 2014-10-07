@@ -20,6 +20,8 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 		nlpm(new YouMainGUI::NLPManager(this)),
 		taskList(new TaskList),
 		vh(new VariantHandler) {
+	Q_INIT_RESOURCE(yougui);
+
 	vh->parentGUI = this;
 	columnHeaders = { TASK_COLUMN_1,
 		TASK_COLUMN_2, TASK_COLUMN_3, TASK_COLUMN_4, TASK_COLUMN_5 };

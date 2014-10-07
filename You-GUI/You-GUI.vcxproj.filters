@@ -105,7 +105,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="yougui.qrc">
+    <CustomBuild Include="Resources/yougui.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="yougui.ui">

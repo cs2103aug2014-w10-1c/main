@@ -17,7 +17,7 @@ void YouMainGUI::SystemTrayManager::setup() {
 }
 
 void YouMainGUI::SystemTrayManager::setIcon() {
-	QIcon icon("icon.png");
+	QIcon icon(":/Icon.png");
 	trayIcon.setIcon(icon);
 	parentGUI->setWindowIcon(icon);
 	trayIcon.show();
