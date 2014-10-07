@@ -11,7 +11,9 @@ DataStore& DataStore::get() {
 
 Transaction&& DataStore::begin() {
 	while (this->isServing) { }
+	isServing = true;
 	Transaction t;
+	transactionStack.push(std::shared_ptr<Transaction>(&t));
 	return std::move(t);
 }
 
