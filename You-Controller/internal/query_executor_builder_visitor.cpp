@@ -92,10 +92,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					description,
 					deadline,
 					Task::DEFAULT_PRIORITY,
-					Task::Dependencies()
-				)
-			)
-		);
+					Task::Dependencies())));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
@@ -127,10 +124,7 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 		return std::unique_ptr<QueryExecutor>(
 			new DeleteTaskQueryExecutor(
 				QueryEngine::DeleteTask(
-					task.getID()
-				)
-			)
-		);
+					task.getID())));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
