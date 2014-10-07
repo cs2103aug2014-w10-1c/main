@@ -68,6 +68,23 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesStringWithPriorityAsTask) {
+		QUERY q = QueryParser::parse(L"win!");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TASK_PRIORITY::HIGH
+		}), q);
+
+		q = QueryParser::parse(L"win lottery! by dec 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TASK_PRIORITY::HIGH,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
+	}
+
 	TEST_METHOD(parsesEditQuery) {
 		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
 

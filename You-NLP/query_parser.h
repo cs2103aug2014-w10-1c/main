@@ -50,6 +50,17 @@ private:
 	static ADD_QUERY constructAddQuery(ParserCharEncoding::char_type lexeme,
 		const ADD_QUERY& query);
 
+	/// Process the terminal ! in a task description. Before the deadline, this
+	/// indicates a high priority task.
+	///
+	/// \see addCommandPriority
+	/// The production rule associated with this semantic action.
+	///
+	/// \param[in] query The query from the eoi terminal. This should be an
+	///                  \ref ADD_QUERY parse tree, with an optional deadline.
+	/// \return The synthesised value for the \ref addCommandPriority rule.
+	static ADD_QUERY constructAddQueryWithPriority(const ADD_QUERY& query);
+
 	/// Process the nonterminal indicating a deadline, converting it to an
 	/// appropriate \ref ADD_QUERY type.
 	///

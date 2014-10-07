@@ -43,7 +43,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Adding tasks
 	addCommand = (
-		ParserCharTraits::char_ >> qi::no_skip[addCommandDescription]
+		ParserCharTraits::char_ >> addCommandDescription
 	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
 	addCommand.name("addCommand");
 
@@ -53,10 +53,18 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	addCommandDescription.name("addCommandDescription");
 
 	addCommandDescriptionTail %= (
-		(qi::omit[*ParserCharTraits::blank] >> qi::skip[addCommandDeadline]) |
+		(qi::omit[*ParserCharTraits::blank] >> addCommandPriority) |
 		addCommandDescription
 	);
 	addCommandDescriptionTail.name("addCommandDescriptionTail");
+
+	addCommandPriority %= qi::skip(ParserCharTraits::blank)[(
+		(
+			qi::lit('!') >> addCommandDeadlineOptional
+		)[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
+		addCommandDeadlineOptional
+	)];
+	addCommandPriority.name("addCommandPriority");
 
 	addCommandDeadline = (
 		(qi::lit("by") | qi::lit("before")) >>
@@ -106,9 +114,16 @@ ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
 	return result;
 }
 
+ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
+	ADD_QUERY result(query);
+	result.priority = TASK_PRIORITY::HIGH;
+	return result;
+}
+
 ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
 	return ADD_QUERY {
 		std::wstring(),
+		TASK_PRIORITY::NORMAL,
 		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
 	};
 }
