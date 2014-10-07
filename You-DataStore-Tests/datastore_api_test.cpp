@@ -56,8 +56,7 @@ public:
 	}
 
 	TEST_METHOD(constructTransactionWithDataStoreBegin) {
-		Transaction sut(DataStore::get().begin());
-
+		Transaction& sut(DataStore::get().begin());
 		
 		Assert::IsTrue(DataStore::get().transactionStack.size() == 1);
 
