@@ -25,6 +25,7 @@ public:
 
 private:
 	bool isServing = false;
+	std::unique_ptr<Transaction> activeTransaction;
 };
 }  // namespace DataStore
 }  // namespace You
