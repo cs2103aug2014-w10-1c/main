@@ -22,7 +22,7 @@ class TaskGraph {
 public:
 	/// A directed graph of task.
 	typedef boost::adjacency_list<boost::vecS, boost::vecS,
-		boost::directedS, Task> Graph;
+		boost::directedS, Task::ID> Graph;
 	/// Type of the vertices
 	typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
 	/// Vertex iterator

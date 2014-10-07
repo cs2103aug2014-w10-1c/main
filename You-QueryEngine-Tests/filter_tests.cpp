@@ -43,7 +43,9 @@ TEST_CLASS(FilterTests) {
 	TEST_METHOD(filterAnyTask) {
 		populateStateWithMockedTasks();
 		using F = You::QueryEngine::Filter;
-		auto result = executeQuery(FilterTask(F::anyTask()));
+		std::unique_ptr<Query> query =
+			FilterTask(F::anyTask());
+		auto result = executeQuery(std::move(query));
 
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_TASK);
 	}

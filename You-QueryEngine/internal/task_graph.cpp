@@ -8,7 +8,7 @@ namespace Internal {
 
 void TaskGraph::addTask(const Task& task) {
 	Vertex v = boost::add_vertex(graph);
-	graph[v] = (Task) Internal::TaskBuilder::fromTask(task);
+	graph[v] = task.getID();
 	taskTable.insert({ task.getID(), task });
 }
 
@@ -19,7 +19,7 @@ void TaskGraph::deleteTask(const Task::ID id) {
 	bool removed = false;
 	boost::tie(begin, end) = boost::vertices(graph);
 	for (next = begin; !removed && next != end; begin = next) {
-		const Task::ID idInVertex = graph[*next].getID();
+		const Task::ID idInVertex = graph[*next];
 		if (idInVertex == id) {
 			removed = true;
 			boost::remove_vertex(*begin, graph);
