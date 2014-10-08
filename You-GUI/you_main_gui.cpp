@@ -78,13 +78,11 @@ const You::Controller::TaskList& YouMainGUI::getTaskList() const {
 void YouMainGUI::addTask(const Task& task) {
 	taskList->push_back(task);
 	tpm->addTask(task);
-	updateRowNumbers();
 }
 
 void YouMainGUI::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
-	updateRowNumbers();
 }
 
 void YouMainGUI::deleteTask(Task::ID taskID) {
@@ -97,7 +95,6 @@ void YouMainGUI::deleteTask(Task::ID taskID) {
 	taskList->erase(i);
 
 	tpm->deleteTask(taskID);
-	updateRowNumbers();
 }
 
 void YouMainGUI::editTask(const Task& task) {
@@ -122,15 +119,6 @@ void YouMainGUI::commandEnterButtonClicked() {
 	// parentGUI->populateTaskPanel();
 }
 
-void YouMainGUI::updateRowNumbers() {
-	QTreeWidgetItemIterator it(ui.taskTreePanel);
-	int rowNum = 0;
-	while (*it) {
-		(*it)->setData(1, Qt::DisplayRole, rowNum);
-		++it;
-		++rowNum;
-	}
-}
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {
