@@ -6,11 +6,12 @@
 #include <functional>
 #include <unordered_map>
 #include "boost/lexical_cast.hpp"
-
-#define PUGIXML_WCHAR_MODE
-#include "pugixml.hpp"
-
 #include "../task_typedefs.h"
+
+namespace pugi {
+class xml_node;
+class xml_document;
+}
 
 namespace You {
 namespace DataStore {
