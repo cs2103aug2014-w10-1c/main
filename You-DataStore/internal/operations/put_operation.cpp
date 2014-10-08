@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#include <boost/lexical_cast.hpp>
 #include "../../task_typedefs.h"
 #include "../internal_datastore.h"
+#include "post_operation.h"
 #include "put_operation.h"
 
 namespace You {
@@ -12,8 +14,19 @@ PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
 	task = stask;
 }
 
-bool PutOperation::run() {
-	return false;
+bool PutOperation::run(pugi::xml_document& document) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(
+		PutOperation::taskId);
+	pugi::xml_node toEdit =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	if (!toEdit) {
+		return false;
+	}
+
+	document.remove_child(toEdit);
+
+	PostOperation post(PutOperation::taskId, task);
+	return post.run(document);
 }
 
 }  // namespace Internal

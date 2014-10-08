@@ -7,12 +7,14 @@
 namespace You {
 namespace DataStore {
 namespace Internal {
+
 class EraseOperation : public IOperation {
 public:
 	explicit EraseOperation(TaskId);
-	bool run();
+	bool run(pugi::xml_document& document) override;
 };
+
 }  // namespace Internal
-}   // namespace DataStore
-}   // namespace You
+}  // namespace DataStore
+}  // namespace You
 #endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_ERASE_OPERATION_H_

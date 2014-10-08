@@ -18,19 +18,7 @@ bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-#if 0
-	// Consider changing parameter to std::wstring altogether
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
-		return false;
-	}
-	pugi::xml_node newTask = document.append_child(L"task");
 
-	pugi::xml_attribute id = newTask.append_attribute(L"id");
-	id.set_value(taskId.c_str());
-	serialize(sTask, newTask);
-	return true;
-#endif
 	return false;
 }
 
@@ -40,16 +28,7 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-#if 0
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toEdit =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-	if (!toEdit) {
-		return false;
-	}
-	document.remove_child(toEdit);
-	return post(rawId, sTask);
-#endif
+
 	return false;
 }
 
@@ -59,12 +38,7 @@ bool InternalDataStore::erase(TaskId rawId) {
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-#if 0
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-	return document.remove_child(toErase);
-#endif
+
 	return false;
 }
 
@@ -72,12 +46,11 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
-	SerializedTask stask = deserialize(toGet);
-	return stask;
+	
+	return SerializationOperation::deserialize(toGet);
 }
 
 std::vector<SerializedTask> InternalDataStore::getAllTask() {
-#if 0
 	loadData();
 	std::vector<SerializedTask> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
@@ -86,11 +59,9 @@ std::vector<SerializedTask> InternalDataStore::getAllTask() {
 		if (test.type() == pugi::xml_node_type::node_pcdata) {
 			throw "Fffff";
 		}
-		allTask.push_back(deserialize(*i));
+		allTask.push_back(SerializationOperation::deserialize(*i));
 	}
 	return allTask;
-#endif
-	return std::vector<SerializedTask>();
 }
 
 bool InternalDataStore::saveData() {
@@ -109,26 +80,6 @@ void InternalDataStore::loadData() {
 			document.reset();
 		}
 	}
-}
-
-void InternalDataStore::serialize(const SerializedTask& stask,
-	pugi::xml_node& node) {
-	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
-		pugi::xml_node keyNode =
-			node.append_child(iter->first.c_str());
-		pugi::xml_node keyValue =
-			keyNode.append_child(pugi::xml_node_type::node_pcdata);
-		keyValue.set_value(iter->second.c_str());
-	}
-}
-
-SerializedTask InternalDataStore::deserialize(const pugi::xml_node& taskNode) {
-	SerializedTask stask;
-	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
-		stask.insert(KeyValuePair(Key(iter->name()),
-			Value(iter->child_value())));
-	}
-	return stask;
 }
 
 }  // namespace Internal

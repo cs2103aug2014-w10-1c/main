@@ -1,6 +1,5 @@
 #include "stdafx.h"
-#include "../../task_typedefs.h"
-#include "../internal_datastore.h"
+#include <boost/lexical_cast.hpp>
 #include "erase_operation.h"
 
 namespace You {
@@ -11,10 +10,13 @@ EraseOperation::EraseOperation(TaskId id) {
 	taskId = id;
 }
 
-bool EraseOperation::run() {
-	return false;
+bool EraseOperation::run(pugi::xml_document& document) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(taskId);
+	pugi::xml_node toErase =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	return document.remove_child(toErase);
 }
 
 }  // namespace Internal
-}   // namespace DataStore
-}   // namespace You
+}  // namespace DataStore
+}  // namespace You

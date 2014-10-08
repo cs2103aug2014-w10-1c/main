@@ -5,8 +5,7 @@
 #include <stack>
 #include <memory>
 
-#define PUGIXML_WCHAR_MODE
-#include "pugixml.hpp"
+#include "pugixml.h"
 
 #include "internal_transaction.h"
 #include "../transaction.h"
@@ -86,13 +85,6 @@ private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
-	/// Serialize task to an xml node
-	void serialize(const SerializedTask&, pugi::xml_node&);
-
-	/// Deserialize task from an xml node
-	SerializedTask deserialize(const pugi::xml_node&);
-
-private:
 	/// The current stack of transactions active.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
 };

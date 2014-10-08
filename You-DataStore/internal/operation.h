@@ -3,6 +3,7 @@
 #define YOU_DATASTORE_INTERNAL_OPERATION_H_
 
 #include "../task_typedefs.h"
+#include "pugixml.h"
 
 namespace You {
 namespace DataStore {
@@ -12,10 +13,14 @@ namespace Internal {
 class IOperation {
 public:
 	/// Executes the operation
-	virtual bool run() = 0;
+	///
+	/// \param[in] document The document to modify.
+	/// \return True if the operation succeeded.
+	virtual bool run(pugi::xml_document& document) = 0;
+
 protected:
+	/// The Task ID to modify
 	TaskId taskId;
-	SerializedTask task;
 };
 
 }  // namespace Internal

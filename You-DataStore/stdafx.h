@@ -9,4 +9,15 @@
 
 #include <SDKDDKVer.h>
 
+#include <memory>
+#include <stack>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include <cstdint>
+
+#include <boost/lexical_cast.hpp>
+#include <boost/ptr_container/ptr_deque.hpp>
+
 #endif  // YOU_DATASTORE_STDAFX_H_
