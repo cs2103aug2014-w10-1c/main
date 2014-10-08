@@ -50,7 +50,7 @@ bool DataStore::post(TaskId rawId, const SerializedTask& sTask) {
 			return true;
 		}
 	}
-	
+
 	return operation->run(document);
 }
 
@@ -77,7 +77,7 @@ bool DataStore::erase(TaskId rawId) {
 			return true;
 		}
 	}
-	
+
 	return operation->run(document);
 }
 
@@ -85,7 +85,7 @@ SerializedTask DataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
-	
+
 	return SerializationOperation::deserialize(toGet);
 }
 

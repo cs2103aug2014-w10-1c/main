@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_DATASTORE_INTERNAL_TRANSACTION_H_
-#define YOU_DATASTORE_INTERNAL_TRANSACTION_H_
+#ifndef YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
+#define YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
 
 #include <memory>
 #include <boost/ptr_container/ptr_deque.hpp>
@@ -20,7 +20,7 @@ class Transaction {
 public:
 	/// Default constructor. This is meant to be called by \ref DataStore.
 	Transaction() = default;
-	
+
 	/// Commits the set of operations made.
 	void commit();
 
@@ -43,4 +43,4 @@ private:
 }  // namespace DataStore
 }  // namespace You
 
-#endif  // YOU_DATASTORE_INTERNAL_TRANSACTION_H_
+#endif  // YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
