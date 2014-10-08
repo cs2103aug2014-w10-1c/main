@@ -32,6 +32,13 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	return post(rawId, sTask);
 }
 
+bool InternalDataStore::erase(TaskId rawId) {
+	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
+	pugi::xml_node toErase =
+		document.find_child_by_attribute(L"id", taskId.c_str());
+	return document.remove_child(toErase);
+}
+
 SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
@@ -40,11 +47,18 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	return stask;
 }
 
-bool InternalDataStore::erase(TaskId rawId) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-	return document.remove_child(toErase);
+std::vector<SerializedTask> InternalDataStore::getAllTask() {
+	loadData();
+	std::vector<SerializedTask> allTask;
+	for (auto i = document.begin(); i != document.end(); ++i) {
+		pugi::xml_node test = *i;
+		// FOR SOME REASON IT IS A PCDATA
+		if (test.type() == pugi::xml_node_type::node_pcdata) {
+			throw "Fffff";
+		}
+		allTask.push_back(deserialize(*i));
+	}
+	return allTask;
 }
 
 bool InternalDataStore::saveData() {
@@ -53,11 +67,15 @@ bool InternalDataStore::saveData() {
 }
 
 void InternalDataStore::loadData() {
-	pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
+	bool isInitialized =
+		document.first_child().type() != pugi::xml_node_type::node_null;
+	if (!isInitialized) {
+		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 
-	// Not sure if the if block below is necessary
-	if (status == pugi::xml_parse_status::status_file_not_found) {
-		document.reset();
+		// Not sure if the if block below is necessary
+		if (status == pugi::xml_parse_status::status_file_not_found) {
+			document.reset();
+		}
 	}
 }
 

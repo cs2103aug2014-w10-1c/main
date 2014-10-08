@@ -34,24 +34,30 @@ public:
 	/// \return false if task id specified does not exist
 	bool put(TaskId, const SerializedTask&);
 
-	/// Get a task
-	/// \return false and an empty SerializedTask if task id does not exist
-	SerializedTask getTask(TaskId);
-
 	/// Delete a task
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist
 	bool erase(TaskId);
 
-private:
-	static const std::wstring FILE_PATH;
-	pugi::xml_document document;
+	/// Get a task
+	/// \return false and an empty SerializedTask if task id does not exist
+	SerializedTask getTask(TaskId);
+
+	/// Get all tasks
+	/// \return a vector of all tasks in unordered map form
+	std::vector<SerializedTask> getAllTask();
 
 	/// Saves the xml object to a file
 	/// \return true if operation successful and false otherwise
 	bool saveData();
-	/// Loads the xml file into the xml object
+
+	/// Loads the xml file into the document variable
 	void loadData();
+
+private:
+	static const std::wstring FILE_PATH;
+	pugi::xml_document document;
+
 	/// Serialize task to an xml node
 	void serialize(const SerializedTask&, pugi::xml_node&);
 

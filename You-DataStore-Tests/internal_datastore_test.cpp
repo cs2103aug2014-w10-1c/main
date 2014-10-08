@@ -124,6 +124,25 @@ public:
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
 	}
+
+	TEST_METHOD(getAllTasks) {
+		InternalDataStore sut;
+		sut.document.append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		std::vector<SerializedTask> result = sut.getAllTask();
+		Assert::AreEqual(1, boost::lexical_cast<int>(result.size()));
+	}
+
+	TEST_METHOD(saveAndLoad) {
+		InternalDataStore sut;
+		sut.document.append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		bool result = sut.saveData();
+		Assert::IsTrue(result);
+		sut.loadData();
+		std::wstring value = sut.document.child(L"task").child_value();
+		Assert::AreEqual(std::wstring(L"what"), value);
+	}
 };
 }  // namespace UnitTests
 }  // namespace DataStore

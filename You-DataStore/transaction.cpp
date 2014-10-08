@@ -5,8 +5,28 @@
 namespace You {
 namespace DataStore {
 
-Transaction::Transaction(Transaction&& t) {
+Transaction::Transaction(Transaction& t) {
 	*this = std::move(t);
+}
+
+void Transaction::commit() {
+	for (auto iter = operationsQueue.begin(); iter != operationsQueue.end();
+		++iter) {
+		bool success = (*iter)->run();
+		if (!success) {
+			return rollback();
+		}
+	}
+	DataStore::get().notifyCommit();
+}
+
+void Transaction::rollback() {
+	operationsQueue.clear();
+	DataStore::get().notifyRollback();
+}
+
+void Transaction::push(std::shared_ptr<Internal::IOperation> op) {
+	operationsQueue.push_back(op);
 }
 
 Transaction::Transaction() {}
