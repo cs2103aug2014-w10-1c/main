@@ -10,14 +10,14 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
-using InternalDataStore = You::DataStore::Internal::InternalDataStore;
+using DataStore = You::DataStore::Internal::DataStore;
 
-/// Unit Test Class for InternalDataStore class
-TEST_CLASS(InternalDataStoreTest) {
+/// Unit Test Class for DataStore class
+TEST_CLASS(DataStoreTest) {
 public:
 	/// Basic test for retrieving a task
 	TEST_METHOD(getExistingTask) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.post(0, task1);
 		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
@@ -29,7 +29,7 @@ public:
 
 	/// Basic test for adding a task
 	TEST_METHOD(postNewTask) {
-		InternalDataStore sut;
+		DataStore sut;
 
 		// Checks if the document is initially empty
 		bool isEmptyDoc = sut.document.children().begin() ==
@@ -49,7 +49,7 @@ public:
 
 	/// Test for adding task with an already existing task id
 	TEST_METHOD(postTaskWithExistingId) {
-		InternalDataStore sut;
+		DataStore sut;
 		bool init = sut.post(0, task1);
 		Assert::IsTrue(init);
 		bool result = sut.post(0, SerializedTask());
@@ -66,7 +66,7 @@ public:
 
 	/// Basic test for editing a task
 	TEST_METHOD(putExistingTask) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.post(0, task2);
 		bool result = sut.put(0, task1);
 		Assert::IsTrue(result);
@@ -82,7 +82,7 @@ public:
 
 	/// Test for editing task with non-existent task id
 	TEST_METHOD(putNonExistentTask) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.post(0, task1);
 		bool result = sut.put(1, task2);
 		Assert::IsFalse(result);
@@ -102,7 +102,7 @@ public:
 
 	/// Basic test for erasing a task with the specified task id
 	TEST_METHOD(eraseExistingTask) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.post(0, task1);
 		// Checks if the xml tree is modified
 		bool isEmptyDoc = sut.document.children().begin() ==
@@ -120,13 +120,13 @@ public:
 
 	/// Test for erasing task with non-existent task id
 	TEST_METHOD(eraseNonExistentTask) {
-		InternalDataStore sut;
+		DataStore sut;
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
 	}
 
 	TEST_METHOD(getAllTasks) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		std::vector<SerializedTask> result = sut.getAllTask();
@@ -134,7 +134,7 @@ public:
 	}
 
 	TEST_METHOD(saveAndLoad) {
-		InternalDataStore sut;
+		DataStore sut;
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		bool result = sut.saveData();

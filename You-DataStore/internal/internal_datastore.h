@@ -13,20 +13,20 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class InternalDataStoreTest; }
+namespace UnitTests { class DataStoreTest; }
 
 /// The internal components of DataStore
 namespace Internal {
 
 /// The most primitive class that does the changes to the actual xml file
-class InternalDataStore {
+class DataStore {
 	/// Test classes
-	friend class You::DataStore::UnitTests::InternalDataStoreTest;
+	friend class You::DataStore::UnitTests::DataStoreTest;
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
 	/// \return The internal data store instance.
-	static InternalDataStore& get();
+	static DataStore& get();
 
 	/// Transaction management.
 	/// @{
@@ -79,7 +79,7 @@ public:
 	void loadData();
 
 private:
-	InternalDataStore() = default;
+	DataStore() = default;
 
 private:
 	static const std::wstring FILE_PATH;

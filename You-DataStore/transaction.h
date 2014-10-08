@@ -7,7 +7,7 @@
 namespace You {
 namespace DataStore {
 namespace UnitTests { class DataStoreApiTest; }
-namespace Internal { class InternalDataStore; class Transaction; }
+namespace Internal { class DataStore; class Transaction; }
 
 /// Represents a collection of operations that need to collectively succeed or
 /// fail.
@@ -15,7 +15,7 @@ namespace Internal { class InternalDataStore; class Transaction; }
 /// This is a RAII class. At the end of the method, if \ref commit is not
 /// called, the transaction will be rolled back.
 class Transaction : protected std::shared_ptr<Internal::Transaction> {
-	friend class Internal::InternalDataStore;
+	friend class Internal::DataStore;
 	friend class UnitTests::DataStoreApiTest;
 
 public:

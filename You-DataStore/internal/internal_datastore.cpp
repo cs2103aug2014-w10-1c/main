@@ -11,21 +11,21 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
+const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
-InternalDataStore& InternalDataStore::get() {
-	static InternalDataStore store;
+DataStore& DataStore::get() {
+	static DataStore store;
 	return store;
 }
 
-You::DataStore::Transaction InternalDataStore::begin() {
+You::DataStore::Transaction DataStore::begin() {
 	You::DataStore::Transaction result;
 	transactionStack.push(std::weak_ptr<Internal::Transaction>(result));
 
 	return result;
 }
 
-void InternalDataStore::onTransactionCommit(Transaction& transaction) {
+void DataStore::onTransactionCommit(Transaction& transaction) {
 	for (auto iter = transaction.operationsQueue.begin();
 		iter != transaction.operationsQueue.end();
 		++iter) {
@@ -36,11 +36,11 @@ void InternalDataStore::onTransactionCommit(Transaction& transaction) {
 	}
 }
 
-void InternalDataStore::onTransactionRollback(Transaction& transaction) {
+void DataStore::onTransactionRollback(Transaction& transaction) {
 	transaction.operationsQueue.clear();
 }
 
-bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
+bool DataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 
@@ -54,7 +54,7 @@ bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	return operation->run(document);
 }
 
-bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
+bool DataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PutOperation>(rawId, sTask);
 
@@ -68,7 +68,7 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	return operation->run(document);
 }
 
-bool InternalDataStore::erase(TaskId rawId) {
+bool DataStore::erase(TaskId rawId) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
 	if (!transactionStack.empty()) {
@@ -81,7 +81,7 @@ bool InternalDataStore::erase(TaskId rawId) {
 	return operation->run(document);
 }
 
-SerializedTask InternalDataStore::getTask(TaskId rawId) {
+SerializedTask DataStore::getTask(TaskId rawId) {
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toGet =
 		document.find_child_by_attribute(L"id", taskId.c_str());
@@ -89,7 +89,7 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 	return SerializationOperation::deserialize(toGet);
 }
 
-std::vector<SerializedTask> InternalDataStore::getAllTask() {
+std::vector<SerializedTask> DataStore::getAllTask() {
 	loadData();
 	std::vector<SerializedTask> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
@@ -103,12 +103,12 @@ std::vector<SerializedTask> InternalDataStore::getAllTask() {
 	return allTask;
 }
 
-bool InternalDataStore::saveData() {
+bool DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;
 }
 
-void InternalDataStore::loadData() {
+void DataStore::loadData() {
 	bool isInitialized =
 		document.first_child().type() != pugi::xml_node_type::node_null;
 	if (!isInitialized) {

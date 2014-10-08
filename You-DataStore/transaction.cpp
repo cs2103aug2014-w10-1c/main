@@ -16,20 +16,20 @@ Transaction::Transaction(Transaction&& t) {
 }
 
 Transaction::~Transaction() {
-	if (state == State::NEITHER) {
+	if (get() != nullptr && state == State::NEITHER) {
 		rollback();
 	}
 }
 
 void Transaction::commit() {
-	assert(state == STATE::NEITHER);
+	assert(state == State::NEITHER);
 
 	operator->()->commit();
 	state = State::COMMITTED;
 }
 
 void Transaction::rollback() {
-	assert(state == STATE::NEITHER);
+	assert(state == State::NEITHER);
 
 	operator->()->rollback();
 	state = State::ROLLED_BACK;

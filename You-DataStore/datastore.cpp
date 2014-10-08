@@ -11,23 +11,23 @@ DataStore& DataStore::get() {
 }
 
 Transaction DataStore::begin() {
-	return Internal::InternalDataStore::get().begin();
+	return Internal::DataStore::get().begin();
 }
 
 void DataStore::post(TaskId taskId, const SerializedTask& task) {
-	Internal::InternalDataStore::get().post(taskId, task);
+	Internal::DataStore::get().post(taskId, task);
 }
 
 void DataStore::put(TaskId taskId, const SerializedTask& task) {
-	Internal::InternalDataStore::get().put(taskId, task);
+	Internal::DataStore::get().put(taskId, task);
 }
 
 void DataStore::erase(TaskId taskId) {
-	Internal::InternalDataStore::get().erase(taskId);
+	Internal::DataStore::get().erase(taskId);
 }
 
 std::vector<SerializedTask> DataStore::getAllTasks() {
-	return Internal::InternalDataStore::get().getAllTask();
+	return Internal::DataStore::get().getAllTask();
 }
 
 }  // namespace DataStore

@@ -7,11 +7,11 @@ namespace DataStore {
 namespace Internal {
 
 void Transaction::commit() {
-	InternalDataStore::get().onTransactionCommit(*this);
+	DataStore::get().onTransactionCommit(*this);
 }
 
 void Transaction::rollback() {
-	InternalDataStore::get().onTransactionRollback(*this);
+	DataStore::get().onTransactionRollback(*this);
 }
 
 void Transaction::push(std::unique_ptr<Internal::IOperation> op) {

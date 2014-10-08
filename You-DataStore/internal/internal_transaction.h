@@ -14,7 +14,7 @@ namespace Internal {
 
 /// The actual class that contains the logic for managing transactions.
 class Transaction {
-	friend class InternalDataStore;
+	friend class DataStore;
 	friend class UnitTests::DataStoreApiTest;
 
 public:
