@@ -11,4 +11,6 @@
 #pragma warning(disable: 4505)
 #include <CppUnitTest.h>
 
+#include "You-DataStore/stdafx.h"
+
 #endif  // YOU_DATASTORE_TESTS_STDAFX_H_

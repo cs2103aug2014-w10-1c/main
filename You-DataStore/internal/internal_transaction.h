@@ -9,15 +9,17 @@
 
 namespace You {
 namespace DataStore {
+namespace UnitTests { class DataStoreApiTest; }
 namespace Internal {
 
 /// The actual class that contains the logic for managing transactions.
 class Transaction {
 	friend class InternalDataStore;
+	friend class UnitTests::DataStoreApiTest;
 
 public:
 	/// Default constructor. This is meant to be called by \ref DataStore.
-	Transaction();
+	Transaction() = default;
 	
 	/// Commits the set of operations made.
 	void commit();

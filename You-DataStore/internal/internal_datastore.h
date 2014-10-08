@@ -51,17 +51,17 @@ public:
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
-	void post(TaskId, const SerializedTask&);
+	bool post(TaskId, const SerializedTask&);
 
 	/// Update the content of a task
 	/// \return true if update successful,
 	/// \return false if task id specified does not exist
-	void put(TaskId, const SerializedTask&);
+	bool put(TaskId, const SerializedTask&);
 
 	/// Delete a task
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist
-	void erase(TaskId);
+	bool erase(TaskId);
 
 	/// Get a task
 	/// \return false and an empty SerializedTask if task id does not exist

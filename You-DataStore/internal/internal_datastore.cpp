@@ -4,6 +4,7 @@
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
 #include "operations/erase_operation.h"
+#include "internal_transaction.h"
 #include "internal_datastore.h"
 
 namespace You {
@@ -11,6 +12,18 @@ namespace DataStore {
 namespace Internal {
 
 const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
+
+InternalDataStore& InternalDataStore::get() {
+	static InternalDataStore store;
+	return store;
+}
+
+You::DataStore::Transaction InternalDataStore::begin() {
+	You::DataStore::Transaction result;
+	transactionStack.push(std::weak_ptr<Internal::Transaction>(result));
+
+	return result;
+}
 
 void InternalDataStore::onTransactionCommit(Transaction& transaction) {
 	for (auto iter = transaction.operationsQueue.begin();
@@ -27,27 +40,36 @@ void InternalDataStore::onTransactionRollback(Transaction& transaction) {
 	transaction.operationsQueue.clear();
 }
 
-void InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
+bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
+		return true;
+	} else {
+		return operation->run(document);
 	}
 }
 
-void InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
+bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PutOperation>(rawId, sTask);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
+		return true;
+	} else {
+		return operation->run(document);
 	}
 }
 
-void InternalDataStore::erase(TaskId rawId) {
+bool InternalDataStore::erase(TaskId rawId) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
+		return true;
+	} else {
+		return operation->run(document);
 	}
 }
 
