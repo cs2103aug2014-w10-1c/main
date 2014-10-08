@@ -8,6 +8,10 @@
 namespace You {
 namespace DataStore {
 
+DataStore::DataStore()
+: internalDataStore(new Internal::InternalDataStore) {
+}
+
 DataStore& DataStore::get() {
 	static DataStore ds;
 	return ds;
@@ -16,7 +20,7 @@ DataStore& DataStore::get() {
 Transaction& DataStore::begin() {
 	while (this->isServing) { }  // for thread-safety
 	isServing = true;
-	internalDataStore.loadData();
+	internalDataStore->loadData();
 	transactionStack.push(std::shared_ptr<Transaction>(new Transaction()));
 	return *(transactionStack.top());
 }
@@ -40,11 +44,11 @@ void DataStore::erase(TaskId taskId) {
 }
 
 std::vector<SerializedTask> DataStore::getAllTask() {
-	return internalDataStore.getAllTask();
+	return internalDataStore->getAllTask();
 }
 
 void DataStore::notifyCommit() {
-	bool isSaved = internalDataStore.saveData();
+	bool isSaved = internalDataStore->saveData();
 	if (isSaved) {
 		isServing = false;
 	}
@@ -57,7 +61,7 @@ void DataStore::notifyRollback() {
 }
 
 Internal::InternalDataStore& DataStore::getInternal() {
-	return internalDataStore;
+	return *internalDataStore.get();
 }
 
 }  // namespace DataStore

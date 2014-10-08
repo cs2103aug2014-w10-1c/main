@@ -4,11 +4,11 @@
 
 #include <deque>
 #include <memory>
-#include "internal/operation.h"
 
 namespace You {
 namespace DataStore {
 namespace UnitTests { class DataStoreApiTest; }
+namespace Internal { class IOperation; }
 class DataStore;
 class Transaction {
 	friend class DataStore;
