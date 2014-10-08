@@ -15,17 +15,16 @@ PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
 }
 
 bool PutOperation::run(pugi::xml_document& document) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(
-		PutOperation::taskId);
+	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	pugi::xml_node toEdit =
-		document.find_child_by_attribute(L"id", taskId.c_str());
+		document.find_child_by_attribute(L"id", idString.c_str());
 	if (!toEdit) {
 		return false;
 	}
 
 	document.remove_child(toEdit);
 
-	PostOperation post(PutOperation::taskId, task);
+	PostOperation post(taskId, task);
 	return post.run(document);
 }
 

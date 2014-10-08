@@ -11,9 +11,9 @@ EraseOperation::EraseOperation(TaskId id) {
 }
 
 bool EraseOperation::run(pugi::xml_document& document) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(taskId);
+	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", taskId.c_str());
+		document.find_child_by_attribute(L"id", idString.c_str());
 	return document.remove_child(toErase);
 }
 
