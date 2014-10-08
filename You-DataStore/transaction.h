@@ -32,6 +32,12 @@ public:
 private:
 	/// Default constructor. This is meant to be called by \ref DataStore.
 	Transaction();
+
+	/// Disable the copy constructor.
+	Transaction(const Transaction&) = delete;
+
+	/// Disable the copy assignment.
+	Transaction& operator=(const Transaction&) = delete;
 };
 
 }  // namespace DataStore
