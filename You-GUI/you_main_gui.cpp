@@ -115,10 +115,7 @@ void YouMainGUI::commandEnterPressed() {
 
 void YouMainGUI::commandEnterButtonClicked() {
 	sendQuery();
-	// For demonstration purposes
-	// parentGUI->populateTaskPanel();
 }
-
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {
