@@ -3,8 +3,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <QApplication>
 #include <QList>
+#include "You-Controller\exception.h"
 #include "NLP_manager.h"
-#include "You-QueryEngine/internal/task_builder.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -20,36 +20,31 @@ void YouMainGUI::NLPManager::setup() {
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-	/*
-	TaskList tl;
-	Task newTask =
-		You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
-	tl.push_back(newTask);
-	*/
+	if (query.length() > 0){
+		Result result = Controller::get().query(query.toStdWString(), taskList);
 
-	Result result = Controller::get().query(query.toStdWString(), taskList);
+		struct ResultProcessorVisitor : boost::static_visitor<void> {
+			explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
+				: parentGUI(parentGUI) {
+			}
 
-	struct ResultProcessorVisitor : boost::static_visitor<void> {
-		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
-		: parentGUI(parentGUI) {
-		}
+			void operator()(You::Controller::ADD_RESULT addResult) {
+				parentGUI->addTask(addResult.task);
+			}
+			void operator()(You::Controller::EDIT_RESULT editResult) {
+				parentGUI->editTask(editResult.task);
+			}
+			void operator()(You::Controller::DELETE_RESULT deleteResult) {
+				parentGUI->deleteTask(deleteResult.task);
+			}
 
-		void operator()(You::Controller::ADD_RESULT addResult) {
-			parentGUI->addTask(addResult.task);
-		}
-		void operator()(You::Controller::EDIT_RESULT editResult) {
-			parentGUI->editTask(editResult.task);
-		}
-		void operator()(You::Controller::DELETE_RESULT deleteResult) {
-			parentGUI->deleteTask(deleteResult.task);
-		}
+		private:
+			YouMainGUI* parentGUI;
+		};
 
-	private:
-		YouMainGUI* parentGUI;
-	};
-
-	ResultProcessorVisitor visitor(parentGUI);
-	boost::apply_visitor(visitor, result);
+		ResultProcessorVisitor visitor(parentGUI);
+		boost::apply_visitor(visitor, result);
+	}
 }
 
 TaskList YouMainGUI::NLPManager::getTasks(
