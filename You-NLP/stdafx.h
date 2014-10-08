@@ -17,8 +17,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/format.hpp>
-#include <boost/fusion/adapted.hpp>
-#include <boost/fusion/sequence.hpp>
 #include <boost/lexical_cast.hpp>
 #pragma warning(disable: 4127 4100 4244)
 #include <boost/spirit/include/qi.hpp>

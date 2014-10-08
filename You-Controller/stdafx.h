@@ -12,6 +12,4 @@
 #include <string>
 #include <stdexcept>
 
-#include "You-NLP/stdafx.h"
-
 #endif  // YOU_CONTROLLER_STDAFX_H_
