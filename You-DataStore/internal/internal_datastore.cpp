@@ -1,4 +1,8 @@
 #include "stdafx.h"
+
+#define PUGIXML_WCHAR_MODE
+#include "pugixml.hpp"
+
 #include "internal_datastore.h"
 
 namespace You {
