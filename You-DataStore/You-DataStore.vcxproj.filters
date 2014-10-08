@@ -33,9 +33,6 @@
     <ClInclude Include="internal\operation.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\internal_datastore.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="task_typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,13 +51,16 @@
     <ClInclude Include="internal\operations\post_operation.h">
       <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
+    <ClInclude Include="internal\internal_datastore.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\internal_transaction.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\internal_datastore.cpp">
-      <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="datastore.cpp">
       <Filter>Source Files</Filter>
@@ -76,6 +76,12 @@
     </ClCompile>
     <ClCompile Include="internal\operations\put_operation.cpp">
       <Filter>Source Files\internal\operations</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\internal_datastore.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\internal_transaction.cpp">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

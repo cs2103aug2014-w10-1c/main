@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "../../datastore.h"
+#include "../../task_typedefs.h"
+#include "../internal_datastore.h"
 #include "put_operation.h"
 
 namespace You {
@@ -12,9 +13,9 @@ PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
 }
 
 bool PutOperation::run() {
-	return DataStore::get().getInternal().put(taskId, task);
+	return false;
 }
 
 }  // namespace Internal
-}   // namespace DataStore
-}   // namespace You
+}  // namespace DataStore
+}  // namespace You

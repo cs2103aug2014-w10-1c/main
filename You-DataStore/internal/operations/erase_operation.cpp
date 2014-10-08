@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "../../datastore.h"
+#include "../../task_typedefs.h"
+#include "../internal_datastore.h"
 #include "erase_operation.h"
 
 namespace You {
@@ -11,7 +12,7 @@ EraseOperation::EraseOperation(TaskId id) {
 }
 
 bool EraseOperation::run() {
-	return DataStore::get().getInternal().erase(taskId);
+	return false;
 }
 
 }  // namespace Internal

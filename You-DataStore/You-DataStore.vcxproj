@@ -79,6 +79,7 @@
     <ClInclude Include="internal\operations\erase_operation.h" />
     <ClInclude Include="internal\operations\post_operation.h" />
     <ClInclude Include="internal\operations\put_operation.h" />
+    <ClInclude Include="internal\internal_transaction.h" />
     <ClInclude Include="task_typedefs.h" />
     <ClInclude Include="internal\internal_datastore.h" />
     <ClInclude Include="internal\operation.h" />
@@ -88,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="datastore.cpp" />
     <ClCompile Include="internal\internal_datastore.cpp" />
+    <ClCompile Include="internal\internal_transaction.cpp" />
     <ClCompile Include="internal\operations\erase_operation.cpp" />
     <ClCompile Include="internal\operations\post_operation.cpp" />
     <ClCompile Include="internal\operations\put_operation.cpp" />

@@ -1,4 +1,9 @@
 #include "stdafx.h"
+#include <boost/lexical_cast.hpp>
+#include "operation.h"
+#include "operations/post_operation.h"
+#include "operations/put_operation.h"
+#include "operations/erase_operation.h"
 #include "internal_datastore.h"
 
 namespace You {
@@ -8,6 +13,12 @@ namespace Internal {
 const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
 
 bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
+	std::unique_ptr<Internal::IOperation> operation =
+		std::make_unique<Internal::PostOperation>(rawId, sTask);
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
+	}
+#if 0
 	// Consider changing parameter to std::wstring altogether
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	if (document.find_child_by_attribute(L"id", taskId.c_str())) {
@@ -19,9 +30,17 @@ bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	id.set_value(taskId.c_str());
 	serialize(sTask, newTask);
 	return true;
+#endif
+	return false;
 }
 
 bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
+	std::unique_ptr<Internal::IOperation> operation =
+		std::make_unique<Internal::PutOperation>(rawId, sTask);
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
+	}
+#if 0
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toEdit =
 		document.find_child_by_attribute(L"id", taskId.c_str());
@@ -30,13 +49,23 @@ bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	}
 	document.remove_child(toEdit);
 	return post(rawId, sTask);
+#endif
+	return false;
 }
 
 bool InternalDataStore::erase(TaskId rawId) {
+	std::unique_ptr<Internal::IOperation> operation =
+		std::make_unique<Internal::EraseOperation>(rawId);
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
+	}
+#if 0
 	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
 	pugi::xml_node toErase =
 		document.find_child_by_attribute(L"id", taskId.c_str());
 	return document.remove_child(toErase);
+#endif
+	return false;
 }
 
 SerializedTask InternalDataStore::getTask(TaskId rawId) {
@@ -48,6 +77,7 @@ SerializedTask InternalDataStore::getTask(TaskId rawId) {
 }
 
 std::vector<SerializedTask> InternalDataStore::getAllTask() {
+#if 0
 	loadData();
 	std::vector<SerializedTask> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
@@ -59,6 +89,8 @@ std::vector<SerializedTask> InternalDataStore::getAllTask() {
 		allTask.push_back(deserialize(*i));
 	}
 	return allTask;
+#endif
+	return std::vector<SerializedTask>();
 }
 
 bool InternalDataStore::saveData() {

@@ -2,14 +2,14 @@
 #ifndef YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
 #define YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
 
-#include <cstdint>
-#include <functional>
-#include <unordered_map>
-#include "boost/lexical_cast.hpp"
+#include <stack>
+#include <memory>
 
 #define PUGIXML_WCHAR_MODE
 #include "pugixml.hpp"
 
+#include "internal_transaction.h"
+#include "../transaction.h"
 #include "../task_typedefs.h"
 
 namespace You {
@@ -24,6 +24,31 @@ class InternalDataStore {
 	/// Test classes
 	friend class You::DataStore::UnitTests::InternalDataStoreTest;
 public:
+	/// Gets the singleton instance of the internal data store.
+	///
+	/// \return The internal data store instance.
+	static InternalDataStore& get();
+
+	/// Transaction management.
+	/// @{
+
+	/// Starts a new transaction.
+	///
+	/// \return A reference to a new \ref DataStrore::Transaction
+	You::DataStore::Transaction begin();
+
+	/// Notifies the data store that the given transaction is being committed.
+	///
+	/// \param[in] transaction The transaction being committed.
+	void onTransactionCommit(const Transaction& transaction);
+
+	/// Notifies the data store that the given transaction is being rolled back.
+	///
+	/// \param[in] transaction The transaction being rolled back.
+	void onTransactionRollBack(const Transaction& transaction);
+
+	/// @}
+
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
@@ -55,6 +80,9 @@ public:
 	void loadData();
 
 private:
+	InternalDataStore() = default;
+
+private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
@@ -63,6 +91,10 @@ private:
 
 	/// Deserialize task from an xml node
 	SerializedTask deserialize(const pugi::xml_node&);
+
+private:
+	/// The current stack of transactions active.
+	std::stack<std::weak_ptr<Transaction>> transactionStack;
 };
 
 }  // namespace Internal

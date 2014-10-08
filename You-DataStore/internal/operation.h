@@ -2,13 +2,12 @@
 #ifndef YOU_DATASTORE_INTERNAL_OPERATION_H_
 #define YOU_DATASTORE_INTERNAL_OPERATION_H_
 
-#include <unordered_map>
 #include "../task_typedefs.h"
-#include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
+
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
@@ -18,8 +17,9 @@ protected:
 	TaskId taskId;
 	SerializedTask task;
 };
+
 }  // namespace Internal
-}   // namespace DataStore
-}   // namespace You
+}  // namespace DataStore
+}  // namespace You
 
 #endif  // YOU_DATASTORE_INTERNAL_OPERATION_H_
