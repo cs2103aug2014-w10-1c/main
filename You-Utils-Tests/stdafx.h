@@ -13,4 +13,6 @@
 
 #include "You-Utils/stdafx.h"
 
+#include "exclusions.h"
+
 #endif  // YOU_UTILS_TESTS_STDAFX_H_
