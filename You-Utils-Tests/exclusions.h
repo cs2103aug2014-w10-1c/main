@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_NLP_TESTS_EXCLUSIONS_H_
-#define YOU_NLP_TESTS_EXCLUSIONS_H_
+#ifndef YOU_UTILS_TESTS_EXCLUSIONS_H_
+#define YOU_UTILS_TESTS_EXCLUSIONS_H_
 
 // A local define since there is no way to test whether a header file exists.
 // If you have VS Premium, then add it to the project definition (user
@@ -19,4 +19,4 @@ ExcludeFromCodeCoverage(boost, L"boost::*");
 
 #endif  // MS_CPP_CODECOVERAGE
 
-#endif  // YOU_NLP_TESTS_EXCLUSIONS_H_
+#endif  // YOU_UTILS_TESTS_EXCLUSIONS_H_
