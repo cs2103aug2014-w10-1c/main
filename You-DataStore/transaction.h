@@ -23,11 +23,28 @@ public:
 	/// reference.
 	Transaction(Transaction&& transaction);
 
+	/// Destructor. Rolls back the active transaction if it has not been
+	/// committed.
+	~Transaction();
+
 	/// Commits the set of operations made.
 	void commit();
 
 	/// Rolls back all the operations made.
 	void rollback();
+
+private:
+	/// The state of the transaction.
+	enum class State {
+		/// The transaction has neither been committed nor rolled back.
+		NEITHER = 0,
+
+		/// The transaction has been committed.
+		COMMITTED,
+
+		/// The transaction has been rolled back.
+		ROLLED_BACK
+	};
 
 private:
 	/// Default constructor. This is meant to be called by \ref DataStore.
@@ -38,6 +55,10 @@ private:
 
 	/// Disable the copy assignment.
 	Transaction& operator=(const Transaction&) = delete;
+
+private:
+	/// The state of the transaction.
+	State state;
 };
 
 }  // namespace DataStore
