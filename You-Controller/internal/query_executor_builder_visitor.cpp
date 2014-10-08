@@ -1,6 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
 #include "query_executor.h"
+#include "../exceptions/context_index_out_of_range_exception.h"
 #include "../result.h"
 #include "query_executor_builder_visitor.h"
 
@@ -71,29 +72,30 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 		}
 	};
 
-	const Task& task = context.at(query.taskID);
-	std::wstring description = query.description ?
-		query.description.get() :
-		Task::DEFAULT_DESCRIPTION;
-	boost::posix_time::ptime deadline = query.deadline ?
-		query.deadline.get() :
-		Task::DEFAULT_DEADLINE;
-	Task::Priority priority = query.priority ?
-		(query.priority == You::NLP::TaskPriority::HIGH ?
-			Task::Priority::IMPORTANT : Task::Priority::NORMAL) :
-		Task::DEFAULT_PRIORITY;
+	try {
+		const Task& task = context.at(query.taskID);
+		std::wstring description = query.description ?
+			query.description.get() :
+			Task::DEFAULT_DESCRIPTION;
+		boost::posix_time::ptime deadline = query.deadline ?
+			query.deadline.get() :
+			Task::DEFAULT_DEADLINE;
+		Task::Priority priority = query.priority ?
+			(query.priority == You::NLP::TaskPriority::HIGH ?
+				Task::Priority::IMPORTANT : Task::Priority::NORMAL) :
+			Task::DEFAULT_PRIORITY;
 
-	return std::unique_ptr<QueryExecutor>(
-		new EditTaskQueryExecutor(
-			QueryEngine::UpdateTask(
-				task.getID(),
-				description,
-				deadline,
-				priority,
-				Task::Dependencies()
-			)
-		)
-	);
+		return std::unique_ptr<QueryExecutor>(
+			new EditTaskQueryExecutor(
+				QueryEngine::UpdateTask(
+					task.getID(),
+					description,
+					deadline,
+					Task::DEFAULT_PRIORITY,
+					Task::Dependencies())));
+	} catch (std::out_of_range& e) {
+		throw ContextIndexOutOfRangeException(e);
+	}
 }
 
 std::unique_ptr<QueryExecutor>
@@ -116,15 +118,16 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 		}
 	};
 
-	const Task& task = context.at(query.taskID);
+	try {
+		const Task& task = context.at(query.taskID);
 
-	return std::unique_ptr<QueryExecutor>(
-		new DeleteTaskQueryExecutor(
-			QueryEngine::DeleteTask(
-				task.getID()
-			)
-		)
-	);
+		return std::unique_ptr<QueryExecutor>(
+			new DeleteTaskQueryExecutor(
+				QueryEngine::DeleteTask(
+					task.getID())));
+	} catch (std::out_of_range& e) {
+		throw ContextIndexOutOfRangeException(e);
+	}
 }
 
 }  // namespace Internal
