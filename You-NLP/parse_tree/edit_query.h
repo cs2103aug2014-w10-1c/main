@@ -4,7 +4,6 @@
 #define YOU_NLP_PARSE_TREE_EDIT_QUERY_H_
 
 #include <string>
-#include <boost/fusion/adapted/struct.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "You-Utils/option.h"
