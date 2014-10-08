@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="exclusions.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="test_helpers.h" />
   </ItemGroup>
