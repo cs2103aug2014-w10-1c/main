@@ -19,6 +19,12 @@
     <Filter Include="Source Files\internal">
       <UniqueIdentifier>{d4171170-8206-417d-9019-c252d2445caf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal\operations">
+      <UniqueIdentifier>{f888a07c-f757-4fc4-a847-a7bfc1a768a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\operations">
+      <UniqueIdentifier>{c8c5e46b-7ece-4999-965e-e9cc043f770c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -39,14 +45,14 @@
     <ClInclude Include="transaction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\operations\post_operation.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\operations\erase_operation.h">
+      <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
     <ClInclude Include="internal\operations\put_operation.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
-    <ClInclude Include="internal\operations\erase_operation.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\operations\post_operation.h">
+      <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +68,14 @@
     <ClCompile Include="transaction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="internal\operations\erase_operation.cpp">
+      <Filter>Source Files\internal\operations</Filter>
+    </ClCompile>
     <ClCompile Include="internal\operations\post_operation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal\operations</Filter>
     </ClCompile>
     <ClCompile Include="internal\operations\put_operation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\operations\erase_operation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal\operations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

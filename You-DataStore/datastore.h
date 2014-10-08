@@ -14,6 +14,7 @@ namespace Internal { class InternalDataStore; }
 
 class DataStore {
 	friend class UnitTests::DataStoreApiTest;
+
 public:
 	DataStore();
 
@@ -49,13 +50,14 @@ public:
 	Internal::InternalDataStore& getInternal();
 
 private:
-	/// Boolean to ensure mutual exclusion
-	bool isServing = false;
+	/// The current stack of transactions. Transactions can be nested.
+	std::stack<std::weak_ptr<Transaction>> transactionStack;
 
-	std::stack<std::shared_ptr<Transaction>> transactionStack;
-
-	std::unique_ptr<Internal::InternalDataStore> internalDataStore;
+	/// The internal data store.
+	std::shared_ptr<Internal::InternalDataStore> internalDataStore;
 };
+
 }  // namespace DataStore
 }  // namespace You
+
 #endif  // YOU_DATASTORE_DATASTORE_H_

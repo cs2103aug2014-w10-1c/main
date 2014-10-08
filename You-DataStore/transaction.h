@@ -9,18 +9,22 @@ namespace You {
 namespace DataStore {
 namespace UnitTests { class DataStoreApiTest; }
 namespace Internal { class IOperation; }
+
 class DataStore;
 class Transaction {
 	friend class DataStore;
 	friend class UnitTests::DataStoreApiTest;
+
 public:
 	Transaction(Transaction&);
 	void commit();
 	void rollback();
-	void push(std::shared_ptr<Internal::IOperation>);
 
 private:
 	Transaction();
+	void push(std::shared_ptr<Internal::IOperation>);
+
+private:
 	std::deque<std::shared_ptr<Internal::IOperation>> operationsQueue;
 };
 }  // namespace DataStore
