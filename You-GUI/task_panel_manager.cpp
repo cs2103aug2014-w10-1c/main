@@ -48,12 +48,14 @@ void YouMainGUI::TaskPanelManager::setup() {
 void YouMainGUI::TaskPanelManager::addTask(const Task& task) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
 	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
+	updateRowNumbers();
 }
 
 void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	const QStringList& rowStrings) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
 	parent->addChild(item.release());
+	updateRowNumbers();
 }
 
 void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
@@ -76,6 +78,7 @@ void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
 	} else {
 		deleteTask(items.at(0));
 	}
+	updateRowNumbers();
 }
 
 void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
@@ -120,15 +123,18 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 	switch (task.getPriority()) {
 	case Task::Priority::IMPORTANT:
 		result.push_back(priority[0]);
-		break;
 	case Task::Priority::NORMAL:
 		result.push_back(priority[1]);
-		break;
-	default:
-		assert(false);
 	}
 
 	// TODO(angathorion): Deal with dependencies
 
 	return result;
+}
+
+void YouMainGUI::TaskPanelManager::updateRowNumbers() {
+	int rowNum = 0;
+	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
+		(*it)->setData(1, Qt::DisplayRole, rowNum++);
+	}
 }

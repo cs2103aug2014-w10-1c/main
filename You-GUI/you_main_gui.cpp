@@ -99,6 +99,7 @@ void YouMainGUI::deleteTask(Task::ID taskID) {
 
 void YouMainGUI::editTask(const Task& task) {
 	tpm->editTask(task);
+	ui.taskTreePanel->viewport()->update();
 }
 
 void YouMainGUI::sendQuery() {
@@ -114,8 +115,6 @@ void YouMainGUI::commandEnterPressed() {
 
 void YouMainGUI::commandEnterButtonClicked() {
 	sendQuery();
-	// For demonstration purposes
-	// parentGUI->populateTaskPanel();
 }
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)

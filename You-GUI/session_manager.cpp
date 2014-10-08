@@ -31,7 +31,6 @@ void YouMainGUI::SessionManager::loadSession() {
 		parentGUI->setWindowState(
 			parentGUI->windowState() & (~Qt::WindowMaximized));
 	}
-
 	settings.endGroup();
 }
 

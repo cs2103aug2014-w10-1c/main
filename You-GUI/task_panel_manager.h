@@ -61,6 +61,9 @@ private:
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
 
+	/// Updates row numbers
+	void updateRowNumbers();
+
 private:
 	/// String/numeric constants for the GUI
 	/// @{
