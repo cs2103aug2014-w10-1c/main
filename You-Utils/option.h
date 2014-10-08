@@ -28,6 +28,12 @@ public:
 	inline Option(const T& value)  // NOLINT(runtime/explicit)
 	: boost::optional<T>(value) {
 	}
+
+	/// By default boost::optional doesn't support the use of an implicit
+	/// conversion to bool. We want this, so define our override.
+	inline operator bool() const throw() {
+		return boost::optional<T>::operator bool();
+	}
 };
 
 }  // namespace Utils
