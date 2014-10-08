@@ -135,7 +135,7 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 }
 
 void YouMainGUI::TaskPanelManager::updateRowNumbers() {
-	QTreeWidgetItemIterator it(ui.taskTreePanel);
+	QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel);
 	int rowNum = 0;
 	while (*it) {
 		(*it)->setData(1, Qt::DisplayRole, rowNum);
