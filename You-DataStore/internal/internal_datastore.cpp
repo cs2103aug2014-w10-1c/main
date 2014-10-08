@@ -12,34 +12,43 @@ namespace Internal {
 
 const std::wstring InternalDataStore::FILE_PATH = std::wstring(L"data.xml");
 
-bool InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
+void InternalDataStore::onTransactionCommit(Transaction& transaction) {
+	for (auto iter = transaction.operationsQueue.begin();
+		iter != transaction.operationsQueue.end();
+		++iter) {
+		if (!iter->run(document)) {
+			// TODO(digawp): this is not necessarily the best thing to do.
+			return transaction.rollback();
+		}
+	}
+}
+
+void InternalDataStore::onTransactionRollback(Transaction& transaction) {
+	transaction.operationsQueue.clear();
+}
+
+void InternalDataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-
-	return false;
 }
 
-bool InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
+void InternalDataStore::put(TaskId rawId, const SerializedTask& sTask) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PutOperation>(rawId, sTask);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-
-	return false;
 }
 
-bool InternalDataStore::erase(TaskId rawId) {
+void InternalDataStore::erase(TaskId rawId) {
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
-
-	return false;
 }
 
 SerializedTask InternalDataStore::getTask(TaskId rawId) {

@@ -39,29 +39,29 @@ public:
 	/// Notifies the data store that the given transaction is being committed.
 	///
 	/// \param[in] transaction The transaction being committed.
-	void onTransactionCommit(const Transaction& transaction);
+	void onTransactionCommit(Transaction& transaction);
 
 	/// Notifies the data store that the given transaction is being rolled back.
 	///
 	/// \param[in] transaction The transaction being rolled back.
-	void onTransactionRollBack(const Transaction& transaction);
+	void onTransactionRollback(Transaction& transaction);
 
 	/// @}
 
 	/// Insert a task into the datastore
 	/// \return true if insertion successful,
 	/// \return false if task id already exists
-	bool post(TaskId, const SerializedTask&);
+	void post(TaskId, const SerializedTask&);
 
 	/// Update the content of a task
 	/// \return true if update successful,
 	/// \return false if task id specified does not exist
-	bool put(TaskId, const SerializedTask&);
+	void put(TaskId, const SerializedTask&);
 
 	/// Delete a task
 	/// \return true if erase successful,
 	/// \return false if task id specified does not exist
-	bool erase(TaskId);
+	void erase(TaskId);
 
 	/// Get a task
 	/// \return false and an empty SerializedTask if task id does not exist

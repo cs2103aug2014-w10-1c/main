@@ -13,6 +13,8 @@ namespace Internal {
 
 /// The actual class that contains the logic for managing transactions.
 class Transaction {
+	friend class InternalDataStore;
+
 public:
 	/// Default constructor. This is meant to be called by \ref DataStore.
 	Transaction();
