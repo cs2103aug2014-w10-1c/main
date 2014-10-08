@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "datastore.h"
+#include "internal/operation.h"
 #include "transaction.h"
 
 namespace You {

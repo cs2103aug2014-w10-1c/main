@@ -10,10 +10,13 @@
 namespace You {
 namespace DataStore {
 namespace UnitTests { class DataStoreApiTest; }
+namespace Internal { class InternalDataStore; }
 
 class DataStore {
 	friend class UnitTests::DataStoreApiTest;
 public:
+	DataStore();
+
 	/// Start a new transaction
 	/// It will do a busy wait if there is another transaction taking place
 	/// \return a reference to a new Transaction
@@ -51,7 +54,7 @@ private:
 
 	std::stack<std::shared_ptr<Transaction>> transactionStack;
 
-	Internal::InternalDataStore internalDataStore;
+	std::unique_ptr<Internal::InternalDataStore> internalDataStore;
 };
 }  // namespace DataStore
 }  // namespace You
