@@ -13,7 +13,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Define action for updating task
+/// Action for updating task (e.g marking it as done)
 class UpdateTask : public Query {
 public:
 	/// Construct EditTask query

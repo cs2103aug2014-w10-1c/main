@@ -15,10 +15,11 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
+/// Test the functionality of \ref TaskBuilder
+TEST_CLASS(TaskBuilderTests) {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(TaskBuilderTests) {
 public:
 	/// Should be able to create a task using minimal required.
 	/// field.
@@ -50,7 +51,8 @@ public:
 	/// Should throw an exception when trying to create
 	/// an empty task.
 	TEST_METHOD(buildEmptyDescriptionShouldThrow) {
-		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
+		using You::QueryEngine::Internal::
+			Exception::EmptyTaskDescriptionException;
 		using TB = TaskBuilder;
 		auto mustFail1 = [] { (Task) TB::get().
 			deadline(Task::DEFAULT_DEADLINE); };

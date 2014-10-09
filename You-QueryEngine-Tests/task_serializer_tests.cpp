@@ -18,11 +18,12 @@ using boost::posix_time::time_duration;
 using boost::gregorian::date;
 using boost::gregorian::greg_month;
 
+/// Test the functionality of \ref TaskSerializer
+TEST_CLASS(TaskSerializerTests) {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
 
-TEST_CLASS(TaskBuilderTest) {
 public:
 	static Task getMockTask() {
 		Task::Description desc = L"Learn Haskell Lens";

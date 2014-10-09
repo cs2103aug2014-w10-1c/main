@@ -29,6 +29,7 @@ using Task = You::QueryEngine::Task;
 using State = Internal::State;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
+/// Test the \ref Filter class.
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;
 

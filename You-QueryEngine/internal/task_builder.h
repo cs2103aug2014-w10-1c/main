@@ -13,15 +13,15 @@ namespace QueryEngine {
 namespace UnitTests { class TaskBuilderTests;  }
 namespace Internal {
 
-///   Builder for tasks
-///	  New instance of task should be created using this builder.
+/// Builder for tasks.
+///	 New instance of task may be created using this builder.
 ///
-///   Example usage:
-///   \code{.cpp}
-///	    Task newTask = TaskBuilder::get().description("Feed");
-///   \endcode
+///  Example usage:
+///  \code{.cpp}
+/// 	Task newTask = TaskBuilder::get().description("Feed");
+///  \endcode
 ///
-///	  \note At least description must be provided when creating a task.
+///	 \note At least description must be provided.
 class TaskBuilder {
 public:
 	/// Return a new builder instance.

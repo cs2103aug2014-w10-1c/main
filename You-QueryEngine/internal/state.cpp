@@ -15,7 +15,7 @@ void State::clear() {
 }
 
 Task::ID State::inquireNewID() {
-	return innerGraph.getTaskTable().size();
+	return innerGraph.getSize();
 }
 
 }  // namespace Internal

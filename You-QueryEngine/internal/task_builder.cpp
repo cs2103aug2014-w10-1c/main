@@ -51,7 +51,7 @@ TaskBuilder::operator Task() const {
 	bool isEmptyDescription =
 		instance.description == Task::DEFAULT_DESCRIPTION;
 	if (isEmptyDescription) {
-		throw EmptyTaskDescriptionException();
+		throw Exception::EmptyTaskDescriptionException();
 	}
 	return instance;
 }

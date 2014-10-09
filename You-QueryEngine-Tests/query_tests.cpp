@@ -23,10 +23,12 @@ using You::QueryEngine::Task;
 using You::QueryEngine::Response;
 using You::QueryEngine::QueryEngine;
 
+
+/// Test the main \ref QueryEngine API
+TEST_CLASS(QueryEngineTests) {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(QueryEngineTests) {
 	const Task::Description desc = L"Learn Haskell Lens";
 	const Task::Description desc2 = L"Learn me";
 	const Task::Time dead = Task::NEVER;

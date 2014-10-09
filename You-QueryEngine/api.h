@@ -1,5 +1,25 @@
 /// \file api.h
-/// Defines the API for Query Engine.
+/// The entry point of the QueryEngine API, defines the \ref QueryEngine
+/// class and \ref Query interface.\n
+/// This component interfaces with \ref You::Controller and
+/// \ref You::DataStore.\n
+
+/// \name Namespaces
+/// @{
+/// \namespace You::QueryEngine
+/// Responsible mainly for implementing and accepting
+/// high level queries from NLP and forward it to
+/// DataStore.
+/// \namespace You::QueryEngine::Internal
+/// Hidden internal components.
+/// \namespace You::QueryEngine::Internal::Action
+/// Several classes that implements Query actions.
+/// \namespace You::QueryEngine::Internal::Exception
+/// A handful of exception classes.
+/// \namespace You::QueryEngine::UnitTests
+/// Contains the test classes for QueryEngine.
+/// @}
+
 /// \author A0112054Y
 
 #pragma once
@@ -20,15 +40,18 @@ namespace Internal { class State; }
 typedef boost::variant<std::vector<Task>, Task,
 	Task::ID, std::wstring> Response;
 
-/// Base class for all queries.
+/// Interface for queries.
+/// Implement execute method which takes a State
+/// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
 private:
 	/// Execute the query on a state.
+	/// \pre The state has been loaded and valid.
 	virtual Response execute(Internal::State& state) = 0;
 };
 
-/// Utility class for QueryEngine
+/// Utility class for QueryEngine \n
 /// This is the API which will be called by Controller
 class QueryEngine {
 public:
@@ -40,6 +63,7 @@ public:
 	typedef You::QueryEngine::Response Response;
 	/// @}
 
+public:
 	#pragma region Query Constructors
 	/// Construct add task query.
 	static std::unique_ptr<Query> AddTask(Task::Description description,
@@ -61,6 +85,7 @@ public:
 	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
 	#pragma endregion
 
+public:
 	/// Execute a query and return a response
 	///  \return The result of the query as a response object.
 	static Response executeQuery(std::unique_ptr<Query> query);
