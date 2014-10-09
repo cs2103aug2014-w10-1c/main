@@ -1,6 +1,7 @@
 //@author A0094446X
 #include "stdafx.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <algorithm>
 #include <QApplication>
 #include <QList>
 #include "You-Controller\exception.h"
@@ -20,31 +21,31 @@ void YouMainGUI::NLPManager::setup() {
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-	if (query.length() > 0){
-		Result result = Controller::get().query(query.toStdWString(), taskList);
 
-		struct ResultProcessorVisitor : boost::static_visitor<void> {
-			explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
-				: parentGUI(parentGUI) {
-			}
+	Result result = Controller::get().query(query.toStdWString(), taskList);
 
-			void operator()(You::Controller::ADD_RESULT addResult) {
-				parentGUI->addTask(addResult.task);
-			}
-			void operator()(You::Controller::EDIT_RESULT editResult) {
-				parentGUI->editTask(editResult.task);
-			}
-			void operator()(You::Controller::DELETE_RESULT deleteResult) {
-				parentGUI->deleteTask(deleteResult.task);
-			}
+	struct ResultProcessorVisitor : boost::static_visitor<void> {
+		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
+			: parentGUI(parentGUI) {
+		}
 
-		private:
-			YouMainGUI* parentGUI;
-		};
+		void operator()(You::Controller::ADD_RESULT addResult) {
+			parentGUI->addTask(addResult.task);
+		}
+		void operator()(You::Controller::EDIT_RESULT editResult) {
+			parentGUI->editTask(editResult.task);
+		}
+		void operator()(You::Controller::DELETE_RESULT deleteResult) {
+			parentGUI->deleteTask(deleteResult.task);
+		}
 
-		ResultProcessorVisitor visitor(parentGUI);
-		boost::apply_visitor(visitor, result);
-	}
+	private:
+		YouMainGUI* parentGUI;
+	};
+
+	ResultProcessorVisitor visitor(parentGUI);
+	boost::apply_visitor(visitor, result);
+	
 }
 
 TaskList YouMainGUI::NLPManager::getTasks(
