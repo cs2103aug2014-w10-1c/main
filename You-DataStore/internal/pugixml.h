@@ -1,0 +1,8 @@
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_PUGIXML_H
+#define YOU_DATASTORE_INTERNAL_PUGIXML_H
+
+#define PUGIXML_WCHAR_MODE
+#include "pugixml.hpp"
+
+#endif  // YOU_DATASTORE_INTERNAL_PUGIXML_H

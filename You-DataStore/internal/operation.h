@@ -2,24 +2,29 @@
 #ifndef YOU_DATASTORE_INTERNAL_OPERATION_H_
 #define YOU_DATASTORE_INTERNAL_OPERATION_H_
 
-#include <unordered_map>
 #include "../task_typedefs.h"
-#include "internal_datastore.h"
+#include "pugixml.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
+
 /// A pure virtual class of operations to be put into transaction stack
 class IOperation {
 public:
 	/// Executes the operation
-	virtual bool run() = 0;
+	///
+	/// \param[in] document The document to modify.
+	/// \return True if the operation succeeded.
+	virtual bool run(pugi::xml_document& document) = 0;
+
 protected:
+	/// The Task ID to modify
 	TaskId taskId;
-	SerializedTask task;
 };
+
 }  // namespace Internal
-}   // namespace DataStore
-}   // namespace You
+}  // namespace DataStore
+}  // namespace You
 
 #endif  // YOU_DATASTORE_INTERNAL_OPERATION_H_

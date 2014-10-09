@@ -1,36 +1,39 @@
 #include "stdafx.h"
-#include "datastore.h"
-#include "internal/operation.h"
+#include "internal/internal_transaction.h"
 #include "transaction.h"
 
 namespace You {
 namespace DataStore {
 
-Transaction::Transaction(Transaction& t) {
-	*this = std::move(t);
+Transaction::Transaction()
+: std::shared_ptr<Internal::Transaction>(
+	std::make_shared<Internal::Transaction>()) {
+}
+
+Transaction::Transaction(Transaction&& t) {
+	state = t.state;
+	std::shared_ptr<Internal::Transaction>::operator=(std::move(t));
+}
+
+Transaction::~Transaction() {
+	if (get() != nullptr && state == State::NEITHER) {
+		rollback();
+	}
 }
 
 void Transaction::commit() {
-	for (auto iter = operationsQueue.begin(); iter != operationsQueue.end();
-		++iter) {
-		bool success = (*iter)->run();
-		if (!success) {
-			return rollback();
-		}
-	}
-	DataStore::get().notifyCommit();
+	assert(state == State::NEITHER);
+
+	operator->()->commit();
+	state = State::COMMITTED;
 }
 
 void Transaction::rollback() {
-	operationsQueue.clear();
-	DataStore::get().notifyRollback();
-}
+	assert(state == State::NEITHER);
 
-void Transaction::push(std::shared_ptr<Internal::IOperation> op) {
-	operationsQueue.push_back(op);
+	operator->()->rollback();
+	state = State::ROLLED_BACK;
 }
-
-Transaction::Transaction() {}
 
 }  // namespace DataStore
 }  // namespace You

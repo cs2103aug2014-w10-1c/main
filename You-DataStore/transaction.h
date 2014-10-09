@@ -2,27 +2,66 @@
 #ifndef YOU_DATASTORE_TRANSACTION_H_
 #define YOU_DATASTORE_TRANSACTION_H_
 
-#include <deque>
 #include <memory>
 
 namespace You {
 namespace DataStore {
 namespace UnitTests { class DataStoreApiTest; }
-namespace Internal { class IOperation; }
-class DataStore;
-class Transaction {
-	friend class DataStore;
+namespace Internal { class DataStore; class Transaction; }
+
+/// Represents a collection of operations that need to collectively succeed or
+/// fail.
+///
+/// This is a RAII class. At the end of the method, if \ref commit is not
+/// called, the transaction will be rolled back.
+class Transaction : protected std::shared_ptr<Internal::Transaction> {
+	friend class Internal::DataStore;
 	friend class UnitTests::DataStoreApiTest;
+
 public:
-	Transaction(Transaction&);
+	/// Move constructor. We only allow a transaction to have one strong
+	/// reference.
+	Transaction(Transaction&& transaction);
+
+	/// Destructor. Rolls back the active transaction if it has not been
+	/// committed.
+	~Transaction();
+
+	/// Commits the set of operations made.
 	void commit();
+
+	/// Rolls back all the operations made.
 	void rollback();
-	void push(std::shared_ptr<Internal::IOperation>);
 
 private:
+	/// The state of the transaction.
+	enum class State {
+		/// The transaction has neither been committed nor rolled back.
+		NEITHER = 0,
+
+		/// The transaction has been committed.
+		COMMITTED,
+
+		/// The transaction has been rolled back.
+		ROLLED_BACK
+	};
+
+private:
+	/// Default constructor. This is meant to be called by \ref DataStore.
 	Transaction();
-	std::deque<std::shared_ptr<Internal::IOperation>> operationsQueue;
+
+	/// Disable the copy constructor.
+	Transaction(const Transaction&) = delete;
+
+	/// Disable the copy assignment.
+	Transaction& operator=(const Transaction&) = delete;
+
+private:
+	/// The state of the transaction.
+	State state;
 };
+
 }  // namespace DataStore
 }  // namespace You
+
 #endif  // YOU_DATASTORE_TRANSACTION_H_
