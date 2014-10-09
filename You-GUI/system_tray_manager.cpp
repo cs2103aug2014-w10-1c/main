@@ -43,9 +43,8 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 	if (reason == QSystemTrayIcon::Trigger) {
 		bool visible = parentGUI->isVisible();
 		bool minimized = parentGUI->isMinimized();
-		assert((visible == true && minimized == true) ||
-				(visible == true && minimized == false) ||
-				(visible == false));
+		assert((visible && minimized) || (visible && !minimized) ||
+			(!visible));
 		Qt::WindowStates toggleState
 			(parentGUI->windowState() & ~Qt::WindowMinimized);
 		if (visible && minimized) {
