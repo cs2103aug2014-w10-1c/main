@@ -29,8 +29,15 @@ private:
 };
 
 /// Utility class for QueryEngine
+/// This is the API which will be called by Controller
 class QueryEngine {
 public:
+	/// Inject all necessary types
+	typedef You::QueryEngine::Task Task;
+	typedef You::QueryEngine::Query Query;
+	typedef You::QueryEngine::Filter Filter;
+	typedef You::QueryEngine::Response Response;
+
 	#pragma region Query Constructors
 	/// Construct AddTask query.
 	static std::unique_ptr<Query> AddTask(Task::Description description,
