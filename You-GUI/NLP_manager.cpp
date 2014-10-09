@@ -21,7 +21,6 @@ void YouMainGUI::NLPManager::setup() {
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
@@ -45,7 +44,6 @@ void YouMainGUI::NLPManager::query(
 
 	ResultProcessorVisitor visitor(parentGUI);
 	boost::apply_visitor(visitor, result);
-	
 }
 
 TaskList YouMainGUI::NLPManager::getTasks(
