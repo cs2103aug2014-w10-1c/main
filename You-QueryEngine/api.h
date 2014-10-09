@@ -67,7 +67,6 @@ public:
 
 private:
 	QueryEngine() = delete;
-
 };  // class QueryEngine
 
 }  // namespace QueryEngine

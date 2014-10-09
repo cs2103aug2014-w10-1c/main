@@ -81,7 +81,7 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Add one task
 		Task task;
-		{
+		1; {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -89,7 +89,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		#pragma region Update the description
-		{
+		2; {
 			auto query = QueryEngine::UpdateTask(
 				task.getID(), desc2,
 				Task::DEFAULT_DEADLINE, Task::DEFAULT_PRIORITY,
@@ -112,7 +112,7 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Add one Task
 		Task task;
-		{
+		1; {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -121,7 +121,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		#pragma region Mark the task added as done
-		{
+		2; {
 			auto query = QueryEngine::UpdateTask(task.getID(), true);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -132,7 +132,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		#pragma region Mark the task added as undone again
-		{
+		3; {
 			auto query = QueryEngine::UpdateTask(task.getID(), false);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -149,7 +149,7 @@ TEST_CLASS(QueryEngineTests) {
 		Internal::State::clear();
 		#pragma region Add one task
 		Task task;
-		{
+		1; {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -158,7 +158,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		#pragma region Delete the task
-		{
+		2; {
 			auto query = QueryEngine::DeleteTask(task.getID());
 			auto response = QueryEngine::executeQuery(std::move(query));
 			Assert::AreEqual(Internal::State::get().graph()
