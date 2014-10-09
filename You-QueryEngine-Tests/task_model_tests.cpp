@@ -36,7 +36,7 @@ public:
 		const Task::Description desc = L"Learn Haskell Lens";
 		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
-		const Task::Priority prio = Task::Priority::IMPORTANT;
+		const Task::Priority prio = Task::Priority::HIGH;
 		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(dead)
@@ -71,7 +71,7 @@ public:
 		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Dependencies dep2 = { 2, 1, 3};
-		const Task::Priority prio = Task::Priority::IMPORTANT;
+		const Task::Priority prio = Task::Priority::HIGH;
 		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(dead)

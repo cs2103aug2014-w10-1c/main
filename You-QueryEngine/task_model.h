@@ -34,7 +34,7 @@ public:
 	typedef std::wstring Description;
 	typedef boost::posix_time::ptime Time;
 	typedef std::vector<Task::ID> Dependencies;
-	enum class Priority { IMPORTANT, NORMAL };
+	enum class Priority { NORMAL, HIGH };
 	/// @}
 
 	/// \name Getters for Field Values.

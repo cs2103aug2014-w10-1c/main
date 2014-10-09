@@ -82,7 +82,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Mocks::Queries::ADD_QUERY.description,
 			result.task.getDescription());
 		Assert::AreEqual(
-			Task::Priority::IMPORTANT,
+			Task::Priority::HIGH,
 			result.task.getPriority());
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.deadline.get(),
@@ -208,7 +208,7 @@ private:
 		case NLP::TaskPriority::NORMAL:
 			return Task::Priority::NORMAL;
 		case NLP::TaskPriority::HIGH:
-			return Task::Priority::IMPORTANT;
+			return Task::Priority::HIGH;
 		default:
 			assert(false);
 			abort();

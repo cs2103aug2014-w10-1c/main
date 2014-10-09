@@ -30,7 +30,7 @@ TEST_CLASS(QueryEngineTests) {
 	const Task::Description desc = L"Learn Haskell Lens";
 	const Task::Description desc2 = L"Learn me";
 	const Task::Time dead = Task::NEVER;
-	const Task::Priority prio = Task::Priority::IMPORTANT;
+	const Task::Priority prio = Task::Priority::HIGH;
 	const Task::Dependencies dep = Task::Dependencies();
 
 	TEST_METHOD(queryEngineIsUtilityClass) {

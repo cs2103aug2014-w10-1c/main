@@ -29,7 +29,7 @@ public:
 		Task::Time dead = ptime(date(2002, 1, 10),
 			time_duration(1, 2, 3));
 		Task::Dependencies dep = { 1, 2, 3 };
-		Task::Priority prio = Task::Priority::IMPORTANT;
+		Task::Priority prio = Task::Priority::HIGH;
 		return TaskBuilder::get().description(desc).deadline(dead).
 			priority(prio).dependencies(dep);
 	}
@@ -47,7 +47,7 @@ public:
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
-			std::wstring(L"important"));
+			std::wstring(L"HIGH"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
 			std::wstring(L"1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],

@@ -54,7 +54,7 @@ public:
 	/// \name String for priorities
 	/// @{
 	static const Value VALUE_PRIORITY_NORMAL;
-	static const Value VALUE_PRIORITY_IMPORTANT;
+	static const Value VALUE_PRIORITY_HIGH;
 	/// @}
 
 	/// Delimiter for dependencies and deadlines

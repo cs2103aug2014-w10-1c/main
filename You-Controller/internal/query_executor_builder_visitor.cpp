@@ -45,7 +45,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 				query.description,
 				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 				query.priority == You::NLP::TaskPriority::HIGH ?
-					Task::Priority::IMPORTANT : Task::Priority::NORMAL,
+					Task::Priority::HIGH : Task::Priority::NORMAL,
 				Task::Dependencies()
 			)
 		)
@@ -82,7 +82,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 			Task::DEFAULT_DEADLINE;
 		Task::Priority priority = query.priority ?
 			(query.priority == You::NLP::TaskPriority::HIGH ?
-				Task::Priority::IMPORTANT : Task::Priority::NORMAL) :
+				Task::Priority::HIGH : Task::Priority::NORMAL) :
 			Task::DEFAULT_PRIORITY;
 
 		return std::unique_ptr<QueryExecutor>(
