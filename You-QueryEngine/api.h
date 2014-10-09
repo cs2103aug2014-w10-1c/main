@@ -32,35 +32,37 @@ private:
 /// This is the API which will be called by Controller
 class QueryEngine {
 public:
-	/// Inject all necessary types
+	/// \name All types used in this component.
+	/// @{
 	typedef You::QueryEngine::Task Task;
 	typedef You::QueryEngine::Query Query;
 	typedef You::QueryEngine::Filter Filter;
 	typedef You::QueryEngine::Response Response;
+	/// @}
 
 	#pragma region Query Constructors
-	/// Construct AddTask query.
+	/// Construct add task query.
 	static std::unique_ptr<Query> AddTask(Task::Description description,
 		Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies);
 
-	/// Construct FilterTask query.
+	/// Construct filter task query.
 	static std::unique_ptr<Query> FilterTask(const Filter& filter);
 
-	/// Construct DeleteTask query.
+	/// Construct delete task query.
 	static std::unique_ptr<Query> DeleteTask(Task::ID id);
 
-	/// Construct UpdateTask query.
+	/// Construct update task query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id,
 		Task::Description description, Task::Time deadline,
 		Task::Priority priority, Task::Dependencies dependencies);
 
+	/// Construct mark task as done query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
 	#pragma endregion
 
 	/// Execute a query and return a response
 	///  \return The result of the query as a response object.
-	///  \deprecated
 	static Response executeQuery(std::unique_ptr<Query> query);
 
 private:

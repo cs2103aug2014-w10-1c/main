@@ -34,6 +34,12 @@ public:
 			priority(prio).dependencies(dep);
 	}
 
+	TEST_METHOD(taskSerializerIsUtilityClass) {
+		static_assert(
+		!std::is_trivially_default_constructible<TaskSerializer>::value,
+		"QueryEngine cannot be default constructed");
+	}
+
 	/// Should be able to serialize a complex task.
 	TEST_METHOD(serializeTask) {
 		Task task = getMockTask();

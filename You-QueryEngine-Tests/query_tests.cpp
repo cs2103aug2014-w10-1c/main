@@ -4,6 +4,7 @@
 #include "common.h"
 #include "exclusions.h"
 
+#include <type_traits>
 #include "internal/task_builder.h"
 #include "internal/exception.h"
 #include "internal/state.h"
@@ -31,6 +32,12 @@ TEST_CLASS(QueryEngineTests) {
 	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::IMPORTANT;
 	const Task::Dependencies dep = Task::Dependencies();
+
+	TEST_METHOD(queryEngineIsUtilityClass) {
+		static_assert(
+			!std::is_trivially_default_constructible<QueryEngine>::value,
+		"QueryEngine cannot be default constructed");
+	}
 
 	TEST_METHOD(constructAddTaskQuery) {
 		auto query = QueryEngine::AddTask(desc, dead, prio, dep);
@@ -71,52 +78,93 @@ TEST_CLASS(QueryEngineTests) {
 
 	TEST_METHOD(executeEditQuery) {
 		Internal::State::clear();
-		auto query = QueryEngine::AddTask(desc, dead, prio, dep);
-		auto response = QueryEngine::executeQuery(std::move(query));
-		query = QueryEngine::UpdateTask(
-			boost::get<Task>(response).getID(), desc2,
-			Task::DEFAULT_DEADLINE, Task::DEFAULT_PRIORITY,
-			Task::DEFAULT_DEPENDENCIES);
-		response = QueryEngine::executeQuery(std::move(query));
-		Task::ID id = boost::get<Task>(response).getID();
-		Assert::AreEqual(boost::get<Task>(response)
-			.getDescription(), desc2);
-		Assert::AreEqual(Internal::State::get().graph().getTask(id)
-			.getDescription(), desc2);
+
+		#pragma region Add one task
+		Task task;
+		{
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		#pragma region Update the description
+		{
+			auto query = QueryEngine::UpdateTask(
+				task.getID(), desc2,
+				Task::DEFAULT_DEADLINE, Task::DEFAULT_PRIORITY,
+				Task::DEFAULT_DEPENDENCIES);
+			auto response = QueryEngine::executeQuery(std::move(query));
+
+			Task::ID id = boost::get<Task>(response).getID();
+			Assert::AreEqual(boost::get<Task>(response)
+				.getDescription(), desc2);
+			Assert::AreEqual(Internal::State::get().graph().getTask(id)
+				.getDescription(), desc2);
+		}
+		#pragma endregion
+
 		Internal::State::clear();
 	}
 
 	TEST_METHOD(executeMarkTaskQuery) {
 		Internal::State::clear();
-		auto query = QueryEngine::AddTask(desc, dead, prio, dep);
-		auto response = QueryEngine::executeQuery(std::move(query));
-		auto task = boost::get<Task>(response);
-		Assert::IsFalse(task.isCompleted());
 
-		query = QueryEngine::UpdateTask(task.getID(), true);
-		response = QueryEngine::executeQuery(std::move(query));
-		task = boost::get<Task>(response);
-		Assert::IsTrue(task.isCompleted());
-		Assert::IsTrue(Internal::State::get().graph()
-			.getTask(task.getID()).isCompleted());
+		#pragma region Add one Task
+		Task task;
+		{
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsFalse(task.isCompleted());
+		}
+		#pragma endregion
 
-		query = QueryEngine::UpdateTask(task.getID(), false);
-		response = QueryEngine::executeQuery(std::move(query));
-		task = boost::get<Task>(response);
-		Assert::IsFalse(task.isCompleted());
-		Assert::IsFalse(Internal::State::get().graph()
-			.getTask(task.getID()).isCompleted());
+		#pragma region Mark the task added as done
+		{
+			auto query = QueryEngine::UpdateTask(task.getID(), true);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsTrue(task.isCompleted());
+			Assert::IsTrue(Internal::State::get().graph()
+				.getTask(task.getID()).isCompleted());
+		}
+		#pragma endregion
+
+		#pragma region Mark the task added as undone again
+		{
+			auto query = QueryEngine::UpdateTask(task.getID(), false);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsFalse(task.isCompleted());
+			Assert::IsFalse(Internal::State::get().graph()
+				.getTask(task.getID()).isCompleted());
+		}
+		#pragma endregion
+
 		Internal::State::clear();
 	}
 
 	TEST_METHOD(executeDeleteQuery) {
 		Internal::State::clear();
-		auto query = QueryEngine::AddTask(desc, dead, prio, dep);
-		auto response = QueryEngine::executeQuery(std::move(query));
-		query = QueryEngine::DeleteTask(boost::get<Task>(response).getID());
-		response = QueryEngine::executeQuery(std::move(query));
-		Assert::AreEqual(Internal::State::get().graph()
-			.getTaskList().size(), std::size_t(0));
+		#pragma region Add one task
+		Task task;
+		{
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+
+		#pragma endregion
+
+		#pragma region Delete the task
+		{
+			auto query = QueryEngine::DeleteTask(task.getID());
+			auto response = QueryEngine::executeQuery(std::move(query));
+			Assert::AreEqual(Internal::State::get().graph()
+				.getTaskList().size(), std::size_t(0));
+		}
+		#pragma endregion
 		Internal::State::clear();
 	}
 

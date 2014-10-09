@@ -54,7 +54,7 @@ TEST_CLASS(FilterTests) {
 		populateStateWithMockedTasks();
 		std::size_t N_FILTERED = 5;
 		std::vector<Task::ID> mustBeHere;
-		for (int i = 1; i <= N_FILTERED; i++) {
+		for (std::size_t i = 1; i <= N_FILTERED; i++) {
 			mustBeHere.push_back((Task::ID) i);
 			State::get().graph().addTask(TaskBuilder::get().id(i)
 				.description(L"Dummy"));
