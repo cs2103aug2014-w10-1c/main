@@ -10,7 +10,7 @@ namespace You {
 namespace Controller {
 
 /// Defines the type of a task.
-typedef You::QueryEngine::Task Task;
+typedef QueryEngine::Task Task;
 
 /// Defines the type of a task list.
 typedef std::vector<Task> TaskList;
