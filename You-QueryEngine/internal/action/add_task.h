@@ -13,7 +13,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Define action for adding task
+/// Action for adding a new task
 class AddTask : public Query {
 public:
 	/// Constructor

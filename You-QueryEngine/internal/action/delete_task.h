@@ -13,7 +13,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Define action for deleting task
+/// Action for deleting an existing task
 class DeleteTask : public Query {
 public:
 	/// Constructor

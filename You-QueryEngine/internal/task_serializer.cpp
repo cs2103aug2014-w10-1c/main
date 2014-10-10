@@ -22,7 +22,7 @@ const TS::Key TS::KEY_PRIORITY = L"priority";
 const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
 
 const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
-const TS::Value TS::VALUE_PRIORITY_IMPORTANT = L"important";
+const TS::Value TS::VALUE_PRIORITY_HIGH = L"HIGH";
 const TS::Value TS::VALUE_DELIMITER = L";";
 
 TS::STask TS::serialize(const Task& task) {
@@ -149,12 +149,12 @@ std::vector<std::wstring> TS::tokenize(const std::wstring& input) {
 
 const std::unordered_map<TS::Value, Task::Priority> TS::strPrioTable = {
 	{ VALUE_PRIORITY_NORMAL, Task::Priority::NORMAL },
-	{ VALUE_PRIORITY_IMPORTANT, Task::Priority::IMPORTANT },
+	{ VALUE_PRIORITY_HIGH, Task::Priority::HIGH },
 };
 
 const std::unordered_map<Task::Priority, TS::Value> TS::prioStrTable = {
 	{ Task::Priority::NORMAL, VALUE_PRIORITY_NORMAL },
-	{ Task::Priority::IMPORTANT, VALUE_PRIORITY_IMPORTANT },
+	{ Task::Priority::HIGH, VALUE_PRIORITY_HIGH },
 };
 
 }  // namespace Internal

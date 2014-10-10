@@ -14,7 +14,7 @@ namespace You {
 namespace QueryEngine {
 
 std::unique_ptr<Query>
-AddTask(Task::Description description, Task::Time deadline,
+QueryEngine::AddTask(Task::Description description, Task::Time deadline,
 	Task::Priority priority, Task::Dependencies dependencies) {
 	using AddTask = Internal::Action::AddTask;
 	return std::unique_ptr<Query>(new AddTask(description, deadline,
@@ -22,19 +22,19 @@ AddTask(Task::Description description, Task::Time deadline,
 }
 
 std::unique_ptr<Query>
-FilterTask(const Filter& filter) {
+QueryEngine::FilterTask(const Filter& filter) {
 	using FilterTask = Internal::Action::FilterTask;
 	return std::unique_ptr<Query>(new FilterTask(filter));
 }
 
 std::unique_ptr<Query>
-DeleteTask(Task::ID id) {
+QueryEngine::DeleteTask(Task::ID id) {
 	using DeleteTask = Internal::Action::DeleteTask;
 	return std::unique_ptr<Query>(new DeleteTask(id));
 }
 
 std::unique_ptr<Query>
-UpdateTask(Task::ID id, Task::Description description,
+QueryEngine::UpdateTask(Task::ID id, Task::Description description,
 Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id,
@@ -42,12 +42,12 @@ Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies) {
 }
 
 std::unique_ptr<Query>
-UpdateTask(Task::ID id, bool completed) {
+QueryEngine::UpdateTask(Task::ID id, bool completed) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, completed));
 }
 
-Response executeQuery(std::unique_ptr<Query> query) {
+Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	return query->execute(Internal::State::get());
 }
 

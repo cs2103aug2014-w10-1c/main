@@ -16,12 +16,13 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-using You::QueryEngine::Task;
-using You::QueryEngine::Internal::TaskGraph;
-using You::QueryEngine::Internal::TaskBuilder;
 
-
+/// Test the functionality of \ref TaskGraph
 TEST_CLASS(TaskGraphTests) {
+using Task = You::QueryEngine::Task;
+using TaskGraph = You::QueryEngine::Internal::TaskGraph;
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+
 	TEST_METHOD(createTaskGraph) {
 		TaskGraph graph;
 		Assert::AreEqual(graph.getTaskList().size(), std::size_t(0));
@@ -37,7 +38,7 @@ TEST_CLASS(TaskGraphTests) {
 	}
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
-		using Internal::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		TaskGraph graph;
 		Task task = TaskBuilder::get().id(10L).description(L"Hello Warld");
 		graph.addTask(task);
@@ -47,7 +48,7 @@ TEST_CLASS(TaskGraphTests) {
 	}
 
 	TEST_METHOD(deleteNonExistingTaskFromGraph) {
-		using Internal::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
 			TaskGraph graph;
 			graph.deleteTask(10L);
@@ -63,7 +64,7 @@ TEST_CLASS(TaskGraphTests) {
 	}
 
 	TEST_METHOD(getNonExistingTaskFromGraph) {
-		using Internal::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([=] {
 			TaskGraph graph;
 			graph.getTask(10L);
@@ -81,7 +82,7 @@ TEST_CLASS(TaskGraphTests) {
 	}
 
 	TEST_METHOD(updateNonExistingTaskInGraph) {
-		using Internal::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Task t = TaskBuilder::get().id(10L).description(L"Hello World");
 		Assert::ExpectException<TaskNotFoundException>([=] {
 			TaskGraph graph;

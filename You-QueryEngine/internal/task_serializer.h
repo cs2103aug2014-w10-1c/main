@@ -18,13 +18,7 @@ namespace QueryEngine {
 namespace UnitTests { class TaskSerializerTests;  }
 namespace Internal {
 
-///   Utility class to serialize and deserialize tasks.
-///
-///   Example usage:
-///   \code{.cpp}
-///     auto fetched = DataStorage.get(id);
-///	    Task newTask = TaskSerializer::deserialize(fetched);
-///   \endcode
+/// Utility class to serialize and deserialize tasks.
 class TaskSerializer {
 public:
 	/// \name Typedefs
@@ -34,13 +28,16 @@ public:
 	typedef std::unordered_map<Key, Value> STask;
 	/// @}
 
-	/// Serialize a task model
-	/// \return Serialized form of the task .
-	static STask serialize(const Task&);
+	/// Serialize a task model.
+	/// \param [in] task The task to be serialized.
+	/// \return Serialized form of type \ref STask
+	/// of the task.
+	static STask serialize(const Task& task);
 
-	/// Deserialize a serialized form of task model
-	/// \return The deserialized task.
-	static Task deserialize(const STask&);
+	/// Deserialize a serialized form of task model.
+	/// \param [in] serialized The serialized task.
+	/// \return The deserialized task of type \ref Task.
+	static Task deserialize(const STask& serialized);
 
 	/// \name Serialized task field names.
 	/// @{
@@ -54,7 +51,7 @@ public:
 	/// \name String for priorities
 	/// @{
 	static const Value VALUE_PRIORITY_NORMAL;
-	static const Value VALUE_PRIORITY_IMPORTANT;
+	static const Value VALUE_PRIORITY_HIGH;
 	/// @}
 
 	/// Delimiter for dependencies and deadlines

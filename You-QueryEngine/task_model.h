@@ -13,32 +13,39 @@
 #include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/graph/adjacency_list.hpp>
 
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class TaskBuilderTests; }
 namespace Internal { class TaskBuilder; }
 
-/// \brief The task model
-/// The task instances must be created using builder pattern.
-/// \see [Internal::TaskBuilder]
+/// Defines the task model
+///
+/// The instances of the task model can be created using
+/// TaskBuilder. No-arg default constructor still
+/// available to satisfy the requirement of TaskGraph \n
+/// The task model has these following fields
+///		- id
+///		- description
+///		- deadline
+///		- priority
+///		- dependencies
 class Task {
 	friend class Internal::TaskBuilder;
 public:
 	/// Constructor
 	Task();
 
-	/// \name Type Declarations for Task Fields
+	/// \name Typedefs
 	/// @{
 	typedef int64_t ID;
 	typedef std::wstring Description;
 	typedef boost::posix_time::ptime Time;
 	typedef std::vector<Task::ID> Dependencies;
-	enum class Priority { IMPORTANT, NORMAL };
+	enum class Priority { NORMAL, HIGH };
 	/// @}
 
-	/// \name Getters for Field Values.
+	/// \name Inlined Field Getters.
 	/// @{
 	inline ID getID() const { return id; }
 	inline Description getDescription() const { return description; }
@@ -48,7 +55,7 @@ public:
 	inline bool isCompleted() const { return completed; }
 	/// @}
 
-	/// \name Setters for Field Values
+	/// \name Field Setters
 	/// @{
 	void setDescription(const Description& description);
 	void setDeadline(Time deadline);
@@ -57,7 +64,7 @@ public:
 	void setCompleted(bool completed);
 	/// @}
 
-	/// \name Default Values
+	/// \name Field Default Values
 	/// @{
 	static const ID DEFAULT_ID;
 	static const Description DEFAULT_DESCRIPTION;
@@ -74,7 +81,7 @@ public:
 	}
 
 private:
-	/// Called by nextNewTask()
+	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority) :
 		id(id), description(description), deadline(deadline),

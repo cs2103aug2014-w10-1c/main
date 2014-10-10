@@ -121,7 +121,7 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 	QString priority[] { "High", "Normal" };
 
 	switch (task.getPriority()) {
-	case Task::Priority::IMPORTANT:
+	case Task::Priority::HIGH:
 		result.push_back(priority[0]);
 	case Task::Priority::NORMAL:
 		result.push_back(priority[1]);

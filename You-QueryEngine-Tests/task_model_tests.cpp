@@ -15,10 +15,11 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
+/// Test the functionality of \ref TaskBuilder
+TEST_CLASS(TaskBuilderTests) {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-TEST_CLASS(TaskBuilderTests) {
 public:
 	/// Should be able to create a task using minimal required.
 	/// field.
@@ -36,7 +37,7 @@ public:
 		const Task::Description desc = L"Learn Haskell Lens";
 		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
-		const Task::Priority prio = Task::Priority::IMPORTANT;
+		const Task::Priority prio = Task::Priority::HIGH;
 		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(dead)
@@ -50,7 +51,8 @@ public:
 	/// Should throw an exception when trying to create
 	/// an empty task.
 	TEST_METHOD(buildEmptyDescriptionShouldThrow) {
-		using You::QueryEngine::Internal::EmptyTaskDescriptionException;
+		using You::QueryEngine::Exception::
+			EmptyTaskDescriptionException;
 		using TB = TaskBuilder;
 		auto mustFail1 = [] { (Task) TB::get().
 			deadline(Task::DEFAULT_DEADLINE); };
@@ -71,7 +73,7 @@ public:
 		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Dependencies dep2 = { 2, 1, 3};
-		const Task::Priority prio = Task::Priority::IMPORTANT;
+		const Task::Priority prio = Task::Priority::HIGH;
 		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(dead)

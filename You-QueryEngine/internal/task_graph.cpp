@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "exception.h"
 #include "task_graph.h"
 
 namespace You {
@@ -27,7 +26,7 @@ void TaskGraph::deleteTask(const Task::ID id) {
 		++next;
 	}
 	if (!removed) {
-		throw TaskNotFoundException();
+		throw Exception::TaskNotFoundException();
 	} else {
 		taskTable.erase(id);
 		rebuildGraph();
@@ -40,7 +39,7 @@ void TaskGraph::updateTask(const Task& task) {
 		found->second = task;
 		rebuildGraph();
 	} else {
-		throw TaskNotFoundException();
+		throw Exception::TaskNotFoundException();
 	}
 }
 
@@ -49,7 +48,7 @@ Task TaskGraph::getTask(const Task::ID id) {
 	if (get != taskTable.end()) {
 		return get->second;
 	} else {
-		throw TaskNotFoundException();
+		throw Exception::TaskNotFoundException();
 	}
 }
 

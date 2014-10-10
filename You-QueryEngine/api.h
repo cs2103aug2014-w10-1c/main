@@ -1,5 +1,25 @@
 /// \file api.h
-/// Defines the API for Query Engine.
+/// The entry point of the QueryEngine API, defines the \ref QueryEngine
+/// class and \ref Query interface.\n
+/// This component interfaces with \ref You::Controller and
+/// \ref You::DataStore.\n
+
+/// \name Namespaces
+/// @{
+/// \namespace You::QueryEngine
+/// Responsible mainly for implementing and accepting
+/// high level queries from NLP and forward it to
+/// DataStore.
+/// \namespace You::QueryEngine::Internal
+/// Hidden internal components.
+/// \namespace You::QueryEngine::Internal::Action
+/// Several classes that implements Query actions.
+/// \namespace You::QueryEngine::Internal::Exception
+/// A handful of exception classes.
+/// \namespace You::QueryEngine::UnitTests
+/// Contains the test classes for QueryEngine.
+/// @}
+
 /// \author A0112054Y
 
 #pragma once
@@ -20,40 +40,59 @@ namespace Internal { class State; }
 typedef boost::variant<std::vector<Task>, Task,
 	Task::ID, std::wstring> Response;
 
-/// Base class for all queries.
+/// Interface for queries.
+/// Implement execute method which takes a State
+/// as a parameter and return a Response\n
 class Query {
-	friend Response executeQuery(std::unique_ptr<Query> query);
+	friend class QueryEngine;
 private:
-	/// Execute the query.
-	virtual Response execute(Internal::State& tasks) = 0;
+	/// Execute the query on a state.
+	/// \pre The state has been loaded and valid.
+	virtual Response execute(Internal::State& state) = 0;
 };
 
-/// \name Query Constructors
-/// @{
-/// Construct a query for adding a task
-/// \note Please use Task::DEFAULT_xxx to replace incomplete fields.
-std::unique_ptr<Query>
-AddTask(Task::Description description, Task::Time deadline,
-Task::Priority priority, Task::Dependencies dependencies);
+/// Utility class for QueryEngine \n
+/// This is the API which will be called by Controller
+class QueryEngine {
+public:
+	/// \name All types used in this component.
+	/// @{
+	typedef You::QueryEngine::Task Task;
+	typedef You::QueryEngine::Query Query;
+	typedef You::QueryEngine::Filter Filter;
+	typedef You::QueryEngine::Response Response;
+	/// @}
 
-std::unique_ptr<Query>
-FilterTask(const Filter& filter);
+public:
+	#pragma region Query Constructors
+	/// Construct add task query.
+	static std::unique_ptr<Query> AddTask(Task::Description description,
+		Task::Time deadline, Task::Priority priority,
+		Task::Dependencies dependencies);
 
-std::unique_ptr<Query>
-DeleteTask(Task::ID id);
+	/// Construct filter task query.
+	static std::unique_ptr<Query> FilterTask(const Filter& filter);
 
-std::unique_ptr<Query>
-UpdateTask(Task::ID id, Task::Description description,
-Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies);
+	/// Construct delete task query.
+	static std::unique_ptr<Query> DeleteTask(Task::ID id);
 
-std::unique_ptr<Query>
-UpdateTask(Task::ID id, bool completed);
-/// @}
+	/// Construct update task query.
+	static std::unique_ptr<Query> UpdateTask(Task::ID id,
+		Task::Description description, Task::Time deadline,
+		Task::Priority priority, Task::Dependencies dependencies);
 
-/// Execute a query and return a response
-///  \return The result of the query as a response object.
-///  \deprecated
-Response executeQuery(std::unique_ptr<Query> query);
+	/// Construct mark task as done query.
+	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
+	#pragma endregion
+
+public:
+	/// Execute a query and return a response
+	///  \return The result of the query as a response object.
+	static Response executeQuery(std::unique_ptr<Query> query);
+
+private:
+	QueryEngine() = delete;
+};  // class QueryEngine
 
 }  // namespace QueryEngine
 }  // namespace You

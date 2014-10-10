@@ -11,6 +11,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include "task_builder.h"
+#include "exception.h"
 #include "../task_model.h"
 
 namespace You {
@@ -28,28 +29,30 @@ public:
 	/// Vertex iterator
 	typedef boost::graph_traits<Graph>::vertex_iterator VIterator;
 
-	/// Add a task to the graph if it is not exist
-	/// May throw CircularDependencyException
-	/// \param [in] id The task id to be added.
+	/// Add a task to the graph if it is not exist.
+	/// May throw CircularDependencyException if it
+	/// causes circular dependency.
+	/// \param [in] task The task to be added.
 	/// \return true if the task is added, false otherwise.
 	void addTask(const Task& task);
 
-	/// Delete a task from the graph
-	/// May throw TaskNotFoundException
+	/// Delete a task from the graph.
+	/// May throw \ref Exception::TaskNotFoundException
 	/// \param [in] id The id of the to-be deleted task
 	/// \return true if success, false otherwise.
 	void deleteTask(const Task::ID id);
 
 	/// Update a task from the graph
 	/// This means rebuilding the graph since dependencies
-	/// may change.
-	/// May throw TaskNotFoundException if trying to update
-	/// non existent task.
+	/// may change. \n
+	/// May throw \ref Exception::TaskNotFoundException if trying
+	/// to update non existent task.
 	/// \param [in] task The updated task
 	void updateTask(const Task& task);
 
 	/// Retrieve a single task from the graph
-	/// May throw TaskNotFoundException
+	/// May throw \ref Exception::TaskNotFoundException
+	/// \param [in] id The id of the task to be retrieved.
 	/// \return The task with id \ref id
 	Task getTask(const Task::ID id);
 
@@ -57,9 +60,8 @@ public:
 	/// \return Vector of all tasks.
 	std::vector<Task> getTaskList() const;
 
-	inline std::unordered_map<Task::ID, Task> getTaskTable() const {
-		return taskTable;
-	}
+	/// Return number of task resided in the graph.
+	inline int getSize() { return taskTable.size(); }
 
 private:
 	void rebuildGraph();

@@ -13,20 +13,23 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// Static class to store \ref DataStore and \ref TaskGraph instances.
+/// Singleton class to store \ref TaskGraph instance.\n
+/// When the application run, only one TaskGraph instance
+/// is alive. This singleton property of this class helped
+/// to achieve this property.
 class State {
 public:
-	/// Get the current instance.
+	/// Getter of the current instance.
 	static State& get();
 
-	/// Reset the state to empty.
-	/// Be careful!
+	/// Reset the state back to empty state. \n
+	/// Should be used only if necessary.
 	static void clear();
 
-	/// Get the graph of the current instance
+	/// Get the task graph.
 	inline TaskGraph& graph() const { return get().innerGraph;  }
 
-	/// Inquire a new, unique task id.
+	/// Inquire a new and unique task id.
 	Task::ID inquireNewID();
 
 private:

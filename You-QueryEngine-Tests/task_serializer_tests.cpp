@@ -18,20 +18,27 @@ using boost::posix_time::time_duration;
 using boost::gregorian::date;
 using boost::gregorian::greg_month;
 
+/// Test the functionality of \ref TaskSerializer
+TEST_CLASS(TaskSerializerTests) {
 using Task = You::QueryEngine::Task;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
 
-TEST_CLASS(TaskBuilderTest) {
 public:
 	static Task getMockTask() {
 		Task::Description desc = L"Learn Haskell Lens";
 		Task::Time dead = ptime(date(2002, 1, 10),
 			time_duration(1, 2, 3));
 		Task::Dependencies dep = { 1, 2, 3 };
-		Task::Priority prio = Task::Priority::IMPORTANT;
+		Task::Priority prio = Task::Priority::HIGH;
 		return TaskBuilder::get().description(desc).deadline(dead).
 			priority(prio).dependencies(dep);
+	}
+
+	TEST_METHOD(taskSerializerIsUtilityClass) {
+		static_assert(
+		!std::is_trivially_default_constructible<TaskSerializer>::value,
+		"QueryEngine cannot be default constructed");
 	}
 
 	/// Should be able to serialize a complex task.
@@ -41,7 +48,7 @@ public:
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
-			std::wstring(L"important"));
+			std::wstring(L"HIGH"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
 			std::wstring(L"1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],

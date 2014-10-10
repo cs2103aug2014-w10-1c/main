@@ -15,6 +15,9 @@ typedef QueryEngine::Task Task;
 /// Defines the type of a task list.
 typedef std::vector<Task> TaskList;
 
+/// Defines the query engine utility class
+typedef You::QueryEngine::QueryEngine QueryEngine;
+
 }  // namespace Controller
 }  // namespace You
 

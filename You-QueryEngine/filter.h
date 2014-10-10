@@ -14,46 +14,46 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests { class FilterTests; }
 
-/// Base task filterer class
-/// New instances of the filter can only be create
-/// by using or combining common filters provided.
+/// Base class for filter object.
+/// New instances of the filter can be created by
+/// NLP by combining common filters provided.
 class Filter {
 public:
 	/// Type of the predicate function using in Filter
 	typedef std::function<bool(const Task&)> FFilter;
 
-	/// \name Common Filters
-	/// @{
+	/// Filter any task.
 	static Filter anyTask();
+	/// Filter tasks that id is in a list.
 	static Filter idIsIn(std::vector<Task::ID> taskIDs);
+	/// Filter completed tasks.
 	static Filter completed();
-	/// @}
 
-	/// Compose an AND operation with another filter
+	/// Compose using AND operation with another filter
 	/// \param[in] filter Filter object to combine with.
 	/// \returns Own reference.
 	Filter& operator&&(const Filter& filter);
 
-	/// Compose an OR operation with another filter
+	/// Compose using OR operation with another filter
 	/// \param[in] filter Filter object to combine with.
 	/// \returns Own reference
 	Filter& operator||(const Filter& filter);
 
-	/// Negate a filter
-	/// \param[in] filter Filter object to be negated.
+	/// Invert the filter using NOT.
 	Filter& operator!(void);
 
-	/// Compose an AND NOT operation with another filter
+	/// Shortcut for AND NOT operation with another filter.
 	/// \param[in] filter Filter object to combine with.
 	/// \returns Own reference
 	const Filter butNot(const Filter& filter);
 
-	/// Implicitly cast to its containing predicate function.
+	/// Implicitly cast a filter to its predicate function.
 	operator FFilter() const;
 
 	/// Filter can be applied directly
 	bool operator()(const Task&) const;
 
+	/// Copy construct a filter.
 	Filter(const Filter& filter) : ffilter(filter.ffilter) {}
 
 private:

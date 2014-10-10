@@ -15,7 +15,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Define action for updating task
+/// Action for filtering tasks
 class FilterTask : public Query {
 public:
 	/// Constructor
