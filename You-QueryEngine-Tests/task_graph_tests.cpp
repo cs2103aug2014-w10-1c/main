@@ -38,7 +38,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 	}
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
-		using Internal::Exception::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		TaskGraph graph;
 		Task task = TaskBuilder::get().id(10L).description(L"Hello Warld");
 		graph.addTask(task);
@@ -48,7 +48,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 	}
 
 	TEST_METHOD(deleteNonExistingTaskFromGraph) {
-		using Internal::Exception::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
 			TaskGraph graph;
 			graph.deleteTask(10L);
@@ -64,7 +64,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 	}
 
 	TEST_METHOD(getNonExistingTaskFromGraph) {
-		using Internal::Exception::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([=] {
 			TaskGraph graph;
 			graph.getTask(10L);
@@ -82,7 +82,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 	}
 
 	TEST_METHOD(updateNonExistingTaskInGraph) {
-		using Internal::Exception::TaskNotFoundException;
+		using Exception::TaskNotFoundException;
 		Task t = TaskBuilder::get().id(10L).description(L"Hello World");
 		Assert::ExpectException<TaskNotFoundException>([=] {
 			TaskGraph graph;

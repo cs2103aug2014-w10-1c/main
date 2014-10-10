@@ -74,6 +74,7 @@
   <ItemGroup>
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="option.h" />
+    <ClInclude Include="exceptions\query_engine_exception.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

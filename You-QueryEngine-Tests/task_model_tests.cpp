@@ -51,8 +51,8 @@ public:
 	/// Should throw an exception when trying to create
 	/// an empty task.
 	TEST_METHOD(buildEmptyDescriptionShouldThrow) {
-		using You::QueryEngine::Internal::
-			Exception::EmptyTaskDescriptionException;
+		using You::QueryEngine::Exception::
+			EmptyTaskDescriptionException;
 		using TB = TaskBuilder;
 		auto mustFail1 = [] { (Task) TB::get().
 			deadline(Task::DEFAULT_DEADLINE); };
