@@ -37,13 +37,25 @@ void YouMainGUI::SystemTrayManager::connectTrayActivatedSlot() {
 	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
+
 void YouMainGUI::SystemTrayManager::iconActivated(
 	QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::Trigger) {
-		if (parentGUI->isVisible() == true)
+		bool visible = parentGUI->isVisible();
+		bool minimized = parentGUI->isMinimized();
+		assert((visible && minimized) || (visible && !minimized) ||
+			(!visible));
+		Qt::WindowStates toggleState
+			(parentGUI->windowState() & ~Qt::WindowMinimized);
+		if (visible && minimized) {
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
+		} else if (visible && !minimized) {
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
 			parentGUI->hide();
-		else
+		} else if (!visible) {
 			parentGUI->show();
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
+		}
 	}
 }
 
