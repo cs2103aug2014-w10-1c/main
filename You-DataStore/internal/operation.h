@@ -18,6 +18,8 @@ public:
 	/// \return True if the operation succeeded.
 	virtual bool run(pugi::xml_document& document) = 0;
 
+	virtual ~IOperation() = default;
+
 protected:
 	/// The Task ID to modify
 	TaskId taskId;
