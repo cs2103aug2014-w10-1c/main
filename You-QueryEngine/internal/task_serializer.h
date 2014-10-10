@@ -30,8 +30,7 @@ public:
 
 	/// Serialize a task model.
 	/// \param [in] task The task to be serialized.
-	/// \return Serialized form of type \ref STask
-	/// of the task.
+	/// \return Serialized form of the task.
 	static STask serialize(const Task& task);
 
 	/// Deserialize a serialized form of task model.

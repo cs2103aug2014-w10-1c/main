@@ -1,4 +1,3 @@
-/// \author A0112054Y
 #include "stdafx.h"
 
 #include "task_serializer.h"

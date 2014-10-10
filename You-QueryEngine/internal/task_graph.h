@@ -51,7 +51,7 @@ public:
 	void updateTask(const Task& task);
 
 	/// Retrieve a single task from the graph
-	/// May throw \ref Exception::TaskNotFoundException
+	/// May throw Exception::TaskNotFoundException
 	/// \param [in] id The id of the task to be retrieved.
 	/// \return The task with id \ref id
 	Task getTask(const Task::ID id);
