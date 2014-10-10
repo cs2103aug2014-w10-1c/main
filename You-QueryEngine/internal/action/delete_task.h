@@ -27,7 +27,7 @@ public:
 private:
 	/// Execute delete task.
 	Response execute(State& tasks) override;
-
+	void makeTransaction();
 	const Task::ID id;  ///< ID of the task to delete
 };
 

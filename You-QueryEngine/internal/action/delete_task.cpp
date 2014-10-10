@@ -9,8 +9,15 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
+void DeleteTask::makeTransaction() {
+	Transaction t(DataStore::get().begin());
+	DataStore::get().erase(id);
+	t.commit();
+}
+
 Response DeleteTask::execute(State& tasks) {
 	tasks.graph().deleteTask(this->id);
+	makeTransaction();
 	return this->id;
 }
 

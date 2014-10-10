@@ -104,6 +104,9 @@
     <ClCompile Include="task_serializer_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\You-DataStore\You-DataStore.vcxproj">
+      <Project>{15c8cbbd-e87a-4744-8f03-658e121a8088}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
       <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
       <Private>false</Private>

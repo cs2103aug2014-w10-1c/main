@@ -28,6 +28,9 @@ public:
 	/// Destructor
 	virtual ~AddTask() = default;
 private:
+	Task buildTask(const Task::ID id);
+	void addTaskToState(const Task& task, State& state) const;
+	void makeTransaction(const Task& newTask) const;
 	/// Execute add task.
 	Response execute(State& tasks) override;
 

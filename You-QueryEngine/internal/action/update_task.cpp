@@ -11,8 +11,8 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-Response UpdateTask::execute(State& tasks) {
-	auto current = tasks.get().graph().getTask(this->id);
+Task UpdateTask::buildUpdatedTask(const State& state) const {
+	auto current = state.get().graph().getTask(this->id);
 	auto builder = TaskBuilder::fromTask(current);
 	if (this->description == Task::DEFAULT_DESCRIPTION) {
 		builder.description(current.getDescription());
@@ -30,8 +30,24 @@ Response UpdateTask::execute(State& tasks) {
 	}
 	Task newTask = builder;
 	newTask.setCompleted(this->completed);
-	tasks.get().graph().updateTask(newTask);
 	return newTask;
+}
+
+void UpdateTask::modifyState(State& state, const Task& task) const {
+	state.get().graph().updateTask(task);
+}
+
+void UpdateTask::makeTransaction(const Task& updated) const {
+	auto serialized = TaskSerializer::serialize(updated);
+	Transaction t(DataStore::get().begin());
+	DataStore::get().put(this->id, serialized);
+	t.commit();
+}
+
+Response UpdateTask::execute(State& state) {
+	auto updated = buildUpdatedTask(state);
+	modifyState(state, updated);
+	return updated;
 }
 
 }  // namespace Action

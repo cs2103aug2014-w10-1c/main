@@ -28,6 +28,8 @@
 
 #include <memory>
 #include <boost/variant.hpp>
+#include "../You-DataStore/datastore.h"
+#include "../You-DataStore/transaction.h"
 #include "task_model.h"
 #include "filter.h"
 
@@ -45,6 +47,13 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
+
+protected:
+	/// Transaction type from DataStore
+	typedef You::DataStore::Transaction Transaction;
+	/// Inject DataStore API
+	typedef You::DataStore::DataStore DataStore;
+
 private:
 	/// Execute the query on a state.
 	/// \pre The state has been loaded and valid.
