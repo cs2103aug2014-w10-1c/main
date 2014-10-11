@@ -25,6 +25,7 @@ public:
 	static Comparator byDeadline();
 	static Comparator byDependenciesCount();
 	static Comparator byPriority();
+
 private:
 	template <class T>
 	static Comparator byApplying(std::function<T(const Task&)> func) {
@@ -49,7 +50,7 @@ public:
 		ComparatorFunc;
 
 	/// Constructor using binary function.
-	Comparator(const ComparatorFunc& func);
+	Comparator(const ComparatorFunc& func);  // NOLINT
 
 	/// Cast to binary comparison function used by std::sort and
 	/// the others.
