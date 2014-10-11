@@ -54,9 +54,6 @@
     <ClInclude Include="internal\controller\task_builder.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="internal\action\add_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
@@ -69,11 +66,14 @@
     <ClInclude Include="internal\action\update_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="internal\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="internal\controller\task_graph_controller.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\controller.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
