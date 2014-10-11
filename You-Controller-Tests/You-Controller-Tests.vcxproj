@@ -109,6 +109,9 @@
     <ProjectReference Include="..\You-Controller\You-Controller.vcxproj">
       <Project>{25c49ad2-4819-4ddd-bc61-8918a71a0730}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\You-DataStore\You-DataStore.vcxproj">
+      <Project>{15c8cbbd-e87a-4744-8f03-658e121a8088}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\You-NLP\You-NLP.vcxproj">
       <Project>{fa205f33-9c62-45a2-b059-0f7d9afc7752}</Project>
     </ProjectReference>

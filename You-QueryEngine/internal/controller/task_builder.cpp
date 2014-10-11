@@ -1,6 +1,8 @@
 /// \author A0112054Y
 #include "stdafx.h"
-#include "exception.h"
+
+#include "../model.h"
+#include "../exception.h"
 #include "task_builder.h"
 
 namespace You {

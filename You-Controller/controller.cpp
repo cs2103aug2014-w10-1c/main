@@ -35,14 +35,14 @@ Result Controller::query(
 
 TaskList Controller::getTasks(const std::vector<Task::ID>& taskIDs) const {
 	std::unique_ptr<AbstractQuery> query =
-		QueryEngine::FilterTask(QueryEngine::Filter::idIsIn(taskIDs));
+		QueryEngine::GetTask(QueryEngine::Filter::idIsIn(taskIDs));
 
 	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }
 
 TaskList Controller::getTasks() const {
 	std::unique_ptr<AbstractQuery> query =
-		QueryEngine::FilterTask(QueryEngine::Filter::anyTask());
+		QueryEngine::GetTask(QueryEngine::Filter::anyTask());
 
 	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }

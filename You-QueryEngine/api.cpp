@@ -1,13 +1,14 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
+#include "internal/controller.h"
 #include "internal/action/add_task.h"
 #include "internal/action/update_task.h"
 #include "internal/action/delete_task.h"
-#include "internal/action/filter_task.h"
+#include "internal/action/get_task.h"
 #include "internal/action/delete_task.h"
 #include "internal/action/update_task.h"
-#include "internal/state.h"
+#include "internal/model.h"
 #include "api.h"
 
 namespace You {
@@ -22,9 +23,9 @@ QueryEngine::AddTask(Task::Description description, Task::Time deadline,
 }
 
 std::unique_ptr<Query>
-QueryEngine::FilterTask(const Filter& filter) {
-	using FilterTask = Internal::Action::FilterTask;
-	return std::unique_ptr<Query>(new FilterTask(filter));
+QueryEngine::GetTask(const Filter& filter) {
+	using GetTask = Internal::Action::GetTask;
+	return std::unique_ptr<Query>(new GetTask(filter));
 }
 
 std::unique_ptr<Query>

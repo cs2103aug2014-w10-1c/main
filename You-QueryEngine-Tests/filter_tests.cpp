@@ -1,12 +1,9 @@
-/// \author A0112054Y
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
 #include "common.h"
-#include "internal\task_builder.h"
-#include "internal/state.h"
-#include "internal/task_builder.h"
-#include "task_model.h"
+#include "internal/model.h"
+#include "internal/controller.h"
 #include "api.h"
 #include "filter.h"
 
@@ -29,14 +26,14 @@ using Task = You::QueryEngine::Task;
 using State = Internal::State;
 using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
-/// Test the \ref Filter class.
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;
 
 	static void populateStateWithMockedTasks() {
 		State::clear();
 		for (std::size_t i = 1; i <= N_TASK; i++) {
-			State::get().graph().addTask((Task)
+			Internal::Controller::Graph::addTask(
+				State::get().graph(),
 				TaskBuilder::get().id(i).description(L"Clone"));
 		}
 	}
@@ -45,7 +42,7 @@ TEST_CLASS(FilterTests) {
 		populateStateWithMockedTasks();
 		using F = You::QueryEngine::Filter;
 		std::unique_ptr<Query> query =
-			QueryEngine::FilterTask(F::anyTask());
+			QueryEngine::GetTask(F::anyTask());
 		auto result = QueryEngine::executeQuery(std::move(query));
 
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_TASK);
@@ -57,12 +54,13 @@ TEST_CLASS(FilterTests) {
 		std::vector<Task::ID> mustBeHere;
 		for (std::size_t i = 1; i <= N_FILTERED; i++) {
 			mustBeHere.push_back((Task::ID) i);
-			State::get().graph().addTask(TaskBuilder::get().id(i)
-				.description(L"Dummy"));
+			Internal::Controller::Graph::addTask(
+				State::get().graph(),
+				TaskBuilder::get().id(i).description(L"Dummy"));
 		}
 		using F = You::QueryEngine::Filter;
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(F::idIsIn(mustBeHere)));
+			QueryEngine::GetTask(F::idIsIn(mustBeHere)));
 
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(),
 			N_FILTERED);
@@ -73,7 +71,7 @@ TEST_CLASS(FilterTests) {
 		using F = You::QueryEngine::Filter;
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(alwaysEmpty));
+			QueryEngine::GetTask(alwaysEmpty));
 
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}
@@ -83,7 +81,7 @@ TEST_CLASS(FilterTests) {
 		using F = You::QueryEngine::Filter;
 		auto alwaysEmpty = (!F::anyTask()) || (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(alwaysEmpty));
+			QueryEngine::GetTask(alwaysEmpty));
 
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}

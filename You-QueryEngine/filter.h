@@ -1,4 +1,4 @@
-/// \file You-QueryEngine/internal/filter.h
+/// \file You-QueryEngine/filter.h
 /// Defines the base class for filters.
 /// \author A0112054Y
 

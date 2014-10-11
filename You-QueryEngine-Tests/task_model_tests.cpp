@@ -1,7 +1,6 @@
-/// \author A0112054Y
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "internal/task_builder.h"
+#include "internal/controller/task_builder.h"
 #include "internal/exception.h"
 
 #include "common.h"

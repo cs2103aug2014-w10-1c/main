@@ -9,15 +9,13 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class TaskBuilderTests; }
-namespace Internal { class TaskBuilder; }
+namespace Internal { class TaskSerializer; class TaskBuilder; }
 
 /// Defines the task model
 ///
@@ -31,6 +29,7 @@ namespace Internal { class TaskBuilder; }
 ///		- priority
 ///		- dependencies
 class Task {
+	friend class Internal::TaskSerializer;
 	friend class Internal::TaskBuilder;
 public:
 	/// Constructor
@@ -105,9 +104,9 @@ private:
 
 /// String representation of a task, for testing and logging.
 ///
-/// \param[in] The task object, assumed all fields are valid
+/// \param[in] task The task object, assumed all fields are valid
 /// \return A string representation of the task
-std::wstring ToString(const Task&);
+std::wstring ToString(const Task& task);
 
 }  // namespace QueryEngine
 }  // namespace You

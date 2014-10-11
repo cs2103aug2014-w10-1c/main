@@ -3,15 +3,10 @@
 /// \author A0112054Y
 
 #pragma once
-#ifndef YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_
-#define YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_
+#ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
+#define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
 
-#include <string>
-#include <unordered_map>
-#include <boost/tokenizer.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include "../task_model.h"
+#include "../model.h"
 
 namespace You {
 namespace QueryEngine {
@@ -30,8 +25,7 @@ public:
 
 	/// Serialize a task model.
 	/// \param [in] task The task to be serialized.
-	/// \return Serialized form of type \ref STask
-	/// of the task.
+	/// \return Serialized form of the task.
 	static STask serialize(const Task& task);
 
 	/// Deserialize a serialized form of task model.
@@ -101,4 +95,4 @@ private:
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
-#endif  // YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_
+#endif  // YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_

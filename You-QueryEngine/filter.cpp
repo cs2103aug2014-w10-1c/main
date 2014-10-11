@@ -1,6 +1,3 @@
-/// \file You-QueryEngine/internal/filter.h
-/// Defines the base class for filters.
-/// \author A0112054Y
 #include "stdafx.h"
 #include "filter.h"
 

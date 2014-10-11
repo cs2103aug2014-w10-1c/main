@@ -33,6 +33,9 @@ public:
 	virtual ~UpdateTask() = default;
 
 private:
+	Task buildUpdatedTask(const State& state) const;
+	void modifyState(State& state, const Task& updated) const;
+	void makeTransaction(const Task& updated) const;
 	/// Execute add task.
 	Response execute(State& tasks) override;
 

@@ -33,58 +33,70 @@
     <ClInclude Include="internal\exception.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\task_builder.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="api.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\action\add_task.h">
-      <Filter>Header Files\internal\action</Filter>
     </ClInclude>
     <ClInclude Include="task_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\task_serializer.h">
+    <ClInclude Include="filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\controller\task_serializer.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action\delete_task.h">
+    <ClInclude Include="internal\controller\task_builder.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\action\add_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action\filter_task.h">
+    <ClInclude Include="internal\action\delete_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
     <ClInclude Include="internal\action\update_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="filter.h">
+    <ClInclude Include="internal\controller\task_graph_controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\task_graph.h">
+    <ClInclude Include="internal\controller.h">
       <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model\state.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model\task_graph.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\action\get_task.h">
+      <Filter>Header Files\internal\action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\task_builder.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="api.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\action\add_task.cpp">
-      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
     <ClCompile Include="task_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\task_serializer.cpp">
+    <ClCompile Include="filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_serializer.cpp">
       <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_builder.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\add_task.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
     <ClCompile Include="internal\action\delete_task.cpp">
       <Filter>Source Files\internal\action</Filter>
@@ -92,17 +104,17 @@
     <ClCompile Include="internal\action\update_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
-    <ClCompile Include="internal\action\filter_task.cpp">
-      <Filter>Source Files\internal\action</Filter>
-    </ClCompile>
-    <ClCompile Include="filter.cpp">
+    <ClCompile Include="internal\controller\task_graph_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\state.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\task_graph.cpp">
+    <ClCompile Include="internal\model\state.cpp">
       <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\task_graph.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\get_task.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

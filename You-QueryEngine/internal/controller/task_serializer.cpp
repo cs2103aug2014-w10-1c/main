@@ -1,8 +1,12 @@
-/// \author A0112054Y
 #include "stdafx.h"
 
+#include <string>
+#include <unordered_map>
+#include <boost/tokenizer.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "task_serializer.h"
-#include "task_builder.h"
 
 namespace You {
 namespace QueryEngine {
@@ -51,9 +55,7 @@ Task TS::deserialize(const STask& stask) {
 		deserializePriority(stask.at(KEY_PRIORITY));
 	Task::Dependencies dependencies =
 		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
-	return TaskBuilder::get().id(id).description(description)
-		.deadline(deadline).priority(priority)
-		.dependencies(dependencies);
+	return Task(id, description, deadline, dependencies, priority);
 }
 
 TS::Value TS::serializeID(const Task::ID id) {

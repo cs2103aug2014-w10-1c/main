@@ -1,8 +1,8 @@
 /// \file api.h
-/// The entry point of the QueryEngine API, defines the \ref QueryEngine
-/// class and \ref Query interface.\n
-/// This component interfaces with \ref You::Controller and
-/// \ref You::DataStore.\n
+/// The entry point of the QueryEngine API, defines the QueryEngine
+/// class and Query interface.\n
+/// This component interfaces with You::Controller and
+/// You::DataStore.\n
 
 /// \name Namespaces
 /// @{
@@ -71,7 +71,7 @@ public:
 		Task::Dependencies dependencies);
 
 	/// Construct filter task query.
-	static std::unique_ptr<Query> FilterTask(const Filter& filter);
+	static std::unique_ptr<Query> GetTask(const Filter& filter);
 
 	/// Construct delete task query.
 	static std::unique_ptr<Query> DeleteTask(Task::ID id);

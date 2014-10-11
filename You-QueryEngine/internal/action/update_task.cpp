@@ -1,9 +1,11 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
-#include "../task_builder.h"
-#include "../task_serializer.h"
-#include "../state.h"
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
+#include "../model.h"
+#include "../controller.h"
 #include "update_task.h"
 
 namespace You {
@@ -11,9 +13,12 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-Response UpdateTask::execute(State& tasks) {
-	auto current = tasks.get().graph().getTask(this->id);
-	auto builder = TaskBuilder::fromTask(current);
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+
+Task UpdateTask::buildUpdatedTask(const State& state) const {
+	auto current = state.get().graph().getTask(this->id);
+	auto builder = Controller::Builder::fromTask(current);
 	if (this->description == Task::DEFAULT_DESCRIPTION) {
 		builder.description(current.getDescription());
 	} else {
@@ -30,8 +35,24 @@ Response UpdateTask::execute(State& tasks) {
 	}
 	Task newTask = builder;
 	newTask.setCompleted(this->completed);
-	tasks.get().graph().updateTask(newTask);
 	return newTask;
+}
+
+void UpdateTask::modifyState(State& state, const Task& task) const {
+	Controller::Graph::updateTask(state.graph(), task);
+}
+
+void UpdateTask::makeTransaction(const Task& updated) const {
+	auto serialized = Controller::Serializer::serialize(updated);
+	Transaction t(DataStore::get().begin());
+	DataStore::get().put(this->id, serialized);
+	t.commit();
+}
+
+Response UpdateTask::execute(State& state) {
+	auto updated = buildUpdatedTask(state);
+	modifyState(state, updated);
+	return updated;
 }
 
 }  // namespace Action

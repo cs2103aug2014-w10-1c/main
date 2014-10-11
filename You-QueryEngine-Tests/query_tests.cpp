@@ -1,13 +1,11 @@
-/// \author A0112054Y
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "common.h"
 #include "exclusions.h"
 
 #include <type_traits>
-#include "internal/task_builder.h"
-#include "internal/exception.h"
-#include "internal/state.h"
+#include "internal/controller/task_builder.h"
+#include "internal/model.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -46,11 +44,11 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 		Assert::IsNotNull(&query);
 	}
 
-	TEST_METHOD(constructFilterTaskQuery) {
+	TEST_METHOD(constructGetTaskQuery) {
 		std::vector<Task::ID> emptyVec;
-		auto query = QueryEngine::FilterTask(Filter::idIsIn(emptyVec));
+		auto query = QueryEngine::GetTask(Filter::idIsIn(emptyVec));
 		Assert::IsNotNull(&query);
-		query = QueryEngine::FilterTask(Filter::anyTask());
+		query = QueryEngine::GetTask(Filter::anyTask());
 		Assert::IsNotNull(&query);
 	}
 
@@ -71,7 +69,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 		for (int i = 1; i <= 5; i++) {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
 			auto response = QueryEngine::executeQuery(std::move(query));
-			std::size_t newSize = Internal::State::get().graph().getTaskList().size();
+			std::size_t newSize = Internal::State::get().graph().asTaskList().size();
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
@@ -164,7 +162,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 			auto query = QueryEngine::DeleteTask(task.getID());
 			auto response = QueryEngine::executeQuery(std::move(query));
 			Assert::AreEqual(Internal::State::get().graph()
-				.getTaskList().size(), std::size_t(0));
+				.asTaskList().size(), std::size_t(0));
 		}
 		#pragma endregion
 		Internal::State::clear();
