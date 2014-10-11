@@ -92,6 +92,9 @@
     <ClCompile Include="parse_tree\edit_query.cpp">
       <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
+    <ClCompile Include="query_parser_actions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
