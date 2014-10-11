@@ -21,6 +21,8 @@ class GetTask : public Query {
 public:
 	/// Constructor
 	explicit GetTask(const Filter& filter) : filter(filter) {}
+	explicit GetTask(const Filter& filter, const Comparator& comparator) :
+		filter(filter), comparator(comparator) {}
 
 	/// Destructor
 	virtual ~GetTask() = default;
@@ -29,6 +31,7 @@ private:
 	Response execute(State& tasks) override;
 	GetTask& operator=(const GetTask&) = delete;
 	Filter filter;
+	Comparator comparator = Comparator::notSorted();
 };
 
 }  // namespace Action
