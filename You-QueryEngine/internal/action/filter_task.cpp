@@ -1,8 +1,8 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
+#include  "../model.h"
 #include  "../controller.h"
-#include  "../state.h"
 #include "filter_task.h"
 
 namespace You {

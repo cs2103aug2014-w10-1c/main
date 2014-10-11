@@ -7,8 +7,8 @@
 #define YOU_QUERYENGINE_INTERNAL_MODEL_H_
 
 #include "../task_model.h"
-#include "task_graph.h"
-#include "state.h"
+#include "model/task_graph.h"
+#include "model/state.h"
 
 namespace You {
 namespace QueryEngine {

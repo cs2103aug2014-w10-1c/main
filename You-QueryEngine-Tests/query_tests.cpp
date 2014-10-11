@@ -6,7 +6,6 @@
 #include <type_traits>
 #include "internal/controller/task_builder.h"
 #include "internal/model.h"
-#include "internal/state.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;

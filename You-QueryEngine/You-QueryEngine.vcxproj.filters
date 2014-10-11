@@ -42,12 +42,6 @@
     <ClInclude Include="filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\task_graph.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\state.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\controller\task_serializer.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
@@ -75,6 +69,12 @@
     <ClInclude Include="internal\model.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="internal\model\state.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model\task_graph.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -88,12 +88,6 @@
     </ClCompile>
     <ClCompile Include="filter.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\task_graph.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\state.cpp">
-      <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="internal\controller\task_serializer.cpp">
       <Filter>Source Files\internal</Filter>
@@ -115,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="internal\controller\task_graph_controller.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\state.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\task_graph.cpp">
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

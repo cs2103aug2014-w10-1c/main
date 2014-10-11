@@ -2,8 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "common.h"
-#include "internal/state.h"
-#include "task_model.h"
+#include "internal/model.h"
 #include "internal/controller.h"
 #include "api.h"
 #include "filter.h"
