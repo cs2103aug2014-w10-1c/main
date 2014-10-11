@@ -54,9 +54,6 @@
     <ClInclude Include="internal\action\delete_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action\filter_task.h">
-      <Filter>Header Files\internal\action</Filter>
-    </ClInclude>
     <ClInclude Include="internal\action\update_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
@@ -74,6 +71,9 @@
     </ClInclude>
     <ClInclude Include="internal\model\task_graph.h">
       <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\action\get_task.h">
+      <Filter>Header Files\internal\action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +101,6 @@
     <ClCompile Include="internal\action\delete_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
-    <ClCompile Include="internal\action\filter_task.cpp">
-      <Filter>Source Files\internal\action</Filter>
-    </ClCompile>
     <ClCompile Include="internal\action\update_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
@@ -115,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="internal\model\task_graph.cpp">
       <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\get_task.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

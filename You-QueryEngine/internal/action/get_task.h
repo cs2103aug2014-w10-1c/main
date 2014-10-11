@@ -15,7 +15,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for filtering tasks
+/// Action for getting tasks by applying a filter and optionally a sorter.
 class GetTask : public Query {
 public:
 	/// Constructor

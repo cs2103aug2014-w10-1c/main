@@ -75,7 +75,7 @@
   <ItemGroup>
     <ClInclude Include="internal\action\delete_task.h" />
     <ClInclude Include="internal\action\update_task.h" />
-    <ClInclude Include="internal\action\filter_task.h" />
+    <ClInclude Include="internal\action\get_task.h" />
     <ClInclude Include="internal\controller.h" />
     <ClInclude Include="internal\controller\task_graph_controller.h" />
     <ClInclude Include="internal\exception.h" />
@@ -93,7 +93,7 @@
   <ItemGroup>
     <ClCompile Include="internal\action\add_task.cpp" />
     <ClCompile Include="internal\action\delete_task.cpp" />
-    <ClCompile Include="internal\action\filter_task.cpp" />
+    <ClCompile Include="internal\action\get_task.cpp" />
     <ClCompile Include="internal\action\update_task.cpp" />
     <ClCompile Include="filter.cpp" />
     <ClCompile Include="internal\controller\task_graph_controller.cpp" />
