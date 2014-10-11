@@ -42,14 +42,14 @@ std::wstring ToString(const TaskField& field);
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The combined fields from both fields.
-inline TaskField operator|(const TaskField& lhs, const TaskField& rhs);
+TaskField operator|(const TaskField& lhs, const TaskField& rhs);
 
 /// Computes a bitwise AND over the two fields specification flags.
 ///
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The common fields from both fields.
-inline TaskField operator&(const TaskField& lhs, const TaskField& rhs);
+TaskField operator&(const TaskField& lhs, const TaskField& rhs);
 
 }  // namespace NLP
 }  // namespace You

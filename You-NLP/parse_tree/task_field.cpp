@@ -25,13 +25,13 @@ namespace NLP {
 TaskField operator|(const TaskField& lhs, const TaskField& rhs) {
 	return static_cast<TaskField>(
 		static_cast<size_t>(lhs) | static_cast<size_t>(rhs)
-		);
+	);
 }
 
 TaskField operator&(const TaskField& lhs, const TaskField& rhs) {
 	return static_cast<TaskField>(
 		static_cast<size_t>(lhs)& static_cast<size_t>(rhs)
-		);
+	);
 }
 
 std::wostream& operator<<(std::wostream& stream, TaskField priority) {
