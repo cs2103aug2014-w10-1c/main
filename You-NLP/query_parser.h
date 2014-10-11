@@ -95,8 +95,7 @@ private:
 	///
 	/// \param[in] field The field which should be edited.
 	/// \return The synthesised value for the \ref editCommand rule.
-	static EDIT_QUERY constructEditQueryNullary(
-		EDIT_QUERY::Fields field);
+	static EDIT_QUERY constructEditQueryNullary(TaskField field);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -104,7 +103,7 @@ private:
 	/// \param[in] newValue The new value the user wants to change the field to.
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryUnary(
-		EDIT_QUERY::Fields field,
+		TaskField field,
 		const LexemeType& newValue);
 
 	/// Constructs a edit query from the given parse tree values.
@@ -164,6 +163,11 @@ private:
 		addCommandDeadlineOptional;
 	#pragma endregion
 
+	#pragma region Showing tasks
+	boost::spirit::qi::rule<IteratorType, SHOW_QUERY(), SkipperType>
+		showCommand;
+	#pragma endregion
+
 	#pragma region Editing tasks
 	/// Edit command rule.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
@@ -189,13 +193,13 @@ private:
 	/// argument (hence unary).
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::Fields> editCommandFieldsUnary;
+		TaskField> editCommandFieldsUnary;
 
 	/// The symbol mapping from task properties to the actual field taking no
 	/// arguments (hence nullary).
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::Fields> editCommandFieldsNullary;
+		TaskField> editCommandFieldsNullary;
 
 	/// The symbol mapping from priority strings to task priorities.
 	boost::spirit::qi::symbols<

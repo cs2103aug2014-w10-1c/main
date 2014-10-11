@@ -8,32 +8,13 @@
 
 #include "You-Utils/option.h"
 #include "task_priority.h"
+#include "task_field.h"
 
 namespace You {
 namespace NLP {
 
 /// Defines the synthesised value type of an edit query.
 struct EDIT_QUERY {
-	/// A bitfield specifying which fields need to be updated
-	///
-	/// This can be binary ORed together.
-	enum class Fields {
-		/// Not changing anything.
-		NONE = 0,
-
-		/// The description field needs to be changed
-		DESCRIPTION = 1 << 0,
-
-		/// The priority of the task
-		PRIORITY = 1 << 1,
-
-		/// The deadline field needs to be changed
-		DEADLINE = 1 << 2,
-
-		/// The task is now complete
-		COMPLETE = 1 << 3
-	};
-
 	/// Equality comparator.
 	///
 	/// \param[in] rhs The other query object to compare with.
@@ -54,24 +35,6 @@ struct EDIT_QUERY {
 	/// Whether the task is complete
 	You::Utils::Option<bool> complete;
 };
-
-/// Computes a bitwise OR over the two fields specification flags.
-///
-/// \param[in] lhs The left hand side of the expression.
-/// \param[in] rhs The right hand side of the expression.
-/// \return The combined fields from both fields.
-EDIT_QUERY::Fields operator|(
-	const EDIT_QUERY::Fields& lhs,
-	const EDIT_QUERY::Fields& rhs);
-
-/// Computes a bitwise AND over the two fields specification flags.
-///
-/// \param[in] lhs The left hand side of the expression.
-/// \param[in] rhs The right hand side of the expression.
-/// \return The common fields from both fields.
-EDIT_QUERY::Fields operator&(
-	const EDIT_QUERY::Fields& lhs,
-	const EDIT_QUERY::Fields& rhs);
 
 /// Defines an output formatter for EDIT_QUERY queries.
 ///

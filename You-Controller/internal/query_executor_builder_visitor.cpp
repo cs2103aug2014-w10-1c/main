@@ -11,6 +11,7 @@ namespace Internal {
 
 using You::NLP::QUERY;
 using You::NLP::ADD_QUERY;
+using You::NLP::SHOW_QUERY;
 using You::NLP::EDIT_QUERY;
 using You::NLP::DELETE_QUERY;
 
@@ -50,6 +51,11 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 			)
 		)
 	);
+}
+
+std::unique_ptr<QueryExecutor>
+QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
+	return nullptr;
 }
 
 std::unique_ptr<QueryExecutor>

@@ -51,11 +51,11 @@ EDIT_QUERY QueryParser::constructEditQuery(
 	return result;
 }
 
-EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
+EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 	EDIT_QUERY result;
 
 	switch (field) {
-	case EDIT_QUERY::Fields::COMPLETE:
+	case TaskField::COMPLETE:
 		result.complete = true;
 		break;
 	default:
@@ -66,16 +66,16 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
 }
 
 EDIT_QUERY QueryParser::constructEditQueryUnary(
-	EDIT_QUERY::Fields field,
+	TaskField field,
 	const LexemeType& newValue) {
 	StringType newStringValue(newValue.begin(), newValue.end());
 	EDIT_QUERY result;
 
 	switch (field) {
-	case EDIT_QUERY::Fields::DESCRIPTION:
+	case TaskField::DESCRIPTION:
 		result.description = newStringValue;
 		break;
-	case EDIT_QUERY::Fields::DEADLINE:
+	case TaskField::DEADLINE:
 		result.deadline = DateTimeParser::parse(newStringValue);
 		break;
 	default:

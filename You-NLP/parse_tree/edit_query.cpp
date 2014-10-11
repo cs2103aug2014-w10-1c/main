@@ -66,22 +66,6 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 namespace You {
 namespace NLP {
 
-EDIT_QUERY::Fields operator|(
-	const EDIT_QUERY::Fields& lhs,
-	const EDIT_QUERY::Fields& rhs) {
-	return static_cast<EDIT_QUERY::Fields>(
-		static_cast<size_t>(lhs) | static_cast<size_t>(rhs)
-	);
-}
-
-EDIT_QUERY::Fields operator&(
-	const EDIT_QUERY::Fields& lhs,
-	const EDIT_QUERY::Fields& rhs) {
-	return static_cast<EDIT_QUERY::Fields>(
-		static_cast<size_t>(lhs) & static_cast<size_t>(rhs)
-	);
-}
-
 std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 	std::vector<std::wstring> fields(getChangedFieldsAsString(q));
 	std::wostringstream fieldsString;
