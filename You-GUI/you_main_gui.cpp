@@ -104,9 +104,13 @@ void YouMainGUI::editTask(const Task& task) {
 
 void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
-
-	nlpm->query(inputString, getTaskList());
-	ui.commandInputBox->setText(QString());
+	std::wstring testEmpty = inputString.toStdWString();
+	// Test to see if string is empty or is all whitespace
+	if (inputString.length() > 0 &&
+		!(testEmpty.find_first_not_of(L"\t\n ") == std::wstring::npos)) {
+		nlpm->query(inputString, getTaskList());
+		ui.commandInputBox->setText(QString());
+	}
 }
 
 void YouMainGUI::commandEnterPressed() {

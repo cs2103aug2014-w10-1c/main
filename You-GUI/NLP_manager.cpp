@@ -1,10 +1,11 @@
 //@author A0094446X
 #include "stdafx.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <algorithm>
 #include <QApplication>
 #include <QList>
+#include "You-Controller\exception.h"
 #include "NLP_manager.h"
-#include "You-QueryEngine/internal/task_builder.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -20,18 +21,11 @@ void YouMainGUI::NLPManager::setup() {
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-	/*
-	TaskList tl;
-	Task newTask =
-		You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
-	tl.push_back(newTask);
-	*/
-
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
 		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
-		: parentGUI(parentGUI) {
+			: parentGUI(parentGUI) {
 		}
 
 		void operator()(You::Controller::ADD_RESULT addResult) {
