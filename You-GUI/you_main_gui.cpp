@@ -27,7 +27,6 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	#pragma warning(disable: 4127)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
-
 	ui.setupUi(this);
 	stm->setup();
 	nlpm->setup();
@@ -37,7 +36,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 
 	// TODO(angathorion): To fix after implementation of task handling
-	// populateTaskPanel();
+	populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -108,30 +107,37 @@ void YouMainGUI::editTask(const Task& task) {
 
 void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
-
+	setIconColor(YouMainGUI::Color::Green);
 	try {
 		nlpm->query(inputString, getTaskList());
 	}
 	catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		QString message("Error: The task requested does not exist in the list.");
-		statusBar()->showMessage(message);
+		ui.statusMessage->setText(message);
+		setIconColor(YouMainGUI::Color::Red);
 	}
 	catch (You::Controller::ContextRequiredException& e) {
 		QString message("Error: A context is required.");
-		statusBar()->showMessage(message);
+		ui.statusMessage->setText(message);
+		setIconColor(YouMainGUI::Color::Red);
 	}
 	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
 		QString message("Error: Please fill in a task description.");
-		statusBar()->showMessage(message);
+		ui.statusMessage->setText(message);
+		setIconColor(YouMainGUI::Color::Red);
 	}
 	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
 		QString message("Error: Requested task was not found.");
-		statusBar()->showMessage(message);
+		ui.statusMessage->setText(message);
+		setIconColor(YouMainGUI::Color::Red);
 	}
 	catch (You::NLP::ParseErrorException& e) {
 		QString message("Error: Unable to parse input.");
-		statusBar()->showMessage(message);
+		ui.statusMessage->setText(message);
+		setIconColor(YouMainGUI::Color::Red);
 	}
+	setIconColor(YouMainGUI::Color::Green);
+
 	ui.commandInputBox->setText(QString());
 }
 
@@ -145,4 +151,18 @@ void YouMainGUI::commandEnterButtonClicked() {
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {
+}
+
+void YouMainGUI::setIconColor(YouMainGUI::Color color) {
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	switch (color) {
+		case YouMainGUI::Color::Green:
+			pixmap.load(":/Status_green.png", 0);
+		case YouMainGUI::Color::Red:
+			pixmap.load(":/Status_red.png", 0);
+		default:
+			;
+	}
+	ui.statusIcon->setPixmap(pixmap);
 }

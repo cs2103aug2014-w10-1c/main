@@ -1,5 +1,7 @@
 <RCC>
-    <qresource>
-        <file>Icon.png</file>
-    </qresource>
+  <qresource>
+    <file>Status_green.png</file>
+    <file>Status_red.png</file>
+    <file>Icon.png</file>
+  </qresource>
 </RCC>

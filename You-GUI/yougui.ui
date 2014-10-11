@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>487</height>
+    <width>572</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,11 @@ p, li { white-space: pre-wrap; }
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="commandInputBox"/>
+       <widget class="QLineEdit" name="commandInputBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="commandEnterButton">
@@ -79,6 +83,41 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="QLabel" name="statusIcon">
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap resource="Resources/yougui.qrc">:/Status_green.png</pixmap>
+      </property>
+      <property name="margin">
+       <number>4</number>
+      </property>
+      <property name="indent">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="statusMessage">
+      <property name="text">
+       <string>Ready.</string>
+      </property>
+      <property name="margin">
+       <number>4</number>
+      </property>
+      <property name="indent">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -86,7 +125,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>597</width>
+     <width>572</width>
      <height>21</height>
     </rect>
    </property>
