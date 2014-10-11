@@ -12,6 +12,7 @@ class PutOperation : public SerializationOperation {
 public:
 	PutOperation(TaskId, const SerializedTask&);
 	bool run(pugi::xml_document& document) override;
+	virtual ~PutOperation() = default;
 
 private:
 	/// The new task contents.

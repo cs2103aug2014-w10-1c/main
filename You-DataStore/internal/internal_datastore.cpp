@@ -26,14 +26,17 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
+	pugi::xml_document temp;
+	temp.reset(document);
 	for (auto iter = transaction.operationsQueue.begin();
 		iter != transaction.operationsQueue.end();
 		++iter) {
-		if (!iter->run(document)) {
+		if (!iter->run(temp)) {
 			// TODO(digawp): this is not necessarily the best thing to do.
 			return transaction.rollback();
 		}
 	}
+	document.reset(temp);
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {

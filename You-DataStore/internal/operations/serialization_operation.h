@@ -15,10 +15,6 @@ public:
 
 	/// Deserialize task from an xml node
 	static SerializedTask deserialize(const pugi::xml_node&);
-
-private:
-	/// The new task contents.
-	SerializedTask task;
 };
 
 }  // namespace Internal

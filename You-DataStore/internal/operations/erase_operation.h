@@ -12,6 +12,7 @@ class EraseOperation : public IOperation {
 public:
 	explicit EraseOperation(TaskId);
 	bool run(pugi::xml_document& document) override;
+	virtual ~EraseOperation() = default;
 };
 
 }  // namespace Internal
