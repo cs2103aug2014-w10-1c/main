@@ -12,24 +12,6 @@ using You::NLP::EDIT_QUERY;
 
 TEST_CLASS(EditQueryTests) {
 public:
-	TEST_METHOD(fieldsBinaryOr) {
-		TaskField lhs = TaskField::COMPLETE;
-		TaskField rhs = TaskField::PRIORITY;
-
-		Assert::AreEqual(
-			static_cast<size_t>(lhs) | static_cast<size_t>(rhs),
-			static_cast<size_t>(lhs | rhs));
-	}
-
-	TEST_METHOD(fieldsBinaryAnd) {
-		TaskField lhs = TaskField::COMPLETE;
-		TaskField rhs = TaskField::PRIORITY;
-
-		Assert::AreEqual(
-			static_cast<size_t>(lhs) & static_cast<size_t>(rhs),
-			static_cast<size_t>(lhs & rhs));
-	}
-
 	TEST_METHOD(convertsToStream) {
 		{
 			std::wostringstream stream;

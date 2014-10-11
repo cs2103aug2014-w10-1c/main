@@ -44,6 +44,9 @@
     <ClCompile Include="parse_tree\edit_query_tests.cpp">
       <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
+    <ClCompile Include="parse_tree\task_field_tests.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
