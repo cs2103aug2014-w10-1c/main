@@ -75,6 +75,9 @@
     <ClInclude Include="internal\action\get_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
+    <ClInclude Include="comparator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -115,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="internal\action\get_task.cpp">
       <Filter>Source Files\internal\action</Filter>
+    </ClCompile>
+    <ClCompile Include="comparator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
