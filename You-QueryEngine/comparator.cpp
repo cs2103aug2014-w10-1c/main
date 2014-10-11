@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "task_comparator.h"
+#include "comparator.h"
 
 namespace You {
 namespace QueryEngine {
