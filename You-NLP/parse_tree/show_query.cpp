@@ -41,7 +41,7 @@ namespace You {
 namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const SHOW_QUERY& q) {
-	std::wstring fields;
+	std::wstring fields(L"none");
 	return s << (boost::wformat(STRING_FORMAT) % fields %
 		getSortFieldsAsString(q));
 }
@@ -52,7 +52,8 @@ bool SHOW_QUERY::FIELD_ORDER::operator==(const FIELD_ORDER& rhs) const {
 }
 
 bool SHOW_QUERY::operator==(const SHOW_QUERY& rhs) const {
-	return std::equal(order.begin(), order.end(), rhs.order.begin());
+	return order.size() == rhs.order.size() &&
+		std::equal(order.begin(), order.end(), rhs.order.begin());
 }
 
 std::wstring ToString(const SHOW_QUERY& q) {
