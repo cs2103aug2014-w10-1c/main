@@ -1,10 +1,11 @@
-/// \file update_task.h
-/// Defines action for updating tasks.
+/// \file get_task.h
+/// Defines action for getting a list of tasks by applying
+/// a filter and a sorter.
 /// \author A0112054Y
 
 #pragma once
-#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_FILTER_TASK_H_
-#define YOU_QUERYENGINE_INTERNAL_ACTION_FILTER_TASK_H_
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
 
 #include <functional>
 #include "../../filter.h"
@@ -35,4 +36,4 @@ private:
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_FILTER_TASK_H_
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
