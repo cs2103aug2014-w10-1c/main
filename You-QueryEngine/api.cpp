@@ -29,6 +29,13 @@ QueryEngine::GetTask(const Filter& filter) {
 }
 
 std::unique_ptr<Query>
+QueryEngine::GetTask(const Filter& filter,
+	const Comparator& comparator) {
+	using GetTask = Internal::Action::GetTask;
+	return std::unique_ptr<Query>(new GetTask(filter, comparator));
+}
+
+std::unique_ptr<Query>
 QueryEngine::DeleteTask(Task::ID id) {
 	using DeleteTask = Internal::Action::DeleteTask;
 	return std::unique_ptr<Query>(new DeleteTask(id));
