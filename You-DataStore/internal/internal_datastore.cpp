@@ -96,11 +96,6 @@ std::vector<SerializedTask> DataStore::getAllTask() {
 	loadData();
 	std::vector<SerializedTask> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
-		pugi::xml_node test = *i;
-		// FOR SOME REASON IT IS A PCDATA
-		if (test.type() == pugi::xml_node_type::node_pcdata) {
-			throw "Fffff";
-		}
 		allTask.push_back(SerializationOperation::deserialize(*i));
 	}
 	return allTask;
