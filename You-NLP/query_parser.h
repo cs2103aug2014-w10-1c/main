@@ -203,8 +203,9 @@ private:
 		showCommandSorting;
 
 	/// Show command sorting rule for one column.
-	boost::spirit::qi::rule<IteratorType, SHOW_QUERY::FIELD_ORDER, SkipperType>
-		showCommandSortingColumn;
+	boost::spirit::qi::rule<IteratorType,
+		SHOW_QUERY::FIELD_ORDER(),
+		SkipperType> showCommandSortingColumn;
 
 	/// The symbol mapping from task ordering to ascending/descending.
 	boost::spirit::qi::symbols<

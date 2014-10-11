@@ -85,6 +85,24 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesShowQuery) {
+		QUERY q = QueryParser::parse(L"/show order by description ascending");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
+		}), q);
+
+		q = QueryParser::parse(L"/show order by description descending, "
+			L"priority");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{
+				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
+				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
+			}
+		}), q);
+	}
+
 	TEST_METHOD(parsesEditQuery) {
 		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
 

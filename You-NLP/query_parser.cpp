@@ -104,6 +104,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	showCommandFields.add
 		(L"description", TaskField::DESCRIPTION)
 		(L"deadline", TaskField::DEADLINE)
+		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
 	showCommandFields.name("showCommandFields");
