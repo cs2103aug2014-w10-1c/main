@@ -101,6 +101,7 @@
     <ClCompile Include="parse_tree\delete_query.cpp" />
     <ClCompile Include="parse_tree\edit_query.cpp" />
     <ClCompile Include="parse_tree\show_query.cpp" />
+    <ClCompile Include="parse_tree\task_field.cpp" />
     <ClCompile Include="query_parser.cpp" />
     <ClCompile Include="query_parser_actions.cpp" />
     <ClCompile Include="stdafx.cpp">

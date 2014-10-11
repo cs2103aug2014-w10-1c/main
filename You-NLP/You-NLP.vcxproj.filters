@@ -104,6 +104,9 @@
     <ClCompile Include="parse_tree\show_query.cpp">
       <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
+    <ClCompile Include="parse_tree\task_field.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

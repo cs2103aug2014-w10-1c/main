@@ -30,31 +30,26 @@ enum class TaskField {
 /// \param[in] stream The stream to write to.
 /// \param[in] priority The priority to display.
 /// \return The stream given.
-inline std::wostream& operator<<(std::wostream& stream, TaskField priority) {
-	return stream << static_cast<int>(priority);
-}
+std::wostream& operator<<(std::wostream& stream, TaskField priority);
+
+/// Converts the given TaskField to a string.
+///
+/// \param[in] field The field to convert.
+std::wstring ToString(const TaskField& field);
 
 /// Computes a bitwise OR over the two fields specification flags.
 ///
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The combined fields from both fields.
-inline TaskField operator|(const TaskField& lhs, const TaskField& rhs) {
-	return static_cast<TaskField>(
-		static_cast<size_t>(lhs) | static_cast<size_t>(rhs)
-		);
-}
+inline TaskField operator|(const TaskField& lhs, const TaskField& rhs);
 
 /// Computes a bitwise AND over the two fields specification flags.
 ///
 /// \param[in] lhs The left hand side of the expression.
 /// \param[in] rhs The right hand side of the expression.
 /// \return The common fields from both fields.
-inline TaskField operator&(const TaskField& lhs, const TaskField& rhs) {
-	return static_cast<TaskField>(
-		static_cast<size_t>(lhs)& static_cast<size_t>(rhs)
-		);
-}
+inline TaskField operator&(const TaskField& lhs, const TaskField& rhs);
 
 }  // namespace NLP
 }  // namespace You
