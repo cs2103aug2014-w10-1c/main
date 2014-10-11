@@ -78,6 +78,29 @@ public:
 		int size = DataStore::get().getAllTasks().size();
 		Assert::AreEqual(1, size);
 	}
+
+	TEST_METHOD(nestedTransaction) {
+		Transaction sut(DataStore::get().begin());
+		DataStore::get().post(0, task1);
+		DataStore::get().post(1, task2);
+		Transaction sut2(DataStore::get().begin());
+		DataStore::get().put(1, task1);
+		sut2.commit();
+
+		std::vector<SerializedTask> allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(0U, allTask.size());
+
+		Transaction sut3(DataStore::get().begin());
+		DataStore::get().erase(0);
+		sut.commit();
+
+		allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(2U, allTask.size());
+
+		sut3.commit();
+		allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(1U, allTask.size());
+	}
 };
 
 }  // namespace UnitTests
