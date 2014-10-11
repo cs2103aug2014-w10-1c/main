@@ -10,14 +10,12 @@ namespace UnitTests {
 
 TEST_CLASS(ShowQueryTests) {
 	TEST_METHOD(convertsToStream) {
-		{
-			std::wostringstream stream;
-			stream << DUMMY;
-			Assert::AreEqual(
-				std::wstring(L"Show tasks (criteria none, sort by "
-					L"Description ascending)"),
-				stream.str());
-		}
+		std::wostringstream stream;
+		stream << DUMMY;
+		Assert::AreEqual(
+			std::wstring(L"Show tasks (criteria none, sort by "
+				L"Description ascending)"),
+			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
