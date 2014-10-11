@@ -11,15 +11,59 @@
 namespace You {
 namespace NLP {
 
-/// Defines the synthesised value type of an edit query.
+/// Defines the synthesised value type of show query.
 struct SHOW_QUERY {
+	/// The order in which columns are sorted
+	enum class Order {
+		/// The column will be sorted in an ascending order.
+		ASCENDING = 0,
+
+		/// The column will be sorted in a descending order.
+		DESCENDING
+	};
+
+	/// The predicate for filtering tasks.
+	enum class Predicate {
+		/// Equality.
+		EQUAL,
+
+		/// Inequality
+		NOT_EQUAL,
+
+		/// Less than
+		LESS_THAN,
+
+		/// Less than or equal
+		LESS_THAN_EQ,
+
+		/// Greater than
+		GREATER_THAN,
+
+		/// Greater than or equal
+		GREATER_THAN_EQ
+	};
+
+	/// A pair containing the field and the order to sort by.
+	struct FIELD_ORDER {
+		/// Equality comparator.
+		///
+		/// \param[in] rhs The other field order object to compare with.
+		bool operator==(const FIELD_ORDER& rhs) const;
+
+		/// The field to sort.
+		TaskField field;
+
+		/// The order to sort the field by.
+		Order order;
+	};
+
 	/// Equality comparator.
 	///
 	/// \param[in] rhs The other query object to compare with.
 	bool operator==(const SHOW_QUERY& rhs) const;
 
 	/// The order of the fields.
-	std::vector<TaskField> order;
+	std::vector<FIELD_ORDER> order;
 };
 
 /// Defines an output formatter for SHOW_QUERY queries.

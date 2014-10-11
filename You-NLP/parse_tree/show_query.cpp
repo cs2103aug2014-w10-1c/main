@@ -20,6 +20,11 @@ std::wostream& operator<<(std::wostream& s, const SHOW_QUERY& q) {
 	return s << (boost::wformat(STRING_FORMAT) % criteria % order);
 }
 
+bool SHOW_QUERY::FIELD_ORDER::operator==(const FIELD_ORDER& rhs) const {
+	return field == rhs.field &&
+		order == rhs.order;
+}
+
 bool SHOW_QUERY::operator==(const SHOW_QUERY& rhs) const {
 	return std::equal(order.begin(), order.end(), rhs.order.begin());
 }
