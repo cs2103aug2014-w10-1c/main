@@ -1,8 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
-#include "../task_builder.h"
-#include "../task_serializer.h"
+#include "../controller.h"
 #include "../state.h"
 #include "update_task.h"
 
@@ -13,7 +12,7 @@ namespace Action {
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
-	auto builder = TaskBuilder::fromTask(current);
+	auto builder = Controller::Builder::fromTask(current);
 	if (this->description == Task::DEFAULT_DESCRIPTION) {
 		builder.description(current.getDescription());
 	} else {
@@ -34,11 +33,11 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 }
 
 void UpdateTask::modifyState(State& state, const Task& task) const {
-	state.get().graph().updateTask(task);
+	Controller::Graph::updateTask(state.graph(), task);
 }
 
 void UpdateTask::makeTransaction(const Task& updated) const {
-	auto serialized = TaskSerializer::serialize(updated);
+	auto serialized = Controller::Serializer::serialize(updated);
 	Transaction t(DataStore::get().begin());
 	DataStore::get().put(this->id, serialized);
 	t.commit();

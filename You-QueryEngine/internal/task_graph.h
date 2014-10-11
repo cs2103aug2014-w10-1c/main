@@ -10,7 +10,6 @@
 #include <stdexcept>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include "task_builder.h"
 #include "exception.h"
 #include "../task_model.h"
 
@@ -18,54 +17,34 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
+class TaskGraphController;
+
 /// Defines a simple task graph
 class TaskGraph {
+	friend class TaskGraphController;
 public:
-	/// A directed graph of task.
+	/// TaskGraph is a directed graph of task.
 	typedef boost::adjacency_list<boost::vecS, boost::vecS,
 		boost::directedS, Task::ID> Graph;
 	/// Type of the vertices
 	typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-	/// Vertex iterator
+	/// Type of the vertex iterator
 	typedef boost::graph_traits<Graph>::vertex_iterator VIterator;
-
-	/// Add a task to the graph if it is not exist.
-	/// May throw CircularDependencyException if it
-	/// causes circular dependency.
-	/// \param [in] task The task to be added.
-	/// \return true if the task is added, false otherwise.
-	void addTask(const Task& task);
-
-	/// Delete a task from the graph.
-	/// May throw \ref Exception::TaskNotFoundException
-	/// \param [in] id The id of the to-be deleted task
-	/// \return true if success, false otherwise.
-	void deleteTask(const Task::ID id);
-
-	/// Update a task from the graph
-	/// This means rebuilding the graph since dependencies
-	/// may change. \n
-	/// May throw \ref Exception::TaskNotFoundException if trying
-	/// to update non existent task.
-	/// \param [in] task The updated task
-	void updateTask(const Task& task);
 
 	/// Retrieve a single task from the graph
 	/// May throw Exception::TaskNotFoundException
 	/// \param [in] id The id of the task to be retrieved.
 	/// \return The task with id \ref id
-	Task getTask(const Task::ID id);
+	Task getTask(const Task::ID id) const;
 
-	/// Get the list of all tasks.
+	/// Represent the graph as list of tasks.
 	/// \return Vector of all tasks.
-	std::vector<Task> getTaskList() const;
+	std::vector<Task> asTaskList() const;
 
 	/// Return number of task resided in the graph.
-	inline int getSize() { return taskTable.size(); }
+	inline int getTaskCount() const { return taskTable.size(); }
 
 private:
-	void rebuildGraph();
-
 	Graph graph;
 	std::unordered_map<Task::ID, Task> taskTable;
 };

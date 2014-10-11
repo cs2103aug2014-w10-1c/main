@@ -1,9 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
-#include "../task_builder.h"
-#include "../task_serializer.h"
-#include "../task_serializer.h"
+#include "../controller.h"
 #include "../state.h"
 #include "add_task.h"
 
@@ -13,7 +11,7 @@ namespace Internal {
 namespace Action {
 
 Task AddTask::buildTask(const Task::ID newID) {
-	return TaskBuilder::get().id(newID)
+	return Controller::Builder::get().id(newID)
 		.description(this->description)
 		.deadline(this->deadline)
 		.dependencies(this->dependencies)
@@ -22,11 +20,11 @@ Task AddTask::buildTask(const Task::ID newID) {
 
 void AddTask::addTaskToState(const Task& task,
 	State& state) const {
-	state.graph().addTask(task);
+	Controller::Graph::addTask(state.graph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
-	auto serialized = TaskSerializer::serialize(newTask);
+	auto serialized = Controller::Serializer::serialize(newTask);
 	Transaction t(DataStore::get().begin());
 	DataStore::get().post(newTask.getID(), serialized);
 	t.commit();

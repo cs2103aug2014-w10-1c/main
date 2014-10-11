@@ -6,7 +6,7 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_BUILDER_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_BUILDER_H_
 
-#include "../task_model.h"
+#include "../model.h"
 
 namespace You {
 namespace QueryEngine {

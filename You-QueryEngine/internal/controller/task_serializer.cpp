@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
+#include "../model.h"
 #include "task_serializer.h"
-#include "task_builder.h"
 
 namespace You {
 namespace QueryEngine {

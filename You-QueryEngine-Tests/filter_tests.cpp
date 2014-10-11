@@ -2,10 +2,9 @@
 #include "CppUnitTest.h"
 
 #include "common.h"
-#include "internal\task_builder.h"
 #include "internal/state.h"
-#include "internal/task_builder.h"
 #include "task_model.h"
+#include "internal/controller.h"
 #include "api.h"
 #include "filter.h"
 
@@ -34,7 +33,8 @@ TEST_CLASS(FilterTests) {
 	static void populateStateWithMockedTasks() {
 		State::clear();
 		for (std::size_t i = 1; i <= N_TASK; i++) {
-			State::get().graph().addTask((Task)
+			Internal::Controller::Graph::addTask(
+				State::get().graph(),
 				TaskBuilder::get().id(i).description(L"Clone"));
 		}
 	}
@@ -55,8 +55,9 @@ TEST_CLASS(FilterTests) {
 		std::vector<Task::ID> mustBeHere;
 		for (std::size_t i = 1; i <= N_FILTERED; i++) {
 			mustBeHere.push_back((Task::ID) i);
-			State::get().graph().addTask(TaskBuilder::get().id(i)
-				.description(L"Dummy"));
+			Internal::Controller::Graph::addTask(
+				State::get().graph(),
+				TaskBuilder::get().id(i).description(L"Dummy"));
 		}
 		using F = You::QueryEngine::Filter;
 		auto result = QueryEngine::executeQuery(

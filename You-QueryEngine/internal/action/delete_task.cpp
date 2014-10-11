@@ -2,6 +2,7 @@
 #include "stdafx.h"
 
 #include "../state.h"
+#include "../controller.h"
 #include "delete_task.h"
 
 namespace You {
@@ -15,8 +16,8 @@ void DeleteTask::makeTransaction() {
 	t.commit();
 }
 
-Response DeleteTask::execute(State& tasks) {
-	tasks.graph().deleteTask(this->id);
+Response DeleteTask::execute(State& state) {
+	Controller::Graph::deleteTask(state.graph(), this->id);
 	makeTransaction();
 	return this->id;
 }

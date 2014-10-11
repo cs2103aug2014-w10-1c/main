@@ -41,7 +41,7 @@
     <ClCompile Include="filter_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="task_graph_tests.cpp">
+    <ClCompile Include="task_graph_controller_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

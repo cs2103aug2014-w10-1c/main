@@ -1,7 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
-#include  "../task_serializer.h"
+#include  "../controller.h"
 #include  "../state.h"
 #include "filter_task.h"
 
@@ -10,10 +10,10 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-Response FilterTask::execute(State& tasks) {
+Response FilterTask::execute(State& state) {
 	std::vector<Task> result;
 	auto filter = this->filter;
-	std::vector<Task> all = tasks.graph().getTaskList();
+	std::vector<Task> all = state.graph().asTaskList();
 	std::for_each(all.begin(), all.end(),
 		[filter, &result] (const Task task) {
 			if (filter(task)) {

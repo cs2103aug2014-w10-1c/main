@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "internal/task_builder.h"
-#include "internal/task_serializer.h"
+#include "internal/controller/task_builder.h"
+#include "internal/controller/task_serializer.h"
 
 #include "common.h"
 

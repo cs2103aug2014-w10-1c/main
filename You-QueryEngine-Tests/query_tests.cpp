@@ -4,8 +4,8 @@
 #include "exclusions.h"
 
 #include <type_traits>
-#include "internal/task_builder.h"
-#include "internal/exception.h"
+#include "internal/controller/task_builder.h"
+#include "internal/model.h"
 #include "internal/state.h"
 #include "api.h"
 
@@ -70,7 +70,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 		for (int i = 1; i <= 5; i++) {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
 			auto response = QueryEngine::executeQuery(std::move(query));
-			std::size_t newSize = Internal::State::get().graph().getTaskList().size();
+			std::size_t newSize = Internal::State::get().graph().asTaskList().size();
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
@@ -163,7 +163,7 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 			auto query = QueryEngine::DeleteTask(task.getID());
 			auto response = QueryEngine::executeQuery(std::move(query));
 			Assert::AreEqual(Internal::State::get().graph()
-				.getTaskList().size(), std::size_t(0));
+				.asTaskList().size(), std::size_t(0));
 		}
 		#pragma endregion
 		Internal::State::clear();
