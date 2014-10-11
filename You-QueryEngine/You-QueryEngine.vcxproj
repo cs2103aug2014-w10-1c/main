@@ -73,7 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="task_comparator.h" />
+    <ClInclude Include="comparator.h" />
     <ClInclude Include="internal\action\delete_task.h" />
     <ClInclude Include="internal\action\update_task.h" />
     <ClInclude Include="internal\action\get_task.h" />
@@ -102,7 +102,7 @@
     <ClCompile Include="internal\controller\task_builder.cpp" />
     <ClCompile Include="internal\model\task_graph.cpp" />
     <ClCompile Include="internal\controller\task_serializer.cpp" />
-    <ClCompile Include="task_comparator.cpp" />
+    <ClCompile Include="comparator.cpp" />
     <ClCompile Include="task_model.cpp" />
     <ClCompile Include="api.cpp" />
     <ClCompile Include="stdafx.cpp">

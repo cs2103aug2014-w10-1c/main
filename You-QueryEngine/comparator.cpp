@@ -4,6 +4,40 @@
 namespace You {
 namespace QueryEngine {
 
+Comparator Comparator::notSorted() {
+	return Comparator([](const Task&, const Task&) {
+		return ComparisonResult::GT;
+	});
+}
+
+Comparator Comparator::byDescription() {
+	return byApplying<Task::Description>([](const Task& task) {
+		return task.getDescription();
+	});
+}
+
+Comparator Comparator::byDeadline() {
+	return byApplying<Task::Time>([](const Task& task) {
+		return task.getDeadline();
+	});
+}
+
+Comparator Comparator::byDependenciesCount() {
+	return byApplying<int>([](const Task& task) {
+		return task.getDependencies().size();
+	});
+}
+
+Comparator Comparator::byPriority() {
+	return byApplying<int>([](const Task& task) {
+		if (task.getPriority() == Task::Priority::NORMAL) {
+			return 1;
+		} else {
+			return 0;
+		}
+	});
+}
+
 Comparator::Comparator(const ComparatorFunc& func) {
 	comparators.push_back(func);
 }
@@ -14,7 +48,7 @@ bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 		 ++comparator) {
 		ComparisonResult result = (*comparator)(lhs, rhs);
 		if (result != ComparisonResult::EQ) {
-			return result == ComparisonResult::GT;
+			return result == ComparisonResult::LT;
 		} else {
 			continue;
 		}

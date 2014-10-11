@@ -17,6 +17,29 @@ namespace UnitTests { class ComparatorTests; }
 /// Base class for task comparators.
 /// Needed by Controller to construct GetTask query.
 class Comparator {
+/// \name Commonly used comparators
+/// @{
+public:
+	static Comparator notSorted();
+	static Comparator byDescription();
+	static Comparator byDeadline();
+	static Comparator byDependenciesCount();
+	static Comparator byPriority();
+private:
+	template <class T>
+	static Comparator byApplying(std::function<T(const Task&)> func) {
+		return Comparator([=] (const Task& lhs, const Task& rhs) {
+			if (func(lhs) < func(rhs)) {
+				return ComparisonResult::LT;
+			} else if (func(lhs) > func(rhs)) {
+				return ComparisonResult::GT;
+			} else {
+				return ComparisonResult::EQ;
+			}
+		});
+	}
+/// @}
+
 public:
 	/// Enum class for comparison result.
 	enum class ComparisonResult { LT, GT, EQ };

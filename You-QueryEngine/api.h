@@ -14,8 +14,6 @@
 /// Hidden internal components.
 /// \namespace You::QueryEngine::Internal::Action
 /// Several classes that implements Query actions.
-/// \namespace You::QueryEngine::Internal::Exception
-/// A handful of exception classes.
 /// \namespace You::QueryEngine::UnitTests
 /// Contains the test classes for QueryEngine.
 /// @}
@@ -30,6 +28,7 @@
 #include <boost/variant.hpp>
 #include "task_model.h"
 #include "filter.h"
+#include "comparator.h"
 
 namespace You {
 namespace QueryEngine {
@@ -70,8 +69,12 @@ public:
 		Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies);
 
-	/// Construct filter task query.
+	/// Construct filter task without sort query
 	static std::unique_ptr<Query> GetTask(const Filter& filter);
+
+	/// Construct filter and sort task query.
+	static std::unique_ptr<Query> GetTask(const Filter& filter,
+		const Comparator& comparator);
 
 	/// Construct delete task query.
 	static std::unique_ptr<Query> DeleteTask(Task::ID id);
