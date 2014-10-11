@@ -80,14 +80,14 @@ private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::YouMainGUIClass ui;
+
 	std::unique_ptr<You::Controller::TaskList> taskList;
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-	enum class Color { Red, Green };
-	void setIconColor(YouMainGUI::Color color);
+
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 

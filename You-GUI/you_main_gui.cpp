@@ -107,37 +107,45 @@ void YouMainGUI::editTask(const Task& task) {
 
 void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
-	setIconColor(YouMainGUI::Color::Green);
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	pixmap.load(":/Status_green.png", 0);
+	QString message("Ready.");
+	ui.statusMessage->setText(message);
 	try {
 		nlpm->query(inputString, getTaskList());
-	}
-	catch (You::Controller::ContextIndexOutOfRangeException& e) {
-		QString message("Error: The task requested does not exist in the list.");
-		ui.statusMessage->setText(message);
-		setIconColor(YouMainGUI::Color::Red);
-	}
-	catch (You::Controller::ContextRequiredException& e) {
-		QString message("Error: A context is required.");
-		ui.statusMessage->setText(message);
-		setIconColor(YouMainGUI::Color::Red);
 	}
 	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
 		QString message("Error: Please fill in a task description.");
 		ui.statusMessage->setText(message);
-		setIconColor(YouMainGUI::Color::Red);
+		pixmap.load(":/Status_red.png", 0);
 	}
 	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
 		QString message("Error: Requested task was not found.");
 		ui.statusMessage->setText(message);
-		setIconColor(YouMainGUI::Color::Red);
+		pixmap.load(":/Status_red.png", 0);
 	}
 	catch (You::NLP::ParseErrorException& e) {
 		QString message("Error: Unable to parse input.");
 		ui.statusMessage->setText(message);
-		setIconColor(YouMainGUI::Color::Red);
+		pixmap.load(":/Status_red.png", 0);
 	}
-	setIconColor(YouMainGUI::Color::Green);
-
+	catch (You::NLP::ParserException& e) {
+		QString message("Error: Unable to parse input.");
+		ui.statusMessage->setText(message);
+		pixmap.load(":/Status_red.png", 0);
+	}
+	catch (You::Controller::ContextIndexOutOfRangeException& e) {
+		QString message("Error: The task requested does not exist in the list.");
+		ui.statusMessage->setText(message);
+		pixmap.load(":/Status_red.png", 0);
+	}
+	catch (You::Controller::ContextRequiredException& e) {
+		QString message("Error: A context is required.");
+		ui.statusMessage->setText(message);
+		pixmap.load(":/Status_red.png", 0);
+	}
+	ui.statusIcon->setPixmap(pixmap);
 	ui.commandInputBox->setText(QString());
 }
 
@@ -151,18 +159,4 @@ void YouMainGUI::commandEnterButtonClicked() {
 
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {
-}
-
-void YouMainGUI::setIconColor(YouMainGUI::Color color) {
-	QPixmap pixmap;
-	pixmap.fill(Qt::transparent);
-	switch (color) {
-		case YouMainGUI::Color::Green:
-			pixmap.load(":/Status_green.png", 0);
-		case YouMainGUI::Color::Red:
-			pixmap.load(":/Status_red.png", 0);
-		default:
-			;
-	}
-	ui.statusIcon->setPixmap(pixmap);
 }
