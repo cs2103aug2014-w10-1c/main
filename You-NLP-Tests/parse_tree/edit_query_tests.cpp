@@ -13,8 +13,8 @@ using You::NLP::EDIT_QUERY;
 TEST_CLASS(EditQueryTests) {
 public:
 	TEST_METHOD(fieldsBinaryOr) {
-		EDIT_QUERY::Fields lhs;
-		EDIT_QUERY::Fields rhs;
+		TaskField lhs = TaskField::COMPLETE;
+		TaskField rhs = TaskField::PRIORITY;
 
 		Assert::AreEqual(
 			static_cast<size_t>(lhs) | static_cast<size_t>(rhs),
@@ -22,8 +22,8 @@ public:
 	}
 
 	TEST_METHOD(fieldsBinaryAnd) {
-		EDIT_QUERY::Fields lhs;
-		EDIT_QUERY::Fields rhs;
+		TaskField lhs = TaskField::COMPLETE;
+		TaskField rhs = TaskField::PRIORITY;
 
 		Assert::AreEqual(
 			static_cast<size_t>(lhs) & static_cast<size_t>(rhs),
