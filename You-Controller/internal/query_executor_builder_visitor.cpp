@@ -91,7 +91,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					task.getID(),
 					description,
 					deadline,
-					Task::DEFAULT_PRIORITY,
+					priority,
 					Task::Dependencies())));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
