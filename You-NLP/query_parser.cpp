@@ -79,6 +79,36 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma endregion
 
+	#pragma region Showing tasks
+	showCommand = (
+		-showCommandFiltering >>
+		(qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
+		showCommandSorting
+	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
+
+	showCommandSorting %= (
+		showCommandSortingColumn % (qi::lit(L",") | qi::lit(L"then"))
+	);
+
+	showCommandSortingColumn = (
+		showCommandFields >> -showCommandSortingOrders
+	)[qi::_val = phoenix::bind(&constructShowQuerySortColumn, qi::_1, qi::_2)];
+
+	showCommandSortingOrders.add
+		(L"asc", SHOW_QUERY::Order::ASCENDING)
+		(L"ascending", SHOW_QUERY::Order::ASCENDING)
+		(L"desc", SHOW_QUERY::Order::DESCENDING)
+		(L"descending", SHOW_QUERY::Order::DESCENDING);
+	showCommandSortingOrders.name("showCommandSortingOrders");
+
+	showCommandFields.add
+		(L"description", TaskField::DESCRIPTION)
+		(L"deadline", TaskField::DEADLINE)
+		(L"done", TaskField::COMPLETE)
+		(L"complete", TaskField::COMPLETE);
+	showCommandFields.name("showCommandFields");
+	#pragma endregion
+
 	#pragma region Editing tasks
 	editCommand = (
 		qi::uint_ >> qi::lit(L"set") >> editCommandRule
