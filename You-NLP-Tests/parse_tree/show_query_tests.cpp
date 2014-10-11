@@ -44,6 +44,9 @@ TEST_CLASS(ShowQueryTests) {
 
 		Assert::AreEqual(DUMMY, local);
 
+		local.order[0].field = TaskField::DEADLINE;
+		Assert::AreNotEqual(DUMMY, local);
+
 		SHOW_QUERY local2 = local;
 		local2.order.push_back(SHOW_QUERY::FIELD_ORDER {
 			TaskField::DESCRIPTION
