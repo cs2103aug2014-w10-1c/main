@@ -23,9 +23,9 @@ QueryEngine::AddTask(Task::Description description, Task::Time deadline,
 }
 
 std::unique_ptr<Query>
-QueryEngine::FilterTask(const Filter& filter) {
-	using FilterTask = Internal::Action::FilterTask;
-	return std::unique_ptr<Query>(new FilterTask(filter));
+QueryEngine::GetTask(const Filter& filter) {
+	using GetTask = Internal::Action::GetTask;
+	return std::unique_ptr<Query>(new GetTask(filter));
 }
 
 std::unique_ptr<Query>

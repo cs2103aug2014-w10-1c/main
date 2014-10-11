@@ -42,7 +42,7 @@ TEST_CLASS(FilterTests) {
 		populateStateWithMockedTasks();
 		using F = You::QueryEngine::Filter;
 		std::unique_ptr<Query> query =
-			QueryEngine::FilterTask(F::anyTask());
+			QueryEngine::GetTask(F::anyTask());
 		auto result = QueryEngine::executeQuery(std::move(query));
 
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_TASK);
@@ -60,7 +60,7 @@ TEST_CLASS(FilterTests) {
 		}
 		using F = You::QueryEngine::Filter;
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(F::idIsIn(mustBeHere)));
+			QueryEngine::GetTask(F::idIsIn(mustBeHere)));
 
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(),
 			N_FILTERED);
@@ -71,7 +71,7 @@ TEST_CLASS(FilterTests) {
 		using F = You::QueryEngine::Filter;
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(alwaysEmpty));
+			QueryEngine::GetTask(alwaysEmpty));
 
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}
@@ -81,7 +81,7 @@ TEST_CLASS(FilterTests) {
 		using F = You::QueryEngine::Filter;
 		auto alwaysEmpty = (!F::anyTask()) || (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
-			QueryEngine::FilterTask(alwaysEmpty));
+			QueryEngine::GetTask(alwaysEmpty));
 
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
 	}

@@ -71,7 +71,7 @@ public:
 		Task::Dependencies dependencies);
 
 	/// Construct filter task query.
-	static std::unique_ptr<Query> FilterTask(const Filter& filter);
+	static std::unique_ptr<Query> GetTask(const Filter& filter);
 
 	/// Construct delete task query.
 	static std::unique_ptr<Query> DeleteTask(Task::ID id);

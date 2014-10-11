@@ -44,11 +44,11 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 		Assert::IsNotNull(&query);
 	}
 
-	TEST_METHOD(constructFilterTaskQuery) {
+	TEST_METHOD(constructGetTaskQuery) {
 		std::vector<Task::ID> emptyVec;
-		auto query = QueryEngine::FilterTask(Filter::idIsIn(emptyVec));
+		auto query = QueryEngine::GetTask(Filter::idIsIn(emptyVec));
 		Assert::IsNotNull(&query);
-		query = QueryEngine::FilterTask(Filter::anyTask());
+		query = QueryEngine::GetTask(Filter::anyTask());
 		Assert::IsNotNull(&query);
 	}
 

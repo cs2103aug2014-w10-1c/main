@@ -16,17 +16,17 @@ namespace Internal {
 namespace Action {
 
 /// Action for filtering tasks
-class FilterTask : public Query {
+class GetTask : public Query {
 public:
 	/// Constructor
-	explicit FilterTask(const Filter& filter) : filter(filter) {}
+	explicit GetTask(const Filter& filter) : filter(filter) {}
 
 	/// Destructor
-	virtual ~FilterTask() = default;
+	virtual ~GetTask() = default;
 private:
 	/// Execute add task.
 	Response execute(State& tasks) override;
-	FilterTask& operator=(const FilterTask&) = delete;
+	GetTask& operator=(const GetTask&) = delete;
 	Filter filter;
 };
 

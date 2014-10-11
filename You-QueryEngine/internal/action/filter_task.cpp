@@ -10,7 +10,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-Response FilterTask::execute(State& state) {
+Response GetTask::execute(State& state) {
 	std::vector<Task> result;
 	auto filter = this->filter;
 	std::vector<Task> all = state.graph().asTaskList();
