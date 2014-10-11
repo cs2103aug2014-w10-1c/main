@@ -6,12 +6,8 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_CONTROLLER_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_CONTROLLER_H_
 
-#include <vector>
-#include <stdexcept>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include "../exception.h"
-#include "../task_graph.h"
+#include "../model.h"
 
 namespace You {
 namespace QueryEngine {

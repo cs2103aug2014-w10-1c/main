@@ -6,12 +6,7 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_
 #define YOU_QUERYENGINE_INTERNAL_TASK_SERIALIZER_H_
 
-#include <string>
-#include <unordered_map>
-#include <boost/tokenizer.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include "task_builder.h"
+#include "../model.h"
 
 namespace You {
 namespace QueryEngine {
