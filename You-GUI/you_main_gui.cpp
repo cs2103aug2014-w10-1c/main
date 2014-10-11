@@ -8,6 +8,10 @@
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
 
+#include "You-Controller\exception.h"
+#include "You-Utils\exceptions\query_engine_exception.h"
+#include "You-NLP\exception.h"
+
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
@@ -105,7 +109,29 @@ void YouMainGUI::editTask(const Task& task) {
 void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
 
-	nlpm->query(inputString, getTaskList());
+	try {
+		nlpm->query(inputString, getTaskList());
+	}
+	catch (You::Controller::ContextIndexOutOfRangeException& e) {
+		QString message("Error: The task requested does not exist in the list.");
+		statusBar()->showMessage(message);
+	}
+	catch (You::Controller::ContextRequiredException& e) {
+		QString message("Error: A context is required.");
+		statusBar()->showMessage(message);
+	}
+	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
+		QString message("Error: Please fill in a task description.");
+		statusBar()->showMessage(message);
+	}
+	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
+		QString message("Error: Requested task was not found.");
+		statusBar()->showMessage(message);
+	}
+	catch (You::NLP::ParseErrorException& e) {
+		QString message("Error: Unable to parse input.");
+		statusBar()->showMessage(message);
+	}
 	ui.commandInputBox->setText(QString());
 }
 
