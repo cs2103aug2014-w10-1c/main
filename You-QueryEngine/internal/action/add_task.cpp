@@ -1,6 +1,9 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
 #include "../model.h"
 #include "../controller.h"
 #include "add_task.h"
@@ -9,6 +12,9 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 namespace Action {
+
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
 
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)

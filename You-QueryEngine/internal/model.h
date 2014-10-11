@@ -19,6 +19,8 @@ public:
 	typedef Task Task;
 	typedef TaskGraph TaskGraph;
 	typedef State State;
+private:
+	Model() = delete;
 };
 
 }  // namespace Internal
