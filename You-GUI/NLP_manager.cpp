@@ -20,14 +20,15 @@ void YouMainGUI::NLPManager::setup() {
 	pixmap.load(":/Status_green.png", 0);
 	parentGUI->ui.statusIcon->setPixmap(QPixmap(":/Status_green.png"));
 	parentGUI->ui.statusIcon->show();
-	parentGUI->statusBar()->insertPermanentWidget(0, parentGUI->ui.statusIcon, 0);
-	parentGUI->statusBar()->insertPermanentWidget(0, parentGUI->ui.statusMessage, 0);
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusIcon, 0);
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusMessage, 0);
 }
 
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {

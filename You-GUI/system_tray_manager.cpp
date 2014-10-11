@@ -49,14 +49,16 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 			(parentGUI->windowState() & ~Qt::WindowMinimized);
 		if (visible && minimized) {
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
-			parentGUI->ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+			parentGUI->ui.commandInputBox->setFocus(
+				Qt::FocusReason::ActiveWindowFocusReason);
 		} else if (visible && !minimized) {
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
 			parentGUI->hide();
 		} else if (!visible) {
 			parentGUI->show();
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
-			parentGUI->ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+			parentGUI->ui.commandInputBox->setFocus(
+				Qt::FocusReason::ActiveWindowFocusReason);
 		}
 	}
 }
