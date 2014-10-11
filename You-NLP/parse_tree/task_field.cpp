@@ -35,7 +35,7 @@ TaskField operator&(const TaskField& lhs, const TaskField& rhs) {
 }
 
 std::wostream& operator<<(std::wostream& stream, TaskField priority) {
-	return stream << static_cast<int>(priority);
+	return stream << ToString(priority);
 }
 
 /// Converts the sorting fields to strings.
