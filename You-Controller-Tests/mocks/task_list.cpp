@@ -6,16 +6,20 @@ namespace Controller {
 namespace UnitTests {
 namespace Mocks {
 
-TaskList::TaskList() {
+TaskList::TaskList(size_t count) {
+	std::generate_n(std::back_inserter<TaskList>(*this),
+		count, std::bind(&TaskList::createTask, this));
+}
+
+Task TaskList::createTask() {
 	std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
 		L"meh",
-		QueryEngine::Task::DEFAULT_DEADLINE,
+		QueryEngine::Task::DEFAULT_DEADLINE + boost::posix_time::hours(size()),
 		QueryEngine::Task::DEFAULT_PRIORITY,
 		QueryEngine::Task::Dependencies());
 
 	QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
-	Task task = boost::get<Task>(r);
-	emplace_back(task);
+	return boost::get<Task>(r);
 }
 
 }  // namespace Mocks

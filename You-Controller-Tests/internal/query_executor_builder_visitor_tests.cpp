@@ -89,6 +89,23 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 	}
 
+	TEST_METHOD(getsCorrectTypeForShowQueries) {
+		Mocks::TaskList taskList(5);
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::SHOW_QUERY);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		SHOW_RESULT result(
+			boost::get<SHOW_RESULT>(executor->execute()));
+
+		Assert::IsTrue(
+			std::is_sorted(begin(result.tasks), end(result.tasks),
+			[](const Task& left, const Task& right) {
+				return left.getDeadline() > right.getDeadline();
+			}));
+	}
+
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
 		getsCorrectTypeForEditQueries1();
 		getsCorrectTypeForEditQueries2();
