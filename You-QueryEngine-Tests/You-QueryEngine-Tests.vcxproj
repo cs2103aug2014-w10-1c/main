@@ -90,9 +90,12 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="exclusions.h" />
+    <ClInclude Include="mocks\task.h" />
+    <ClInclude Include="mocks\task_list.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="comparator_tests.cpp" />
     <ClCompile Include="filter_tests.cpp" />
     <ClCompile Include="query_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
