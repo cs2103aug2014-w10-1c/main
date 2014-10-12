@@ -2,13 +2,13 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
+#include "main_window.h"
 #include "system_tray_manager.h"
 
-YouMainGUI::SystemTrayManager::~SystemTrayManager() {
+MainWindow::SystemTrayManager::~SystemTrayManager() {
 }
 
-void YouMainGUI::SystemTrayManager::setup() {
+void MainWindow::SystemTrayManager::setup() {
 	createActions();
 	setIcon();
 	makeContextMenu();
@@ -16,14 +16,14 @@ void YouMainGUI::SystemTrayManager::setup() {
 	parentGUI->setVisible(true);
 }
 
-void YouMainGUI::SystemTrayManager::setIcon() {
+void MainWindow::SystemTrayManager::setIcon() {
 	QIcon icon(":/Icon.png");
 	trayIcon.setIcon(icon);
 	parentGUI->setWindowIcon(icon);
 	trayIcon.show();
 }
 
-void YouMainGUI::SystemTrayManager::makeContextMenu() {
+void MainWindow::SystemTrayManager::makeContextMenu() {
 	trayIconMenu = new QMenu(parentGUI);
 	trayIconMenu->addAction(minimizeAction);
 	trayIconMenu->addAction(maximizeAction);
@@ -33,12 +33,12 @@ void YouMainGUI::SystemTrayManager::makeContextMenu() {
 	trayIcon.setContextMenu(trayIconMenu);
 }
 
-void YouMainGUI::SystemTrayManager::connectTrayActivatedSlot() {
+void MainWindow::SystemTrayManager::connectTrayActivatedSlot() {
 	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
-void YouMainGUI::SystemTrayManager::iconActivated(
+void MainWindow::SystemTrayManager::iconActivated(
 	QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::Trigger) {
 		bool visible = parentGUI->isVisible();
@@ -63,7 +63,7 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 	}
 }
 
-void YouMainGUI::SystemTrayManager::createActions() {
+void MainWindow::SystemTrayManager::createActions() {
 	minimizeAction = new QAction(tr("Minimize"), parentGUI);
 	connect(minimizeAction, SIGNAL(triggered()), parentGUI, SLOT(hide()));
 

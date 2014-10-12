@@ -11,12 +11,12 @@ using Task = You::Controller::Task;
 /// handles basics such as the window state of the application and task sets
 /// previously displayed, saving the state on program exit, and restoring them
 /// when the program is started again. It inherits from the BaseManager class.
-class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
+class MainWindow::SessionManager : public MainWindow::BaseManager{
 	Q_OBJECT
 
 public:
 	/// Constructor inherited from BaseManager.
-	explicit SessionManager(YouMainGUI * const parentGUI)
+	explicit SessionManager(MainWindow * const parentGUI)
 		: BaseManager(parentGUI) {}
 
 	/// Destructor.

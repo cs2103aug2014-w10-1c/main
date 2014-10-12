@@ -6,20 +6,20 @@
 
 using Task = You::Controller::Task;
 
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_2 = "Index";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_3 = "Description";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_5 = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
 
-YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI* const parentGUI)
+MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI) {
 }
 
-YouMainGUI::TaskPanelManager::~TaskPanelManager() {
+MainWindow::TaskPanelManager::~TaskPanelManager() {
 }
 
-void YouMainGUI::TaskPanelManager::setup() {
+void MainWindow::TaskPanelManager::setup() {
 	QStringList columnHeaders({
 		TASK_COLUMN_1,
 		TASK_COLUMN_2,
@@ -45,20 +45,20 @@ void YouMainGUI::TaskPanelManager::setup() {
 	taskTreePanel->setColumnHidden(0, true);
 }
 
-void YouMainGUI::TaskPanelManager::addTask(const Task& task) {
+void MainWindow::TaskPanelManager::addTask(const Task& task) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
 	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
+void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	const QStringList& rowStrings) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
 	parent->addChild(item.release());
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
+void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QList<QTreeWidgetItem*> items = findItems(task.getID());
 
 	if (items.length() != 1) {
@@ -71,7 +71,7 @@ void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
+void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
 	QList<QTreeWidgetItem*> items = findItems(taskID);
 
 	if (items.length() != 1) {
@@ -82,27 +82,27 @@ void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
+void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const Task& task) {
 	return createItem(taskToStrVec(task));
 }
 
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const QStringList& rowStrings) {
 	return std::make_unique<QTreeWidgetItem>(rowStrings);
 }
 
-QList<QTreeWidgetItem*> YouMainGUI::TaskPanelManager::findItems(
+QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 	You::Controller::Task::ID taskID) const {
 	return parentGUI->ui.taskTreePanel->findItems(
 		boost::lexical_cast<QString>(taskID), 0);
 }
 
-QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
+QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	const You::Controller::Task& task) {
 	QStringList result;
 
@@ -133,7 +133,7 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 	return result;
 }
 
-void YouMainGUI::TaskPanelManager::updateRowNumbers() {
+void MainWindow::TaskPanelManager::updateRowNumbers() {
 	int rowNum = 0;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
 		(*it)->setData(1, Qt::DisplayRole, rowNum++);

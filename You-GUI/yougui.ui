@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>YouMainGUIClass</class>
- <widget class="QMainWindow" name="YouMainGUIClass">
+ <class>MainWindowClass</class>
+ <widget class="QMainWindow" name="MainWindowClass">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -148,7 +148,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>commandInputBox</sender>
    <signal>returnPressed()</signal>
-   <receiver>YouMainGUIClass</receiver>
+   <receiver>MainWindowClass</receiver>
    <slot>commandEnterPressed()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -164,7 +164,7 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>commandEnterButton</sender>
    <signal>released()</signal>
-   <receiver>YouMainGUIClass</receiver>
+   <receiver>MainWindowClass</receiver>
    <slot>commandEnterButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">

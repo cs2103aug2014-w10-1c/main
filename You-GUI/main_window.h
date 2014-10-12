@@ -1,7 +1,7 @@
 //@author A0094446X
 #pragma once
-#ifndef YOU_GUI_YOU_MAIN_GUI_H_
-#define YOU_GUI_YOU_MAIN_GUI_H_
+#ifndef YOU_GUI_MAIN_WINDOW_H_
+#define YOU_GUI_MAIN_WINDOW_H_
 #include <memory>
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
@@ -10,15 +10,15 @@
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
-class YouMainGUI : public QMainWindow {
+class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 public:
 	/// Constructor for the GUI.
-	explicit YouMainGUI(QWidget *parent = nullptr);
+	explicit MainWindow(QWidget *parent = nullptr);
 
 	/// Destructor for the GUI.
-	~YouMainGUI();
+	~MainWindow();
 
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
@@ -79,7 +79,7 @@ private:
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
-	Ui::YouMainGUIClass ui;
+	Ui::MainWindowClass ui;
 
 	std::unique_ptr<You::Controller::TaskList> taskList;
 	/// Reimplementation of setVisible for system tray manager
@@ -112,4 +112,4 @@ private slots:
 	void applicationExitRequested();
 };
 
-#endif  // YOU_GUI_YOU_MAIN_GUI_H_
+#endif  // YOU_GUI_MAIN_WINDOW_H_

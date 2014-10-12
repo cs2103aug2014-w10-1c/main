@@ -10,7 +10,7 @@ using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
-void YouMainGUI::QueryManager::setup() {
+void MainWindow::QueryManager::setup() {
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
 	// Set result to current context
@@ -25,13 +25,13 @@ void YouMainGUI::QueryManager::setup() {
 		0, parentGUI->ui.statusMessage, 0);
 }
 
-void YouMainGUI::QueryManager::query(
+void MainWindow::QueryManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
-		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
+		explicit ResultProcessorVisitor(MainWindow* const parentGUI)
 		: parentGUI(parentGUI) {
 		}
 
@@ -48,14 +48,14 @@ void YouMainGUI::QueryManager::query(
 		}
 
 	private:
-		YouMainGUI* parentGUI;
+		MainWindow* parentGUI;
 	};
 
 	ResultProcessorVisitor visitor(parentGUI);
 	boost::apply_visitor(visitor, result);
 }
 
-TaskList YouMainGUI::QueryManager::getTasks(
+TaskList MainWindow::QueryManager::getTasks(
 	const QList<Task::ID>& taskIDs) {
 	std::vector<Task::ID> taskIDVector;
 	std::copy(
@@ -67,6 +67,6 @@ TaskList YouMainGUI::QueryManager::getTasks(
 	return Controller::get().getTasks(taskIDVector);
 }
 
-TaskList YouMainGUI::QueryManager::getTasks() {
+TaskList MainWindow::QueryManager::getTasks() {
 	return Controller::get().getTasks();
 }

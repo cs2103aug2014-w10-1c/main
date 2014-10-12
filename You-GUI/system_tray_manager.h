@@ -8,12 +8,12 @@
 /// The component that handles all interactions with the tray icon. It handles
 /// the window state of the application based on commands sent to the tray
 /// manager. It inherits from the BaseManager class.
-class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager{
+class MainWindow::SystemTrayManager : public MainWindow::BaseManager{
 	Q_OBJECT
-	friend class YouMainGUI;
+	friend class MainWindow;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit SystemTrayManager(YouMainGUI * const parentGUI)
+	explicit SystemTrayManager(MainWindow * const parentGUI)
 		: BaseManager(parentGUI) {}
 
 	/// Destructor.

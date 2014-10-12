@@ -7,7 +7,7 @@
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
 #include "query_manager.h"
-#include "you_main_gui_messages.h"
+#include "main_window_messages.h"
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
 #include "You-NLP\exception.h"
@@ -17,11 +17,11 @@ using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
-YouMainGUI::YouMainGUI(QWidget *parent)
-	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
-		stm(new YouMainGUI::SystemTrayManager(this)),
-		tpm(new YouMainGUI::TaskPanelManager(this)),
-		qm(new YouMainGUI::QueryManager(this)),
+MainWindow::MainWindow(QWidget *parent)
+	: QMainWindow(parent), sm(new MainWindow::SessionManager(this)),
+		stm(new MainWindow::SystemTrayManager(this)),
+		tpm(new MainWindow::TaskPanelManager(this)),
+		qm(new MainWindow::QueryManager(this)),
 		taskList(new TaskList) {
 	#pragma warning(push)
 	#pragma warning(disable: 4127)
@@ -39,10 +39,10 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	populateTaskPanel();
 }
 
-YouMainGUI::~YouMainGUI() {
+MainWindow::~MainWindow() {
 }
 
-void YouMainGUI::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent *event) {
 	if (stm->trayIcon.isVisible()) {
 		QMessageBox::information(this, tr("Systray"),
 			tr("The program will keep running in the "
@@ -54,7 +54,7 @@ void YouMainGUI::closeEvent(QCloseEvent *event) {
 	}
 }
 
-void YouMainGUI::populateTaskPanel() {
+void MainWindow::populateTaskPanel() {
 	// Grabs tasks from last session from the list of IDs saved
 	QList<Task::ID> IDs = sm->taskIDs;
 	TaskList tl;
@@ -67,28 +67,28 @@ void YouMainGUI::populateTaskPanel() {
 	addTasks(tl);
 }
 
-void YouMainGUI::setVisible(bool visible) {
+void MainWindow::setVisible(bool visible) {
 	stm->minimizeAction->setEnabled(visible);
 	stm->maximizeAction->setEnabled(!isMaximized());
 	stm->restoreAction->setEnabled(isMaximized() || !visible);
 	QWidget::setVisible(visible);
 }
 
-const You::Controller::TaskList& YouMainGUI::getTaskList() const {
+const You::Controller::TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
-void YouMainGUI::addTask(const Task& task) {
+void MainWindow::addTask(const Task& task) {
 	taskList->push_back(task);
 	tpm->addTask(task);
 }
 
-void YouMainGUI::addTasks(const TaskList& tl) {
+void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
-		std::bind(&YouMainGUI::addTask, this, std::placeholders::_1));
+		std::bind(&MainWindow::addTask, this, std::placeholders::_1));
 }
 
-void YouMainGUI::deleteTask(Task::ID taskID) {
+void MainWindow::deleteTask(Task::ID taskID) {
 	TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
 		[=](Task& task) {
 			return task.getID() == taskID;
@@ -100,12 +100,12 @@ void YouMainGUI::deleteTask(Task::ID taskID) {
 	tpm->deleteTask(taskID);
 }
 
-void YouMainGUI::editTask(const Task& task) {
+void MainWindow::editTask(const Task& task) {
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 }
 
-void YouMainGUI::sendQuery() {
+void MainWindow::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -143,11 +143,11 @@ void YouMainGUI::sendQuery() {
 	ui.commandInputBox->setText(QString());
 }
 
-void YouMainGUI::commandEnterPressed() {
+void MainWindow::commandEnterPressed() {
 	sendQuery();
 }
 
-void YouMainGUI::commandEnterButtonClicked() {
+void MainWindow::commandEnterButtonClicked() {
 	sendQuery();
 }
 

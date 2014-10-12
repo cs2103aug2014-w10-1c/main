@@ -14,12 +14,12 @@ HEADERS += ./qt_helpers.h \
     ./session_manager.h \
     ./base_manager.h \
     ./query_manager.h \
-    ./you_main_gui.h
+    ./main_window.h
 SOURCES += ./NLP_manager.cpp \
     ./session_manager.cpp \
     ./stdafx.cpp \
     ./system_tray_manager.cpp \
     ./task_panel_manager.cpp \
-    ./you_main_gui.cpp
+    ./main_window.cpp
 FORMS += ./yougui.ui
 RESOURCES += Resources/yougui.qrc
