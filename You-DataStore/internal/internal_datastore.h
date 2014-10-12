@@ -85,8 +85,11 @@ private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
-	/// The current stack of transactions active.
+	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
+
+	/// The stack of committed transactions.
+	std::stack<std::weak_ptr<Transaction>> committedTransaction;
 };
 
 }  // namespace Internal
