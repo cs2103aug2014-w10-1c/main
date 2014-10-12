@@ -37,7 +37,7 @@ public:
 	/// earlier.
 	///
 	/// \param[in] queue The operations queue
-	void mergeQueue(boost::ptr_deque<IOperation>& queue);
+	void mergeOperationsQueue(boost::ptr_deque<IOperation>& queue);
 
 	bool operator==(Transaction&);
 

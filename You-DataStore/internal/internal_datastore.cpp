@@ -57,8 +57,8 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 	} else {
 		auto below = transactionStack.top().lock();
 
-		below->mergeQueue(transaction.operationsQueue);
-		below->mergeQueue(transaction.mergedOperationsQueue);
+		below->mergeOperationsQueue(transaction.operationsQueue);
+		below->mergeOperationsQueue(transaction.mergedOperationsQueue);
 	}
 }
 

@@ -22,7 +22,7 @@ bool Transaction::operator==(Transaction& other) {
 	return &*this == &other;
 }
 
-void Transaction::mergeQueue(boost::ptr_deque<IOperation>& queue) {
+void Transaction::mergeOperationsQueue(boost::ptr_deque<IOperation>& queue) {
 	mergedOperationsQueue.transfer(mergedOperationsQueue.end(), queue.begin(),
 		queue.end(), queue);
 }
