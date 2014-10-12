@@ -50,9 +50,6 @@
     <ClCompile Include="task_panel_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NLP_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_system_tray_manager.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -85,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_yougui.cpp">
       <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="query_manager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +123,7 @@
     <CustomBuild Include="base_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="NLP_manager.h">
+    <CustomBuild Include="query_manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

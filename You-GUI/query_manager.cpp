@@ -3,14 +3,14 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <QApplication>
 #include <QList>
-#include "NLP_manager.h"
+#include "query_manager.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
 using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
-void YouMainGUI::NLPManager::setup() {
+void YouMainGUI::QueryManager::setup() {
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
 	// Set result to current context
@@ -25,7 +25,7 @@ void YouMainGUI::NLPManager::setup() {
 		0, parentGUI->ui.statusMessage, 0);
 }
 
-void YouMainGUI::NLPManager::query(
+void YouMainGUI::QueryManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
 	Result result = Controller::get().query(query.toStdWString(), taskList);
@@ -55,7 +55,7 @@ void YouMainGUI::NLPManager::query(
 	boost::apply_visitor(visitor, result);
 }
 
-TaskList YouMainGUI::NLPManager::getTasks(
+TaskList YouMainGUI::QueryManager::getTasks(
 	const QList<Task::ID>& taskIDs) {
 	std::vector<Task::ID> taskIDVector;
 	std::copy(
@@ -67,6 +67,6 @@ TaskList YouMainGUI::NLPManager::getTasks(
 	return Controller::get().getTasks(taskIDVector);
 }
 
-TaskList YouMainGUI::NLPManager::getTasks() {
+TaskList YouMainGUI::QueryManager::getTasks() {
 	return Controller::get().getTasks();
 }

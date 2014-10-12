@@ -15,10 +15,10 @@
 /// Result object. Every time a command is sent, the current Result as well
 /// as input string is sent to the parser. The Result is a vector of tasks, and
 /// this replaces the existing Result. It inherits from the BaseManager class.
-class YouMainGUI::NLPManager : public YouMainGUI::BaseManager{
+class YouMainGUI::QueryManager : public YouMainGUI::BaseManager{
 public:
 	/// Constructor inherited from BaseManager.
-	explicit NLPManager(YouMainGUI* const parentGUI)
+	explicit QueryManager(YouMainGUI* const parentGUI)
 		: BaseManager(parentGUI) {}
 
 	/// Wrapper function to connect commandEnterButton to NLP call signal/slot

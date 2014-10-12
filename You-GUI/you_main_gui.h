@@ -51,7 +51,7 @@ public:
 	/// Result as well as input string is sent to the parser. The Result is a
 	/// vector of tasks, and this replaces the existing Result. It inherits
 	/// from the BaseManager class.
-	class NLPManager;
+	class QueryManager;
 
 	void addTask(const You::Controller::Task& task);
 
@@ -73,8 +73,8 @@ private:
 	/// The SystemTrayManager instance
 	const std::unique_ptr<SystemTrayManager> stm;
 
-	/// The NLPManager instance
-	const std::unique_ptr<NLPManager> nlpm;
+	/// The QueryManager instance
+	const std::unique_ptr<QueryManager> qm;
 
 private:
 	/// The QT object that holds all items that are defined when building the

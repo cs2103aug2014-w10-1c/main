@@ -6,7 +6,7 @@
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
-#include "NLP_manager.h"
+#include "query_manager.h"
 #include "you_main_gui_messages.h"
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
@@ -21,7 +21,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	: QMainWindow(parent), sm(new YouMainGUI::SessionManager(this)),
 		stm(new YouMainGUI::SystemTrayManager(this)),
 		tpm(new YouMainGUI::TaskPanelManager(this)),
-		nlpm(new YouMainGUI::NLPManager(this)),
+		qm(new YouMainGUI::QueryManager(this)),
 		taskList(new TaskList) {
 	#pragma warning(push)
 	#pragma warning(disable: 4127)
@@ -29,7 +29,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	#pragma warning(pop)
 	ui.setupUi(this);
 	stm->setup();
-	nlpm->setup();
+	qm->setup();
 	tpm->setup();
 	sm->setup();
 
@@ -60,9 +60,9 @@ void YouMainGUI::populateTaskPanel() {
 	TaskList tl;
 
 	if (IDs.size() != 0) {
-		tl = nlpm->getTasks(IDs);
+		tl = qm->getTasks(IDs);
 	} else {
-		tl = nlpm->getTasks();
+		tl = qm->getTasks();
 	}
 	addTasks(tl);
 }
@@ -113,7 +113,7 @@ void YouMainGUI::sendQuery() {
 	QString message(READY_MESSAGE);
 	ui.statusMessage->setText(message);
 	try {
-		nlpm->query(inputString, getTaskList());
+		qm->query(inputString, getTaskList());
 	}
 	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
 		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);

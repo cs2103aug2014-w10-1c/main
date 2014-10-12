@@ -13,7 +13,7 @@ HEADERS += ./qt_helpers.h \
     ./task_panel_manager.h \
     ./session_manager.h \
     ./base_manager.h \
-    ./NLP_manager.h \
+    ./query_manager.h \
     ./you_main_gui.h
 SOURCES += ./NLP_manager.cpp \
     ./session_manager.cpp \
