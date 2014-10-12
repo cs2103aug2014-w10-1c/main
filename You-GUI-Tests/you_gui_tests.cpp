@@ -16,5 +16,5 @@ void TestYouMainGUI::testGUI() {
 	QVERIFY(w.isVisible());
 }
 
-#include "You-GUI-Tests\GeneratedFiles\Debug\test_tests.moc"
+#include "You-GUI-Tests\GeneratedFiles\Debug\you_gui_tests.moc"
 QTEST_MAIN(TestYouMainGUI)

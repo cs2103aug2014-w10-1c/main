@@ -4,16 +4,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="packages.config" />
-    <CustomBuild Include="GeneratedFiles\Debug\test_tests.moc">
+    <CustomBuild Include="GeneratedFiles\Debug\you_gui_tests.moc">
       <Filter>Generated Files\Debug</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\Release\test_tests.moc">
+    <CustomBuild Include="you_gui_tests.cpp">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Release\you_gui_tests.moc">
       <Filter>Generated Files\Release</Filter>
     </CustomBuild>
   </ItemGroup>
