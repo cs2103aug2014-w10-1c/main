@@ -37,9 +37,9 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		executeTransaction(transaction, temp);
 		document.reset(temp);
 		committedTransaction.push(self);
+		saveData();
 	} else {
 		auto below = transactionStack.top().lock();
-
 		below->mergeOperationsQueue(transaction.operationsQueue);
 		below->mergeOperationsQueue(transaction.mergedOperationsQueue);
 	}
