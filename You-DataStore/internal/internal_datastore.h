@@ -22,6 +22,7 @@ namespace Internal {
 class DataStore {
 	/// Test classes
 	friend class You::DataStore::UnitTests::DataStoreTest;
+	friend class You::DataStore::UnitTests::DataStoreApiTest;
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
