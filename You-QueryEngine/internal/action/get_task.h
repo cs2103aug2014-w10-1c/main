@@ -22,7 +22,7 @@ public:
 	/// Constructor
 	explicit GetTask(const Filter& filter) : filter(filter) {}
 	explicit GetTask(const Filter& filter, const Comparator& comparator) :
-		filter(filter), comparator(comparator) {}
+		filter(filter), comparator(comparator), sortAfterFilter(true) {}
 
 	/// Destructor
 	virtual ~GetTask() = default;
@@ -32,6 +32,7 @@ private:
 	GetTask& operator=(const GetTask&) = delete;
 	Filter filter;
 	Comparator comparator = Comparator::notSorted();
+	bool sortAfterFilter = false;
 };
 
 }  // namespace Action
