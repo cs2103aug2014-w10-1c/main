@@ -74,5 +74,6 @@ void YouMainGUI::SystemTrayManager::createActions() {
 	connect(restoreAction, SIGNAL(triggered()), parentGUI, SLOT(showNormal()));
 
 	quitAction = new QAction(tr("Quit"), parentGUI);
-	connect(quitAction, SIGNAL(triggered()), parentGUI, SLOT(applicationExitRequested()));
+	connect(quitAction, SIGNAL(triggered()),
+		parentGUI, SLOT(applicationExitRequested()));
 }
