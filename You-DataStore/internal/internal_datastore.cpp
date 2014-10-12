@@ -31,27 +31,10 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 	auto self = transactionStack.top();
 	transactionStack.pop();
 
-	if (transactionStack.empty()) {
+	if (transactionStack.empty()) {  // it is the only active transaction
 		pugi::xml_document temp;
 		temp.reset(document);
-		for (auto operation = transaction.operationsQueue.begin();
-			operation != transaction.operationsQueue.end();
-			++operation) {
-			bool status = !operation->run(temp);
-			assert(!status);
-			if (!status) {
-				// throw exception/assert
-			}
-		}
-		for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
-			mergedOperation != transaction.mergedOperationsQueue.end();
-			++mergedOperation) {
-			bool status = !mergedOperation->run(temp);
-			assert(!status);
-			if (!status) {
-				// throw exception/assert
-			}
-		}
+		executeTransaction(transaction, temp);
 		document.reset(temp);
 		committedTransaction.push(self);
 	} else {
@@ -138,6 +121,28 @@ void DataStore::loadData() {
 		// Not sure if the if block below is necessary
 		if (status == pugi::xml_parse_status::status_file_not_found) {
 			document.reset();
+		}
+	}
+}
+
+void DataStore::executeTransaction(Transaction & transaction,
+	pugi::xml_document& xml) {
+	for (auto operation = transaction.operationsQueue.begin();
+		operation != transaction.operationsQueue.end();
+		++operation) {
+		bool status = !operation->run(xml);
+		assert(!status);
+		if (!status) {
+			// throw exception/assert
+		}
+	}
+	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
+		mergedOperation != transaction.mergedOperationsQueue.end();
+		++mergedOperation) {
+		bool status = !mergedOperation->run(xml);
+		assert(!status);
+		if (!status) {
+			// throw exception/assert
 		}
 	}
 }
