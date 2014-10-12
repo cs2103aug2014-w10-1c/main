@@ -26,12 +26,14 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
+	// assume only transaction on top of the stack may be committed
 	assert(*transactionStack.top().lock() == transaction);
 
 	auto self = transactionStack.top();
 	transactionStack.pop();
 
-	if (transactionStack.empty()) {  // it is the only active transaction
+	if (transactionStack.empty()) {
+		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
 		executeTransaction(transaction, temp);
@@ -39,6 +41,8 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		committedTransaction.push(self);
 		saveData();
 	} else {
+		// There is a transaction before it that is yet to be committed.
+		// Merge with that transaction
 		auto below = transactionStack.top().lock();
 		below->mergeOperationsQueue(transaction.operationsQueue);
 		below->mergeOperationsQueue(transaction.mergedOperationsQueue);
