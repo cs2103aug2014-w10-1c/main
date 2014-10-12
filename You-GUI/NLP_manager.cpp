@@ -38,6 +38,8 @@ void YouMainGUI::NLPManager::query(
 		void operator()(You::Controller::ADD_RESULT addResult) {
 			parentGUI->addTask(addResult.task);
 		}
+		void operator()(const You::Controller::SHOW_RESULT& showResult) {
+		}
 		void operator()(You::Controller::EDIT_RESULT editResult) {
 			parentGUI->editTask(editResult.task);
 		}
