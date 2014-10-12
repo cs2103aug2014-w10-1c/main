@@ -9,6 +9,8 @@ namespace You {
 namespace Controller {
 namespace Internal {
 
+using You::NLP::TaskField;
+using You::NLP::TaskPriority;
 using You::NLP::QUERY;
 using You::NLP::ADD_QUERY;
 using You::NLP::SHOW_QUERY;
@@ -45,7 +47,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 			QueryEngine::AddTask(
 				query.description,
 				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-				query.priority == You::NLP::TaskPriority::HIGH ?
+				query.priority == TaskPriority::HIGH ?
 					Task::Priority::HIGH : Task::Priority::NORMAL,
 				Task::Dependencies()
 			)
@@ -55,7 +57,60 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 
 std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
-	return nullptr;
+	class ShowTaskQueryExecutor : public QueryExecutor {
+	public:
+		explicit ShowTaskQueryExecutor(
+			std::unique_ptr<QueryEngine::Query>&& query)
+			: QueryExecutor(std::move(query)) {
+		}
+
+		virtual ~ShowTaskQueryExecutor() = default;
+
+	protected:
+		Result processResponse(
+			const You::QueryEngine::Response& response) override {
+			return SHOW_RESULT {
+				boost::get<TaskList>(response)
+			};
+		}
+	};
+
+	using You::QueryEngine::Comparator;
+	QueryEngine::Filter filter = QueryEngine::Filter::anyTask();
+	Comparator comparator(Comparator::notSorted());
+
+	std::for_each(begin(query.order), end(query.order),
+		[&comparator](const SHOW_QUERY::FIELD_ORDER& field) {
+		Comparator comp(Comparator::notSorted());
+			switch (field.field) {
+			case TaskField::DESCRIPTION:
+				comp = Comparator::byDescription();
+				break;
+			case TaskField::DEADLINE:
+				comp = Comparator::byDeadline();
+				break;
+			case TaskField::PRIORITY:
+				comp = Comparator::byPriority();
+				break;
+			case TaskField::COMPLETE:
+			default:
+				assert(false);
+			}
+
+			if (field.order == SHOW_QUERY::Order::ASCENDING) {
+				comp = comp.ascending();
+			} else {
+				comp = comp.descending();
+			}
+
+			comparator = comparator && comp;
+		});
+
+	return std::unique_ptr<QueryExecutor>(
+		new ShowTaskQueryExecutor(
+			QueryEngine::GetTask(filter, comparator)
+		)
+	);
 }
 
 std::unique_ptr<QueryExecutor>
@@ -87,7 +142,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 			query.deadline.get() :
 			Task::DEFAULT_DEADLINE;
 		Task::Priority priority = query.priority ?
-			(query.priority == You::NLP::TaskPriority::HIGH ?
+			(query.priority == TaskPriority::HIGH ?
 				Task::Priority::HIGH : Task::Priority::NORMAL) :
 			Task::DEFAULT_PRIORITY;
 

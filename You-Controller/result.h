@@ -22,6 +22,7 @@ typedef You::QueryEngine::QueryEngine QueryEngine;
 }  // namespace You
 
 #include "results/add_result.h"
+#include "results/show_result.h"
 #include "results/delete_result.h"
 #include "results/edit_result.h"
 #include "results/result.h"
