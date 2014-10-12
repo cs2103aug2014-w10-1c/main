@@ -26,17 +26,40 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
-	pugi::xml_document temp;
-	temp.reset(document);
-	for (auto iter = transaction.operationsQueue.begin();
-		iter != transaction.operationsQueue.end();
-		++iter) {
-		if (!iter->run(temp)) {
-			// TODO(digawp): this is not necessarily the best thing to do.
-			return transaction.rollback();
+	assert(*transactionStack.top().lock() == transaction);
+
+	auto self = transactionStack.top();
+	transactionStack.pop();
+
+	if (transactionStack.empty()) {
+		pugi::xml_document temp;
+		temp.reset(document);
+		for (auto operation = transaction.operationsQueue.begin();
+			operation != transaction.operationsQueue.end();
+			++operation) {
+			bool status = !operation->run(temp);
+			assert(!status);
+			if (!status) {
+				// throw exception/assert
+			}
 		}
+		for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
+			mergedOperation != transaction.mergedOperationsQueue.end();
+			++mergedOperation) {
+			bool status = !mergedOperation->run(temp);
+			assert(!status);
+			if (!status) {
+				// throw exception/assert
+			}
+		}
+		document.reset(temp);
+		committedTransaction.push(self);
+	} else {
+		auto below = transactionStack.top().lock();
+
+		below->mergeQueue(transaction.operationsQueue);
+		below->mergeQueue(transaction.mergedOperationsQueue);
 	}
-	document.reset(temp);
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
