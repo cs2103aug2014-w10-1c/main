@@ -151,6 +151,15 @@ void YouMainGUI::commandEnterButtonClicked() {
 	sendQuery();
 }
 
+void YouMainGUI::applicationExitRequested() {
+	sm->taskIDs.clear();
+	for (int i = 0; i < taskList->size(); i++) {
+		qDebug() << taskList->at(i).getID();
+		sm->taskIDs.push_back(taskList->at(i).getID());
+	}
+	qApp->quit();
+}
+
 YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
 	: parentGUI(parentGUI) {
 }
