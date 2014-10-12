@@ -154,7 +154,6 @@ void YouMainGUI::commandEnterButtonClicked() {
 void YouMainGUI::applicationExitRequested() {
 	sm->taskIDs.clear();
 	for (int i = 0; i < taskList->size(); i++) {
-		qDebug() << taskList->at(i).getID();
 		sm->taskIDs.push_back(taskList->at(i).getID());
 	}
 	qApp->quit();
