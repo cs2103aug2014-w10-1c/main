@@ -18,6 +18,10 @@ void Transaction::push(std::unique_ptr<Internal::IOperation> op) {
 	operationsQueue.push_back(op.release());
 }
 
+bool Transaction::operator==(Transaction& other) {
+	return &*this == &other;
+}
+
 }  // namespace Internal
 }  // namespace DataStore
 }  // namespace You

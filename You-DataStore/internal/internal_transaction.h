@@ -39,6 +39,8 @@ public:
 	/// \param[in] queue The operations queue
 	void mergeQueue(boost::ptr_deque<IOperation>& queue);
 
+	bool operator==(Transaction&);
+
 private:
 	/// The set of operations that need to be executed when the transaction is
 	/// committed.
