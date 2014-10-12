@@ -17,7 +17,7 @@ TEST_CLASS(DataStoreTest) {
 public:
 	/// Basic test for retrieving a task
 	TEST_METHOD(getExistingTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		sut.post(0, task1);
 		SerializedTask task = sut.getTask(0);
 		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
@@ -25,11 +25,13 @@ public:
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
 		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
+
+		sut.document.reset();
 	}
 
 	/// Basic test for adding a task
 	TEST_METHOD(postNewTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 
 		// Checks if the document is initially empty
 		bool isEmptyDoc = sut.document.children().begin() ==
@@ -45,11 +47,13 @@ public:
 			sut.document.children().end();
 		// Checks if the document is now not empty
 		Assert::IsFalse(isEmptyDoc);
+
+		sut.document.reset();
 	}
 
 	/// Test for adding task with an already existing task id
 	TEST_METHOD(postTaskWithExistingId) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		bool init = sut.post(0, task1);
 		Assert::IsTrue(init);
 		bool result = sut.post(0, SerializedTask());
@@ -62,11 +66,13 @@ public:
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
 		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
+
+		sut.document.reset();
 	}
 
 	/// Basic test for editing a task
 	TEST_METHOD(putExistingTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		sut.post(0, task2);
 		bool result = sut.put(0, task1);
 		Assert::IsTrue(result);
@@ -78,11 +84,13 @@ public:
 		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
 		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
+
+		sut.document.reset();
 	}
 
 	/// Test for editing task with non-existent task id
 	TEST_METHOD(putNonExistentTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		sut.post(0, task1);
 		bool result = sut.put(1, task2);
 		Assert::IsFalse(result);
@@ -98,11 +106,13 @@ public:
 		// Checks if the put does not add things to the xml tree
 		pugi::xpath_node_set nodeSet = sut.document.select_nodes(L"task");
 		Assert::AreEqual(1, boost::lexical_cast<int>(nodeSet.size()));
+
+		sut.document.reset();
 	}
 
 	/// Basic test for erasing a task with the specified task id
 	TEST_METHOD(eraseExistingTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		sut.post(0, task1);
 		// Checks if the xml tree is modified
 		bool isEmptyDoc = sut.document.children().begin() ==
@@ -116,25 +126,31 @@ public:
 		isEmptyDoc = sut.document.children().begin() ==
 			sut.document.children().end();
 		Assert::IsTrue(isEmptyDoc);
+
+		sut.document.reset();
 	}
 
 	/// Test for erasing task with non-existent task id
 	TEST_METHOD(eraseNonExistentTask) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		bool result = sut.erase(0);
 		Assert::IsFalse(result);
+
+		sut.document.reset();
 	}
 
 	TEST_METHOD(getAllTasks) {
-		DataStore sut;
+		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1, boost::lexical_cast<int>(result.size()));
+
+		sut.document.reset();
 	}
 
-	TEST_METHOD(saveAndLoad) {
-		DataStore sut;
+	TEST_METHOD(saveThenLoad) {
+		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		bool result = sut.saveData();
@@ -142,6 +158,8 @@ public:
 		sut.loadData();
 		std::wstring value = sut.document.child(L"task").child_value();
 		Assert::AreEqual(std::wstring(L"what"), value);
+
+		sut.document.reset();
 	}
 };
 }  // namespace UnitTests
