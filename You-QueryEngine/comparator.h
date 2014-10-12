@@ -17,6 +17,7 @@ namespace UnitTests { class ComparatorTests; }
 /// Base class for task comparators.
 /// Needed by Controller to construct GetTask query.
 class Comparator {
+	friend class You::QueryEngine::UnitTests::ComparatorTests;
 /// \name Commonly used comparators
 /// @{
 public:
@@ -73,7 +74,7 @@ private:
 	ComparatorFunc negate(const ComparatorFunc& comp);
 	void negateAllComparators();
 	std::vector<const ComparatorFunc> comparators;
-	bool isAscending = false;
+	bool isAscending = true;
 };
 
 }  // namespace QueryEngine
