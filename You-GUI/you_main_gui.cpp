@@ -7,6 +7,10 @@
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
+#include "you_main_gui_messages.h"
+#include "You-Controller\exception.h"
+#include "You-Utils\exceptions\query_engine_exception.h"
+#include "You-NLP\exception.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -23,7 +27,6 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	#pragma warning(disable: 4127)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
-
 	ui.setupUi(this);
 	stm->setup();
 	nlpm->setup();
@@ -33,7 +36,7 @@ YouMainGUI::YouMainGUI(QWidget *parent)
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 
 	// TODO(angathorion): To fix after implementation of task handling
-	// populateTaskPanel();
+	populateTaskPanel();
 }
 
 YouMainGUI::~YouMainGUI() {
@@ -104,8 +107,39 @@ void YouMainGUI::editTask(const Task& task) {
 
 void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
-
-	nlpm->query(inputString, getTaskList());
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	pixmap.load(RESOURCE_GREEN, 0);
+	QString message(READY_MESSAGE);
+	ui.statusMessage->setText(message);
+	try {
+		nlpm->query(inputString, getTaskList());
+	}
+	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
+		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
+		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (You::NLP::ParseErrorException& e) {
+		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (You::NLP::ParserException& e) {
+		ui.statusMessage->setText(message);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (You::Controller::ContextIndexOutOfRangeException& e) {
+		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (You::Controller::ContextRequiredException& e) {
+		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	ui.statusIcon->setPixmap(pixmap);
 	ui.commandInputBox->setText(QString());
 }
 

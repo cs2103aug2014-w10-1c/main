@@ -91,6 +91,17 @@ private:
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 
+private:
+	static const QString READY_MESSAGE;
+	static const QString EMPTY_TASK_DESCRIPTION_MESSAGE;
+	static const QString TASK_NOT_FOUND_MESSAGE;
+	static const QString PARSE_ERROR_MESSAGE;
+	static const QString PARSER_EXCEPTION_MESSAGE;
+	static const QString RESOURCE_RED;
+	static const QString RESOURCE_GREEN;
+	static const QString CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE;
+	static const QString CONTEXT_REQUIRED_MESSAGE;
+
 private slots:
 	/// Qt's slot for hitting enter in the input box.
 	void commandEnterPressed();

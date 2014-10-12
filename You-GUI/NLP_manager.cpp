@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QList>
 #include "NLP_manager.h"
-#include "You-QueryEngine/internal/task_builder.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -15,18 +14,20 @@ void YouMainGUI::NLPManager::setup() {
 	// To change to get list of tasks from session instead of ALL tasks.
 	// Somehow pass sm's taskIDs into this.
 	// Set result to current context
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	pixmap.load(":/Status_green.png", 0);
+	parentGUI->ui.statusIcon->setPixmap(QPixmap(":/Status_green.png"));
+	parentGUI->ui.statusIcon->show();
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusIcon, 0);
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusMessage, 0);
 }
 
 void YouMainGUI::NLPManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
-	/*
-	TaskList tl;
-	Task newTask =
-		You::QueryEngine::Internal::TaskBuilder::get().description(L"LOL");
-	tl.push_back(newTask);
-	*/
-
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
