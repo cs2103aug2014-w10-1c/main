@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "task_graph_controller.h"
 
+#include "task_serializer.h"
+#include "../../../You-DataStore/datastore.h"
+
 namespace You {
 namespace QueryEngine {
 namespace Internal {
@@ -8,6 +11,20 @@ namespace Internal {
 using TGC = TaskGraphController;
 using Vertex = TaskGraph::Vertex;
 using VIterator = TaskGraph::VIterator;
+
+Task::ID TGC::loadFromFile(TaskGraph& graph) {
+	auto serialized =
+		You::DataStore::DataStore::get().getAllTasks();
+	Task::ID maxID = 0;
+	std::for_each(serialized.cbegin(), serialized.cend(),
+		[&] (const TaskSerializer::STask task) {
+			auto t = TaskSerializer::deserialize(task);
+			addTask(graph, t);
+			maxID = std::max(t.getID(), maxID);
+		}
+	);
+	return maxID;
+}
 
 void TGC::addTask(TaskGraph& g, const Task& task) {
 	Vertex v = boost::add_vertex(g.graph);

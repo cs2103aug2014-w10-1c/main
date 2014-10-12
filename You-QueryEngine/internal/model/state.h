@@ -32,10 +32,10 @@ public:
 	Task::ID inquireNewID();
 
 private:
-	State() : innerGraph(std::move(TaskGraph())) {}
+	State();
 	State(const State&) = delete;
 	State& operator=(const State&) = delete;
-
+	Task::ID maxID;
 	TaskGraph innerGraph;
 };
 
