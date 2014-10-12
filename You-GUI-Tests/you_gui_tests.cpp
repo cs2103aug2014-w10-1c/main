@@ -1,9 +1,9 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <QtTest/QtTest>
 #include "You-GUI\you_main_gui.h"
 #include "You-GUI\system_tray_manager.h"
-class TestYouMainGUI : public QObject
-{
+class TestYouMainGUI : public QObject {
 	Q_OBJECT
 		private slots:
 	void testGUI();
