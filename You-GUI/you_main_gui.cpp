@@ -7,7 +7,7 @@
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
 #include "NLP_manager.h"
-
+#include "you_main_gui_messages.h"
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
 #include "You-NLP\exception.h"
@@ -109,41 +109,35 @@ void YouMainGUI::sendQuery() {
 	QString inputString = ui.commandInputBox->text();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
-	pixmap.load(":/Status_green.png", 0);
-	QString message("Ready.");
+	pixmap.load(RESOURCE_GREEN, 0);
+	QString message(READY_MESSAGE);
 	ui.statusMessage->setText(message);
 	try {
 		nlpm->query(inputString, getTaskList());
 	}
 	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
-		QString message("Error: Please fill in a task description.");
-		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
-		QString message("Error: Requested task was not found.");
-		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	catch (You::NLP::ParseErrorException& e) {
-		QString message("Error: Unable to parse input.");
-		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	catch (You::NLP::ParserException& e) {
-		QString message("Error: Unable to parse input.");
 		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	catch (You::Controller::ContextIndexOutOfRangeException& e) {
-		QString message("Error: The task requested does not exist in the list.");
-		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	catch (You::Controller::ContextRequiredException& e) {
-		QString message("Error: A context is required.");
-		ui.statusMessage->setText(message);
-		pixmap.load(":/Status_red.png", 0);
+		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	}
 	ui.statusIcon->setPixmap(pixmap);
 	ui.commandInputBox->setText(QString());
