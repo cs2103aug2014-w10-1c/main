@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "datastore.h"
 #include "transaction.h"
+#include "internal/internal_datastore.h"
 #include "internal/internal_transaction.h"
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
@@ -66,6 +67,8 @@ public:
 		DataStore::get().erase(0);
 		Assert::AreEqual(3U, sut->operationsQueue.size());
 		sut.commit();
+
+		Internal::DataStore::get().document.reset();
 	}
 
 	TEST_METHOD(commitTransaction) {
@@ -77,6 +80,8 @@ public:
 
 		int size = DataStore::get().getAllTasks().size();
 		Assert::AreEqual(1, size);
+
+		Internal::DataStore::get().document.reset();
 	}
 
 	TEST_METHOD(nestedTransaction) {
@@ -100,6 +105,8 @@ public:
 		sut.commit();
 		allTask = DataStore::get().getAllTasks();
 		Assert::AreEqual(1U, allTask.size());
+
+		Internal::DataStore::get().document.reset();
 	}
 };
 
