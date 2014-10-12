@@ -68,6 +68,7 @@ void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
 		QStringList wstr = taskToStrVec(task);
 		*items.at(0) = *createItem(wstr);
 	}
+	updateRowNumbers();
 }
 
 void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {

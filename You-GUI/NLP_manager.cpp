@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QList>
 #include "NLP_manager.h"
-#include "You-QueryEngine/internal/task_builder.h"
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
