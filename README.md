@@ -5,6 +5,8 @@ The You Task Management Application.
 You will need:
 
 - Visual Studio 2013
+- Qt 5.3
+- Qt 5 Visual Studio Addin
 
 To build this on your local machine:
 
