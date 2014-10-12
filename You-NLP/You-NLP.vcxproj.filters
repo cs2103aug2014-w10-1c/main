@@ -66,7 +66,13 @@
     <ClInclude Include="query_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parse_tree\task_field.h">
+      <Filter>Header Files\parse_tree</Filter>
+    </ClInclude>
     <ClInclude Include="parse_tree\task_priority.h">
+      <Filter>Header Files\parse_tree</Filter>
+    </ClInclude>
+    <ClInclude Include="parse_tree\show_query.h">
       <Filter>Header Files\parse_tree</Filter>
     </ClInclude>
   </ItemGroup>
@@ -90,6 +96,15 @@
       <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
     <ClCompile Include="parse_tree\edit_query.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="query_parser_actions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parse_tree\show_query.cpp">
+      <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="parse_tree\task_field.cpp">
       <Filter>Source Files\parse_tree</Filter>
     </ClCompile>
   </ItemGroup>

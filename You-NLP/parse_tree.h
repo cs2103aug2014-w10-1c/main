@@ -6,6 +6,7 @@
 #include <boost/variant.hpp>
 
 #include "parse_tree/add_query.h"
+#include "parse_tree/show_query.h"
 #include "parse_tree/edit_query.h"
 #include "parse_tree/delete_query.h"
 #include "parse_tree/task_priority.h"
@@ -16,6 +17,7 @@ namespace NLP {
 /// Defines the synthesised value type of a query.
 typedef boost::variant<
 	ADD_QUERY,
+	SHOW_QUERY,
 	EDIT_QUERY,
 	DELETE_QUERY
 > QUERY;

@@ -11,6 +11,7 @@ namespace Internal {
 
 using You::NLP::QUERY;
 using You::NLP::ADD_QUERY;
+using You::NLP::SHOW_QUERY;
 using You::NLP::EDIT_QUERY;
 using You::NLP::DELETE_QUERY;
 
@@ -53,6 +54,11 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 }
 
 std::unique_ptr<QueryExecutor>
+QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
+	return nullptr;
+}
+
+std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	class EditTaskQueryExecutor : public QueryExecutor {
 	public:
@@ -91,7 +97,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					task.getID(),
 					description,
 					deadline,
-					Task::DEFAULT_PRIORITY,
+					priority,
 					Task::Dependencies())));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);

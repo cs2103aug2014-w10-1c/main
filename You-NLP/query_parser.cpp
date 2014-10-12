@@ -1,6 +1,5 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "date_time_parser.h"
 #include "exceptions/parse_error_exception.h"
 #include "query_parser.h"
 
@@ -36,6 +35,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	explicitCommand %= (
 		(qi::lit(L"add") >> addCommand) |
+		(qi::lit(L"show") >> showCommand) |
 		(qi::lit(L"edit") >> editCommand) |
 		(qi::lit(L"delete") >> deleteCommand)
 	);
@@ -79,6 +79,37 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma endregion
 
+	#pragma region Showing tasks
+	showCommand = (
+		-showCommandFiltering >>
+		(qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
+		showCommandSorting
+	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
+
+	showCommandSorting %= (
+		showCommandSortingColumn % (qi::lit(L",") | qi::lit(L"then"))
+	);
+
+	showCommandSortingColumn = (
+		showCommandFields >> -showCommandSortingOrders
+	)[qi::_val = phoenix::bind(&constructShowQuerySortColumn, qi::_1, qi::_2)];
+
+	showCommandSortingOrders.add
+		(L"asc", SHOW_QUERY::Order::ASCENDING)
+		(L"ascending", SHOW_QUERY::Order::ASCENDING)
+		(L"desc", SHOW_QUERY::Order::DESCENDING)
+		(L"descending", SHOW_QUERY::Order::DESCENDING);
+	showCommandSortingOrders.name("showCommandSortingOrders");
+
+	showCommandFields.add
+		(L"description", TaskField::DESCRIPTION)
+		(L"deadline", TaskField::DEADLINE)
+		(L"priority", TaskField::PRIORITY)
+		(L"done", TaskField::COMPLETE)
+		(L"complete", TaskField::COMPLETE);
+	showCommandFields.name("showCommandFields");
+	#pragma endregion
+
 	#pragma region Editing tasks
 	editCommand = (
 		qi::uint_ >> qi::lit(L"set") >> editCommandRule
@@ -109,13 +140,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRulePriorities.name("editCommandRulePriorities");
 
 	editCommandFieldsUnary.add
-		(L"description", EDIT_QUERY::Fields::DESCRIPTION)
-		(L"deadline", EDIT_QUERY::Fields::DEADLINE);
+		(L"description", TaskField::DESCRIPTION)
+		(L"deadline", TaskField::DEADLINE);
 	editCommandFieldsUnary.name("editCommandFieldsUnary");
 
 	editCommandFieldsNullary.add
-		(L"done", EDIT_QUERY::Fields::COMPLETE)
-		(L"complete", EDIT_QUERY::Fields::COMPLETE);
+		(L"done", TaskField::COMPLETE)
+		(L"complete", TaskField::COMPLETE);
 	editCommandFieldsNullary.name("editCommandFieldsNullary");
 
 	editCommandFieldPriorities.add
@@ -133,94 +164,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
-}
-
-ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
-	const ADD_QUERY& query) {
-	ADD_QUERY result(query);
-	result.description.insert(result.description.begin(), lexeme);
-
-	return result;
-}
-
-ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
-	ADD_QUERY result(query);
-	result.priority = TaskPriority::HIGH;
-	return result;
-}
-
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
-	return ADD_QUERY {
-		std::wstring(),
-		TaskPriority::NORMAL,
-		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
-	};
-}
-
-ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
-	const boost::optional<ADD_QUERY>& query) {
-	if (query) {
-		return query.get();
-	} else {
-		return ADD_QUERY {
-		};
-	}
-}
-
-EDIT_QUERY QueryParser::constructEditQuery(
-	const size_t offset,
-	const EDIT_QUERY& query) {
-	EDIT_QUERY result(query);
-	result.taskID = offset;
-
-	return result;
-}
-
-EDIT_QUERY QueryParser::constructEditQueryNullary(EDIT_QUERY::Fields field) {
-	EDIT_QUERY result;
-
-	switch (field) {
-	case EDIT_QUERY::Fields::COMPLETE:
-		result.complete = true;
-		break;
-	default:
-		assert(false);
-	}
-
-	return result;
-}
-
-EDIT_QUERY QueryParser::constructEditQueryUnary(
-	EDIT_QUERY::Fields field,
-	const LexemeType& newValue) {
-	StringType newStringValue(newValue.begin(), newValue.end());
-	EDIT_QUERY result;
-
-	switch (field) {
-	case EDIT_QUERY::Fields::DESCRIPTION:
-		result.description = newStringValue;
-		break;
-	case EDIT_QUERY::Fields::DEADLINE:
-		result.deadline = DateTimeParser::parse(newStringValue);
-		break;
-	default:
-		assert(false);
-	}
-
-	return result;
-}
-
-EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
-	EDIT_QUERY result;
-	result.priority = priority;
-
-	return result;
-}
-
-DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
-	return DELETE_QUERY {
-		offset
-	};
 }
 
 void QueryParser::onFailure(

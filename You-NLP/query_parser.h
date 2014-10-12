@@ -83,6 +83,31 @@ private:
 		const boost::optional<ADD_QUERY>& query);
 	#pragma endregion
 
+	#pragma region Showing tasks
+	/// Process the non-terminal returned from the show query parse rule,
+	/// constructing the predicates and ordering.
+	///
+	/// \param[in] predicates The filter predicates.
+	/// \param[in] ordering The ordering for display.
+	/// \return The synthesised value for the \ref showCommand rule.
+	static SHOW_QUERY constructShowQuery(
+		const boost::optional<std::vector<int>>& predicates,
+		const boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>>& ordering
+	);
+
+	/// Process the terminal returned from the show query ordering parse rule,
+	/// constructing one column's ordering.
+	///
+	/// \param[in] field The field to sort by.
+	/// \param[in] order The order to sort the field by.
+	/// \return The synthesised value for the \ref showCommandSortingColumn
+	///         rule.
+	static SHOW_QUERY::FIELD_ORDER constructShowQuerySortColumn(
+		const TaskField& field,
+		const boost::optional<SHOW_QUERY::Order> order
+	);
+	#pragma endregion
+
 	#pragma region Editing tasks
 	/// Sets the edit query's task ID.
 	///
@@ -95,8 +120,7 @@ private:
 	///
 	/// \param[in] field The field which should be edited.
 	/// \return The synthesised value for the \ref editCommand rule.
-	static EDIT_QUERY constructEditQueryNullary(
-		EDIT_QUERY::Fields field);
+	static EDIT_QUERY constructEditQueryNullary(TaskField field);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -104,7 +128,7 @@ private:
 	/// \param[in] newValue The new value the user wants to change the field to.
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryUnary(
-		EDIT_QUERY::Fields field,
+		TaskField field,
 		const LexemeType& newValue);
 
 	/// Constructs a edit query from the given parse tree values.
@@ -164,6 +188,36 @@ private:
 		addCommandDeadlineOptional;
 	#pragma endregion
 
+	#pragma region Showing tasks
+	/// Show command rule.
+	boost::spirit::qi::rule<IteratorType, SHOW_QUERY(), SkipperType>
+		showCommand;
+
+	/// Show command filtering rule.
+	boost::spirit::qi::rule<IteratorType, std::vector<int>(), SkipperType>
+		showCommandFiltering;
+
+	/// Show command sorting rule for multiple columns.
+	boost::spirit::qi::rule<IteratorType,
+		std::vector<SHOW_QUERY::FIELD_ORDER>(), SkipperType>
+		showCommandSorting;
+
+	/// Show command sorting rule for one column.
+	boost::spirit::qi::rule<IteratorType,
+		SHOW_QUERY::FIELD_ORDER(),
+		SkipperType> showCommandSortingColumn;
+
+	/// The symbol mapping from task ordering to ascending/descending.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		SHOW_QUERY::Order> showCommandSortingOrders;
+
+	/// The symbol mapping from task properties to the actual field.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		TaskField> showCommandFields;
+	#pragma endregion
+
 	#pragma region Editing tasks
 	/// Edit command rule.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
@@ -189,13 +243,13 @@ private:
 	/// argument (hence unary).
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::Fields> editCommandFieldsUnary;
+		TaskField> editCommandFieldsUnary;
 
 	/// The symbol mapping from task properties to the actual field taking no
 	/// arguments (hence nullary).
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		EDIT_QUERY::Fields> editCommandFieldsNullary;
+		TaskField> editCommandFieldsNullary;
 
 	/// The symbol mapping from priority strings to task priorities.
 	boost::spirit::qi::symbols<
