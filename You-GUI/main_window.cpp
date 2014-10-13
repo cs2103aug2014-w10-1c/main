@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
 	ui.setupUi(this);
+	ui.menuBar->setVisible(false);
+	ui.mainToolBar->setVisible(false);
 	stm->setup();
 	qm->setup();
 	tpm->setup();

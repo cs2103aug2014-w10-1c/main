@@ -12,7 +12,7 @@
 /// user input to the NLP engine and listens for any return instructions.
 class MainWindow : public QMainWindow {
 	Q_OBJECT
-
+	friend class TestMainWindow;
 public:
 	/// Constructor for the GUI.
 	explicit MainWindow(QWidget *parent = nullptr);

@@ -60,25 +60,17 @@ void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 
 void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QList<QTreeWidgetItem*> items = findItems(task.getID());
-
-	if (items.length() != 1) {
-		qDebug() << "editTask items.length() != 1" << endl;
-	} else {
-		QTreeWidgetItem item = *items.at(0);
-		QStringList wstr = taskToStrVec(task);
-		*items.at(0) = *createItem(wstr);
-	}
+	assert(items.length() == 1);
+	QTreeWidgetItem item = *items.at(0);
+	QStringList wstr = taskToStrVec(task);
+	*items.at(0) = *createItem(wstr);
 	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
 	QList<QTreeWidgetItem*> items = findItems(taskID);
-
-	if (items.length() != 1) {
-		qDebug() << "deleteTask items.length() != 1" << endl;
-	} else {
-		deleteTask(items.at(0));
-	}
+	assert(items.length() == 1);
+	deleteTask(items.at(0));
 	updateRowNumbers();
 }
 
@@ -116,7 +108,11 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
+	if (task.getDeadline() == Task::NEVER) {
+		result.push_back(QString("Never"));
+	} else {
+		result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
+	}
 
 	// Iterate through task list and add it to the task panel
 	QString priority[] { "High", "Normal" };

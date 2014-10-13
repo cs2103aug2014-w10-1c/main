@@ -23,6 +23,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::ActionsContextMenu</enum>
+      </property>
       <property name="lineWidth">
        <number>0</number>
       </property>
@@ -43,6 +46,12 @@
         <horstretch>0</horstretch>
         <verstretch>2</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>171</height>
+       </size>
       </property>
       <property name="sizeIncrement">
        <size>
