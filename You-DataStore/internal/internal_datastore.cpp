@@ -95,14 +95,6 @@ bool DataStore::erase(TaskId rawId) {
 	return operation->run(document);
 }
 
-SerializedTask DataStore::getTask(TaskId rawId) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toGet =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-
-	return SerializationOperation::deserialize(toGet);
-}
-
 std::vector<SerializedTask> DataStore::getAllTask() {
 	loadData();
 	std::vector<SerializedTask> allTask;

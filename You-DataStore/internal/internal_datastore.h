@@ -64,10 +64,6 @@ public:
 	/// \return false if task id specified does not exist
 	bool erase(TaskId);
 
-	/// Get a task
-	/// \return false and an empty SerializedTask if task id does not exist
-	SerializedTask getTask(TaskId);
-
 	/// Get all tasks
 	/// \return a vector of all tasks in unordered map form
 	std::vector<SerializedTask> getAllTask();
