@@ -31,10 +31,9 @@ void MainWindow::TaskPanelManager::setup() {
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	taskTreePanel->setColumnCount(columnHeaders.size());
 	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
-
 	// TODO(angathorion): remove magic constants.
 	QHeaderView* header = taskTreePanel->header();
-	header->setStretchLastSection(false);
+	header->setStretchLastSection(true);
 	for (int i = 1; i < columnHeaders.size(); ++i) {
 		if (i == 2) {
 			continue;
