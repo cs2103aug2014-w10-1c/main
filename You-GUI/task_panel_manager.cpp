@@ -34,13 +34,14 @@ void MainWindow::TaskPanelManager::setup() {
 	// TODO(angathorion): remove magic constants.
 	QHeaderView* header = taskTreePanel->header();
 	header->setStretchLastSection(true);
+
 	for (int i = 1; i < columnHeaders.size(); ++i) {
 		if (i == 2) {
 			continue;
 		}
 		header->resizeSection(i, header->defaultSectionSize());
 	}
-
+	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
 }
 
