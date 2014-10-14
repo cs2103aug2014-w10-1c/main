@@ -39,7 +39,7 @@ public:
 	/// \param[in] thing The message to append. The message is not copied and
 	///                  must have a lifetime longer than this.
 	LogMessage& operator<<(const wchar_t* const string) {
-		components.emplace_back([&string] { return std::wstring(string); });
+		components.emplace_back([string] { return std::wstring(string); });
 		return *this;
 	}
 

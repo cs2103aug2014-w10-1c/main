@@ -17,7 +17,7 @@ components(std::move(rhs.components)) {
 }
 
 LogMessage::~LogMessage() {
-	if (logger.isActive()) {
+	if (!components.empty() && logger.isActive()) {
 		logger.write(evaluate(), category);
 	}
 }
