@@ -21,15 +21,15 @@ public:
 		pugi::xml_node taskNode = document.append_child();
 		Internal::SerializationOperation::serialize(task1, taskNode);
 
-		Assert::AreEqual(L"0",
+		Assert::AreEqual(task1.at(TASK_ID).c_str(),
 			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(L"bla bla",
+		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
 			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(L"xxxxxx",
+		Assert::AreEqual(task1.at(DEADLINE).c_str(),
 			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(L"urgent",
+		Assert::AreEqual(task1.at(PRIORITY).c_str(),
 			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(L"12345",
+		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
 			taskNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
@@ -53,15 +53,15 @@ public:
 
 		// Check the content
 		pugi::xml_node taskNode = document.child(L"task");
-		Assert::AreEqual(L"0",
+		Assert::AreEqual(task1.at(TASK_ID).c_str(),
 			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(L"bla bla",
+		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
 			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(L"xxxxxx",
+		Assert::AreEqual(task1.at(DEADLINE).c_str(),
 			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(L"urgent",
+		Assert::AreEqual(task1.at(PRIORITY).c_str(),
 			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(L"12345",
+		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
 			taskNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
@@ -90,15 +90,15 @@ public:
 
 		// Check the content
 		pugi::xml_node taskNode = document.child(L"task");
-		Assert::AreEqual(L"0",
+		Assert::AreEqual(task1.at(TASK_ID).c_str(),
 			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(L"bla bla",
+		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
 			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(L"xxxxxx",
+		Assert::AreEqual(task1.at(DEADLINE).c_str(),
 			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(L"urgent",
+		Assert::AreEqual(task1.at(PRIORITY).c_str(),
 			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(L"12345",
+		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
 			taskNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
