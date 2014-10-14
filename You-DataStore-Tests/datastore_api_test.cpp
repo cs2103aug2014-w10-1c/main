@@ -69,6 +69,7 @@ public:
 		sut.commit();
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(commitTransaction) {
@@ -82,6 +83,7 @@ public:
 		Assert::AreEqual(1, size);
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(nestedTransaction) {
@@ -110,6 +112,7 @@ public:
 		Assert::AreEqual(1U, allTask.size());
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 };
 
