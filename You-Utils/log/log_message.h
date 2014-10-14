@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <type_traits>
+
+#include <boost/type_traits/is_fundamental.hpp>
 
 namespace You {
 namespace Utils {
@@ -15,6 +18,22 @@ namespace Utils {
 class LogMessage {
 	friend class Logger;
 
+	/// Template metaprogram to check if T is a functor.
+	///
+	/// Slightly modified from http://stackoverflow.com/questions/5100015
+	template<typename T>
+	struct is_callable {
+		template<typename C> // detect regular operator()
+		static char test(decltype(&C::operator()));
+
+		template<typename C> // worst match
+		static char(&test(C))[2];
+
+		static const bool value = !boost::is_fundamental<T>::value &&
+			!boost::is_array<T>::value &&
+			sizeof(test<T>(0)) == 1;
+	};
+
 public:
 	/// Move constructor.
 	LogMessage(LogMessage&& rhs);
@@ -22,14 +41,31 @@ public:
 	/// Destructor. Commits the message to the owning logger.
 	~LogMessage();
 
-	/// Writes the given thing to the message.
+	/// Writes the given message.
 	///
-	/// \param[in] thing The message to append. This must be convertible to a
-	///                  string, via lexical_cast.
-	template<typename TLazy>
-	LogMessage& operator<<(const TLazy& thing) {
+	/// \param[in] pickle The function to apply. This must be a nullary function
+	///                   returning a value convertible to std::wstring using
+	///                   lexical_cast.
+	template<
+		typename TLazy,
+		typename = std::enable_if_t<is_callable<TLazy>::value>>
+	LogMessage& operator<<(TLazy pickle) {
+		components.emplace_back([pickle]() {
+			return boost::lexical_cast<std::wstring>(pickle());
+		});
+		return *this;
+	}
+
+	/// Writes the given message.
+	///
+	/// \param[in] thing The thing to write. This must be implicitly convertible
+	///                  to a std::wstring using lexical_cast.
+	template<
+		typename TPrimitive,
+		typename = std::enable_if_t<boost::is_fundamental<TPrimitive>::value>>
+	LogMessage& operator<<(const TPrimitive& thing) {
 		components.emplace_back([&thing]() {
-			return boost::lexical_cast<std::wstring>(thing());
+			return boost::lexical_cast<std::wstring>(thing);
 		});
 		return *this;
 	}
@@ -40,15 +76,6 @@ public:
 	///                  must have a lifetime longer than this.
 	LogMessage& operator<<(const wchar_t* const string) {
 		components.emplace_back([string] { return std::wstring(string); });
-		return *this;
-	}
-
-	/// Writes the given message.
-	///
-	/// \param[in] pickle The function to apply. This must be a nullary function
-	///                   returning a string.
-	LogMessage& operator<<(std::function<std::wstring()> pickle) {
-		components.emplace_back(std::move(pickle));
 		return *this;
 	}
 
