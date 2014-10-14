@@ -2,6 +2,9 @@
 #include "CppUnitTest.h"
 
 #include "../dummy_values.h"
+#include "internal/operations/erase_operation.h"
+#include "internal/operations/post_operation.h"
+#include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -108,6 +111,27 @@ public:
 
 		sut.document.reset();
 		sut.saveData();
+	}
+
+	TEST_METHOD(pushOperationToTransaction) {
+		Internal::Transaction sut;
+
+		std::unique_ptr<Internal::IOperation> post =
+			std::make_unique<Internal::PostOperation>(0, task1);
+		sut.push(std::move(post));
+		Assert::AreEqual(1U, sut.operationsQueue.size());
+
+		std::unique_ptr<Internal::IOperation> put =
+			std::make_unique<Internal::PutOperation>(0, task1);
+		sut.push(std::move(put));
+		Assert::AreEqual(2U, sut.operationsQueue.size());
+
+		std::unique_ptr<Internal::IOperation> erase =
+			std::make_unique<Internal::EraseOperation>(0);
+		sut.push(std::move(erase));
+		Assert::AreEqual(3U, sut.operationsQueue.size());
+
+		sut.operationsQueue.clear();
 	}
 };
 }  // namespace UnitTests
