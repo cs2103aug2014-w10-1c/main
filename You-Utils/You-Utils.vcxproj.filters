@@ -16,6 +16,12 @@
     <Filter Include="Header Files\exceptions">
       <UniqueIdentifier>{b0c82b9f-0846-4c8e-949e-41ded46084c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\log">
+      <UniqueIdentifier>{ed69d84c-45b6-4480-8501-8048863c7813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log">
+      <UniqueIdentifier>{5dee2f58-290b-4791-ab0c-4865c5b6697d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -30,10 +36,37 @@
     <ClInclude Include="exceptions\query_engine_exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="log\logger.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="log\log_message.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="log\log.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="log\log_sink.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="log\log_severity.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="log\log_message.cpp">
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
+    <ClCompile Include="log\logger.cpp">
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
+    <ClCompile Include="log\log.cpp">
+      <Filter>Source Files\log</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
