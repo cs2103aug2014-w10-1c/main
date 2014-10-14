@@ -50,7 +50,8 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
-	transaction.operationsQueue.clear();
+	assert(*transactionStack.top().lock().get() == transaction);
+	transactionStack.pop();
 }
 
 bool DataStore::post(TaskId rawId, const SerializedTask& sTask) {
@@ -130,24 +131,19 @@ void DataStore::executeTransaction(Transaction & transaction,
 		operation != transaction.operationsQueue.end();
 		++operation) {
 		bool status = !operation->run(xml);
-		/// ???? The assertion failed during unit testing so I removed it
-#if 0
 		assert(!status);
 		if (!status) {
 			// throw exception/assert
 		}
-#endif
 	}
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
 		bool status = !mergedOperation->run(xml);
-#if 0
 		assert(!status);
 		if (!status) {
 			// throw exception/assert
 		}
-#endif
 	}
 }
 
