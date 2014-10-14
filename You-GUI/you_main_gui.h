@@ -108,6 +108,8 @@ private slots:
 
 	/// Qt's signal/slot mechanism for input enter button.
 	void commandEnterButtonClicked();
+
+	void applicationExitRequested();
 };
 
 #endif  // YOU_GUI_YOU_MAIN_GUI_H_
