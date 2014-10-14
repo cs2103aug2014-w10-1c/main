@@ -45,6 +45,8 @@ public:
 	}
 
 	TEST_METHOD(constructTransactionWithDataStoreBegin) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 
 		DataStore::get().post(0, task1);
@@ -62,6 +64,8 @@ public:
 	}
 
 	TEST_METHOD(commitTransaction) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
@@ -76,6 +80,8 @@ public:
 	}
 
 	TEST_METHOD(nestedTransaction) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 
@@ -103,7 +109,7 @@ public:
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut.commit();
 			auto sizeAfter = DataStore::get().getAllTasks().size();
-			Assert::AreEqual(sizeBefore, sizeAfter - 1);
+			Assert::AreEqual(sizeBefore + 1, sizeAfter);
 		}
 
 		Internal::DataStore::get().document.reset();
