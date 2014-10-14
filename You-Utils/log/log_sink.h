@@ -12,6 +12,8 @@ namespace Utils {
 /// an implementation of the Observer pattern.
 class LogSink {
 public:
+	virtual ~LogSink() = default;
+
 	/// The method which will be called when a new log message is received.
 	///
 	/// \param[in] severity The severity of the message.
