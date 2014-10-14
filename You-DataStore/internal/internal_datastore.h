@@ -68,15 +68,15 @@ public:
 	/// \return a vector of all tasks in unordered map form
 	std::vector<SerializedTask> getAllTask();
 
+private:
+	DataStore() = default;
+
 	/// Saves the xml object to a file
 	/// \return true if operation successful and false otherwise
 	bool saveData();
 
 	/// Loads the xml file into the document variable
 	void loadData();
-
-private:
-	DataStore() = default;
 
 	/// Executes the operation queue into the xml_document
 	///
