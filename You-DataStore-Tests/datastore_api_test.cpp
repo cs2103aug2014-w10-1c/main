@@ -16,7 +16,7 @@ namespace UnitTests {
 TEST_CLASS(DataStoreApiTest) {
 public:
 	TEST_METHOD(pushOperationsToTransaction) {
-		Transaction sut;
+		Transaction sut(DataStore::get().begin());
 
 		std::unique_ptr<Internal::IOperation> postOp =
 			std::make_unique<Internal::PostOperation>(0, task1);
