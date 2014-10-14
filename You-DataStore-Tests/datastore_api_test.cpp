@@ -93,14 +93,17 @@ public:
 
 		sut2.commit();
 		std::vector<SerializedTask> allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(0U, allTask.size());
+		// Of course this is one and not 0 right since you commit sut2?
+		Assert::AreEqual(1U, allTask.size());
 
 		Transaction sut3(DataStore::get().begin());
+		// But zero is sut which you haven't commited
 		DataStore::get().erase(0);
 
 		sut3.commit();
 		allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(0U, allTask.size());
+		// Hence, this one should be 1U
+		Assert::AreEqual(1U, allTask.size());
 
 		sut.commit();
 		allTask = DataStore::get().getAllTasks();
