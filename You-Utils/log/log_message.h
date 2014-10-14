@@ -23,11 +23,11 @@ class LogMessage {
 	/// Slightly modified from http://stackoverflow.com/questions/5100015
 	template<typename T>
 	struct is_callable {
-		template<typename C> // detect regular operator()
+		template<typename C>  // detect regular operator()
 		static char test(decltype(&C::operator()));
 
-		template<typename C> // worst match
-		static char(&test(C))[2];
+		template<typename C>  // worst match
+		static char(&test(C))[2];  // NOLINT(readability/casting)
 
 		static const bool value = !boost::is_fundamental<T>::value &&
 			!boost::is_array<T>::value &&
@@ -84,7 +84,7 @@ private:
 	///
 	/// \param[in] log The logger this message will write to.
 	/// \param[in] category The category of the message we are creating.
-	LogMessage(Logger& log, std::wstring category = std::wstring());
+	explicit LogMessage(Logger& log, std::wstring category = std::wstring());
 	LogMessage(const LogMessage&) = delete;
 	LogMessage& operator=(const LogMessage&) = delete;
 

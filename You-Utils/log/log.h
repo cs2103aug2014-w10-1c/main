@@ -49,7 +49,7 @@ public:
 	///
 	/// \see LogSeverity
 	static Logger critical;
-	
+
 	/// Gets the active log level.
 	///
 	/// The active log level is the minimum severity for which messages must be
@@ -96,7 +96,7 @@ private:
 private:
 	/// The active log level.
 	static LogSeverity logLevel;
-	
+
 	/// The active log sink.
 	static std::shared_ptr<LogSink> sink;
 };

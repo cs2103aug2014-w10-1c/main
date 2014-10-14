@@ -71,7 +71,7 @@ private:
 	/// Constructs a new logger with the given severity.
 	///
 	/// \param[in] severity The severity of the current logger.
-	Logger(LogSeverity severity);
+	explicit Logger(LogSeverity severity);
 	Logger(const Logger&) = delete;
 	Logger& operator=(const Logger&) = delete;
 

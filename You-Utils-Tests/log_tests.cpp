@@ -32,7 +32,7 @@ public:
 	expectedMessage(expectedMessage) {
 	}
 
-	virtual void onLog(LogSeverity severity,
+	void onLog(LogSeverity severity,
 		const std::wstring& category,
 		const std::wstring& message) override {
 		Assert::AreEqual(expectedSeverity, severity);
