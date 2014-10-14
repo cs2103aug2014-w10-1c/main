@@ -11,5 +11,10 @@
 
 #include <memory>
 #include <cassert>
+#include <string>
+#include <vector>
+#include <functional>
+
+#include <boost/lexical_cast.hpp>
 
 #endif  // YOU_UTILS_STDAFX_H_
