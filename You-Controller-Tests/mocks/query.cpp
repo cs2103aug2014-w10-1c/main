@@ -16,6 +16,15 @@ extern const You::NLP::ADD_QUERY ADD_QUERY {
 	)
 };
 
+extern const You::NLP::SHOW_QUERY SHOW_QUERY {
+	{
+		{
+			You::NLP::TaskField::DEADLINE,
+			You::NLP::SHOW_QUERY::Order::DESCENDING
+		}
+	}
+};
+
 extern const You::NLP::EDIT_QUERY EDIT_QUERY {
 	0,
 	L"new description",

@@ -12,7 +12,12 @@ namespace Mocks {
 /// A dummy task list. This contains one task.
 class TaskList : public You::Controller::TaskList {
 public:
-	TaskList();
+	/// Constructor. Creates the specified number of tasks.
+	explicit TaskList(size_t count = 1);
+
+private:
+	/// Creates a new task and adds it to the task list.
+	Task createTask();
 };
 
 }  // namespace Mocks
