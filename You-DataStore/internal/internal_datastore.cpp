@@ -110,8 +110,7 @@ bool DataStore::saveData() {
 }
 
 void DataStore::loadData() {
-	bool isInitialized =
-		document.first_child().type() != pugi::xml_node_type::node_null;
+	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
 		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 	}
