@@ -11,11 +11,11 @@ Logger::Logger(LogSeverity severity)
 }
 
 bool Logger::isActive() const {
-	return Log::get().getLogLevel() <= severity;
+	return Log::getLogLevel() <= severity;
 }
 
 void Logger::write(const std::wstring& message, const std::wstring& category) {
-	Log::get().write(severity, category, message);
+	Log::write(severity, category, message);
 }
 
 }  // namespace Utils

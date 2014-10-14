@@ -12,6 +12,12 @@ namespace Utils {
 /// an implementation of the Observer pattern.
 class LogSink {
 public:
+	/// The method which will be called when a new log message is received.
+	///
+	/// \param[in] severity The severity of the message.
+	/// \param[in] category The category of the message. This can be an empty
+	///                     string for the default category.
+	/// \param[in] message The message which was logged.
 	virtual void onLog(LogSeverity severity,
 		const std::wstring& category,
 		const std::wstring& message) = 0;
