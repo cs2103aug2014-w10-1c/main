@@ -50,7 +50,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
-	assert(*transactionStack.top().lock().get() == transaction);
+	assert(*(transactionStack.top().lock()) == transaction);
 	transactionStack.pop();
 }
 
