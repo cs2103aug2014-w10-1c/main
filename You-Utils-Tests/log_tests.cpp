@@ -24,8 +24,8 @@ namespace UnitTests {
 class LogTesterSink : public LogSink {
 public:
 	LogTesterSink(LogSeverity expectedSeverity,
-		const std::wstring& expectedCategory,
-		const std::wstring& expectedMessage)
+		const std::wstring& expectedCategory = std::wstring(),
+		const std::wstring& expectedMessage = std::wstring())
 	: callCount(0),
 	expectedSeverity(expectedSeverity),
 	expectedCategory(expectedCategory),
@@ -53,15 +53,56 @@ private:
 };
 
 TEST_CLASS(LogTests) {
-	TEST_METHOD(debugLogMethod) {
+	TEST_METHOD_INITIALIZE(setLogSeverity) {
+		Log::setLogLevel(LogSeverity::DEBUG);
+	}
+
+	TEST_METHOD(basicLogging) {
 		std::shared_ptr<LogTesterSink> tester(
-			std::make_shared<LogTesterSink>(LogSeverity::DEBUG, L"", L"lol"));
+			std::make_shared<LogTesterSink>(LogSeverity::DEBUG, L"", L"lol2"));
 		Log::setSink(tester);
-		Log::debug << L"lol";
+		Log::debug << L"lol2";
 		Assert::AreEqual(1U, tester->getCallCount());
 
-		Log::debug << L"lo" << L"l";
+		Log::debug << L"lo" << L"l" << 2;
 		Assert::AreEqual(2U, tester->getCallCount());
+	}
+
+	TEST_METHOD(lazyLogging) {
+		Log::setLogLevel(LogSeverity::CRITICAL);
+		std::shared_ptr<LogTesterSink> tester(
+			std::make_shared<LogTesterSink>(LogSeverity::DEBUG));
+		Log::setSink(tester);
+
+		bool called = false;
+		auto callerCheck = [&called]() {
+			called = true; return L"";
+		};
+		Log::debug << callerCheck;
+		Assert::IsFalse(called);
+		Assert::AreEqual(0U, tester->getCallCount());
+
+		Log::setLogLevel(LogSeverity::DEBUG);
+		Log::debug << callerCheck;
+		Assert::IsTrue(called);
+		Assert::AreEqual(1U, tester->getCallCount());
+	}
+
+	TEST_METHOD(correctLogLevels) {
+		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::DEBUG));
+		Log::debug << L"";
+
+		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::INFO));
+		Log::info << L"";
+
+		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::WARNING));
+		Log::warning << L"";
+
+		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::ERROR));
+		Log::error << L"";
+
+		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::CRITICAL));
+		Log::critical << L"";
 	}
 };
 

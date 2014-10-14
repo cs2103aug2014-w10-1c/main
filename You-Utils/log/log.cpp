@@ -6,7 +6,12 @@ namespace You {
 namespace Utils {
 
 Logger Log::debug(LogSeverity::DEBUG);
-LogSeverity Log::logLevel;
+Logger Log::info(LogSeverity::INFO);
+Logger Log::warning(LogSeverity::WARNING);
+Logger Log::error(LogSeverity::ERROR);
+Logger Log::critical(LogSeverity::CRITICAL);
+
+LogSeverity Log::logLevel = LogSeverity::WARNING;
 std::shared_ptr<LogSink> Log::sink;
 
 void Log::write(
