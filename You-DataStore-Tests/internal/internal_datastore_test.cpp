@@ -15,8 +15,7 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
-	/// Basic test for retrieving a task
-	TEST_METHOD(getExistingTask) {
+	TEST_METHOD(beginTransaction) {
 		DataStore& sut = DataStore::get();
 		sut.post(0, task1);
 		SerializedTask task = sut.getTask(0);
