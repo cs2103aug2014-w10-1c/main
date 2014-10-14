@@ -15,7 +15,9 @@ bool Logger::isActive() const {
 }
 
 void Logger::write(const std::wstring& message, const std::wstring& category) {
-	Log::write(severity, category, message);
+	if (isActive()) {
+		Log::write(severity, category, message);
+	}
 }
 
 }  // namespace Utils
