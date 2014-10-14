@@ -44,6 +44,10 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
+
+protected:
+	static const std::wstring category;
+
 private:
 	/// Execute the query on a state.
 	/// \pre The state has been loaded and valid.

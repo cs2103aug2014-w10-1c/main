@@ -24,6 +24,10 @@ public:
 
 	/// Destructor
 	virtual ~DeleteTask() = default;
+
+protected:
+	static const std::wstring category;
+
 private:
 	/// Execute delete task.
 	Response execute(State& tasks) override;
