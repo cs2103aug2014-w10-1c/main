@@ -14,13 +14,16 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-using boost::gregorian::date;
-using boost::gregorian::max_date_time;
+/// \cond Imports
+namespace {
+	using boost::gregorian::date;
+	using boost::gregorian::max_date_time;
 
-using You::QueryEngine::Task;
-using You::QueryEngine::Response;
-using You::QueryEngine::QueryEngine;
-
+	using You::QueryEngine::Task;
+	using You::QueryEngine::Response;
+	using You::QueryEngine::QueryEngine;
+}
+/// \endcond
 
 /// Test the main \ref QueryEngine API
 TEST_CLASS(QueryEngineTests) {

@@ -73,3 +73,7 @@ Makefile*
 
 # Code coverage test results
 /TestResults
+
+# Testing leftovers
+You/data.xml
+You/session.txt

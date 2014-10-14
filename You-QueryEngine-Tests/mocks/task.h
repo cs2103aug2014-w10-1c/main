@@ -15,9 +15,11 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
+/// \name Various task examples for testing
+/// @{
+
 using Task = You::QueryEngine::Task;
 using Controller = You::QueryEngine::Internal::Controller;
-
 const Task FEED_THE_DOGGY = Controller::Builder::get().
 	id(43L).
 	description(L"Feed the doggy");
@@ -55,6 +57,8 @@ const Task NINE_DEPENDENCIES = Controller::Builder::get().
 	id(666L).
 	description(L"Impossible is nothing").
 	dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+/// @}
 
 }  // namespace UnitTests
 }  // namespace QueryEngine

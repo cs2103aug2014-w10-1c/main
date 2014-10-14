@@ -13,8 +13,12 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-using Transaction = You::DataStore::Transaction;
-using DataStore = You::DataStore::DataStore;
+/// \cond Imports
+namespace {
+	using Transaction = You::DataStore::Transaction;
+	using DataStore = You::DataStore::DataStore;
+}
+/// \endcond
 
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)

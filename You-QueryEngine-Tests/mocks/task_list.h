@@ -9,6 +9,9 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
+/// \name Various task lists for testing
+/// @{
+
 using Task = You::QueryEngine::Task;
 
 std::vector<Task::Description> TASK_DESCRIPTIONS = {
@@ -30,6 +33,7 @@ std::vector<Task> fromDescription(const std::vector<Task::Description>& v) {
 	return result;
 }
 
+/// @}
 }  // namespace UnitTests
 }  // namespace QueryEngine
 }  // namespace You
