@@ -63,24 +63,9 @@ public:
 
 	const You::Controller::TaskList& getTaskList() const;
 
-
 protected:
-	
-	void resizeEvent(QResizeEvent* event) {
-		double oldWidth = event->oldSize().width();
-		double newWidth = event->size().width();
-		double ratio = newWidth / oldWidth;
-		for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
-			//double currWidth = ui.taskTreePanel->columnWidth(i);
-			double currWidth = ui.taskTreePanel->header()->sectionSize(i);
-			//ui.taskTreePanel->setColumnWidth(i, currWidth * ratio);
-			double finalWidth = currWidth * ratio;
-			if (finalWidth >75)
-				ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
-		}
-		QMainWindow::resizeEvent(event);
-	}
-	
+	void resizeEvent(QResizeEvent* event);
+
 private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;

@@ -152,7 +152,7 @@ void MainWindow::commandEnterButtonClicked() {
 	sendQuery();
 }
 
-void YouMainGUI::applicationExitRequested() {
+void MainWindow::applicationExitRequested() {
 	sm->taskIDs.clear();
 	for (int i = 0; i < taskList->size(); i++) {
 		sm->taskIDs.push_back(taskList->at(i).getID());
@@ -160,6 +160,19 @@ void YouMainGUI::applicationExitRequested() {
 	qApp->quit();
 }
 
-YouMainGUI::BaseManager::BaseManager(YouMainGUI* parentGUI)
+void MainWindow::resizeEvent(QResizeEvent* event) {
+	double oldWidth = event->oldSize().width();
+	double newWidth = event->size().width();
+	double ratio = newWidth / oldWidth;
+	for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
+		double currWidth = ui.taskTreePanel->header()->sectionSize(i);
+		double finalWidth = currWidth * ratio;
+		if (finalWidth >75)
+			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
+	}
+	QMainWindow::resizeEvent(event);
+}
+
+MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }

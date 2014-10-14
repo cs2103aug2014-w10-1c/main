@@ -33,7 +33,7 @@ public:
 
 	/// Deletes a task.
 	void deleteTask(You::Controller::Task::ID taskID);
-	
+
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget
