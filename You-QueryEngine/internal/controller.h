@@ -16,8 +16,11 @@ namespace Internal {
 
 class Controller {
 public:
+	/// Access the TaskGraph controller.
 	typedef TaskGraphController Graph;
+	/// Access the TaskBuilder.
 	typedef TaskBuilder Builder;
+	/// Access the TaskSerializer.
 	typedef TaskSerializer Serializer;
 private:
 	Controller() = delete;

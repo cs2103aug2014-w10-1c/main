@@ -12,12 +12,16 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-using boost::posix_time::ptime;
-using boost::gregorian::date;
-using boost::gregorian::greg_year_month_day;
-using boost::posix_time::time_duration;
+/// \cond Imports
+namespace {
+	using boost::posix_time::ptime;
+	using boost::gregorian::date;
+	using boost::gregorian::greg_year_month_day;
+	using boost::posix_time::time_duration;
 
-using TS = TaskSerializer;
+	using TS = TaskSerializer;
+}
+/// \endcond
 
 const TS::Key TS::KEY_ID = L"id";
 const TS::Key TS::KEY_DESCRIPTION = L"description";

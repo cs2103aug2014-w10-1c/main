@@ -8,21 +8,27 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-using TGC = TaskGraphController;
-using Vertex = TaskGraph::Vertex;
-using VIterator = TaskGraph::VIterator;
+/// \cond Shorten names
+namespace {
+	using TGC = TaskGraphController;
+	using Vertex = TaskGraph::Vertex;
+	using VIterator = TaskGraph::VIterator;
+}
+/// \endcond
 
 Task::ID TGC::loadFromFile(TaskGraph& graph) {
-	auto serialized =
-		You::DataStore::DataStore::get().getAllTasks();
 	Task::ID maxID = 0;
-	std::for_each(serialized.cbegin(), serialized.cend(),
-		[&] (const TaskSerializer::STask task) {
+	try {
+		auto serialized =
+			You::DataStore::DataStore::get().getAllTasks();
+		std::for_each(serialized.cbegin(), serialized.cend(),
+			[&](const TaskSerializer::STask task) {
 			auto t = TaskSerializer::deserialize(task);
 			addTask(graph, t);
 			maxID = std::max(t.getID(), maxID);
-		}
-	);
+		});
+	} catch (...) {  // will fix later lol
+	}
 	return maxID;
 }
 
