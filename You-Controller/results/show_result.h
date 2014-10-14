@@ -15,5 +15,5 @@ struct SHOW_RESULT {
 }  // namespace Controller
 }  // namespace You
 
-#endif  // #ifndef YOU_CONTROLLER_RESULTS_SHOW_RESULT_H_
+#endif  // YOU_CONTROLLER_RESULTS_SHOW_RESULT_H_
 
