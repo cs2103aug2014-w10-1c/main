@@ -13,12 +13,16 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// Test the functionality of \ref TaskGraphController
-TEST_CLASS(TaskGraphControllerTests) {
+/// \cond Imports
+namespace {
 	using Task = You::QueryEngine::Task;
 	using TaskGraph = You::QueryEngine::Internal::TaskGraph;
 	using Controller = You::QueryEngine::Internal::Controller;
+}
+/// \endcond
 
+/// Test the functionality of \ref TaskGraphController
+TEST_CLASS(TaskGraphControllerTests) {
 	TEST_METHOD(createTaskGraph) {
 		TaskGraph graph;
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
