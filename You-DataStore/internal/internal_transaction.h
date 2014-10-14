@@ -9,12 +9,13 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreApiTest; }
+namespace UnitTests { class DataStoreTest; class DataStoreApiTest; }
 namespace Internal {
 
 /// The actual class that contains the logic for managing transactions.
 class Transaction {
 	friend class DataStore;
+	friend class UnitTests::DataStoreTest;
 	friend class UnitTests::DataStoreApiTest;
 
 public:
