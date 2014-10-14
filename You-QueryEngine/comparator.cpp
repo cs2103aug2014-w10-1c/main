@@ -6,7 +6,7 @@ namespace QueryEngine {
 
 Comparator Comparator::notSorted() {
 	return Comparator([](const Task&, const Task&) {
-		return ComparisonResult::GT;
+		return ComparisonResult::EQ;
 	});
 }
 
