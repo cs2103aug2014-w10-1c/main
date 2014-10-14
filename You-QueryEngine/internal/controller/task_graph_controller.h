@@ -16,6 +16,11 @@ namespace Internal {
 /// Static utility class to manage a graph.
 class TaskGraphController {
 public:
+	/// Load the xml and build an initial task graph.
+	/// \param[in] graph The graph to be built.
+	/// \return The last task ID seen.
+	static Task::ID loadFromFile(TaskGraph& graph);
+
 	/// Add a task to the graph if it is not exist.
 	/// May throw CircularDependencyException if it
 	/// causes circular dependency.

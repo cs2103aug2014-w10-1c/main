@@ -1,9 +1,16 @@
 #include "stdafx.h"
 #include "state.h"
 
+#include "../controller/task_graph_controller.h"
+
 namespace You {
 namespace QueryEngine {
 namespace Internal {
+
+State::State() {
+	innerGraph = TaskGraph();
+	maxID = TaskGraphController::loadFromFile(innerGraph);
+}
 
 State& State::get() {
 	static State instance;
@@ -15,7 +22,8 @@ void State::clear() {
 }
 
 Task::ID State::inquireNewID() {
-	return innerGraph.getTaskCount();
+	++maxID;
+	return maxID;
 }
 
 }  // namespace Internal
