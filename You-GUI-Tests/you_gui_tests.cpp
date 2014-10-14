@@ -3,7 +3,7 @@
 #include <QtTest/QtTest>
 #include "You-GUI\main_window.h"
 #include "You-GUI\system_tray_manager.h"
-class TestMainWindow : public QObject {
+class MainWindowTests : public QObject {
 	Q_OBJECT
 private slots:
 	// Check visibility of elements to show
@@ -21,56 +21,56 @@ private slots:
 	void isMenuBarHidden();
 };
 
-void TestMainWindow::isMainWindowVisible() {
+void MainWindowTests::isMainWindowVisible() {
 	MainWindow w;
 	QVERIFY(w.isVisible());
 	w.ui.menuBar->isVisible();
 }
 
-void TestMainWindow::isCentralWidgetVisible() {
+void MainWindowTests::isCentralWidgetVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.centralWidget->isVisible());
 }
 
-void TestMainWindow::isTaskPanelVisible() {
+void MainWindowTests::isTaskPanelVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.taskTreePanel->isVisible());
 }
 
-void TestMainWindow::isCommandEnterButtonVisible() {
+void MainWindowTests::isCommandEnterButtonVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.commandEnterButton->isVisible());
 }
 
-void TestMainWindow::isCommandInputBoxVisible() {
+void MainWindowTests::isCommandInputBoxVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.commandInputBox->isVisible());
 }
 
-void TestMainWindow::isStatusBarVisible() {
+void MainWindowTests::isStatusBarVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.statusBar->isVisible());
 }
 
-void TestMainWindow::isStatusIconVisible() {
+void MainWindowTests::isStatusIconVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.statusIcon->isVisible());
 }
 
-void TestMainWindow::isStatusMessageVisible() {
+void MainWindowTests::isStatusMessageVisible() {
 	MainWindow w;
 	QVERIFY(w.ui.statusMessage->isVisible());
 }
 
-void TestMainWindow::isMainToolBarHidden() {
+void MainWindowTests::isMainToolBarHidden() {
 	MainWindow w;
 	QVERIFY(!w.ui.mainToolBar->isVisible());
 }
 
-void TestMainWindow::isMenuBarHidden() {
+void MainWindowTests::isMenuBarHidden() {
 	MainWindow w;
 	QVERIFY(!w.ui.menuBar->isVisible());
 }
 
 #include "You-GUI-Tests\GeneratedFiles\Debug\you_gui_tests.moc"
-QTEST_MAIN(TestMainWindow)
+QTEST_MAIN(MainWindowTests)
