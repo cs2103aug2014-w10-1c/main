@@ -12,10 +12,11 @@ $cpp = Get-ChildItem -recurse -filter *.cpp
 $h = Get-ChildItem -recurse -filter *.h
 $files = ($cpp + $h) |
 	Foreach-Object {$_.FullName} |			# Full name
-	Resolve-Path -relative |				# Relative path
+	Resolve-Path -relative |			# Relative path
 	Foreach-Object {$_.substring(2)} |		# Remove dots
 	?{ $_ -notmatch "packages\\*" }	|		# Exclude NuGet
-	?{ $_ -notmatch "pugixml\\*" }			# Exclude pugixml
+	?{ $_ -notmatch "pugixml\\*" } |		# Exclude pugixml
+	?{ $_ -notmatch "You-GUI\\GeneratedFiles\\*" }	# Exclude Qt moc'ed files
 
 # Execute CppLint
 $arguments = @(
