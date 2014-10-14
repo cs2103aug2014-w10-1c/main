@@ -66,10 +66,10 @@ public:
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
 		DataStore::get().erase(0);
+		auto sizeBefore = DataStore::get().getAllTasks().size();
 		sut.commit();
-
-		int size = DataStore::get().getAllTasks().size();
-		Assert::AreEqual(1, size);
+		auto sizeAfter = DataStore::get().getAllTasks().size();
+		Assert::AreEqual(sizeBefore + 1, sizeAfter);
 
 		Internal::DataStore::get().document.reset();
 		Internal::DataStore::get().saveData();
@@ -82,23 +82,29 @@ public:
 		Transaction sut2(DataStore::get().begin());
 		DataStore::get().post(1, task2);
 
-		sut2.commit();
-		std::vector<SerializedTask> allTask = DataStore::get().getAllTasks();
-		// Of course this is one and not 0 right since you commit sut2?
-		Assert::AreEqual(0U, allTask.size());
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut2.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore, sizeAfter);
+		}
 
 		Transaction sut3(DataStore::get().begin());
-		// But zero is sut which you haven't commited
 		DataStore::get().erase(0);
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut3.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			// Hence, this one should be 1U
+			Assert::AreEqual(sizeAfter, sizeBefore);
+		}
 
-		sut3.commit();
-		allTask = DataStore::get().getAllTasks();
-		// Hence, this one should be 1U
-		Assert::AreEqual(0U, allTask.size());
-
-		sut.commit();
-		allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(1U, allTask.size());
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore, sizeAfter - 1);
+		}
 
 		Internal::DataStore::get().document.reset();
 		Internal::DataStore::get().saveData();
