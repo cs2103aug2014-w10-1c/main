@@ -118,6 +118,9 @@
     <ProjectReference Include="..\You-QueryEngine\You-QueryEngine.vcxproj">
       <Project>{dc647c82-d04e-4c03-8295-b7534f4b5797}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\You-Utils\You-Utils.vcxproj">
+      <Project>{bb59ad84-cde2-49e9-b32a-f8a8ebf36fc3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
