@@ -18,6 +18,15 @@ void Transaction::push(std::unique_ptr<Internal::IOperation> op) {
 	operationsQueue.push_back(op.release());
 }
 
+bool Transaction::operator==(Transaction& other) {
+	return &*this == &other;
+}
+
+void Transaction::mergeOperationsQueue(boost::ptr_deque<IOperation>& queue) {
+	mergedOperationsQueue.transfer(mergedOperationsQueue.end(), queue.begin(),
+		queue.end(), queue);
+}
+
 }  // namespace Internal
 }  // namespace DataStore
 }  // namespace You

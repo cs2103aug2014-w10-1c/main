@@ -33,10 +33,20 @@ public:
 	/// \param[in] operation The operation to push.
 	void push(std::unique_ptr<IOperation> operation);
 
+	/// Merges the operationsQueue of the next transaction that is committed
+	/// earlier.
+	///
+	/// \param[in] queue The operations queue
+	void mergeOperationsQueue(boost::ptr_deque<IOperation>& queue);
+
+	bool operator==(Transaction&);
+
 private:
 	/// The set of operations that need to be executed when the transaction is
 	/// committed.
 	boost::ptr_deque<IOperation> operationsQueue;
+
+	boost::ptr_deque<IOperation> mergedOperationsQueue;
 };
 
 }  // namespace Internal

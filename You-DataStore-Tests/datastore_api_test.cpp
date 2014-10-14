@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "datastore.h"
 #include "transaction.h"
+#include "internal/internal_datastore.h"
 #include "internal/internal_transaction.h"
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
@@ -66,6 +67,8 @@ public:
 		DataStore::get().erase(0);
 		Assert::AreEqual(3U, sut->operationsQueue.size());
 		sut.commit();
+
+		Internal::DataStore::get().document.reset();
 	}
 
 	TEST_METHOD(commitTransaction) {
@@ -77,6 +80,33 @@ public:
 
 		int size = DataStore::get().getAllTasks().size();
 		Assert::AreEqual(1, size);
+
+		Internal::DataStore::get().document.reset();
+	}
+
+	TEST_METHOD(nestedTransaction) {
+		Transaction sut(DataStore::get().begin());
+		DataStore::get().post(0, task1);
+
+		Transaction sut2(DataStore::get().begin());
+		DataStore::get().post(1, task2);
+
+		sut2.commit();
+		std::vector<SerializedTask> allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(0U, allTask.size());
+
+		Transaction sut3(DataStore::get().begin());
+		DataStore::get().erase(0);
+
+		sut3.commit();
+		allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(0U, allTask.size());
+
+		sut.commit();
+		allTask = DataStore::get().getAllTasks();
+		Assert::AreEqual(1U, allTask.size());
+
+		Internal::DataStore::get().document.reset();
 	}
 };
 

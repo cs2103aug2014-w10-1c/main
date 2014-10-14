@@ -22,6 +22,7 @@ namespace Internal {
 class DataStore {
 	/// Test classes
 	friend class You::DataStore::UnitTests::DataStoreTest;
+	friend class You::DataStore::UnitTests::DataStoreApiTest;
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
@@ -81,12 +82,21 @@ public:
 private:
 	DataStore() = default;
 
+	/// Executes the operation queue into the xml_document
+	///
+	/// \param[in] opQueue operations queue to be executed
+	/// \param[in] xml xml document to be modified by the operations
+	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
+
 private:
 	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
-	/// The current stack of transactions active.
+	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
+
+	/// The stack of committed transactions.
+	std::stack<std::weak_ptr<Transaction>> committedTransaction;
 };
 
 }  // namespace Internal
