@@ -54,45 +54,37 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 	transactionStack.pop();
 }
 
-bool DataStore::post(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::post(TaskId rawId, const SerializedTask& sTask) {
+	assert(!transactionStack.empty());
+	
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
 }
 
-bool DataStore::put(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::put(TaskId rawId, const SerializedTask& sTask) {
+	assert(!transactionStack.empty());
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PutOperation>(rawId, sTask);
 
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
 }
 
-bool DataStore::erase(TaskId rawId) {
+void DataStore::erase(TaskId rawId) {
+	assert(!transactionStack.empty());
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+	
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
 }
 
 std::vector<SerializedTask> DataStore::getAllTask() {

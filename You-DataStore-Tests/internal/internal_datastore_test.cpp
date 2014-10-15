@@ -25,62 +25,6 @@ public:
 		Assert::AreEqual(1U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(postWithoutTransaction) {
-		DataStore& sut = DataStore::get();
-
-		// Checks if the document is initially empty
-		Assert::IsTrue(sut.document.first_child().empty());
-
-		// Equivalent to postWithNewId
-		Assert::IsTrue(sut.post(0, task1));
-
-		// Checks if the document is now not empty
-		Assert::IsFalse(sut.document.first_child().empty());
-
-		// Equivalent to postWithUsedId
-		Assert::IsFalse(sut.post(0, task1));
-
-		sut.document.reset();
-		sut.saveData();
-	}
-
-	/// Basic test for editing a task
-	TEST_METHOD(putWithoutTransaction) {
-		DataStore& sut = DataStore::get();
-
-		// Checks if the document is initially empty
-		Assert::IsTrue(sut.document.first_child().empty());
-
-		pugi::xml_node node = sut.document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
-		// Equivalent to putWithExistingId
-		Assert::IsTrue(sut.put(0, task1));
-
-		// Equivalent to putNonExistentId
-		Assert::IsFalse(sut.put(1, task1));
-
-		sut.document.reset();
-		sut.saveData();
-	}
-
-	/// Basic test for erasing a task with the specified task id
-	TEST_METHOD(eraseWithoutTransaction) {
-		DataStore& sut = DataStore::get();
-
-		pugi::xml_node node = sut.document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
-		// Equivalent to eraseExistingId
-		Assert::IsTrue(sut.erase(0));
-
-		// Equivalent to eraseNonExistentId
-		Assert::IsFalse(sut.erase(1));
-
-		sut.document.reset();
-		sut.saveData();
-	}
-
 	TEST_METHOD(getAllTasks) {
 		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
