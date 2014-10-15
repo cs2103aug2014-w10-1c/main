@@ -15,6 +15,11 @@
 #include <vector>
 #include <functional>
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include <windows.h>
+#undef ERROR
 
 #endif  // YOU_UTILS_STDAFX_H_

@@ -61,7 +61,7 @@ TEST_CLASS(LogTests) {
 		std::shared_ptr<LogTesterSink> tester(
 			std::make_shared<LogTesterSink>(LogSeverity::DEBUG, L"", L"lol2"));
 		Log::setSink(tester);
-		Log::debug << L"lol2";
+		Log::debug << std::wstring(L"lol2");
 		Assert::AreEqual(1U, tester->getCallCount());
 
 		Log::debug << L"lo" << L"l" << 2;
