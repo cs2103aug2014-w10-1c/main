@@ -49,13 +49,13 @@ public:
 
 	/// @}
 
-	/// Insert a task into the datastore
+	/// Pushes \ref PostOperation into the active \ref Transaction
 	void post(TaskId, const SerializedTask&);
 
-	/// Update the content of a task
+	/// Pushes \ref PutOperation into the active \ref Transaction
 	void put(TaskId, const SerializedTask&);
 
-	/// Delete a task
+	/// Pushes \ref EraseOperation into the active \ref Transaction
 	void erase(TaskId);
 
 	/// Get all tasks
