@@ -81,6 +81,22 @@ public:
 		sut.saveData();
 	}
 
+	TEST_METHOD(getAllTaskFromFile) {
+		DataStore& sut = DataStore::get();
+		sut.document.reset();
+		
+		// create mock
+		sut.document.append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		
+		std::vector<SerializedTask> result = sut.getAllTask();
+		Assert::AreEqual(1U, result.size());
+
+		// Clean up
+		sut.document.reset();
+		sut.saveData();
+	}
+
 	TEST_METHOD(saveThenLoad) {
 		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
