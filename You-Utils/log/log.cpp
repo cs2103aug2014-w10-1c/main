@@ -44,7 +44,6 @@ class DebugLogger : public You::Utils::LogSink {
 	void onLog(You::Utils::LogSeverity severity,
 		const std::wstring& category,
 		const std::wstring& message) override {
-
 		std::wstring categoryString;
 		if (!category.empty()) {
 			categoryString = (boost::wformat(CATEGORY_FORMAT) % category).str();
