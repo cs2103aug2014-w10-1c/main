@@ -18,7 +18,7 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
-	TEST_METHOD(beginTransaction) {
+	TEST_METHOD(beginTransactionAddToTransactionStack) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());
 		Transaction t(sut.begin());
@@ -69,13 +69,14 @@ public:
 		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(getAllTasks) {
+	TEST_METHOD(getAllTasksFromTreeCorrectly) {
 		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
 
+		// Clean up
 		sut.document.reset();
 		sut.saveData();
 	}
