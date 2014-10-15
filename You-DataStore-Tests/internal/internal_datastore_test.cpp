@@ -38,16 +38,13 @@ public:
 
 	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
-
 		sut.document.reset();
 		sut.saveData();
-		assert(sut.document.first_child.empty());
 
 		Transaction t(sut.begin());
 		sut.post(10, task1);
 		// document must not change without commit
 		Assert::IsTrue(sut.document.first_child().empty());
-
 		t.commit();
 		// document changes after commit
 		Assert::IsFalse(sut.document.first_child().empty());
@@ -71,8 +68,12 @@ public:
 
 	TEST_METHOD(getAllTasksFromTree) {
 		DataStore& sut = DataStore::get();
+		sut.document.reset();
+
+		// Create mock
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
 
@@ -85,9 +86,11 @@ public:
 		DataStore& sut = DataStore::get();
 		sut.document.reset();
 
-		// create mock
+		// Create mock
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		sut.document.save_file(sut.FILE_PATH.c_str());
+		sut.document.reset();
 
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
@@ -99,10 +102,15 @@ public:
 
 	TEST_METHOD(saveAndLoadTheSameThing) {
 		DataStore& sut = DataStore::get();
+		sut.document.reset();
+
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		bool result = sut.saveData();
 		Assert::IsTrue(result);
+
+		sut.document.reset();
+
 		sut.loadData();
 		std::wstring value = sut.document.child(L"task").child_value();
 		Assert::AreEqual(std::wstring(L"what"), value);
