@@ -18,7 +18,7 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
-	TEST_METHOD(beginTransactionAddToTransactionStack) {
+	TEST_METHOD(beginTransactionAddsToTransactionStack) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());
 		Transaction t(sut.begin());
@@ -36,7 +36,7 @@ public:
 		Assert::AreEqual(3U, t->operationsQueue.size());
 	}
 
-	TEST_METHOD(commitChangesDocumentTree) {
+	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
 
 		sut.document.reset();
@@ -61,7 +61,7 @@ public:
 		Assert::IsTrue(sut.document.first_child().empty());
 	}
 
-	TEST_METHOD(rollbackCleanUpTransactionStack) {
+	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
 		Assert::AreEqual(1U, sut.transactionStack.size());
@@ -69,7 +69,7 @@ public:
 		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(getAllTasksFromTreeCorrectly) {
+	TEST_METHOD(getAllTasksFromTree) {
 		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
@@ -97,7 +97,7 @@ public:
 		sut.saveData();
 	}
 
-	TEST_METHOD(saveThenLoad) {
+	TEST_METHOD(saveAndLoadTheSameThing) {
 		DataStore& sut = DataStore::get();
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
