@@ -20,7 +20,8 @@ namespace {
 	using Log = You::Utils::Log;
 }
 
-const std::wstring UpdateTask::logCategory = Query::logCategory + L"[UpdateTask]";
+const std::wstring UpdateTask::logCategory =
+	Query::logCategory + L"[UpdateTask]";
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);

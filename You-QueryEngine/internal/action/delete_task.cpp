@@ -20,7 +20,8 @@ namespace {
 	using Log = You::Utils::Log;
 }
 
-const std::wstring DeleteTask::logCategory = Query::logCategory + L"[DeleteTask]";
+const std::wstring DeleteTask::logCategory =
+	Query::logCategory + L"[DeleteTask]";
 
 void DeleteTask::makeTransaction() {
 	Log::debug << [=] { return boost::wformat(L"%1% : ERASE \"%2%\"") %
