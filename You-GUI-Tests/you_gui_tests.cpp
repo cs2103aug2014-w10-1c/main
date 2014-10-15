@@ -3,8 +3,10 @@
 #include "CppUnitTest.h"
 #include "You-GUI\main_window.h"
 #include "You-GUI\system_tray_manager.h"
-
+#include "You-QueryEngine\api.h"
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+using Task = You::Controller::Task;
+using TaskList = You::Controller::TaskList;
 namespace You {
 namespace GUI {
 namespace UnitTests{
@@ -18,7 +20,7 @@ TEST_MODULE_INITIALIZE(ModuleInitialize) {
 	app = new QApplication(argc, argv);
 }
 
-// Cleans up what we set up// Cleans up what we set up
+// Cleans up what we set up
 TEST_MODULE_CLEANUP(ModuleCleanup) {
 	app->quit();
 	delete app;
@@ -74,6 +76,13 @@ public:
 	TEST_METHOD(isMenuBarHidden) {
 		MainWindow w;
 		Assert::IsFalse(w.ui.menuBar->isVisible());
+	}
+
+	TEST_METHOD(addSingleTaskCount) {
+		MainWindow w;
+		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
+		w.commandEnterPressed();
+		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
 };
 }

@@ -37,8 +37,6 @@ void MainWindow::SessionManager::loadSession() {
 
 void MainWindow::SessionManager::saveSession() {
 	QSettings settings("session.txt", QSettings::IniFormat);
-	// TODO(angathorion): Add a function in main gui that calls fills taskIDs
-	// array on close.
 	settings.beginWriteArray("idList");
 	for (int i = 0; i < taskIDs.size(); i++) {
 		settings.setArrayIndex(i);
