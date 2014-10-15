@@ -148,7 +148,7 @@ public:
 		Assert::AreEqual(1U, sut.mergedOperationsQueue.size());
 		sut.mergeOperationsQueue(q2);
 		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
-		// Check if the order is correct
+		// TODO(digawp): Check if the order is correct
 	}
 };
 }  // namespace UnitTests
