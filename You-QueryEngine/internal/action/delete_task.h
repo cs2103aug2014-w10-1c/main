@@ -26,7 +26,7 @@ public:
 	virtual ~DeleteTask() = default;
 
 protected:
-	static const std::wstring category;
+	static const std::wstring logCategory;
 
 private:
 	/// Execute delete task.

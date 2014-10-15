@@ -28,7 +28,7 @@ public:
 	virtual ~GetTask() = default;
 
 protected:
-	static const std::wstring category;
+	static const std::wstring logCategory;
 
 private:
 	/// Execute add task.

@@ -46,7 +46,7 @@ class Query {
 	friend class QueryEngine;
 
 protected:
-	static const std::wstring category;
+	static const std::wstring logCategory;
 
 private:
 	/// Execute the query on a state.

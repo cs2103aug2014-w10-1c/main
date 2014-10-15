@@ -20,11 +20,11 @@ namespace {
 	using Log = You::Utils::Log;
 }
 
-const std::wstring DeleteTask::category = Query::category + L"[DeleteTask]";
+const std::wstring DeleteTask::logCategory = Query::logCategory + L"[DeleteTask]";
 
 void DeleteTask::makeTransaction() {
-	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"") %
-		category % id).str().c_str();
+	Log::debug << [=] { return boost::wformat(L"%1% : ERASE \"%2%\"") %
+		logCategory % id; };
 	Transaction t(DataStore::get().begin());
 	DataStore::get().erase(id);
 	t.commit();

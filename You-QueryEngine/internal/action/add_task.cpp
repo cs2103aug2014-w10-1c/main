@@ -22,7 +22,7 @@ namespace {
 }
 /// \endcond
 
-const std::wstring AddTask::category = Query::category + L"[AddTask]";
+const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
 
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
@@ -34,16 +34,16 @@ Task AddTask::buildTask(const Task::ID newID) {
 
 void AddTask::addTaskToState(const Task& task,
 	State& state) const {
-	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"") %
-		category % task.getDescription()).str().c_str();
+	Log::debug << [=] { return boost::wformat(L"%1% : Registering \"%2%\"") %
+		logCategory % task.getDescription(); };
 	Controller::Graph::addTask(state.graph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
 	auto serialized = Controller::Serializer::serialize(newTask);
 	Transaction t(DataStore::get().begin());
-	Log::debug << (boost::wformat(L"%1% : POST \"%2%\"") %
-		category % newTask.getID()).str().c_str();
+	Log::debug << [=] { return boost::wformat(L"%1% : POST \"%2%\"") %
+		logCategory % newTask.getID(); };
 	DataStore::get().post(newTask.getID(), serialized);
 	t.commit();
 }

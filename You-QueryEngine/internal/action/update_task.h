@@ -33,7 +33,7 @@ public:
 	virtual ~UpdateTask() = default;
 
 protected:
-	static const std::wstring category;
+	static const std::wstring logCategory;
 
 private:
 	Task buildUpdatedTask(const State& state) const;

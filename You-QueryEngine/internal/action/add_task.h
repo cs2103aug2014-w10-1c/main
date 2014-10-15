@@ -29,7 +29,7 @@ public:
 	virtual ~AddTask() = default;
 
 protected:
-	static const std::wstring category;
+	static const std::wstring logCategory;
 
 private:
 	Task buildTask(const Task::ID id);

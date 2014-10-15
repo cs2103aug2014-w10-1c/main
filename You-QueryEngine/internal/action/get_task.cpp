@@ -10,7 +10,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-const std::wstring GetTask::category = Query::category + L"[GetTask]";
+const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
 
 Response GetTask::execute(State& state) {
 	std::vector<Task> result;

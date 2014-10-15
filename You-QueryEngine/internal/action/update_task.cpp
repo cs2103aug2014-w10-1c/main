@@ -20,7 +20,7 @@ namespace {
 	using Log = You::Utils::Log;
 }
 
-const std::wstring UpdateTask::category = Query::category + L"[UpdateTask]";
+const std::wstring UpdateTask::logCategory = Query::logCategory + L"[UpdateTask]";
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
@@ -45,8 +45,8 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 }
 
 void UpdateTask::modifyState(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Deleting %2% - \"%3%\"") %
-		category % task.getID() % task.getDescription()).str().c_str();
+	Log::debug << [=] { return boost::wformat(L"%1% : Deleting %2% - \"%3%\"") %
+		logCategory % task.getID() % task.getDescription(); };
 	Controller::Graph::updateTask(state.graph(), task);
 }
 
