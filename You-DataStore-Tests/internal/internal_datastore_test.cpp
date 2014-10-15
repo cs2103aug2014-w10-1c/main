@@ -20,16 +20,9 @@ TEST_CLASS(DataStoreTest) {
 public:
 	TEST_METHOD(beginTransaction) {
 		DataStore& sut = DataStore::get();
-		sut.post(0, task1);
-		SerializedTask task = sut.getTask(0);
-		Assert::AreEqual(task1.at(TASK_ID), task[TASK_ID]);
-		Assert::AreEqual(task1.at(DESCRIPTION), task[DESCRIPTION]);
-		Assert::AreEqual(task1.at(DEADLINE), task[DEADLINE]);
-		Assert::AreEqual(task1.at(PRIORITY), task[PRIORITY]);
-		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
-
-		sut.document.reset();
-		sut.saveData();
+		Assert::IsTrue(sut.transactionStack.empty());
+		You::DataStore::Transaction t(sut.begin());
+		Assert::AreEqual(1U, sut.transactionStack.size());
 	}
 
 	TEST_METHOD(postWithoutTransaction) {
