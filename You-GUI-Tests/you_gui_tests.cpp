@@ -4,12 +4,14 @@
 #include "You-GUI\main_window.h"
 #include "You-GUI\system_tray_manager.h"
 #include "You-QueryEngine\api.h"
+
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 using Task = You::Controller::Task;
 using TaskList = You::Controller::TaskList;
+
 namespace You {
 namespace GUI {
-namespace UnitTests{
+namespace UnitTests {
 QApplication *app;
 
 // Simulate running the main() function
@@ -84,7 +86,20 @@ public:
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
+
+	TEST_METHOD(addSingleTaskContent) {
+		MainWindow w;
+		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
+		w.commandEnterPressed();
+		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
+		int column1 = QString::compare(item.text(1), QString("0"));
+		int column2 = QString::compare(item.text(2), QString("test"));
+		int column3 = QString::compare(item.text(3), QString("2020-Nov-01 00:00:00"));
+		int column4 = QString::compare(item.text(4), QString("Normal"));
+		Assert::IsTrue((column1 == 0) && (column2 == 0) &&
+			(column3 == 0) && (column4 == 0));
+	}
 };
-}
-}
-}
+}  // namespace UnitTests
+}  // namespace GUI
+}  // namespace You
