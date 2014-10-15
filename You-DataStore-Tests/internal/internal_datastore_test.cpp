@@ -25,11 +25,48 @@ public:
 		Assert::AreEqual(1U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(pushPostOperation) {
+	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(12, task1);
+		sut.post(10, task1);
 		Assert::AreEqual(1U, t->operationsQueue.size());
+		sut.put(10, task2);
+		Assert::AreEqual(2U, t->operationsQueue.size());
+		sut.erase(10);
+		Assert::AreEqual(3U, t->operationsQueue.size());
+	}
+
+	TEST_METHOD(commitChangesDocumentTree) {
+		DataStore& sut = DataStore::get();
+
+		sut.document.reset();
+		sut.saveData();
+		assert(sut.document.first_child.empty());
+
+		Transaction t(sut.begin());
+		sut.post(10, task1);
+		// document must not change without commit
+		Assert::IsTrue(sut.document.first_child().empty());
+
+		t.commit();
+		// document changes after commit
+		Assert::IsFalse(sut.document.first_child().empty());
+
+		Transaction t2(sut.begin());
+		sut.erase(10);
+		// document must not change without commit
+		Assert::IsFalse(sut.document.first_child().empty());
+		t2.commit();
+		// document changes after commit
+		Assert::IsTrue(sut.document.first_child().empty());
+	}
+
+	TEST_METHOD(rollbackCleanUpTransactionStack) {
+		DataStore& sut = DataStore::get();
+		Transaction t(sut.begin());
+		Assert::AreEqual(1U, sut.transactionStack.size());
+		t.rollback();
+		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
 	TEST_METHOD(getAllTasks) {
@@ -57,7 +94,7 @@ public:
 		sut.saveData();
 	}
 
-	TEST_METHOD(pushOperationToTransaction) {
+	TEST_METHOD(pushOperationToTransactionWithoutDataStore) {
 		Internal::Transaction sut;
 
 		std::unique_ptr<Internal::IOperation> post =
