@@ -79,6 +79,15 @@ public:
 		return *this;
 	}
 
+	/// Writes the given message.
+	///
+	/// \param[in] thing The message to append. The message is not copied and
+	///                  must have a lifetime longer than this.
+	LogMessage& operator<<(const std::wstring& string) {
+		components.emplace_back([&string] { return string; });
+		return *this;
+	}
+
 private:
 	/// Constructs a new log message buffer, with the given category.
 	///
