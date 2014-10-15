@@ -7,6 +7,7 @@
 
 namespace You {
 namespace GUI {
+namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
 
@@ -16,7 +17,7 @@ using Task = You::Controller::Task;
 /// when the program is started again. It inherits from the BaseManager class.
 class MainWindow::SessionManager : public MainWindow::BaseManager{
 	Q_OBJECT
-
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SessionManager(MainWindow * const parentGUI)

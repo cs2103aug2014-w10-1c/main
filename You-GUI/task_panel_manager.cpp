@@ -7,7 +7,7 @@ namespace You {
 namespace GUI {
 
 using Task = You::Controller::Task;
-
+using Date = boost::gregorian::date;
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
@@ -114,6 +114,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		result.push_back(QString("Never"));
 	} else {
 		result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
+		task.getDeadline();
 	}
 
 	// Iterate through task list and add it to the task panel
@@ -135,6 +136,50 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 	int rowNum = 0;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
 		(*it)->setData(1, Qt::DisplayRole, rowNum++);
+	}
+}
+
+bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
+	return true;
+}
+
+bool MainWindow::TaskPanelManager::isDueToday(Task::Time deadline) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::universal_day();
+	if (by.day_of_year() - today.day_of_year() == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool MainWindow::TaskPanelManager::isDueTomorrow(Task::Time deadline) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::universal_day();
+	if (by.day_of_year() - today.day_of_year() == 1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool MainWindow::TaskPanelManager::isDueDayAfter(Task::Time deadline) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::universal_day();
+	if (by.day_of_year() - today.day_of_year() == 2) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool MainWindow::TaskPanelManager::isDueInThreeDays(Task::Time deadline) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::universal_day();
+	if (by.day_of_year() - today.day_of_year() == 3) {
+		return true;
+	} else {
+		return false;
 	}
 }
 

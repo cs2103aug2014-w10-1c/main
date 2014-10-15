@@ -4,16 +4,16 @@
 #include "You-GUI\main_window.h"
 #include "You-GUI\system_tray_manager.h"
 #include "You-QueryEngine\api.h"
+#include "You-GUI\task_panel_manager.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 using Task = You::Controller::Task;
 using TaskList = You::Controller::TaskList;
-
+using Date = boost::gregorian::date;
 namespace You {
 namespace GUI {
 namespace UnitTests {
 QApplication *app;
-
 // Simulate running the main() function
 // Sets up the logging facility and the Qt event loop
 TEST_MODULE_INITIALIZE(ModuleInitialize) {
@@ -94,10 +94,31 @@ public:
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(1), QString("0"));
 		int column2 = QString::compare(item.text(2), QString("test"));
-		int column3 = QString::compare(item.text(3), QString("2020-Nov-01 00:00:00"));
+		int column3 = QString::compare(
+			item.text(3), QString("2020-Nov-01 00:00:00"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
 		Assert::IsTrue((column1 == 0) && (column2 == 0) &&
 			(column3 == 0) && (column4 == 0));
+	}
+
+	TEST_METHOD(testDueToday1) {
+		MainWindow w;
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		Assert::IsTrue(MainWindow::TaskPanelManager::isDueToday(dl));
+	}
+
+	TEST_METHOD(testDueToday2) {
+		MainWindow w;
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl += boost::posix_time::hours(24) + boost::posix_time::minutes(1);
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueToday(dl));
+	}
+
+	TEST_METHOD(testDueToday3) {
+		MainWindow w;
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueToday(dl));
 	}
 };
 }  // namespace UnitTests

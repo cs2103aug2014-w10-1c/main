@@ -10,13 +10,16 @@
 
 namespace You {
 namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
 
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
 /// It inherits from the BaseManager class.
 class MainWindow::TaskPanelManager : public MainWindow::BaseManager{
 	Q_OBJECT
-
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit TaskPanelManager(MainWindow* const parentGUI);
@@ -36,6 +39,16 @@ public:
 
 	/// Deletes a task.
 	void deleteTask(You::Controller::Task::ID taskID);
+
+	static bool isPastDue(Task::Time deadline);
+
+	static bool isDueToday(Task::Time deadline);
+
+	static bool isDueTomorrow(Task::Time deadline);
+
+	static bool isDueDayAfter(Task::Time deadline);
+
+	static bool isDueInThreeDays(Task::Time deadline);
 
 private:
 	/// Converts the properties of a task into a set of cells for display
@@ -66,6 +79,7 @@ private:
 
 	/// Updates row numbers
 	void updateRowNumbers();
+
 
 private:
 	/// String/numeric constants for the GUI

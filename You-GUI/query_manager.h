@@ -10,6 +10,8 @@
 #include "base_manager.h"
 namespace You {
 namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
 /// The component that handles passing of data between the controller and the
 /// rest of the GUI. It has two primary operations: on setup it passes a list
 /// containing the IDs of tasks that were previously open, and receives a
@@ -17,6 +19,7 @@ namespace GUI {
 /// as input string is sent to the parser. The Result is a vector of tasks, and
 /// this replaces the existing Result. It inherits from the BaseManager class.
 class MainWindow::QueryManager : public MainWindow::BaseManager{
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit QueryManager(MainWindow* const parentGUI)

@@ -6,6 +6,7 @@
 #include "base_manager.h"
 namespace You {
 namespace GUI {
+namespace UnitTests { class MainWindowTests; }
 
 /// The component that handles all interactions with the tray icon. It handles
 /// the window state of the application based on commands sent to the tray
@@ -13,6 +14,7 @@ namespace GUI {
 class MainWindow::SystemTrayManager : public MainWindow::BaseManager{
 	Q_OBJECT
 	friend class MainWindow;
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
 	explicit SystemTrayManager(MainWindow * const parentGUI)
