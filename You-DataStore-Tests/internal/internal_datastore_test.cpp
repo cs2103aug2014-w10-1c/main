@@ -131,7 +131,7 @@ public:
 
 		sut.operationsQueue.clear();
 	}
-
+	/*
 	TEST_METHOD(mergeOperationsQueueIsAppend) {
 		boost::ptr_deque<Internal::IOperation> q1;
 		boost::ptr_deque<Internal::IOperation> q2;
@@ -149,7 +149,7 @@ public:
 		sut.mergeOperationsQueue(q2);
 		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
 		// TODO(digawp): Check if the order is correct
-	}
+	}*/
 };
 }  // namespace UnitTests
 }  // namespace DataStore
