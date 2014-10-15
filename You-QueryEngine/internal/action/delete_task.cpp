@@ -24,7 +24,7 @@ const std::wstring DeleteTask::logCategory =
 	Query::logCategory + L"[DeleteTask]";
 
 void DeleteTask::makeTransaction() {
-	Log::debug << [=] { return boost::wformat(L"%1% : ERASE \"%2%\"") %
+	Log::debug << [=] { return boost::wformat(L"%1% : ERASE \"%2%\"\n") %
 		logCategory % id; };
 	Transaction t(DataStore::get().begin());
 	DataStore::get().erase(id);
