@@ -4,7 +4,8 @@
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
-
+namespace You {
+namespace GUI {
 MainWindow::SessionManager::~SessionManager() {
 	saveSession();
 }
@@ -50,3 +51,6 @@ void MainWindow::SessionManager::saveSession() {
 	settings.setValue("maximized", parentGUI->isMaximized());
 	settings.endGroup();
 }
+
+}  // namespace GUI
+}  // namespace You

@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QList>
 #include "task_panel_manager.h"
+namespace You {
+namespace GUI {
 
 using Task = You::Controller::Task;
 
@@ -135,3 +137,6 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 		(*it)->setData(1, Qt::DisplayRole, rowNum++);
 	}
 }
+
+}  // namespace GUI
+}  // namespace You

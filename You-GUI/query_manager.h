@@ -8,7 +8,8 @@
 #include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
 #include "base_manager.h"
-
+namespace You {
+namespace GUI {
 /// The component that handles passing of data between the controller and the
 /// rest of the GUI. It has two primary operations: on setup it passes a list
 /// containing the IDs of tasks that were previously open, and receives a
@@ -40,4 +41,6 @@ private:
 	std::unique_ptr<You::Controller::Result> currentResult;
 };
 
+}  // namespace GUI
+}  // namespace You
 #endif  // YOU_GUI_QUERY_MANAGER_H_

@@ -5,6 +5,9 @@
 #include <QApplication>
 #include "base_manager.h"
 
+namespace You {
+namespace GUI {
+
 using Task = You::Controller::Task;
 
 /// The component that handles all session-related data of the application. It
@@ -39,4 +42,6 @@ private:
 	void saveSession();
 };
 
+}  // namespace GUI
+}  // namespace You
 #endif  // YOU_GUI_SESSION_MANAGER_H_

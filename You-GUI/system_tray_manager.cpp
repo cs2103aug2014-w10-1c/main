@@ -4,6 +4,8 @@
 #include <QList>
 #include "main_window.h"
 #include "system_tray_manager.h"
+namespace You {
+namespace GUI {
 
 MainWindow::SystemTrayManager::~SystemTrayManager() {
 }
@@ -77,3 +79,6 @@ void MainWindow::SystemTrayManager::createActions() {
 	connect(quitAction, SIGNAL(triggered()),
 		parentGUI, SLOT(applicationExitRequested()));
 }
+
+}  // namespace GUI
+}  // namespace You

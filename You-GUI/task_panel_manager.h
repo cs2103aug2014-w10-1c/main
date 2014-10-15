@@ -8,6 +8,9 @@
 #include "You-Controller/controller_context.h"
 #include "You-Controller/result.h"
 
+namespace You {
+namespace GUI {
+
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
 /// It inherits from the BaseManager class.
@@ -83,5 +86,8 @@ private:
 	static const QString TASK_COLUMN_5;
 	/// @}
 };
+
+}  // namespace GUI
+}  // namespace You
 
 #endif  // YOU_GUI_TASK_PANEL_MANAGER_H_

@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QList>
 #include "query_manager.h"
+namespace You {
+namespace GUI {
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -70,3 +72,6 @@ TaskList MainWindow::QueryManager::getTasks(
 TaskList MainWindow::QueryManager::getTasks() {
 	return Controller::get().getTasks();
 }
+
+}  // namespace GUI
+}  // namespace You

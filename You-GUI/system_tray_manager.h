@@ -4,6 +4,8 @@
 #define YOU_GUI_SYSTEM_TRAY_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
+namespace You {
+namespace GUI {
 
 /// The component that handles all interactions with the tray icon. It handles
 /// the window state of the application based on commands sent to the tray
@@ -62,5 +64,8 @@ private:
 	/// show/hide behavior on click.
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
 };
+
+}  // namespace GUI
+}  // namespace You
 
 #endif  // YOU_GUI_SYSTEM_TRAY_MANAGER_H_

@@ -5,7 +5,9 @@
 #include "You-GUI\system_tray_manager.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
-
+namespace You {
+namespace GUI {
+namespace UnitTests{
 QApplication *app;
 
 // Simulate running the main() function
@@ -74,3 +76,6 @@ public:
 		Assert::IsFalse(w.ui.menuBar->isVisible());
 	}
 };
+}
+}
+}

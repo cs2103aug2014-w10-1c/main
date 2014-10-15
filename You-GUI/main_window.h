@@ -7,12 +7,15 @@
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
 
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
 class MainWindow : public QMainWindow {
 	Q_OBJECT
-	friend class MainWindowTests;
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor for the GUI.
 	explicit MainWindow(QWidget *parent = nullptr);
@@ -115,4 +118,6 @@ private slots:
 	void applicationExitRequested();
 };
 
+}  // namespace GUI
+}  // namespace You
 #endif  // YOU_GUI_MAIN_WINDOW_H_

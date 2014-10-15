@@ -11,6 +11,8 @@
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
 #include "You-NLP\exception.h"
+namespace You {
+namespace GUI {
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
@@ -176,3 +178,6 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
+
+}  // namespace GUI
+}  // namespace You
