@@ -73,7 +73,7 @@ public:
 		Internal::PostOperation post(0, task1);
 		bool status = post.run(document);
 		Assert::IsFalse(status);
-		
+
 		// Check the content
 		pugi::xml_node taskNode = document.child(L"task");
 		Assert::IsTrue(taskNode.first_child().empty());

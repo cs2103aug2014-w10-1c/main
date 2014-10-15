@@ -58,7 +58,7 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 
 void DataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	assert(!transactionStack.empty());
-	
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 
@@ -83,7 +83,7 @@ void DataStore::erase(TaskId rawId) {
 
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
-	
+
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
