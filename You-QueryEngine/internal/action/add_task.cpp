@@ -34,16 +34,16 @@ Task AddTask::buildTask(const Task::ID newID) {
 
 void AddTask::addTaskToState(const Task& task,
 	State& state) const {
-	Log::debug << [=] { return boost::wformat(L"%1% : Registering \"%2%\"\n") %
-		logCategory % task.getDescription(); };
+	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
+		logCategory % task.getDescription()).str();
 	Controller::Graph::addTask(state.graph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
 	auto serialized = Controller::Serializer::serialize(newTask);
 	Transaction t(DataStore::get().begin());
-	Log::debug << [=] { return boost::wformat(L"%1% : POST \"%2%\"\n") %
-		logCategory % newTask.getID(); };
+	Log::debug << (boost::wformat(L"%1% : POST \"%2%\"\n") %
+		logCategory % newTask.getID()).str();
 	DataStore::get().post(newTask.getID(), serialized);
 	t.commit();
 }

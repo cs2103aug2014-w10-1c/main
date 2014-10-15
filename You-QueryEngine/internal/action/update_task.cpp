@@ -46,8 +46,8 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 }
 
 void UpdateTask::modifyState(State& state, const Task& task) const {
-	Log::debug << [=] { return boost::wformat(L"%1% : Updating %2% - \"%3%\"\n") %
-		logCategory % task.getID() % task.getDescription(); };
+	Log::debug << (boost::wformat(L"%1% : Updating %2% - \"%3%\"\n") %
+		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.graph(), task);
 }
 
