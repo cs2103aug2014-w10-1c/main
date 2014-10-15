@@ -10,12 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="packages.config" />
-    <CustomBuild Include="GeneratedFiles\Debug\you_gui_tests.moc">
-      <Filter>Generated Files\Debug</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\Release\you_gui_tests.moc">
-      <Filter>Generated Files\Release</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
