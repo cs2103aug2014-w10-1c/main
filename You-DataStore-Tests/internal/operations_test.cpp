@@ -40,7 +40,7 @@ public:
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"pcdata");
 		SerializedTask task =
 			Internal::SerializationOperation::deserialize(taskNode);
-		Assert::AreEqual(static_cast<Value>(L"pcdata"), task.at(L"elementName"));
+		Assert::AreEqual(L"pcdata", task.at(L"elementName").c_str());
 	}
 
 	TEST_METHOD(postWithNewId) {
