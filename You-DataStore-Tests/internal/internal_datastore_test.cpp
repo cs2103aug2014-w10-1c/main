@@ -18,6 +18,11 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
+	static void clearDataStoreState() {
+		DataStore::get().document.reset();
+		DataStore::get().saveData();
+	}
+
 	TEST_METHOD(beginTransactionAddsToTransactionStack) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());
@@ -37,10 +42,9 @@ public:
 	}
 
 	TEST_METHOD(commitChangesXmlDocumentTree) {
-		DataStore& sut = DataStore::get();
-		sut.document.reset();
-		sut.saveData();
+		clearDataStoreState();
 
+		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
 		sut.post(10, task1);
 		// document must not change without commit
@@ -67,8 +71,8 @@ public:
 	}
 
 	TEST_METHOD(getAllTasksFromTree) {
+		clearDataStoreState();
 		DataStore& sut = DataStore::get();
-		sut.document.reset();
 
 		// Create mock
 		sut.document.append_child(L"task").
@@ -76,15 +80,11 @@ public:
 
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
-
-		// Clean up
-		sut.document.reset();
-		sut.saveData();
 	}
 
 	TEST_METHOD(getAllTaskFromFile) {
+		clearDataStoreState();
 		DataStore& sut = DataStore::get();
-		sut.document.reset();
 
 		// Create mock
 		sut.document.append_child(L"task").
@@ -94,15 +94,11 @@ public:
 
 		std::vector<SerializedTask> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
-
-		// Clean up
-		sut.document.reset();
-		sut.saveData();
 	}
 
 	TEST_METHOD(saveAndLoadTheSameThing) {
+		clearDataStoreState();
 		DataStore& sut = DataStore::get();
-		sut.document.reset();
 
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
@@ -114,9 +110,6 @@ public:
 		sut.loadData();
 		std::wstring value = sut.document.child(L"task").child_value();
 		Assert::AreEqual(std::wstring(L"what"), value);
-
-		sut.document.reset();
-		sut.saveData();
 	}
 
 	TEST_METHOD(pushOperationToTransactionWithoutDataStore) {
