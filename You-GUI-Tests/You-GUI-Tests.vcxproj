@@ -68,7 +68,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;C:\Users\Tang\Source\Repos\main\Debug;..\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;..\;$(SolutionDir)Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Testd.lib;Qt5Widgetsd.lib;Qt5Guid.lib;%(AdditionalDependencies);You-DataStore.lib</AdditionalDependencies>
     </Link>
@@ -86,7 +86,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;C:\Users\Tang\Source\Repos\main\Debug;$(SolutionDir)\Debug;..\;$(SolutionDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(VCInstallDir)UnitTest\lib;..\;$(SolutionDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Test.lib;Qt5Widgets.lib;Qt5Gui.lib;%(AdditionalDependencies);You-DataStore.lib</AdditionalDependencies>
     </Link>
