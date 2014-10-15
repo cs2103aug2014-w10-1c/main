@@ -13,9 +13,18 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
+/// Mock xml_document for \ref DataStoreOperationsTest
+static pugi::xml_document mockDocument;
+
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreOperationsTest) {
 public:
+	static void initializeMockDocument() {
+		mockDocument.reset();
+		pugi::xml_node node = mockDocument.append_child(L"task");
+		node.append_attribute(L"id").set_value(L"0");
+	}
+
 	TEST_METHOD(serializeOperation) {
 		pugi::xml_document document;
 		pugi::xml_node taskNode = document.append_child();
@@ -66,30 +75,24 @@ public:
 	}
 
 	TEST_METHOD(postWithUsedId) {
-		pugi::xml_document document;
-		pugi::xml_node node = document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
+		initializeMockDocument();
 		Internal::PostOperation post(0, task1);
-		bool status = post.run(document);
+		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 
 		// Check the content
-		pugi::xml_node taskNode = document.child(L"task");
+		pugi::xml_node taskNode = mockDocument.child(L"task");
 		Assert::IsTrue(taskNode.first_child().empty());
 	}
 
 	TEST_METHOD(putWithExistingId) {
-		pugi::xml_document document;
-		pugi::xml_node node = document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
+		initializeMockDocument();
 		Internal::PutOperation put(0, task1);
-		bool status = put.run(document);
+		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
 
 		// Check the content
-		pugi::xml_node taskNode = document.child(L"task");
+		pugi::xml_node taskNode = mockDocument.child(L"task");
 		Assert::AreEqual(task1.at(TASK_ID).c_str(),
 			taskNode.child(TASK_ID.c_str()).child_value());
 		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
@@ -103,39 +106,30 @@ public:
 	}
 
 	TEST_METHOD(putNonExistentId) {
-		pugi::xml_document document;
-		pugi::xml_node node = document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
+		initializeMockDocument();
 		Internal::PutOperation put(1, task1);
-		bool status = put.run(document);
+		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 
 		// Check the content
-		pugi::xml_node taskNode = document.child(L"task");
+		pugi::xml_node taskNode = mockDocument.child(L"task");
 		Assert::AreEqual(L"0", taskNode.attribute(L"id").value());
 	}
 
 	TEST_METHOD(eraseExistingId) {
-		pugi::xml_document document;
-		pugi::xml_node node = document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
+		initializeMockDocument();
 		Internal::EraseOperation erase(0);
-		bool status = erase.run(document);
+		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
-		Assert::IsTrue(document.first_child().empty());
+		Assert::IsTrue(mockDocument.first_child().empty());
 	}
 
 	TEST_METHOD(eraseNonExistentId) {
-		pugi::xml_document document;
-		pugi::xml_node node = document.append_child(L"task");
-		node.append_attribute(L"id").set_value(L"0");
-
+		initializeMockDocument();
 		Internal::EraseOperation erase(1);
-		bool status = erase.run(document);
+		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
-		Assert::IsFalse(document.first_child().empty());
+		Assert::IsFalse(mockDocument.first_child().empty());
 	}
 };
 }  // namespace UnitTests
