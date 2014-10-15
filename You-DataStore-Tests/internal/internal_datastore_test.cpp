@@ -21,8 +21,15 @@ public:
 	TEST_METHOD(beginTransaction) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());
-		You::DataStore::Transaction t(sut.begin());
+		Transaction t(sut.begin());
 		Assert::AreEqual(1U, sut.transactionStack.size());
+	}
+
+	TEST_METHOD(pushPostOperation) {
+		DataStore& sut = DataStore::get();
+		Transaction t(sut.begin());
+		sut.post(12, task1);
+		Assert::AreEqual(1U, t->operationsQueue.size());
 	}
 
 	TEST_METHOD(getAllTasks) {
