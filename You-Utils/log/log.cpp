@@ -68,4 +68,4 @@ public:
 
 SetDefaultLogger setDefault;
 
-}
+}  // namespace
