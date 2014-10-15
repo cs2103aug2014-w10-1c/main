@@ -131,6 +131,25 @@ public:
 
 		sut.operationsQueue.clear();
 	}
+
+	TEST_METHOD(mergeOperationsQueueIsAppend) {
+		boost::ptr_deque<Internal::IOperation> q1;
+		boost::ptr_deque<Internal::IOperation> q2;
+
+		std::unique_ptr<Internal::IOperation> post =
+			std::make_unique<Internal::PostOperation>(0, task1);
+		std::unique_ptr<Internal::IOperation> erase =
+			std::make_unique<Internal::EraseOperation>(0);
+		q1.push_back(post.get());
+		q2.push_back(erase.get());
+
+		Internal::Transaction sut;
+		sut.mergeOperationsQueue(q1);
+		Assert::AreEqual(1U, sut.mergedOperationsQueue.size());
+		sut.mergeOperationsQueue(q2);
+		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
+		// Check if the order is correct
+	}
 };
 }  // namespace UnitTests
 }  // namespace DataStore
