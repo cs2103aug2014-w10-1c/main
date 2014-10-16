@@ -135,6 +135,19 @@ public:
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
+
+	TEST_METHOD(deleteSingleTaskFind) {
+		MainWindow w;
+		w.clearTasks();
+		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
+		w.commandEnterPressed();
+		w.ui.commandInputBox->setText(QString("/add test2 by Nov 20"));
+		w.commandEnterPressed();
+		w.ui.commandInputBox->setText(QString("/delete 1"));
+		w.commandEnterPressed();
+		Assert::IsTrue(w.ui.taskTreePanel->findItems(
+			QString("1"), Qt::MatchExactly, 1).size() == 0);
+	}
 };
 }  // namespace UnitTests
 }  // namespace GUI
