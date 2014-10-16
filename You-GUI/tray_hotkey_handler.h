@@ -7,23 +7,16 @@
 namespace You {
 namespace GUI {
 namespace Thread {
+
 class TrayHotkeyHandler : public QThread {
 	Q_OBJECT
 public:
-	TrayHotkeyHandler() {
-		moveToThread(this);
-	}
+	TrayHotkeyHandler();
+signals:
+	void hotkeyClicked(QSystemTrayIcon::ActivationReason);
 protected:
-	void run() {
-		while (1) {
-			Sleep(10);
-			if (GetAsyncKeyState(0x59) == -32767)
-				if (GetAsyncKeyState(0x5B) == -32767)
-					qDebug() << "lol";
-		}
-	}
+	void run();
 };
-
 
 }  // namespace Thread
 }  // namespace GUI

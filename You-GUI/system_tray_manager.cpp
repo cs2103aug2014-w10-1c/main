@@ -6,7 +6,6 @@
 #include "system_tray_manager.h"
 namespace You {
 namespace GUI {
-
 MainWindow::SystemTrayManager::~SystemTrayManager() {
 }
 
@@ -16,6 +15,8 @@ void MainWindow::SystemTrayManager::setup() {
 	makeContextMenu();
 	connectTrayActivatedSlot();
 	parentGUI->setVisible(true);
+
+	thread.start();
 }
 
 void MainWindow::SystemTrayManager::setIcon() {
@@ -37,6 +38,8 @@ void MainWindow::SystemTrayManager::makeContextMenu() {
 
 void MainWindow::SystemTrayManager::connectTrayActivatedSlot() {
 	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+	connect(&thread, SIGNAL(hotkeyClicked(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 

@@ -92,6 +92,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_tray_hotkey_handler.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="tray_hotkey_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

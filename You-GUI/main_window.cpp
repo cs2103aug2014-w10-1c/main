@@ -11,6 +11,7 @@
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
 #include "You-NLP\exception.h"
+
 namespace You {
 namespace GUI {
 

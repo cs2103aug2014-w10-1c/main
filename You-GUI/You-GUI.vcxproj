@@ -131,6 +131,7 @@
     <ClCompile Include="system_tray_manager.cpp" />
     <ClCompile Include="task_panel_manager.cpp" />
     <ClCompile Include="main_window.cpp" />
+    <ClCompile Include="tray_hotkey_handler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_window_messages.h" />

@@ -4,6 +4,8 @@
 #define YOU_GUI_SYSTEM_TRAY_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
+#include "../You-GUI/tray_hotkey_handler.h"
+
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
@@ -42,6 +44,8 @@ private:
 
 	/// Tray icon context menu
 	QMenu* trayIconMenu;
+
+	Thread::TrayHotkeyHandler thread;
 
 	/// Declares and defines the image of the tray icon.
 	void setIcon();
