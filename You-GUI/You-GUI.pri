@@ -7,15 +7,17 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./qt_helpers.h \
+HEADERS += ./main_window_messages.h \
+    ./qt_helpers.h \
     ./stdafx.h \
+    ./tray_hotkey_handler.h \
     ./system_tray_manager.h \
     ./task_panel_manager.h \
     ./session_manager.h \
     ./base_manager.h \
     ./query_manager.h \
     ./main_window.h
-SOURCES += ./NLP_manager.cpp \
+SOURCES += ./query_manager.cpp \
     ./session_manager.cpp \
     ./stdafx.cpp \
     ./system_tray_manager.cpp \

@@ -133,7 +133,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 
 	// Insert dependencies
 	std::wstringstream ss;
-	if (task.getDependencies().size() != 0){
+	if (task.getDependencies().size() != 0) {
 		ss << task.getDependencies().at(0);
 		for (int i = 1; i < task.getDependencies().size(); i++) {
 			ss << ", " << task.getDependencies().at(i);
