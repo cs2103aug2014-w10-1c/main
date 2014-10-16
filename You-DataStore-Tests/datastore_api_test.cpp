@@ -42,7 +42,7 @@ public:
 		Assert::AreEqual(3U, sut->operationsQueue.size());
 	}
 
-	TEST_METHOD(transactionRollback) {
+	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		Transaction sut(DataStore::get().begin());
 		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
 
@@ -64,7 +64,7 @@ public:
 		Assert::AreEqual(3U, sut->operationsQueue.size());
 	}
 
-	TEST_METHOD(commitTransaction) {
+	TEST_METHOD(commitTransactionModifyData) {
 		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
@@ -76,15 +76,16 @@ public:
 		Assert::AreEqual(sizeBefore + 1, sizeAfter);
 	}
 
-	TEST_METHOD(nestedTransaction) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
+		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 
 		Transaction sut2(DataStore::get().begin());
 		DataStore::get().post(1, task2);
 
+		// Data must not be modified since the first transaction has not been
+		// committed
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut2.commit();
@@ -94,6 +95,9 @@ public:
 
 		Transaction sut3(DataStore::get().begin());
 		DataStore::get().erase(0);
+
+		// Data must not be modified since the first transaction has not been
+		// committed
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut3.commit();
@@ -102,6 +106,9 @@ public:
 			Assert::AreEqual(sizeAfter, sizeBefore);
 		}
 
+		// Execute all the operations, with the follow order:
+		// add task 0, add task 1, erase task 0
+		// Therefore the end result should be sizeBefore + 1
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut.commit();
