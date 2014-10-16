@@ -5,12 +5,6 @@
 #include "../You-QueryEngine/internal/controller.h"
 #include "../You-QueryEngine/internal/model.h"
 
-using boost::gregorian::greg_month;
-using boost::gregorian::greg_year;
-using boost::posix_time::ptime;
-using boost::posix_time::time_duration;
-using boost::gregorian::date;
-
 namespace You {
 namespace QueryEngine {
 namespace UnitTests {
@@ -18,45 +12,21 @@ namespace UnitTests {
 /// \name Various task examples for testing
 /// @{
 
-using Task = You::QueryEngine::Task;
-using Controller = You::QueryEngine::Internal::Controller;
-const Task FEED_THE_DOGGY = Controller::Builder::get().
-	id(43L).
-	description(L"Feed the doggy");
+	extern Task FEED_THE_DOGGY();
 
-const Task FEED_THE_KITTEN = Controller::Builder::get().
-	id(42L).
-	description(L"Feed the kitten");
+	extern Task FEED_THE_KITTEN();
 
-const Task SUPER_IMPORTANT_TASK = Controller::Builder::get().
-	id(42L).
-	description(L"Sleep").
-	priority(Task::Priority::HIGH);
+	extern Task SUPER_IMPORTANT_TASK();
 
-const Task LESS_IMPORTANT_TASK = Controller::Builder::get().
-	id(42L).
-	description(L"Save the Earth").
-	priority(Task::Priority::NORMAL);
+	extern Task LESS_IMPORTANT_TASK();
 
-const Task FOR_TOMMOROW = Controller::Builder::get().
-	id(42L).
-	description(L"Save the Earth").
-	deadline(ptime(date(2014, 10, 7)));
+	extern Task FOR_TOMMOROW();
 
-const Task FOR_NEXT_WEEK = Controller::Builder::get().
-	id(43L).
-	description(L"Save the Earth").
-	deadline(ptime(date(2014, 10, 14)));
+	extern Task FOR_NEXT_WEEK();
 
-const Task TEN_DEPENDENCIES = Controller::Builder::get().
-	id(666L).
-	description(L"Impossible is nothing").
-	dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+	extern Task TEN_DEPENDENCIES();
 
-const Task NINE_DEPENDENCIES = Controller::Builder::get().
-	id(666L).
-	description(L"Impossible is nothing").
-	dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+	extern Task NINE_DEPENDENCIES();
 
 /// @}
 
