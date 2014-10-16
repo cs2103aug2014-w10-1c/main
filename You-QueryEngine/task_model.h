@@ -55,6 +55,10 @@ public:
 	inline bool isCompleted() const { return completed; }
 	/// @}
 
+	/// Check dependency
+	/// \returns true if id is in the dependency, false otherwise.
+	bool isDependOn(const Task::ID id);
+
 	/// \name Field Setters
 	/// @{
 	void setDescription(const Description& description);

@@ -48,6 +48,8 @@ TEST_CLASS(TaskBuilderTests) {
 		Assert::AreEqual(task.getDescription(), desc);
 		// The valid one should be the last chain
 		Assert::AreEqual(task.getDeadline(), dead);
+		Assert::IsTrue(task.isDependOn(1));
+		Assert::IsFalse(task.isDependOn(0));
 	}
 
 	/// Should throw an exception when trying to create
