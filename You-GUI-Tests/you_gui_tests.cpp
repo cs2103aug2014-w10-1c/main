@@ -128,6 +128,7 @@ public:
 		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
+	/// Test if is past due, 1 minute before
 	TEST_METHOD(testPastDue1) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -135,10 +136,18 @@ public:
 		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
 	}
 
+	/// Test if is past due, 1 day and 1 minute before
 	TEST_METHOD(testPastDue2) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
 		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
+		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Test if is past due, on the same time
+	TEST_METHOD(testPastDue3) {
+		MainWindow w;
+		Task::Time dl = boost::posix_time::second_clock::local_time();
 		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
 	}
 
