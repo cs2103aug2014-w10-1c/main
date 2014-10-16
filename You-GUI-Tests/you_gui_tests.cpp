@@ -107,21 +107,21 @@ public:
 	TEST_METHOD(testDueToday1) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
-		Assert::IsTrue(MainWindow::TaskPanelManager::isDueToday(dl));
+		Assert::IsTrue(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
 	TEST_METHOD(testDueToday2) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
 		dl += boost::posix_time::hours(24) + boost::posix_time::minutes(1);
-		Assert::IsFalse(MainWindow::TaskPanelManager::isDueToday(dl));
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
 	TEST_METHOD(testDueToday3) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
 		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
-		Assert::IsFalse(MainWindow::TaskPanelManager::isDueToday(dl));
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
 	TEST_METHOD(deleteSingleTaskCount) {

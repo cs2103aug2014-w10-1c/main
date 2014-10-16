@@ -157,45 +157,17 @@ bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	return true;
 }
 
-bool MainWindow::TaskPanelManager::isDueToday(Task::Time deadline) {
+bool MainWindow::TaskPanelManager::isDueAfter(
+		Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
 	Date today = boost::gregorian::day_clock::universal_day();
-	if (by.day_of_year() - today.day_of_year() == 0) {
+	if (by.day_of_year() - today.day_of_year() == daysLeft) {
 		return true;
 	} else {
 		return false;
 	}
 }
 
-bool MainWindow::TaskPanelManager::isDueTomorrow(Task::Time deadline) {
-	Date by = Date(deadline.date());
-	Date today = boost::gregorian::day_clock::universal_day();
-	if (by.day_of_year() - today.day_of_year() == 1) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool MainWindow::TaskPanelManager::isDueDayAfter(Task::Time deadline) {
-	Date by = Date(deadline.date());
-	Date today = boost::gregorian::day_clock::universal_day();
-	if (by.day_of_year() - today.day_of_year() == 2) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool MainWindow::TaskPanelManager::isDueInThreeDays(Task::Time deadline) {
-	Date by = Date(deadline.date());
-	Date today = boost::gregorian::day_clock::universal_day();
-	if (by.day_of_year() - today.day_of_year() == 3) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 }  // namespace GUI
 }  // namespace You
