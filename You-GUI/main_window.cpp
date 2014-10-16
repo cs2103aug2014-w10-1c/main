@@ -11,6 +11,7 @@
 #include "You-Controller\exception.h"
 #include "You-Utils\exceptions\query_engine_exception.h"
 #include "You-NLP\exception.h"
+#include "tray_hotkey_handler.h"
 namespace You {
 namespace GUI {
 
@@ -38,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
 	sm->setup();
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 
+	//You::GUI::TrayHotkeyHandler handler;
+	//handler.start();
 	// TODO(angathorion): To fix after implementation of task handling
 	populateTaskPanel();
 }

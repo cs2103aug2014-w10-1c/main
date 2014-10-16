@@ -86,6 +86,12 @@
     <ClCompile Include="GeneratedFiles\Release\moc_main_window.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_tray_hotkey_handler.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_tray_hotkey_handler.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -124,6 +130,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="main_window.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="tray_hotkey_handler.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
