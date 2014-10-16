@@ -130,11 +130,11 @@ Task::Priority TS::deserializePriority(const Value& priority) {
 }
 
 Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
-	std::vector<Task::ID> deps;
+	Task::Dependencies deps;
 	std::vector<std::wstring> tokens = tokenize(dependencies);
 	std::for_each(tokens.cbegin(), tokens.cend(),
-		[&deps](const std::wstring token) {
-			deps.push_back(boost::lexical_cast<Task::ID>(token));
+		[&deps] (const std::wstring token) {
+			deps.insert(boost::lexical_cast<Task::ID>(token));
 		}
 	);
 	return deps;

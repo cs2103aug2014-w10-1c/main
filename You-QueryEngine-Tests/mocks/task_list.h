@@ -12,8 +12,6 @@ namespace UnitTests {
 /// \name Various task lists for testing
 /// @{
 
-using Task = You::QueryEngine::Task;
-
 extern std::vector<Task::Description> TASK_DESCRIPTIONS();
 
 extern std::vector<Task> fromDescription(
