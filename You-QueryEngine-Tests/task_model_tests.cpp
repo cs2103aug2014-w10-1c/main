@@ -14,12 +14,15 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// Test the functionality of \ref TaskBuilder
-TEST_CLASS(TaskBuilderTests) {
-using Task = You::QueryEngine::Task;
-using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+/// \cond Imports
+namespace {
+	using Task = You::QueryEngine::Task;
+	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+}
+/// \endcond
 
-public:
+/// Test the functionality of TaskBuilder
+TEST_CLASS(TaskBuilderTests) {
 	/// Should be able to create a task using minimal required.
 	/// field.
 	TEST_METHOD(buildValidTask) {

@@ -14,6 +14,8 @@
 namespace You {
 namespace QueryEngine {
 
+const std::wstring Query::logCategory = L"[QE]";
+
 std::unique_ptr<Query>
 QueryEngine::AddTask(Task::Description description, Task::Time deadline,
 	Task::Priority priority, Task::Dependencies dependencies) {

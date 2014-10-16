@@ -26,6 +26,10 @@ public:
 
 	/// Destructor
 	virtual ~GetTask() = default;
+
+protected:
+	static const std::wstring logCategory;
+
 private:
 	/// Execute add task.
 	Response execute(State& tasks) override;

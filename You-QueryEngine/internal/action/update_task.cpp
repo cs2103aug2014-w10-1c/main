@@ -1,6 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
+#include "../../../You-Utils/log.h"
 #include "../../../You-DataStore/datastore.h"
 #include "../../../You-DataStore/transaction.h"
 
@@ -13,8 +14,14 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-using Transaction = You::DataStore::Transaction;
-using DataStore = You::DataStore::DataStore;
+namespace {
+	using Transaction = You::DataStore::Transaction;
+	using DataStore = You::DataStore::DataStore;
+	using Log = You::Utils::Log;
+}
+
+const std::wstring UpdateTask::logCategory =
+	Query::logCategory + L"[UpdateTask]";
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
@@ -39,6 +46,8 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 }
 
 void UpdateTask::modifyState(State& state, const Task& task) const {
+	Log::debug << (boost::wformat(L"%1% : Updating %2% - \"%3%\"\n") %
+		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.graph(), task);
 }
 

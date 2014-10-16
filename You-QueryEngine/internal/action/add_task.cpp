@@ -1,6 +1,7 @@
 /// \author A0112054Y
 #include "stdafx.h"
 
+#include "../../../You-Utils/log.h"
 #include "../../../You-DataStore/datastore.h"
 #include "../../../You-DataStore/transaction.h"
 
@@ -13,8 +14,15 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-using Transaction = You::DataStore::Transaction;
-using DataStore = You::DataStore::DataStore;
+/// \cond Imports
+namespace {
+	using Transaction = You::DataStore::Transaction;
+	using DataStore = You::DataStore::DataStore;
+	using Log = You::Utils::Log;
+}
+/// \endcond
+
+const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
 
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
@@ -26,12 +34,16 @@ Task AddTask::buildTask(const Task::ID newID) {
 
 void AddTask::addTaskToState(const Task& task,
 	State& state) const {
+	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
+		logCategory % task.getDescription()).str();
 	Controller::Graph::addTask(state.graph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
 	auto serialized = Controller::Serializer::serialize(newTask);
 	Transaction t(DataStore::get().begin());
+	Log::debug << (boost::wformat(L"%1% : POST \"%2%\"\n") %
+		logCategory % newTask.getID()).str();
 	DataStore::get().post(newTask.getID(), serialized);
 	t.commit();
 }

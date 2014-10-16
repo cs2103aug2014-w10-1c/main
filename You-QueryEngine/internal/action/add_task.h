@@ -27,6 +27,10 @@ public:
 
 	/// Destructor
 	virtual ~AddTask() = default;
+
+protected:
+	static const std::wstring logCategory;
+
 private:
 	Task buildTask(const Task::ID id);
 	void addTaskToState(const Task& task, State& state) const;

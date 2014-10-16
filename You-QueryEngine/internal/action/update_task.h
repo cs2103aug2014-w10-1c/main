@@ -32,6 +32,9 @@ public:
 	/// Destructor
 	virtual ~UpdateTask() = default;
 
+protected:
+	static const std::wstring logCategory;
+
 private:
 	Task buildUpdatedTask(const State& state) const;
 	void modifyState(State& state, const Task& updated) const;

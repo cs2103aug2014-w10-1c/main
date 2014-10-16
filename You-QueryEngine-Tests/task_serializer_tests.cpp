@@ -12,17 +12,21 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-using boost::posix_time::ptime;
-using boost::posix_time::time_duration;
-using boost::gregorian::date;
-using boost::gregorian::greg_month;
+/// \cond Imports
+namespace {
+	using boost::posix_time::ptime;
+	using boost::posix_time::time_duration;
+	using boost::gregorian::date;
+	using boost::gregorian::greg_month;
 
-/// Test the functionality of \ref TaskSerializer
+	using Task = You::QueryEngine::Task;
+	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+	using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
+}
+/// \endcond
+
+/// Test the functionality of TaskSerializer
 TEST_CLASS(TaskSerializerTests) {
-using Task = You::QueryEngine::Task;
-using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
-
 public:
 	static Task getMockTask() {
 		Task::Description desc = L"Learn Haskell Lens";

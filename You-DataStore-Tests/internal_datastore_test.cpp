@@ -27,6 +27,7 @@ public:
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Basic test for adding a task
@@ -49,6 +50,7 @@ public:
 		Assert::IsFalse(isEmptyDoc);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Test for adding task with an already existing task id
@@ -68,6 +70,7 @@ public:
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Basic test for editing a task
@@ -86,6 +89,7 @@ public:
 		Assert::AreEqual(task1.at(DEPENDENCIES), task[DEPENDENCIES]);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Test for editing task with non-existent task id
@@ -108,6 +112,7 @@ public:
 		Assert::AreEqual(1, boost::lexical_cast<int>(nodeSet.size()));
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Basic test for erasing a task with the specified task id
@@ -128,6 +133,7 @@ public:
 		Assert::IsTrue(isEmptyDoc);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	/// Test for erasing task with non-existent task id
@@ -137,6 +143,7 @@ public:
 		Assert::IsFalse(result);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	TEST_METHOD(getAllTasks) {
@@ -147,6 +154,7 @@ public:
 		Assert::AreEqual(1, boost::lexical_cast<int>(result.size()));
 
 		sut.document.reset();
+		sut.saveData();
 	}
 
 	TEST_METHOD(saveThenLoad) {
@@ -160,6 +168,7 @@ public:
 		Assert::AreEqual(std::wstring(L"what"), value);
 
 		sut.document.reset();
+		sut.saveData();
 	}
 };
 }  // namespace UnitTests

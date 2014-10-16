@@ -4,6 +4,11 @@
 namespace You {
 namespace QueryEngine {
 
+namespace {
+	/// Shorten the qualname for FFilter.
+	using FFilter = Filter::FFilter;
+}
+
 #pragma region Common Filters
 Filter Filter::anyTask() {
 	const FFilter f = [] (const Task&) {
@@ -46,8 +51,6 @@ Filter& Filter::operator!(void) {
 bool Filter::operator()(const Task& task) const {
 	return ffilter(task);
 }
-
-using FFilter = Filter::FFilter;
 
 FFilter Filter::AND(const FFilter& f, const FFilter& g) {
 	return [=] (FFilter::argument_type x) {

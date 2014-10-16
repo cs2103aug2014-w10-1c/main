@@ -16,7 +16,7 @@ namespace UnitTests {
 TEST_CLASS(DataStoreApiTest) {
 public:
 	TEST_METHOD(pushOperationsToTransaction) {
-		Transaction sut;
+		Transaction sut(DataStore::get().begin());
 
 		std::unique_ptr<Internal::IOperation> postOp =
 			std::make_unique<Internal::PostOperation>(0, task1);
@@ -32,30 +32,21 @@ public:
 			std::make_unique<Internal::EraseOperation>(0);
 		sut->push(std::move(eraseOp));
 		Assert::AreEqual(3U, sut->operationsQueue.size());
+
+		sut->operationsQueue.clear();
 	}
 
 	TEST_METHOD(transactionRollback) {
-		Transaction sut;
-
-		std::unique_ptr<Internal::IOperation> postOp =
-			std::make_unique<Internal::PostOperation>(0, task1);
-		sut->push(std::move(postOp));
-
-		std::unique_ptr<Internal::IOperation> putOp =
-			std::make_unique<Internal::PutOperation>(0, task2);
-		sut->push(std::move(putOp));
-
-		std::unique_ptr<Internal::IOperation> eraseOp =
-			std::make_unique<Internal::EraseOperation>(0);
-		sut->push(std::move(eraseOp));
-
-		Assert::AreEqual(3U, sut->operationsQueue.size());
+		Transaction sut(DataStore::get().begin());
+		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
 
 		sut.rollback();
-		Assert::AreEqual(0U, sut->operationsQueue.size());
+		Assert::AreEqual(0U, Internal::DataStore::get().transactionStack.size());
 	}
 
 	TEST_METHOD(constructTransactionWithDataStoreBegin) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 
 		DataStore::get().post(0, task1);
@@ -69,44 +60,60 @@ public:
 		sut.commit();
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(commitTransaction) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
 		DataStore::get().erase(0);
+		auto sizeBefore = DataStore::get().getAllTasks().size();
 		sut.commit();
-
-		int size = DataStore::get().getAllTasks().size();
-		Assert::AreEqual(1, size);
+		auto sizeAfter = DataStore::get().getAllTasks().size();
+		Assert::AreEqual(sizeBefore + 1, sizeAfter);
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(nestedTransaction) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 
 		Transaction sut2(DataStore::get().begin());
 		DataStore::get().post(1, task2);
 
-		sut2.commit();
-		std::vector<SerializedTask> allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(0U, allTask.size());
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut2.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore, sizeAfter);
+		}
 
 		Transaction sut3(DataStore::get().begin());
 		DataStore::get().erase(0);
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut3.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			// Hence, this one should be 1U
+			Assert::AreEqual(sizeAfter, sizeBefore);
+		}
 
-		sut3.commit();
-		allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(0U, allTask.size());
-
-		sut.commit();
-		allTask = DataStore::get().getAllTasks();
-		Assert::AreEqual(1U, allTask.size());
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore + 1, sizeAfter);
+		}
 
 		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 };
 

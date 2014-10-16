@@ -10,6 +10,8 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
+const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
+
 Response GetTask::execute(State& state) {
 	std::vector<Task> result;
 	auto filter = this->filter;
