@@ -46,6 +46,7 @@ void MainWindow::TaskPanelManager::setup() {
 		}
 		header->resizeSection(i, header->defaultSectionSize());
 	}
+
 	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
 	taskTreePanel->setColumnHidden(5, true);

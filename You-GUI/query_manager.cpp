@@ -13,9 +13,6 @@ using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
 void MainWindow::QueryManager::setup() {
-	// To change to get list of tasks from session instead of ALL tasks.
-	// Somehow pass sm's taskIDs into this.
-	// Set result to current context
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
 	pixmap.load(":/Status_green.png", 0);

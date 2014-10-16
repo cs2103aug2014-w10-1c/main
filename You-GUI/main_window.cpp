@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
 	sm->setup();
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 
-	// TODO(angathorion): To fix after implementation of task handling
 	populateTaskPanel();
 }
 

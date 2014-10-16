@@ -56,19 +56,27 @@ public:
 	/// from the BaseManager class.
 	class QueryManager;
 
+	/// Calls TaskPanelManager and requests addition of a single task.
 	void addTask(const You::Controller::Task& task);
 
+	/// Calls TaskPanelManager and requests addition of a list of tasks.
 	void addTasks(const You::Controller::TaskList& tl);
 
+	/// Calls TaskPanelManager and requests editing of a single task.
 	void editTask(const You::Controller::Task& task);
 
+	/// Calls TaskPanelManager and requests deletion of a single task.
 	void deleteTask(You::Controller::Task::ID taskID);
 
+	/// Clears the task panel of all tasks, and clears taskList.
 	void clearTasks();
 
+	/// Gets the current list of tasks.
 	const You::Controller::TaskList& getTaskList() const;
 
 protected:
+	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
+	/// task panel proportions on resize.
 	void resizeEvent(QResizeEvent* event);
 
 private:
@@ -111,14 +119,16 @@ private:
 	static const QString CONTEXT_REQUIRED_MESSAGE;
 
 private slots:
-	/// Qt's slot for hitting enter in the input box.
+	/// Sends a query to Controller from the commandInputBox.
 	void commandEnterPressed();
 
-	/// Qt's signal/slot mechanism for input enter button.
+	/// Sends a query to Controller from the commandInputBox.
 	void commandEnterButtonClicked();
 
+	/// Reimplementation of application exit, called from SystemTrayManager
 	void applicationExitRequested();
 
+	/// Updates task descriptor panel on task selection.
 	void taskSelected();
 };
 

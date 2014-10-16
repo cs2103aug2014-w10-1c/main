@@ -40,14 +40,23 @@ public:
 	/// Deletes a task.
 	void deleteTask(You::Controller::Task::ID taskID);
 
+	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);
 
+	/// Time function to check if a deadline is due on the same day
+	/// it is called, local time.
 	static bool isDueToday(Task::Time deadline);
 
+	/// Time function to check if a deadline is due on the next day
+	/// it is called, local time.
 	static bool isDueTomorrow(Task::Time deadline);
 
+	/// Time function to check if a deadline is due 2 days after
+	/// it is called, local time.
 	static bool isDueDayAfter(Task::Time deadline);
 
+	/// Time function to check if a deadline is due 3 days after
+	/// it is called, local time.
 	static bool isDueInThreeDays(Task::Time deadline);
 
 private:

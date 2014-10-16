@@ -11,10 +11,12 @@ TrayHotkeyHandler::TrayHotkeyHandler() {
 }
 
 void TrayHotkeyHandler::run() {
-	RegisterHotKey(0, 0, MOD_WIN, 0x59);
+	RegisterHotKey(0, 0, MOD_WIN, hotkey);
+	MSG msg;
+	// Allows Qt to send ActivationReason as a signal type
 	qRegisterMetaType<QSystemTrayIcon::ActivationReason>(
 		"QSystemTrayIcon::ActivationReason");
-	MSG msg;
+
 	while (1) {
 		Sleep(40);
 		msg = { 0 };
