@@ -6,6 +6,7 @@
 #include "system_tray_manager.h"
 namespace You {
 namespace GUI {
+
 MainWindow::SystemTrayManager::~SystemTrayManager() {
 }
 
@@ -15,7 +16,6 @@ void MainWindow::SystemTrayManager::setup() {
 	makeContextMenu();
 	connectTrayActivatedSlot();
 	parentGUI->setVisible(true);
-
 	thread.start();
 }
 

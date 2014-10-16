@@ -32,13 +32,13 @@ public:
 	void setup();
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(const You::Controller::Task& task);
+	void addTask(const Task& task);
 
 	/// Edits a task.
-	void editTask(const You::Controller::Task& task);
+	void editTask(const Task& task);
 
 	/// Deletes a task.
-	void deleteTask(You::Controller::Task::ID taskID);
+	void deleteTask(Task::ID taskID);
 
 	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);
@@ -62,7 +62,7 @@ public:
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget
-	static QStringList taskToStrVec(const You::Controller::Task& task);
+	static QStringList taskToStrVec(const Task& task);
 
 	/// Produces a generic QTreeWidgetItem from a task. It is an
 	/// intermediate step to adding headings and tasks.
@@ -75,7 +75,7 @@ private:
 		const QStringList& cells);
 
 	/// Finds the items which display the given task ID.
-	QList<QTreeWidgetItem*> findItems(You::Controller::Task::ID taskID) const;
+	QList<QTreeWidgetItem*> findItems(Task::ID taskID) const;
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.

@@ -6,6 +6,7 @@
 #include "session_manager.h"
 namespace You {
 namespace GUI {
+
 MainWindow::SessionManager::~SessionManager() {
 	saveSession();
 }

@@ -6,7 +6,6 @@
 namespace You {
 namespace GUI {
 
-using Task = You::Controller::Task;
 using Date = boost::gregorian::date;
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";

@@ -8,6 +8,8 @@ namespace You {
 namespace GUI {
 namespace Thread {
 
+/// TrayHotkeyHandler inherits from QThread, and runs on a separate thread
+/// as a listener for a hotkey event. It registers the hotkey before looping.
 class TrayHotkeyHandler : public QThread {
 	Q_OBJECT
 public:

@@ -10,6 +10,10 @@
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+using TaskList = You::Controller::TaskList;
+
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
@@ -57,22 +61,22 @@ public:
 	class QueryManager;
 
 	/// Calls TaskPanelManager and requests addition of a single task.
-	void addTask(const You::Controller::Task& task);
+	void addTask(const Task& task);
 
 	/// Calls TaskPanelManager and requests addition of a list of tasks.
-	void addTasks(const You::Controller::TaskList& tl);
+	void addTasks(const TaskList& tl);
 
 	/// Calls TaskPanelManager and requests editing of a single task.
-	void editTask(const You::Controller::Task& task);
+	void editTask(const Task& task);
 
 	/// Calls TaskPanelManager and requests deletion of a single task.
-	void deleteTask(You::Controller::Task::ID taskID);
+	void deleteTask(Task::ID taskID);
 
 	/// Clears the task panel of all tasks, and clears taskList.
 	void clearTasks();
 
 	/// Gets the current list of tasks.
-	const You::Controller::TaskList& getTaskList() const;
+	const TaskList& getTaskList() const;
 
 protected:
 	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
@@ -97,7 +101,7 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
-	std::unique_ptr<You::Controller::TaskList> taskList;
+	std::unique_ptr<TaskList> taskList;
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 

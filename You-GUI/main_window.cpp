@@ -15,11 +15,6 @@
 namespace You {
 namespace GUI {
 
-using Task = You::Controller::Task;
-using Result = You::Controller::Result;
-using TaskList = You::Controller::TaskList;
-using Controller = You::Controller::Controller;
-
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent), sm(new MainWindow::SessionManager(this)),
 		stm(new MainWindow::SystemTrayManager(this)),
@@ -77,7 +72,7 @@ void MainWindow::setVisible(bool visible) {
 	QWidget::setVisible(visible);
 }
 
-const You::Controller::TaskList& MainWindow::getTaskList() const {
+const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
@@ -117,28 +112,22 @@ void MainWindow::sendQuery() {
 	ui.statusMessage->setText(message);
 	try {
 		qm->query(inputString, getTaskList());
-	}
-	catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
+	} catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
 		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
+	} catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
 		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::NLP::ParseErrorException& e) {
+	} catch (You::NLP::ParseErrorException& e) {
 		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::NLP::ParserException& e) {
+	} catch (You::NLP::ParserException& e) {
 		ui.statusMessage->setText(message);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::Controller::ContextIndexOutOfRangeException& e) {
+	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::Controller::ContextRequiredException& e) {
+	} catch (You::Controller::ContextRequiredException& e) {
 		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	}
@@ -176,7 +165,7 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 }
 
 void MainWindow::clearTasks() {
-	taskList.reset(new You::Controller::TaskList);
+	taskList.reset(new TaskList);
 	ui.taskTreePanel->clear();
 	ui.taskDescriptor->clear();
 	ui.commandInputBox->clear();

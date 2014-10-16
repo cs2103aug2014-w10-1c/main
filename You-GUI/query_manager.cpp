@@ -7,9 +7,6 @@
 namespace You {
 namespace GUI {
 
-using Task = You::Controller::Task;
-using Result = You::Controller::Result;
-using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
 void MainWindow::QueryManager::setup() {

@@ -12,6 +12,10 @@ namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
 
+using Task = You::Controller::Task;
+using Result = You::Controller::Result;
+using TaskList = You::Controller::TaskList;
+
 /// The component that handles passing of data between the controller and the
 /// rest of the GUI. It has two primary operations: on setup it passes a list
 /// containing the IDs of tasks that were previously open, and receives a
@@ -30,18 +34,17 @@ public:
 
 	/// Queries the NLP engine. Sends the query into the NLP engine, and gets a
 	/// Result which it will process.
-	void query(const QString& query, const You::Controller::TaskList& taskList);
+	void query(const QString& query, const TaskList& taskList);
 
 	/// Gets the tasks with the given task IDs.
-	You::Controller::TaskList getTasks(
-		const QList<You::Controller::Task::ID>& taskIDs);
+	TaskList getTasks(const QList<Task::ID>& taskIDs);
 
 	/// Gets all tasks.
-	You::Controller::TaskList getTasks();
+	TaskList getTasks();
 
 private:
 	/// The current result/context displayed to the user
-	std::unique_ptr<You::Controller::Result> currentResult;
+	std::unique_ptr<Result> currentResult;
 };
 
 }  // namespace GUI
