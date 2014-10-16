@@ -44,7 +44,8 @@ private:
 
 	/// Tray icon context menu
 	QMenu* trayIconMenu;
-
+	
+	/// Thread that detects hotkey press and notifies SystemTrayManager
 	Thread::TrayHotkeyHandler thread;
 
 	/// Declares and defines the image of the tray icon.
