@@ -160,7 +160,7 @@ bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 bool MainWindow::TaskPanelManager::isDueAfter(
 		Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
-	Date today = boost::gregorian::day_clock::universal_day();
+	Date today = boost::gregorian::day_clock::local_day();
 	if (by.day_of_year() - today.day_of_year() == daysLeft) {
 		return true;
 	} else {
