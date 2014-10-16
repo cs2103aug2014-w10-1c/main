@@ -118,6 +118,8 @@ private slots:
 	void commandEnterButtonClicked();
 
 	void applicationExitRequested();
+
+	void taskSelected();
 };
 
 }  // namespace GUI

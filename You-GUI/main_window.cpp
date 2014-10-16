@@ -182,6 +182,25 @@ void MainWindow::clearTasks() {
 	ui.commandInputBox->clear();
 }
 
+void MainWindow::taskSelected() {
+	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
+	QString contents = "";
+	if (selection.size() == 0) {
+		ui.taskDescriptor->setText(contents);
+	} else {
+		QTreeWidgetItem item = *selection.at(0);
+		QString index = item.text(1);
+		QString description = item.text(2);
+		QString deadline = item.text(3);
+		QString priority = item.text(4);
+		QString dependencies = item.text(5);
+		contents = "Index: " + index + "\n" + "Description: " + description
+			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
+			+ "\n" + "Dependencies: " + dependencies;
+		ui.taskDescriptor->setText(contents);
+	}
+}
+
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }

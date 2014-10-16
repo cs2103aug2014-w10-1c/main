@@ -13,6 +13,7 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI) {
@@ -28,9 +29,11 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_3,
 		TASK_COLUMN_4,
 		TASK_COLUMN_5,
+		TASK_COLUMN_6
 	});
-
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
+	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
+		parentGUI, SLOT(taskSelected()));
 	taskTreePanel->setColumnCount(columnHeaders.size());
 	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
 	// TODO(angathorion): remove magic constants.
@@ -45,6 +48,7 @@ void MainWindow::TaskPanelManager::setup() {
 	}
 	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
+	taskTreePanel->setColumnHidden(5, true);
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -103,7 +107,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	// Insert id
 	result.push_back(boost::lexical_cast<QString>(task.getID()));
 
-	// Insert count
+	// Insert dummy count
 	result.push_back("0");
 
 	// Insert description
@@ -117,7 +121,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		task.getDeadline();
 	}
 
-	// Iterate through task list and add it to the task panel
+	// Insert priority
 	QString priority[] { "High", "Normal" };
 
 	switch (task.getPriority()) {
@@ -127,7 +131,17 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		result.push_back(priority[1]);
 	}
 
-	// TODO(angathorion): Deal with dependencies
+	// Insert dependencies
+	std::wstringstream ss;
+	if (task.getDependencies().size() != 0){
+		ss << task.getDependencies().at(0);
+		for (int i = 1; i < task.getDependencies().size(); i++) {
+			ss << ", " << task.getDependencies().at(i);
+		}
+		result.push_back(QString::fromStdWString(ss.str()));
+	} else {
+		result.push_back("None");
+	}
 
 	return result;
 }

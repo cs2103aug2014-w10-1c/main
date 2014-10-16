@@ -80,7 +80,6 @@ private:
 	/// Updates row numbers
 	void updateRowNumbers();
 
-
 private:
 	/// String/numeric constants for the GUI
 	/// @{
@@ -98,6 +97,9 @@ private:
 
 	/// Header string for column 5
 	static const QString TASK_COLUMN_5;
+
+	/// Header string from column 6
+	static const QString TASK_COLUMN_6;
 	/// @}
 };
 
