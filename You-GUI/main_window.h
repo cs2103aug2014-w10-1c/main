@@ -64,6 +64,8 @@ public:
 
 	void deleteTask(You::Controller::Task::ID taskID);
 
+	void clearTasks();
+
 	const You::Controller::TaskList& getTaskList() const;
 
 protected:

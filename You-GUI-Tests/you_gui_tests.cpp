@@ -16,6 +16,7 @@ namespace UnitTests {
 QApplication *app;
 // Simulate running the main() function
 // Sets up the logging facility and the Qt event loop
+
 TEST_MODULE_INITIALIZE(ModuleInitialize) {
 	int argc = 1;
 	char *argv[] = { "You.exe" };
@@ -82,6 +83,7 @@ public:
 
 	TEST_METHOD(addSingleTaskCount) {
 		MainWindow w;
+		w.clearTasks();
 		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
@@ -89,6 +91,7 @@ public:
 
 	TEST_METHOD(addSingleTaskContent) {
 		MainWindow w;
+		w.clearTasks();
 		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
@@ -119,6 +122,18 @@ public:
 		Task::Time dl = boost::posix_time::second_clock::local_time();
 		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
 		Assert::IsFalse(MainWindow::TaskPanelManager::isDueToday(dl));
+	}
+
+	TEST_METHOD(deleteSingleTaskCount) {
+		MainWindow w;
+		w.clearTasks();
+		w.ui.commandInputBox->setText(QString("/add test by Nov 20"));
+		w.commandEnterPressed();
+		w.ui.commandInputBox->setText(QString("/add test2 by Nov 20"));
+		w.commandEnterPressed();
+		w.ui.commandInputBox->setText(QString("/delete 1"));
+		w.commandEnterPressed();
+		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
 };
 }  // namespace UnitTests

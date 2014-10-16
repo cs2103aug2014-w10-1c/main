@@ -175,6 +175,13 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 	QMainWindow::resizeEvent(event);
 }
 
+void MainWindow::clearTasks() {
+	taskList.reset(new You::Controller::TaskList);
+	ui.taskTreePanel->clear();
+	ui.taskDescriptor->clear();
+	ui.commandInputBox->clear();
+}
+
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
