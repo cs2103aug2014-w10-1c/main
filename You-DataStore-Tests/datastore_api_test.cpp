@@ -17,7 +17,13 @@ namespace DataStore {
 namespace UnitTests {
 TEST_CLASS(DataStoreApiTest) {
 public:
-	TEST_METHOD(pushOperationsToTransaction) {
+	/// Clears xml document tree and save empty xml file
+	static void clearDataStoreState() {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
+	}
+
+	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		Transaction sut(DataStore::get().begin());
 
 		std::unique_ptr<Internal::IOperation> postOp =
@@ -34,8 +40,6 @@ public:
 			std::make_unique<Internal::EraseOperation>(0);
 		sut->push(std::move(eraseOp));
 		Assert::AreEqual(3U, sut->operationsQueue.size());
-
-		sut->operationsQueue.clear();
 	}
 
 	TEST_METHOD(transactionRollback) {
@@ -47,8 +51,7 @@ public:
 	}
 
 	TEST_METHOD(constructTransactionWithDataStoreBegin) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 
 		DataStore::get().post(0, task1);
@@ -59,15 +62,10 @@ public:
 
 		DataStore::get().erase(0);
 		Assert::AreEqual(3U, sut->operationsQueue.size());
-		sut.commit();
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(commitTransaction) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
@@ -76,9 +74,6 @@ public:
 		sut.commit();
 		auto sizeAfter = DataStore::get().getAllTasks().size();
 		Assert::AreEqual(sizeBefore + 1, sizeAfter);
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 
 	TEST_METHOD(nestedTransaction) {
@@ -113,9 +108,6 @@ public:
 			auto sizeAfter = DataStore::get().getAllTasks().size();
 			Assert::AreEqual(sizeBefore + 1, sizeAfter);
 		}
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 };
 
