@@ -33,9 +33,9 @@ public:
 	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(10, task1());
 		Assert::AreEqual(1U, t->operationsQueue.size());
-		sut.put(10, task2);
+		sut.put(10, task2());
 		Assert::AreEqual(2U, t->operationsQueue.size());
 		sut.erase(10);
 		Assert::AreEqual(3U, t->operationsQueue.size());
@@ -46,7 +46,7 @@ public:
 
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(10, task1());
 		// document must not change without commit
 		Assert::IsTrue(sut.document.first_child().empty());
 		t.commit();

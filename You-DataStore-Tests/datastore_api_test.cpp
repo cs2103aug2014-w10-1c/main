@@ -19,12 +19,12 @@ public:
 		Transaction sut(DataStore::get().begin());
 
 		std::unique_ptr<Internal::IOperation> postOp =
-			std::make_unique<Internal::PostOperation>(0, task1);
+			std::make_unique<Internal::PostOperation>(0, task1());
 		sut->push(std::move(postOp));
 		Assert::AreEqual(1U, sut->operationsQueue.size());
 
 		std::unique_ptr<Internal::IOperation> putOp =
-			std::make_unique<Internal::PutOperation>(0, task2);
+			std::make_unique<Internal::PutOperation>(0, task2());
 		sut->push(std::move(putOp));
 		Assert::AreEqual(2U, sut->operationsQueue.size());
 
@@ -49,10 +49,10 @@ public:
 		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
 
-		DataStore::get().post(0, task1);
+		DataStore::get().post(0, task1());
 		Assert::AreEqual(1U, sut->operationsQueue.size());
 
-		DataStore::get().put(0, task2);
+		DataStore::get().put(0, task2());
 		Assert::AreEqual(2U, sut->operationsQueue.size());
 
 		DataStore::get().erase(0);
@@ -67,8 +67,8 @@ public:
 		Internal::DataStore::get().document.reset();
 		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
-		DataStore::get().post(0, task1);
-		DataStore::get().post(1, task2);
+		DataStore::get().post(0, task1());
+		DataStore::get().post(1, task2());
 		DataStore::get().erase(0);
 		auto sizeBefore = DataStore::get().getAllTasks().size();
 		sut.commit();
@@ -83,10 +83,10 @@ public:
 		Internal::DataStore::get().document.reset();
 		Internal::DataStore::get().saveData();
 		Transaction sut(DataStore::get().begin());
-		DataStore::get().post(0, task1);
+		DataStore::get().post(0, task1());
 
 		Transaction sut2(DataStore::get().begin());
-		DataStore::get().post(1, task2);
+		DataStore::get().post(1, task2());
 
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
