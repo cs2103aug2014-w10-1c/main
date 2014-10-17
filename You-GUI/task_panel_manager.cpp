@@ -209,11 +209,13 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 	QTreeWidgetItem *item = parentGUI->ui.taskTreePanel->itemAt(pos);
 	if (!item)
 		return;
-	QMenu *menu = new QMenu(parentGUI->ui.taskTreePanel);
-	deleteAction.reset(menu->addAction("Delete"));
-	editAction.reset(menu->addAction("Edit"));
+	itemContextMenu.reset(new QMenu(parentGUI->ui.taskTreePanel));
+	deleteAction.reset(itemContextMenu->addAction("Delete"));
+	editAction.reset(itemContextMenu->addAction("Edit"));
+	//connect(deleteAction, SIGNAL(triggered()), parentGUI->ui.commandInputBox, SLOT(setText("lol")));
 
-	menu->popup(parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
+	itemContextMenu->popup(
+		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }
 
 }  // namespace GUI
