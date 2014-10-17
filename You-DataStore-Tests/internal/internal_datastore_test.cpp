@@ -116,12 +116,12 @@ public:
 		Internal::Transaction sut;
 
 		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1);
+			std::make_unique<Internal::PostOperation>(0, task1());
 		sut.push(std::move(post));
 		Assert::AreEqual(1U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::IOperation> put =
-			std::make_unique<Internal::PutOperation>(0, task1);
+			std::make_unique<Internal::PutOperation>(0, task1());
 		sut.push(std::move(put));
 		Assert::AreEqual(2U, sut.operationsQueue.size());
 
@@ -132,17 +132,17 @@ public:
 
 		sut.operationsQueue.clear();
 	}
-	/*
+
 	TEST_METHOD(mergeOperationsQueueIsAppend) {
 		boost::ptr_deque<Internal::IOperation> q1;
 		boost::ptr_deque<Internal::IOperation> q2;
 
 		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1);
+			std::make_unique<Internal::PostOperation>(0, task1());
 		std::unique_ptr<Internal::IOperation> erase =
 			std::make_unique<Internal::EraseOperation>(0);
-		q1.push_back(post.get());
-		q2.push_back(erase.get());
+		q1.push_back(post.release());
+		q2.push_back(erase.release());
 
 		Internal::Transaction sut;
 		sut.mergeOperationsQueue(q1);
@@ -150,7 +150,8 @@ public:
 		sut.mergeOperationsQueue(q2);
 		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
 		// TODO(digawp): Check if the order is correct
-	}*/
+		// sut.mergedOperationsQueue.front().run(/*mockdoc here*/);
+	}
 };
 }  // namespace UnitTests
 }  // namespace DataStore
