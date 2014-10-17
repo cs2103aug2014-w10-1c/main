@@ -15,6 +15,8 @@
 namespace You {
 namespace GUI {
 
+using Task = You::Controller::Task;
+
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent), sm(new MainWindow::SessionManager(this)),
 		stm(new MainWindow::SystemTrayManager(this)),
@@ -32,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
 	qm->setup();
 	tpm->setup();
 	sm->setup();
+	notificationHandler.start();
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
-
 	populateTaskPanel();
 }
 
@@ -63,6 +65,8 @@ void MainWindow::populateTaskPanel() {
 		tl = qm->getTasks();
 	}
 	addTasks(tl);
+	connect(&notificationHandler, SIGNAL(notify(Task::ID)),
+		this, SLOT(notify(Task::ID)));
 }
 
 void MainWindow::setVisible(bool visible) {
@@ -188,6 +192,10 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
 	}
+}
+
+void MainWindow::notify(Task::ID id) {
+
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)

@@ -6,7 +6,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
-
+#include "task_notification_handler.h"
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
@@ -96,12 +96,17 @@ private:
 	/// The QueryManager instance
 	const std::unique_ptr<QueryManager> qm;
 
+	/// Listener that checks for upcoming notifications
+	Thread::TaskNotificationHandler notificationHandler;
+
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
+	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
+
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 
@@ -134,6 +139,9 @@ private slots:
 
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
+
+	/// Gives the user notifications of a task
+	void notify(Task::ID id);
 };
 
 }  // namespace GUI
