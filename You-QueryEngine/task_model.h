@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 #include <vector>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -40,7 +41,7 @@ public:
 	typedef int64_t ID;
 	typedef std::wstring Description;
 	typedef boost::posix_time::ptime Time;
-	typedef std::vector<Task::ID> Dependencies;
+	typedef std::unordered_set<Task::ID> Dependencies;
 	enum class Priority { NORMAL, HIGH };
 	/// @}
 
@@ -53,6 +54,10 @@ public:
 	inline Priority getPriority() const { return priority; }
 	inline bool isCompleted() const { return completed; }
 	/// @}
+
+	/// Check dependency
+	/// \returns true if id is in the dependency, false otherwise.
+	bool isDependOn(const Task::ID id);
 
 	/// \name Field Setters
 	/// @{

@@ -37,13 +37,13 @@ TEST_CLASS(ComparatorTests) {
 	TEST_METHOD(compareByDescription) {
 		Assert::IsFalse((Comparator::byDescription()
 			.descending().ascending())
-			(FEED_THE_KITTEN, FEED_THE_DOGGY));
+			(FEED_THE_KITTEN(), FEED_THE_DOGGY()));
 		Assert::IsTrue((Comparator::byDescription().descending())
-			(FEED_THE_KITTEN, FEED_THE_DOGGY));
+			(FEED_THE_KITTEN(), FEED_THE_DOGGY()));
 	}
 
 	TEST_METHOD(useComparatorToSort) {
-		auto t = fromDescription(TASK_DESCRIPTIONS);
+		auto t = fromDescription(TASK_DESCRIPTIONS());
 		std::sort(t.begin(), t.end(), Comparator::byDescription());
 		Assert::IsTrue(std::is_sorted(t.begin(), t.end(),
 			[] (Task& lhs, Task& rhs) {
@@ -53,26 +53,26 @@ TEST_CLASS(ComparatorTests) {
 
 	TEST_METHOD(compareByDeadline) {
 		Assert::IsTrue((Comparator::byDeadline())
-			(FOR_TOMMOROW, FOR_NEXT_WEEK));
+			(FOR_TOMMOROW(), FOR_NEXT_WEEK()));
 		Assert::IsTrue((Comparator::byDescription().descending())
-			(FOR_NEXT_WEEK, FOR_TOMMOROW));
+			(FOR_NEXT_WEEK(), FOR_TOMMOROW()));
 	}
 
 	TEST_METHOD(combineComparators) {
 		auto complex =
 			Comparator::byDescription() &&
 			(Comparator::byDeadline().descending());
-		Assert::IsTrue(complex(FOR_NEXT_WEEK, FOR_TOMMOROW));
+		Assert::IsTrue(complex(FOR_NEXT_WEEK(), FOR_TOMMOROW()));
 	}
 
 	TEST_METHOD(compareByPriority) {
 		Assert::IsTrue((Comparator::byPriority())
-			(SUPER_IMPORTANT_TASK, LESS_IMPORTANT_TASK));
+			(SUPER_IMPORTANT_TASK(), LESS_IMPORTANT_TASK()));
 	}
 
 	TEST_METHOD(compareByDependencies) {
 		Assert::IsTrue((Comparator::byPriority())
-			(TEN_DEPENDENCIES, NINE_DEPENDENCIES));
+			(TEN_DEPENDENCIES(), NINE_DEPENDENCIES()));
 	}
 
 	ComparatorTests& operator=(const ComparatorTests&) = delete;
