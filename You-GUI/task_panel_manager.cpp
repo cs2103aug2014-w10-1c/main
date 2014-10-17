@@ -137,7 +137,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		wss << L"More than a month away (" << task.getDeadline() << L")";
 	}
 	result.push_back(boost::lexical_cast<QString>(wss.str()));
-	
+
 	// Insert priority
 	QString priority[] { "High", "Normal" };
 
@@ -172,7 +172,7 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	Task::Time now = boost::posix_time::second_clock::local_time();
-	
+
 	if (deadline < now) {
 		return true;
 	} else {
@@ -197,8 +197,7 @@ bool MainWindow::TaskPanelManager::isDueWithin(
 	Date today = boost::gregorian::day_clock::local_day();
 	if (by.julian_day() - today.julian_day() < daysLeft) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
