@@ -195,7 +195,6 @@ void MainWindow::taskSelected() {
 }
 
 void MainWindow::notify(Task::ID id) {
-
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)

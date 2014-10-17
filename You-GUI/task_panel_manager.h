@@ -87,6 +87,7 @@ private:
 
 private slots:
 	void contextMenu(const QPoint &pos);
+
 private:
 	/// String/numeric constants for the GUI
 	/// @{
