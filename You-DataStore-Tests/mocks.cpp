@@ -5,6 +5,12 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
+const std::wstring TASK_ID = L"id";
+const std::wstring DESCRIPTION = L"description";
+const std::wstring DEADLINE = L"deadline";
+const std::wstring PRIORITY = L"priority";
+const std::wstring DEPENDENCIES = L"dependency";
+
 SerializedTask task1() {
 	SerializedTask st = {
 		{ TASK_ID, L"0" },

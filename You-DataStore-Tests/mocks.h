@@ -9,11 +9,11 @@ namespace DataStore {
 namespace UnitTests {
 
 /// \name Dummy constants for testing
-const std::wstring TASK_ID = L"id";
-const std::wstring DESCRIPTION = L"description";
-const std::wstring DEADLINE = L"deadline";
-const std::wstring PRIORITY = L"priority";
-const std::wstring DEPENDENCIES = L"dependency";
+extern const std::wstring TASK_ID;
+extern const std::wstring DESCRIPTION;
+extern const std::wstring DEADLINE;
+extern const std::wstring PRIORITY;
+extern const std::wstring DEPENDENCIES;
 
 /// \name Dummy serialized task for testing
 /// @{
