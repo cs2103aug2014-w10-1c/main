@@ -1,6 +1,6 @@
 #pragma once
-#ifndef YOU_DATASTORE_TESTS_DUMMY_VALUES_H_
-#define YOU_DATASTORE_TESTS_DUMMY_VALUES_H_
+#ifndef YOU_DATASTORE_TESTS_MOCKS_H_
+#define YOU_DATASTORE_TESTS_MOCKS_H_
 
 #include "task_typedefs.h"
 
@@ -35,4 +35,4 @@ const SerializedTask task2 = {
 }  // namespace DataStore
 }  // namespace You
 
-#endif  // YOU_DATASTORE_TESTS_DUMMY_VALUES_H_
+#endif  // YOU_DATASTORE_TESTS_MOCKS_H_

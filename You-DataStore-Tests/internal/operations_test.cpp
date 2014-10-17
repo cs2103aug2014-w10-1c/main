@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../dummy_values.h"
+#include "../mocks.h"
 #include "internal/operations/erase_operation.h"
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"

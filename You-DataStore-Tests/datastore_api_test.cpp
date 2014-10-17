@@ -6,7 +6,7 @@
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/operations/erase_operation.h"
-#include "dummy_values.h"
+#include "mocks.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
