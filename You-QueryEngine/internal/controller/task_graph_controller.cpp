@@ -79,6 +79,7 @@ void TGC::rebuildGraph(TaskGraph& g) {
 	}
 }
 
+/// \endcond
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You
