@@ -23,25 +23,6 @@ public:
 		Internal::DataStore::get().saveData();
 	}
 
-	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
-		Transaction sut(DataStore::get().begin());
-
-		std::unique_ptr<Internal::IOperation> postOp =
-			std::make_unique<Internal::PostOperation>(0, task1);
-		sut->push(std::move(postOp));
-		Assert::AreEqual(1U, sut->operationsQueue.size());
-
-		std::unique_ptr<Internal::IOperation> putOp =
-			std::make_unique<Internal::PutOperation>(0, task2);
-		sut->push(std::move(putOp));
-		Assert::AreEqual(2U, sut->operationsQueue.size());
-
-		std::unique_ptr<Internal::IOperation> eraseOp =
-			std::make_unique<Internal::EraseOperation>(0);
-		sut->push(std::move(eraseOp));
-		Assert::AreEqual(3U, sut->operationsQueue.size());
-	}
-
 	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		Transaction sut(DataStore::get().begin());
 		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
