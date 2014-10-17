@@ -149,8 +149,14 @@ public:
 		Assert::AreEqual(1U, sut.mergedOperationsQueue.size());
 		sut.mergeOperationsQueue(q2);
 		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
-		// TODO(digawp): Check if the order is correct
-		// sut.mergedOperationsQueue.front().run(/*mockdoc here*/);
+
+		pugi::xml_document mockDocument;
+
+		// Check if the order of operation is correct
+		bool result = sut.mergedOperationsQueue.front().run(mockDocument);
+		Assert::IsTrue(result);
+		result = sut.mergedOperationsQueue.back().run(mockDocument);
+		Assert::IsTrue(result);
 	}
 };
 }  // namespace UnitTests
