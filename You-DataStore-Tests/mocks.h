@@ -8,28 +8,21 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
-// Dummy constants
+/// \name Dummy constants for testing
 const std::wstring TASK_ID = L"id";
 const std::wstring DESCRIPTION = L"description";
 const std::wstring DEADLINE = L"deadline";
 const std::wstring PRIORITY = L"priority";
 const std::wstring DEPENDENCIES = L"dependency";
 
-// Dummy serialized task
-const SerializedTask task1 = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"bla bla" },
-		{ DEADLINE, L"xxxxxx" },
-		{ PRIORITY, L"urgent" },
-		{ DEPENDENCIES, L"12345" }
-};
-const SerializedTask task2 = {
-		{ TASK_ID, L"0" },
-		{ DESCRIPTION, L"yada yada" },
-		{ DEADLINE, L"yyyyyy" },
-		{ PRIORITY, L"normal" },
-		{ DEPENDENCIES, L"4321" }
-};
+/// \name Dummy serialized task for testing
+/// @{
+
+extern SerializedTask task1();
+
+extern SerializedTask task2();
+
+/// @}
 
 }  // namespace UnitTests
 }  // namespace DataStore
