@@ -49,28 +49,21 @@ public:
 
 	/// @}
 
-	/// Insert a task into the datastore
-	/// \return true if insertion successful,
-	/// \return false if task id already exists
-	bool post(TaskId, const SerializedTask&);
+	/// Pushes \ref PostOperation into the active \ref Transaction
+	void post(TaskId, const SerializedTask&);
 
-	/// Update the content of a task
-	/// \return true if update successful,
-	/// \return false if task id specified does not exist
-	bool put(TaskId, const SerializedTask&);
+	/// Pushes \ref PutOperation into the active \ref Transaction
+	void put(TaskId, const SerializedTask&);
 
-	/// Delete a task
-	/// \return true if erase successful,
-	/// \return false if task id specified does not exist
-	bool erase(TaskId);
-
-	/// Get a task
-	/// \return false and an empty SerializedTask if task id does not exist
-	SerializedTask getTask(TaskId);
+	/// Pushes \ref EraseOperation into the active \ref Transaction
+	void erase(TaskId);
 
 	/// Get all tasks
 	/// \return a vector of all tasks in unordered map form
 	std::vector<SerializedTask> getAllTask();
+
+private:
+	DataStore() = default;
 
 	/// Saves the xml object to a file
 	/// \return true if operation successful and false otherwise
@@ -78,9 +71,6 @@ public:
 
 	/// Loads the xml file into the document variable
 	void loadData();
-
-private:
-	DataStore() = default;
 
 	/// Executes the operation queue into the xml_document
 	///
