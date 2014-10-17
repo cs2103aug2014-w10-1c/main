@@ -184,7 +184,7 @@ bool MainWindow::TaskPanelManager::isDueAfter(
 		Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
 	Date today = boost::gregorian::day_clock::local_day();
-	if (by.day_of_year() - today.day_of_year() == daysLeft) {
+	if (by.modjulian_day() - today.modjulian_day() == daysLeft) {
 		return true;
 	} else {
 		return false;
@@ -195,7 +195,7 @@ bool MainWindow::TaskPanelManager::isDueWithin(
 	Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
 	Date today = boost::gregorian::day_clock::local_day();
-	if (by.day_of_year() - today.day_of_year() < daysLeft) {
+	if (by.julian_day() - today.julian_day() < daysLeft) {
 		return true;
 	}
 	else {
