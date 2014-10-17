@@ -43,8 +43,11 @@ public:
 	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);
 
-	/// Time function to check if a deadline is due in daysLeft days.
+	/// Time function to check if a deadline is due on the daysLeft'th day.
 	static bool isDueAfter(Task::Time deadline, int daysLeft);
+
+	/// Time function to check if a deadline is due within daysLeft days
+	static bool isDueWithin(Task::Time deadline, int daysLeft);
 
 private:
 	/// Converts the properties of a task into a set of cells for display

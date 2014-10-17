@@ -114,13 +114,30 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
+	std::wstringstream wss;
 	if (task.getDeadline() == Task::NEVER) {
-		result.push_back(QString("Never"));
+		wss << L"Never";
+	} else if (isPastDue(task.getDeadline())) {
+		wss << L"Overdue (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 0)) {
+		wss << L"Today (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 1)) {
+		wss << L"Tomorrow (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 2)) {
+		wss << L"In two days (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 7)) {
+		wss << L"Within one week (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 14)) {
+		wss << L"Within two weeks (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 21)) {
+		wss << L"Within three weeks (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 28)) {
+		wss << L"Within one month (" << task.getDeadline() << L")";
 	} else {
-		result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
-		task.getDeadline();
+		wss << L"More than a month away (" << task.getDeadline() << L")";
 	}
-
+	result.push_back(boost::lexical_cast<QString>(wss.str()));
+	
 	// Insert priority
 	QString priority[] { "High", "Normal" };
 
@@ -154,7 +171,13 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 }
 
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
-	return true;
+	Task::Time now = boost::posix_time::second_clock::local_time();
+	
+	if (deadline < now) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool MainWindow::TaskPanelManager::isDueAfter(
@@ -168,6 +191,17 @@ bool MainWindow::TaskPanelManager::isDueAfter(
 	}
 }
 
+bool MainWindow::TaskPanelManager::isDueWithin(
+	Task::Time deadline, int daysLeft) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::local_day();
+	if (by.day_of_year() - today.day_of_year() < daysLeft) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 }  // namespace GUI
 }  // namespace You

@@ -31,10 +31,6 @@ TEST_MODULE_CLEANUP(ModuleCleanup) {
 
 TEST_CLASS(MainWindowTests) {
 public:
-	TEST_METHOD_INITIALIZE(init) {
-		Sleep(20);
-	}
-
 	TEST_METHOD(isMainWindowVisible) {
 		MainWindow w;
 		Assert::IsTrue(w.isVisible());
@@ -148,7 +144,15 @@ public:
 	TEST_METHOD(testPastDue3) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
-		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
+		Assert::IsFalse(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Test if is past due, with deadline 1 minute after
+	TEST_METHOD(testPastDue4) {
+		MainWindow w;
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl += boost::posix_time::minutes(1);
+		Assert::IsFalse(MainWindow::TaskPanelManager::isPastDue(dl));
 	}
 
 	TEST_METHOD(deleteSingleTaskCount) {
