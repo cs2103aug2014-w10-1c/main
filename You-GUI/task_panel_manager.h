@@ -79,6 +79,14 @@ private:
 	/// Updates row numbers
 	void updateRowNumbers();
 
+	std::unique_ptr<QMenu> itemContextMenu;
+
+	std::unique_ptr<QAction> deleteAction;
+
+	std::unique_ptr<QAction> editAction;
+
+private slots:
+	void contextMenu(const QPoint &pos);
 private:
 	/// String/numeric constants for the GUI
 	/// @{

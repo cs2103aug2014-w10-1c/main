@@ -28,7 +28,7 @@
         </size>
        </property>
        <property name="contextMenuPolicy">
-        <enum>Qt::ActionsContextMenu</enum>
+        <enum>Qt::CustomContextMenu</enum>
        </property>
        <property name="lineWidth">
         <number>0</number>

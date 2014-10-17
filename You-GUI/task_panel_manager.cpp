@@ -33,6 +33,9 @@ void MainWindow::TaskPanelManager::setup() {
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
 		parentGUI, SLOT(taskSelected()));
+
+	connect(taskTreePanel, SIGNAL(customContextMenuRequested(const QPoint &)),
+		this, SLOT(contextMenu(const QPoint &)));
 	taskTreePanel->setColumnCount(columnHeaders.size());
 	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
 	// TODO(angathorion): remove magic constants.
@@ -200,6 +203,17 @@ bool MainWindow::TaskPanelManager::isDueWithin(
 	} else {
 		return false;
 	}
+}
+
+void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
+	QTreeWidgetItem *item = parentGUI->ui.taskTreePanel->itemAt(pos);
+	if (!item)
+		return;
+	QMenu *menu = new QMenu(parentGUI->ui.taskTreePanel);
+	deleteAction.reset(menu->addAction("Delete"));
+	editAction.reset(menu->addAction("Edit"));
+
+	menu->popup(parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }
 
 }  // namespace GUI
