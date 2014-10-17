@@ -4,10 +4,6 @@
 #include "datastore.h"
 #include "transaction.h"
 #include "internal/internal_datastore.h"
-#include "internal/internal_transaction.h"
-#include "internal/operations/post_operation.h"
-#include "internal/operations/put_operation.h"
-#include "internal/operations/erase_operation.h"
 #include "mocks.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -15,6 +11,9 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 namespace You {
 namespace DataStore {
 namespace UnitTests {
+
+/// Unit test for DataStore API that is exposed to Query Engine, namely
+/// \ref DataStore and \ref Transaction
 TEST_CLASS(DataStoreApiTest) {
 public:
 	/// Clears xml document tree and save empty xml file
@@ -31,7 +30,7 @@ public:
 		Assert::AreEqual(0U, Internal::DataStore::get().transactionStack.size());
 	}
 
-	TEST_METHOD(constructTransactionWithDataStoreBegin) {
+	TEST_METHOD(dataStoreOperationPushedToOperationsQueue) {
 		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 
