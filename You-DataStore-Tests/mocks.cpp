@@ -20,7 +20,7 @@ SerializedTask task1() {
 		{ DEPENDENCIES, L"12345" }
 	};
 	return st;
-};
+}
 
 SerializedTask task2() {
 	SerializedTask st = {
@@ -31,7 +31,7 @@ SerializedTask task2() {
 		{ DEPENDENCIES, L"4321" }
 	};
 	return st;
-};
+}
 
 }  // namespace UnitTests
 }  // namespace DataStore
