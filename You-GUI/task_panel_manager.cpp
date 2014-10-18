@@ -212,7 +212,9 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 	itemContextMenu.reset(new QMenu(parentGUI->ui.taskTreePanel));
 	deleteAction.reset(itemContextMenu->addAction("Delete"));
 	editAction.reset(itemContextMenu->addAction("Edit"));
-	//connect(deleteAction, SIGNAL(triggered()), parentGUI->ui.commandInputBox, SLOT(setText("lol")));
+	// To implement:
+	// connect(deleteAction, SIGNAL(triggered()),
+	// parentGUI->ui.commandInputBox, SLOT(setText("lol")));
 
 	itemContextMenu->popup(
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
