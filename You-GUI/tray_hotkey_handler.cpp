@@ -18,9 +18,8 @@ void TrayHotkeyHandler::run() {
 		"QSystemTrayIcon::ActivationReason");
 
 	while (1) {
-		Sleep(40);
 		msg = { 0 };
-		PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+		GetMessage(&msg, 0, 0, 0);
 		if (msg.message == WM_HOTKEY) {
 			emit hotkeyClicked(QSystemTrayIcon::Trigger);
 		}

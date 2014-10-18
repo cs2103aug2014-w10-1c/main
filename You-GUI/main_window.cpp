@@ -8,9 +8,9 @@
 #include "system_tray_manager.h"
 #include "query_manager.h"
 #include "main_window_messages.h"
-#include "You-Controller\exception.h"
-#include "You-Utils\exceptions\query_engine_exception.h"
-#include "You-NLP\exception.h"
+#include "You-Controller/exception.h"
+#include "You-Utils/exceptions/query_engine_exception.h"
+#include "You-NLP/exception.h"
 
 namespace You {
 namespace GUI {
