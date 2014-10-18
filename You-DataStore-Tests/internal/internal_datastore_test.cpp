@@ -116,12 +116,12 @@ public:
 		Internal::Transaction sut;
 
 		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1());
+			std::make_unique<Internal::PostOperation>(0, task1);
 		sut.push(std::move(post));
 		Assert::AreEqual(1U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::IOperation> put =
-			std::make_unique<Internal::PutOperation>(0, task1());
+			std::make_unique<Internal::PutOperation>(0, task1);
 		sut.push(std::move(put));
 		Assert::AreEqual(2U, sut.operationsQueue.size());
 
@@ -138,7 +138,7 @@ public:
 		boost::ptr_deque<Internal::IOperation> q2;
 
 		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1());
+			std::make_unique<Internal::PostOperation>(0, task1);
 		std::unique_ptr<Internal::IOperation> erase =
 			std::make_unique<Internal::EraseOperation>(0);
 		q1.push_back(post.release());
