@@ -32,4 +32,5 @@ private:
 }  // namespace Thread
 }  // namespace GUI
 }  // namespace You
+
 #endif  // YOU_GUI_TRAY_HOTKEY_HANDLER_H_

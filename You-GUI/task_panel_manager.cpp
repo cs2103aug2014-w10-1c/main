@@ -235,7 +235,7 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 		connect(&editSignalMapper, SIGNAL(mapped(int)),
 			parentGUI, SLOT(contextEditTask(int)));
 	}
-	
+
 	itemContextMenu->popup(
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }

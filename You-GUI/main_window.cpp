@@ -35,7 +35,19 @@ MainWindow::MainWindow(QWidget *parent)
 	tpm->setup();
 	sm->setup();
 	initializeAllTimerNotifications();
-	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+
+	ui.commandTextBox->installEventFilter(this);
+	ui.commandTextBox->setTabChangesFocus(true);
+	ui.commandTextBox->setWordWrapMode(QTextOption::NoWrap);
+	ui.commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui.commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui.commandTextBox->setFixedHeight(20);
+	ui.commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+
+	syntaxHighlighter.reset(
+		new SyntaxHighlighter(ui.commandTextBox->document()));
+
+
 	populateTaskPanel();
 }
 
@@ -109,7 +121,7 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
-	QString inputString = ui.commandInputBox->text();
+	QString inputString = ui.commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
 	pixmap.load(RESOURCE_GREEN, 0);
@@ -137,7 +149,7 @@ void MainWindow::sendQuery() {
 		pixmap.load(RESOURCE_RED, 0);
 	}
 	ui.statusIcon->setPixmap(pixmap);
-	ui.commandInputBox->setText(QString());
+	ui.commandTextBox->setPlainText(QString());
 }
 
 void MainWindow::commandEnterPressed() {
@@ -173,7 +185,7 @@ void MainWindow::clearTasks() {
 	taskList.reset(new TaskList);
 	ui.taskTreePanel->clear();
 	ui.taskDescriptor->clear();
-	ui.commandInputBox->clear();
+	ui.commandTextBox->clear();
 }
 
 void MainWindow::taskSelected() {
@@ -224,26 +236,44 @@ void MainWindow::notify(Task::ID id) {
 }
 
 void MainWindow::contextAddTask() {
-	ui.commandInputBox->setText(QString("/add"));
-	ui.commandInputBox->setFocus();
+	ui.commandTextBox->setPlainText(QString("/add "));
+	ui.commandTextBox->setFocus();
+	ui.commandTextBox->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::contextDeleteTask(int id) {
 	std::wstringstream wss;
 	wss << L"/delete " << id;
-	ui.commandInputBox->setText(QString::fromStdWString(wss.str()));
-	ui.commandInputBox->setFocus();
+	ui.commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	ui.commandTextBox->setFocus();
+	ui.commandTextBox->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::contextEditTask(int id) {
 	std::wstringstream wss;
 	wss << L"/edit " << id << L" set ";
-	ui.commandInputBox->setText(QString::fromStdWString(wss.str()));
-	ui.commandInputBox->setFocus();
+	ui.commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	ui.commandTextBox->setFocus();
+	ui.commandTextBox->moveCursor(QTextCursor::End);
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+	if (object == ui.commandTextBox && event->type() == QEvent::KeyPress) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		if (keyEvent->key() == Qt::Key_Return) {
+			commandEnterPressed();
+			ui.commandTextBox->setFocus();
+			return true;
+		} else {
+			return QMainWindow::eventFilter(object, event);
+		}
+	} else {
+		return QMainWindow::eventFilter(object, event);
+	}
 }
 
 }  // namespace GUI

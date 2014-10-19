@@ -6,6 +6,8 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
+#include "syntax_highlighter.h"
+
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
@@ -29,6 +31,8 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
+
+	std::unique_ptr<SyntaxHighlighter> syntaxHighlighter;
 
 	/// The class from which all components inherit.
 	class BaseManager;
@@ -109,6 +113,8 @@ private:
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
+	bool eventFilter(QObject *object, QEvent *event);
+
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 
@@ -155,6 +161,7 @@ private slots:
 	/// Gives the user notifications of a task
 	void notify(Task::ID id);
 };
+
 
 }  // namespace GUI
 }  // namespace You

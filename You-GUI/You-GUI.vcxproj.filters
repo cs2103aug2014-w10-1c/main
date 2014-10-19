@@ -95,6 +95,15 @@
     <ClCompile Include="tray_hotkey_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_syntax_highlighter.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_syntax_highlighter.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="syntax_highlighter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -136,6 +145,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="tray_hotkey_handler.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="syntax_highlighter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

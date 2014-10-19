@@ -49,4 +49,5 @@ private:
 
 }  // namespace GUI
 }  // namespace You
+
 #endif  // YOU_GUI_QUERY_MANAGER_H_

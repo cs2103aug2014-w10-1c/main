@@ -27,4 +27,5 @@ private:
 
 }  // namespace GUI
 }  // namespace You
+
 #endif  // YOU_GUI_BASE_MANAGER_H_

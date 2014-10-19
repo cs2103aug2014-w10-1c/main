@@ -45,4 +45,5 @@ private:
 
 }  // namespace GUI
 }  // namespace You
+
 #endif  // YOU_GUI_SESSION_MANAGER_H_
