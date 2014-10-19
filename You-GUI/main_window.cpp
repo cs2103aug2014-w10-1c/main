@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 	qm->setup();
 	tpm->setup();
 	sm->setup();
-	notificationHandler.start();
+	initializeAllTimerNotifications();
 	ui.commandInputBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 	populateTaskPanel();
 }
@@ -65,8 +65,6 @@ void MainWindow::populateTaskPanel() {
 		tl = qm->getTasks();
 	}
 	addTasks(tl);
-	connect(&notificationHandler, SIGNAL(notify(Task::ID)),
-		this, SLOT(notify(Task::ID)));
 }
 
 void MainWindow::setVisible(bool visible) {
@@ -81,6 +79,7 @@ const TaskList& MainWindow::getTaskList() const {
 }
 
 void MainWindow::addTask(const Task& task) {
+	initializeSingleTimerNotification(task);
 	taskList->push_back(task);
 	tpm->addTask(task);
 }
@@ -98,11 +97,13 @@ void MainWindow::deleteTask(Task::ID taskID) {
 
 	assert(i != taskList->end());
 	taskList->erase(i);
-
+	timerMap.erase(taskID);
 	tpm->deleteTask(taskID);
 }
 
 void MainWindow::editTask(const Task& task) {
+	timerMap.erase(task.getID());
+	initializeSingleTimerNotification(task);
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 }
@@ -194,7 +195,32 @@ void MainWindow::taskSelected() {
 	}
 }
 
+void MainWindow::initializeAllTimerNotifications() {
+	for (int i = 0; i < taskList->size(); i++) {
+		initializeSingleTimerNotification(taskList->at(i));
+	}
+}
+
+void MainWindow::initializeSingleTimerNotification(Task task) {
+	Task::Time deadline = task.getDeadline();
+	if (deadline != Task::DEFAULT_DEADLINE) {
+		Task::Time now = boost::posix_time::second_clock::local_time();
+		boost::posix_time::time_duration difference = deadline - now;
+		QTimer* timer = new QTimer(this);
+		connect(timer, SIGNAL(timeout()), this,
+			SLOT(notify(notify(task.getID(), task.getDeadline()))));
+		timerMap[task.getID()] = timer;
+	}
+}
+
 void MainWindow::notify(Task::ID id) {
+	for (auto it = taskList->begin(); it != taskList->end(); it++) {
+		Task task = *it;
+		if (task.getID() == id) {
+			stm->trayIcon.showMessage("lol", "lol");
+			break;
+		}
+	}
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)

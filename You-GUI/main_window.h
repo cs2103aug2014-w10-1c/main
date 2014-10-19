@@ -6,7 +6,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
-#include "task_notification_handler.h"
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
@@ -96,9 +95,6 @@ private:
 	/// The QueryManager instance
 	const std::unique_ptr<QueryManager> qm;
 
-	/// Listener that checks for upcoming notifications
-	Thread::TaskNotificationHandler notificationHandler;
-
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
@@ -115,6 +111,14 @@ private:
 
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
+
+	std::map<int32_t, QTimer*> timerMap;
+
+	/// Initializes timers for all tasks
+	void initializeAllTimerNotifications();
+	
+	/// Initializes single timer
+	void initializeSingleTimerNotification(Task task);
 
 private:
 	static const QString READY_MESSAGE;
