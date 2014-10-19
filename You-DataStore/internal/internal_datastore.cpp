@@ -56,7 +56,7 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 	transactionStack.pop();
 }
 
-void DataStore::post(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::IOperation> operation =
@@ -67,7 +67,7 @@ void DataStore::post(TaskId rawId, const SerializedTask& sTask) {
 	}
 }
 
-void DataStore::put(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::IOperation> operation =
@@ -89,9 +89,9 @@ void DataStore::erase(TaskId rawId) {
 	}
 }
 
-std::vector<SerializedTask> DataStore::getAllTask() {
+std::vector<KeyValuePairs> DataStore::getAllTask() {
 	loadData();
-	std::vector<SerializedTask> allTask;
+	std::vector<KeyValuePairs> allTask;
 	for (auto i = document.begin(); i != document.end(); ++i) {
 		allTask.push_back(SerializationOperation::deserialize(*i));
 	}

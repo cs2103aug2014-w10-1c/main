@@ -50,17 +50,17 @@ public:
 	/// @}
 
 	/// Pushes \ref PostOperation into the active \ref Transaction
-	void post(TaskId, const SerializedTask&);
+	void post(TaskId, const KeyValuePairs&);
 
 	/// Pushes \ref PutOperation into the active \ref Transaction
-	void put(TaskId, const SerializedTask&);
+	void put(TaskId, const KeyValuePairs&);
 
 	/// Pushes \ref EraseOperation into the active \ref Transaction
 	void erase(TaskId);
 
 	/// Get all tasks
 	/// \return a vector of all tasks in unordered map form
-	std::vector<SerializedTask> getAllTask();
+	std::vector<KeyValuePairs> getAllTask();
 
 private:
 	DataStore() = default;

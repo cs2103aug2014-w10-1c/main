@@ -10,13 +10,13 @@ namespace Internal {
 
 class PostOperation : public SerializationOperation {
 public:
-	PostOperation(TaskId, const SerializedTask&);
+	PostOperation(TaskId, const KeyValuePairs&);
 	bool run(pugi::xml_document& document) override;
 	virtual ~PostOperation() = default;
 
 private:
 	/// The new task contents.
-	SerializedTask task;
+	KeyValuePairs task;
 };
 }  // namespace Internal
 }  // namespace DataStore

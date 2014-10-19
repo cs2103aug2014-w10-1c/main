@@ -16,14 +16,14 @@ const std::wstring PRIORITY = L"priority";
 const std::wstring DEPENDENCIES = L"dependency";
 
 // Dummy serialized task
-const SerializedTask task1 = {
+const KeyValuePairs task1 = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"bla bla" },
 		{ DEADLINE, L"xxxxxx" },
 		{ PRIORITY, L"urgent" },
 		{ DEPENDENCIES, L"12345" }
 };
-const SerializedTask task2 = {
+const KeyValuePairs task2 = {
 		{ TASK_ID, L"0" },
 		{ DESCRIPTION, L"yada yada" },
 		{ DEADLINE, L"yyyyyy" },

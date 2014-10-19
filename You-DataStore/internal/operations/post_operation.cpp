@@ -8,7 +8,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PostOperation::PostOperation(TaskId id, const SerializedTask& stask) {
+PostOperation::PostOperation(TaskId id, const KeyValuePairs& stask) {
 	taskId = id;
 	task = stask;
 }
