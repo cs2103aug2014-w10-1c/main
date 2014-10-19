@@ -1,0 +1,39 @@
+//@author A0094446X
+#pragma once
+#ifndef YOU_GUI_MAIN_WINDOW_MESSAGES_H_
+#define YOU_GUI_MAIN_WINDOW_MESSAGES_H_
+#include "stdafx.h"
+#include "main_window.h"
+
+namespace You {
+namespace GUI {
+
+const QString MainWindow::READY_MESSAGE = "Ready.";
+
+const QString MainWindow::EMPTY_TASK_DESCRIPTION_MESSAGE =
+"Error: Please fill in a task description.";
+
+const QString MainWindow::TASK_NOT_FOUND_MESSAGE =
+"Error: Requested task was not found.";
+
+const QString MainWindow::PARSE_ERROR_MESSAGE =
+"Error: Unable to parse input.";
+
+const QString MainWindow::PARSER_EXCEPTION_MESSAGE =
+"Error: Unable to parse input.";
+
+const QString MainWindow::CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE =
+"Error: The task requested does not exist in the list.";
+
+const QString MainWindow::CONTEXT_REQUIRED_MESSAGE =
+"Error: A context is required.";
+
+const QString MainWindow::RESOURCE_RED =
+":/Status_red.png";
+
+const QString MainWindow::RESOURCE_GREEN =
+":/Status_green.png";
+
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_MAIN_WINDOW_MESSAGES_H_
