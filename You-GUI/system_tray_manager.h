@@ -4,16 +4,22 @@
 #define YOU_GUI_SYSTEM_TRAY_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
+#include "../You-GUI/tray_hotkey_handler.h"
+
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
 
 /// The component that handles all interactions with the tray icon. It handles
 /// the window state of the application based on commands sent to the tray
 /// manager. It inherits from the BaseManager class.
-class YouMainGUI::SystemTrayManager : public YouMainGUI::BaseManager{
+class MainWindow::SystemTrayManager : public MainWindow::BaseManager{
 	Q_OBJECT
-	friend class YouMainGUI;
+	friend class MainWindow;
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit SystemTrayManager(YouMainGUI * const parentGUI)
+	explicit SystemTrayManager(MainWindow * const parentGUI)
 		: BaseManager(parentGUI) {}
 
 	/// Destructor.
@@ -39,6 +45,9 @@ private:
 	/// Tray icon context menu
 	QMenu* trayIconMenu;
 
+	/// Thread that detects hotkey press and notifies SystemTrayManager
+	Thread::TrayHotkeyHandler thread;
+
 	/// Declares and defines the image of the tray icon.
 	void setIcon();
 
@@ -62,5 +71,8 @@ private:
 	/// show/hide behavior on click.
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
 };
+
+}  // namespace GUI
+}  // namespace You
 
 #endif  // YOU_GUI_SYSTEM_TRAY_MANAGER_H_

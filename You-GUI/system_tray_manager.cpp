@@ -2,28 +2,31 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
-#include "you_main_gui.h"
+#include "main_window.h"
 #include "system_tray_manager.h"
+namespace You {
+namespace GUI {
 
-YouMainGUI::SystemTrayManager::~SystemTrayManager() {
+MainWindow::SystemTrayManager::~SystemTrayManager() {
 }
 
-void YouMainGUI::SystemTrayManager::setup() {
+void MainWindow::SystemTrayManager::setup() {
 	createActions();
 	setIcon();
 	makeContextMenu();
 	connectTrayActivatedSlot();
 	parentGUI->setVisible(true);
+	thread.start();
 }
 
-void YouMainGUI::SystemTrayManager::setIcon() {
+void MainWindow::SystemTrayManager::setIcon() {
 	QIcon icon(":/Icon.png");
 	trayIcon.setIcon(icon);
 	parentGUI->setWindowIcon(icon);
 	trayIcon.show();
 }
 
-void YouMainGUI::SystemTrayManager::makeContextMenu() {
+void MainWindow::SystemTrayManager::makeContextMenu() {
 	trayIconMenu = new QMenu(parentGUI);
 	trayIconMenu->addAction(minimizeAction);
 	trayIconMenu->addAction(maximizeAction);
@@ -33,12 +36,14 @@ void YouMainGUI::SystemTrayManager::makeContextMenu() {
 	trayIcon.setContextMenu(trayIconMenu);
 }
 
-void YouMainGUI::SystemTrayManager::connectTrayActivatedSlot() {
+void MainWindow::SystemTrayManager::connectTrayActivatedSlot() {
 	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+	connect(&thread, SIGNAL(hotkeyClicked(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
-void YouMainGUI::SystemTrayManager::iconActivated(
+void MainWindow::SystemTrayManager::iconActivated(
 	QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::Trigger) {
 		bool visible = parentGUI->isVisible();
@@ -49,7 +54,7 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 			(parentGUI->windowState() & ~Qt::WindowMinimized);
 		if (visible && minimized) {
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
-			parentGUI->ui.commandInputBox->setFocus(
+			parentGUI->ui.commandTextBox->setFocus(
 				Qt::FocusReason::ActiveWindowFocusReason);
 		} else if (visible && !minimized) {
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
@@ -57,13 +62,13 @@ void YouMainGUI::SystemTrayManager::iconActivated(
 		} else if (!visible) {
 			parentGUI->show();
 			parentGUI->setWindowState(toggleState | Qt::WindowActive);
-			parentGUI->ui.commandInputBox->setFocus(
+			parentGUI->ui.commandTextBox->setFocus(
 				Qt::FocusReason::ActiveWindowFocusReason);
 		}
 	}
 }
 
-void YouMainGUI::SystemTrayManager::createActions() {
+void MainWindow::SystemTrayManager::createActions() {
 	minimizeAction = new QAction(tr("Minimize"), parentGUI);
 	connect(minimizeAction, SIGNAL(triggered()), parentGUI, SLOT(hide()));
 
@@ -77,3 +82,6 @@ void YouMainGUI::SystemTrayManager::createActions() {
 	connect(quitAction, SIGNAL(triggered()),
 		parentGUI, SLOT(applicationExitRequested()));
 }
+
+}  // namespace GUI
+}  // namespace You

@@ -4,16 +4,18 @@
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
+namespace You {
+namespace GUI {
 
-YouMainGUI::SessionManager::~SessionManager() {
+MainWindow::SessionManager::~SessionManager() {
 	saveSession();
 }
 
-void YouMainGUI::SessionManager::setup() {
+void MainWindow::SessionManager::setup() {
 	loadSession();
 }
 
-void YouMainGUI::SessionManager::loadSession() {
+void MainWindow::SessionManager::loadSession() {
 	QSettings settings("session.txt", QSettings::IniFormat);
 	int size = settings.beginReadArray("idList");
 	for (int i = 0; i < size; i++) {
@@ -34,10 +36,8 @@ void YouMainGUI::SessionManager::loadSession() {
 	settings.endGroup();
 }
 
-void YouMainGUI::SessionManager::saveSession() {
+void MainWindow::SessionManager::saveSession() {
 	QSettings settings("session.txt", QSettings::IniFormat);
-	// TODO(angathorion): Add a function in main gui that calls fills taskIDs
-	// array on close.
 	settings.beginWriteArray("idList");
 	for (int i = 0; i < taskIDs.size(); i++) {
 		settings.setArrayIndex(i);
@@ -50,3 +50,6 @@ void YouMainGUI::SessionManager::saveSession() {
 	settings.setValue("maximized", parentGUI->isMaximized());
 	settings.endGroup();
 }
+
+}  // namespace GUI
+}  // namespace You

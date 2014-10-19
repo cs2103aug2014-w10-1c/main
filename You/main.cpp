@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include <QtWidgets/QApplication>
-#include "../You-GUI/you_main_gui.h"
+#include "../You-GUI/main_window.h"
 
 int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);
-	YouMainGUI w;
+	You::GUI::MainWindow w;
 	w.show();
 	return a.exec();
 }
