@@ -74,6 +74,10 @@ TEST_CLASS(FilterTests) {
 		Assert::IsTrue((F::dueThisMonth())(DUE_THIS_MONTH()));
 	}
 
+	TEST_METHOD(filterDueNever) {
+		Assert::IsTrue((F::dueNever())(FEED_THE_DOGGY()));
+	}
+
 	TEST_METHOD(logicalAndTwoFilters) {
 		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());

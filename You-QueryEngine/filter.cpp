@@ -83,6 +83,12 @@ Filter Filter::dueThisWeek() {
 	});
 }
 
+Filter Filter::dueNever() {
+	return Filter([] (const Task& task) {
+		return task.getDeadline() == Task::NEVER;
+	});
+}
+
 #pragma endregion
 
 Filter& Filter::operator&&(const Filter& filter) {

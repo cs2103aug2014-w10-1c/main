@@ -60,6 +60,9 @@ public:
 	/// \returns true if id is in the dependency, false otherwise.
 	bool isDependOn(const Task::ID id) const;
 
+	/// Get deadline string
+	std::wstring getDeadlineString() const;
+
 	/// \name Field Setters
 	/// @{
 	void setDescription(const Description& description);
@@ -96,6 +99,15 @@ private:
 	/// Two taks are strictly equal if all fields are equal
 	/// \returns The strict equality of two tasks.
 	bool isStrictEqual(const Task& task) const;
+
+	/// \name Deadline String Format
+	/// @{
+	static const std::wstring DEADLINE_OVERDUE;
+	static const std::wstring DEADLINE_TODAY;
+	static const std::wstring DEADLINE_WITHIN_DAYS;
+	static const std::wstring DEADLINE_WITHIN_MONTHS;
+	static const std::wstring DEADLINE_NEVER;
+	/// @}
 
 	/// \name Private Fields
 	/// @{

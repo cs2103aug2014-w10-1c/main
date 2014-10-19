@@ -44,6 +44,8 @@ public:
 	static Filter dueToday();
 	/// Filter tasks that due this month.
 	static Filter dueThisWeek();
+	/// Filter tasks that does not have deadline set (i.e never)
+	static Filter dueNever();
 
 	/// Compose using AND operation with another filter
 	/// \param[in] filter Filter object to combine with.
