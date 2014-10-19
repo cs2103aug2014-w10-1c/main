@@ -79,11 +79,17 @@ private:
 	/// Updates row numbers
 	void updateRowNumbers();
 
-	std::unique_ptr<QMenu> itemContextMenu;
+	QScopedPointer<QMenu> itemContextMenu;
 
-	std::unique_ptr<QAction> deleteAction;
+	QAction addAction;
 
-	std::unique_ptr<QAction> editAction;
+	QAction deleteAction;
+
+	QAction editAction;
+
+	QSignalMapper deleteSignalMapper;
+
+	QSignalMapper editSignalMapper;
 
 private slots:
 	void contextMenu(const QPoint &pos);

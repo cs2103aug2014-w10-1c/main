@@ -141,6 +141,14 @@ private slots:
 	/// Reimplementation of application exit, called from SystemTrayManager
 	void applicationExitRequested();
 
+	/// Task panel context menu Add action
+	void contextAddTask();
+
+	/// Task panel context menu Edit/Delete action
+	void contextDeleteTask(int id);
+
+	void contextEditTask(int id);
+
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
 

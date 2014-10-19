@@ -223,6 +223,25 @@ void MainWindow::notify(Task::ID id) {
 	}
 }
 
+void MainWindow::contextAddTask() {
+	ui.commandInputBox->setText(QString("/add"));
+	ui.commandInputBox->setFocus();
+}
+
+void MainWindow::contextDeleteTask(int id) {
+	std::wstringstream wss;
+	wss << L"/delete " << id;
+	ui.commandInputBox->setText(QString::fromStdWString(wss.str()));
+	ui.commandInputBox->setFocus();
+}
+
+void MainWindow::contextEditTask(int id) {
+	std::wstringstream wss;
+	wss << L"/edit " << id << L" set ";
+	ui.commandInputBox->setText(QString::fromStdWString(wss.str()));
+	ui.commandInputBox->setFocus();
+}
+
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
+#include <QPair>
 #include "task_panel_manager.h"
 namespace You {
 namespace GUI {
@@ -15,7 +16,9 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
-: BaseManager(parentGUI) {
+: BaseManager(parentGUI), deleteAction(QString("Delete"), this),
+editAction(QString("Edit"), this), addAction(QString("Add"), this),
+deleteSignalMapper(this), editSignalMapper(this) {
 }
 
 MainWindow::TaskPanelManager::~TaskPanelManager() {
@@ -206,16 +209,33 @@ bool MainWindow::TaskPanelManager::isDueWithin(
 }
 
 void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
+	/// Try to get the item at the position of the context menu
 	QTreeWidgetItem *item = parentGUI->ui.taskTreePanel->itemAt(pos);
-	if (!item)
-		return;
 	itemContextMenu.reset(new QMenu(parentGUI->ui.taskTreePanel));
-	deleteAction.reset(itemContextMenu->addAction("Delete"));
-	editAction.reset(itemContextMenu->addAction("Edit"));
-	// To implement:
-	// connect(deleteAction, SIGNAL(triggered()),
-	// parentGUI->ui.commandInputBox, SLOT(setText("lol")));
 
+	/// Adds the Add Task action. This is always present in the menu.
+	itemContextMenu->addAction(&addAction);
+	connect(&addAction, SIGNAL(triggered()), parentGUI, SLOT(contextAddTask()));
+
+	/// Adds the Edit Task and Delete Task actions if an item is selected.
+	/// QSignalMapper is necessary because arguments need to be passed
+	/// as part of the signal.
+	if (item) {
+		deleteSignalMapper.setMapping(&deleteAction, item->text(1).toInt());
+		connect(&deleteAction, SIGNAL(triggered()),
+			&deleteSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&deleteAction);
+		connect(&deleteSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextDeleteTask(int)));
+
+		editSignalMapper.setMapping(&editAction, item->text(1).toInt());
+		connect(&editAction, SIGNAL(triggered()),
+			&editSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&editAction);
+		connect(&editSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextEditTask(int)));
+	}
+	
 	itemContextMenu->popup(
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }
