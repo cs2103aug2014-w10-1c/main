@@ -116,7 +116,7 @@ private:
 
 	/// Initializes timers for all tasks
 	void initializeAllTimerNotifications();
-	
+
 	/// Initializes single timer
 	void initializeSingleTimerNotification(Task task);
 
