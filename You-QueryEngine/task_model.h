@@ -51,13 +51,14 @@ public:
 	inline Description getDescription() const { return description; }
 	inline Time getDeadline() const { return deadline; }
 	inline Dependencies getDependencies() const { return dependencies; }
+	inline Dependencies getChildren() const { return dependencies; }
 	inline Priority getPriority() const { return priority; }
 	inline bool isCompleted() const { return completed; }
 	/// @}
 
 	/// Check dependency
 	/// \returns true if id is in the dependency, false otherwise.
-	bool isDependOn(const Task::ID id);
+	bool isDependOn(const Task::ID id) const;
 
 	/// \name Field Setters
 	/// @{

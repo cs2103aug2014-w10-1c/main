@@ -11,22 +11,35 @@ namespace UnitTests {
 
 /// \name Various task examples for testing
 /// @{
+	/// Has specific ID
+	extern Task TASK_WITH_ID_1();
+	extern Task TASK_WITH_ID_2();
+	extern Task TASK_WITH_ID_3();
 
+	/// Has description.
 	extern Task FEED_THE_DOGGY();
-
 	extern Task FEED_THE_KITTEN();
 
+	/// Has priority
 	extern Task SUPER_IMPORTANT_TASK();
-
 	extern Task LESS_IMPORTANT_TASK();
 
+	/// Has due dates.
 	extern Task FOR_TOMMOROW();
-
 	extern Task FOR_NEXT_WEEK();
 
+	/// Has dependencies.
+	extern Task DEPENDS_ON_1_2_3();
+	extern Task DEPENDS_ON_3_4_5();
+	extern Task DEPENDS_ON_NOTHING();
 	extern Task TEN_DEPENDENCIES();
-
 	extern Task NINE_DEPENDENCIES();
+
+	/// Due on various time point
+	extern Task OVERDUE();
+	extern Task DUE_THIS_MONTH();
+	extern Task DUE_THIS_WEEK();
+	extern Task DUE_TODAY();
 
 /// @}
 

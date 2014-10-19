@@ -4,6 +4,7 @@
 #include "exclusions.h"
 
 #include <type_traits>
+#include "mocks/task_list.h"
 #include "internal/controller/task_builder.h"
 #include "internal/model.h"
 #include "api.h"
@@ -19,6 +20,7 @@ namespace {
 	using boost::gregorian::date;
 	using boost::gregorian::max_date_time;
 
+	using You::QueryEngine::Filter;
 	using You::QueryEngine::Task;
 	using You::QueryEngine::Response;
 	using You::QueryEngine::QueryEngine;
@@ -27,9 +29,6 @@ namespace {
 
 /// Test the main \ref QueryEngine API
 TEST_CLASS(QueryEngineTests) {
-using Task = You::QueryEngine::Task;
-using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-
 	const Task::Description desc = L"Learn Haskell Lens";
 	const Task::Description desc2 = L"Learn me";
 	const Task::Time dead = Task::NEVER;
@@ -53,6 +52,17 @@ using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 		Assert::IsNotNull(&query);
 		query = QueryEngine::GetTask(Filter::anyTask());
 		Assert::IsNotNull(&query);
+	}
+
+	TEST_METHOD(executeFilterQuery) {
+		populateStateWithTasks(ID_ONE_TO_FIVE());
+		std::vector<Task::ID> mustBeHere = { 0, 1, 2, 3, 10 };
+
+		auto result = QueryEngine::executeQuery(
+			QueryEngine::GetTask(Filter::idIsIn(mustBeHere)));
+		std::size_t N_FILTERED = 3;
+
+		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_FILTERED);
 	}
 
 	TEST_METHOD(constructDeleteTaskQuery) {

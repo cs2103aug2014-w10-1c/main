@@ -39,7 +39,7 @@ void Task::setCompleted(bool completed) {
 	this->completed = completed;
 }
 
-bool Task::isDependOn(const Task::ID id) {
+bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
 }
 
@@ -54,11 +54,7 @@ bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;
 	bool descriptionIsEqual = description == task.description;
 	bool priorityIsEqual = priority == task.priority;
-	auto d1 = std::unordered_set<Task::ID>(dependencies.begin(),
-		dependencies.end());
-	auto d2 = std::unordered_set<Task::ID>(task.dependencies.begin(),
-		task.dependencies.end());
-	bool dependenciesIsEqual = d1 == d2;
+	bool dependenciesIsEqual = dependencies == task.dependencies;
 	bool deadlineIsEqual = deadline == task.deadline;
 	return idIsEqual && descriptionIsEqual && priorityIsEqual
 		&& dependenciesIsEqual && deadlineIsEqual;
