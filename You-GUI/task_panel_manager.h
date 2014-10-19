@@ -8,36 +8,51 @@
 #include "You-Controller/controller_context.h"
 #include "You-Controller/result.h"
 
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+
 /// The component that deals with everything in the task panel. It handles the
 /// presentation of logic of a set of tasks presented to it by the NLP engine.
 /// It inherits from the BaseManager class.
-class YouMainGUI::TaskPanelManager : public YouMainGUI::BaseManager{
+class MainWindow::TaskPanelManager : public MainWindow::BaseManager{
 	Q_OBJECT
-
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit TaskPanelManager(YouMainGUI* const parentGUI);
+	explicit TaskPanelManager(MainWindow* const parentGUI);
 
 	/// Destructor.
 	~TaskPanelManager();
 
 	/// Initializes the taskTreePanel by setting column count and headers.
-	/// Called in the constructor of YouMainGUI.
+	/// Called in the constructor of MainWindow.
 	void setup();
 
 	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
-	void addTask(const You::Controller::Task& task);
+	void addTask(const Task& task);
 
 	/// Edits a task.
-	void editTask(const You::Controller::Task& task);
+	void editTask(const Task& task);
 
 	/// Deletes a task.
-	void deleteTask(You::Controller::Task::ID taskID);
+	void deleteTask(Task::ID taskID);
+
+	/// Time function to check if a deadline is past due.
+	static bool isPastDue(Task::Time deadline);
+
+	/// Time function to check if a deadline is due on the daysLeft'th day.
+	static bool isDueAfter(Task::Time deadline, int daysLeft);
+
+	/// Time function to check if a deadline is due within daysLeft days
+	static bool isDueWithin(Task::Time deadline, int daysLeft);
 
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget
-	static QStringList taskToStrVec(const You::Controller::Task& task);
+	static QStringList taskToStrVec(const Task& task);
 
 	/// Produces a generic QTreeWidgetItem from a task. It is an
 	/// intermediate step to adding headings and tasks.
@@ -50,7 +65,7 @@ private:
 		const QStringList& cells);
 
 	/// Finds the items which display the given task ID.
-	QList<QTreeWidgetItem*> findItems(You::Controller::Task::ID taskID) const;
+	QList<QTreeWidgetItem*> findItems(Task::ID taskID) const;
 
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
@@ -63,6 +78,21 @@ private:
 
 	/// Updates row numbers
 	void updateRowNumbers();
+
+	QScopedPointer<QMenu> itemContextMenu;
+
+	QAction addAction;
+
+	QAction deleteAction;
+
+	QAction editAction;
+
+	QSignalMapper deleteSignalMapper;
+
+	QSignalMapper editSignalMapper;
+
+private slots:
+	void contextMenu(const QPoint &pos);
 
 private:
 	/// String/numeric constants for the GUI
@@ -81,7 +111,13 @@ private:
 
 	/// Header string for column 5
 	static const QString TASK_COLUMN_5;
+
+	/// Header string from column 6
+	static const QString TASK_COLUMN_6;
 	/// @}
 };
+
+}  // namespace GUI
+}  // namespace You
 
 #endif  // YOU_GUI_TASK_PANEL_MANAGER_H_

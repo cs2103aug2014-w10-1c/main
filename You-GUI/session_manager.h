@@ -5,18 +5,22 @@
 #include <QApplication>
 #include "base_manager.h"
 
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
 using Task = You::Controller::Task;
 
 /// The component that handles all session-related data of the application. It
 /// handles basics such as the window state of the application and task sets
 /// previously displayed, saving the state on program exit, and restoring them
 /// when the program is started again. It inherits from the BaseManager class.
-class YouMainGUI::SessionManager : public YouMainGUI::BaseManager{
+class MainWindow::SessionManager : public MainWindow::BaseManager{
 	Q_OBJECT
-
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor inherited from BaseManager.
-	explicit SessionManager(YouMainGUI * const parentGUI)
+	explicit SessionManager(MainWindow * const parentGUI)
 		: BaseManager(parentGUI) {}
 
 	/// Destructor.
@@ -38,5 +42,8 @@ private:
 	/// Saves the state of the GUI before closing. Called during closeEvent.
 	void saveSession();
 };
+
+}  // namespace GUI
+}  // namespace You
 
 #endif  // YOU_GUI_SESSION_MANAGER_H_

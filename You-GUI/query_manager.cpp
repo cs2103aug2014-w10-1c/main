@@ -3,17 +3,13 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <QApplication>
 #include <QList>
-#include "NLP_manager.h"
+#include "query_manager.h"
+namespace You {
+namespace GUI {
 
-using Task = You::Controller::Task;
-using Result = You::Controller::Result;
-using TaskList = You::Controller::TaskList;
 using Controller = You::Controller::Controller;
 
-void YouMainGUI::NLPManager::setup() {
-	// To change to get list of tasks from session instead of ALL tasks.
-	// Somehow pass sm's taskIDs into this.
-	// Set result to current context
+void MainWindow::QueryManager::setup() {
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
 	pixmap.load(":/Status_green.png", 0);
@@ -25,13 +21,13 @@ void YouMainGUI::NLPManager::setup() {
 		0, parentGUI->ui.statusMessage, 0);
 }
 
-void YouMainGUI::NLPManager::query(
+void MainWindow::QueryManager::query(
 	const QString& query,
 	const You::Controller::TaskList& taskList) {
 	Result result = Controller::get().query(query.toStdWString(), taskList);
 
 	struct ResultProcessorVisitor : boost::static_visitor<void> {
-		explicit ResultProcessorVisitor(YouMainGUI* const parentGUI)
+		explicit ResultProcessorVisitor(MainWindow* const parentGUI)
 		: parentGUI(parentGUI) {
 		}
 
@@ -48,14 +44,14 @@ void YouMainGUI::NLPManager::query(
 		}
 
 	private:
-		YouMainGUI* parentGUI;
+		MainWindow* parentGUI;
 	};
 
 	ResultProcessorVisitor visitor(parentGUI);
 	boost::apply_visitor(visitor, result);
 }
 
-TaskList YouMainGUI::NLPManager::getTasks(
+TaskList MainWindow::QueryManager::getTasks(
 	const QList<Task::ID>& taskIDs) {
 	std::vector<Task::ID> taskIDVector;
 	std::copy(
@@ -67,6 +63,9 @@ TaskList YouMainGUI::NLPManager::getTasks(
 	return Controller::get().getTasks(taskIDVector);
 }
 
-TaskList YouMainGUI::NLPManager::getTasks() {
+TaskList MainWindow::QueryManager::getTasks() {
 	return Controller::get().getTasks();
 }
+
+}  // namespace GUI
+}  // namespace You

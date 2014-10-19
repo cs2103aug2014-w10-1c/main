@@ -1,28 +1,38 @@
 //@author A0094446X
 #pragma once
-#ifndef YOU_GUI_YOU_MAIN_GUI_H_
-#define YOU_GUI_YOU_MAIN_GUI_H_
+#ifndef YOU_GUI_MAIN_WINDOW_H_
+#define YOU_GUI_MAIN_WINDOW_H_
 #include <memory>
 #include <QtWidgets/QMainWindow>
 #include "ui_yougui.h"
 #include "You-Controller/result.h"
+#include "syntax_highlighter.h"
+
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+using TaskList = You::Controller::TaskList;
 
 /// The entity that deals with all GUI operations, and makes calls to the NLP
 /// engine. It deals with basic tasks regarding GUI initialization, passes all
 /// user input to the NLP engine and listens for any return instructions.
-class YouMainGUI : public QMainWindow {
+class MainWindow : public QMainWindow {
 	Q_OBJECT
-
+	friend class UnitTests::MainWindowTests;
 public:
 	/// Constructor for the GUI.
-	explicit YouMainGUI(QWidget *parent = nullptr);
+	explicit MainWindow(QWidget *parent = nullptr);
 
 	/// Destructor for the GUI.
-	~YouMainGUI();
+	~MainWindow();
 
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
+
+	std::unique_ptr<SyntaxHighlighter> syntaxHighlighter;
 
 	/// The class from which all components inherit.
 	class BaseManager;
@@ -51,17 +61,30 @@ public:
 	/// Result as well as input string is sent to the parser. The Result is a
 	/// vector of tasks, and this replaces the existing Result. It inherits
 	/// from the BaseManager class.
-	class NLPManager;
+	class QueryManager;
 
-	void addTask(const You::Controller::Task& task);
+	/// Calls TaskPanelManager and requests addition of a single task.
+	void addTask(const Task& task);
 
-	void addTasks(const You::Controller::TaskList& tl);
+	/// Calls TaskPanelManager and requests addition of a list of tasks.
+	void addTasks(const TaskList& tl);
 
-	void editTask(const You::Controller::Task& task);
+	/// Calls TaskPanelManager and requests editing of a single task.
+	void editTask(const Task& task);
 
-	void deleteTask(You::Controller::Task::ID taskID);
+	/// Calls TaskPanelManager and requests deletion of a single task.
+	void deleteTask(Task::ID taskID);
 
-	const You::Controller::TaskList& getTaskList() const;
+	/// Clears the task panel of all tasks, and clears taskList.
+	void clearTasks();
+
+	/// Gets the current list of tasks.
+	const TaskList& getTaskList() const;
+
+protected:
+	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
+	/// task panel proportions on resize.
+	void resizeEvent(QResizeEvent* event);
 
 private:
 	/// The SessionManager instance
@@ -73,23 +96,35 @@ private:
 	/// The SystemTrayManager instance
 	const std::unique_ptr<SystemTrayManager> stm;
 
-	/// The NLPManager instance
-	const std::unique_ptr<NLPManager> nlpm;
+	/// The QueryManager instance
+	const std::unique_ptr<QueryManager> qm;
 
 private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
-	Ui::YouMainGUIClass ui;
+	Ui::MainWindowClass ui;
 
-	std::unique_ptr<You::Controller::TaskList> taskList;
+	/// TaskList containing tasks to be placed in the task panel
+	std::unique_ptr<TaskList> taskList;
+
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
+	bool eventFilter(QObject *object, QEvent *event);
+
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
+
+	std::map<int32_t, QTimer*> timerMap;
+
+	/// Initializes timers for all tasks
+	void initializeAllTimerNotifications();
+
+	/// Initializes single timer
+	void initializeSingleTimerNotification(Task task);
 
 private:
 	static const QString READY_MESSAGE;
@@ -103,13 +138,31 @@ private:
 	static const QString CONTEXT_REQUIRED_MESSAGE;
 
 private slots:
-	/// Qt's slot for hitting enter in the input box.
+	/// Sends a query to Controller from the commandInputBox.
 	void commandEnterPressed();
 
-	/// Qt's signal/slot mechanism for input enter button.
+	/// Sends a query to Controller from the commandInputBox.
 	void commandEnterButtonClicked();
 
+	/// Reimplementation of application exit, called from SystemTrayManager
 	void applicationExitRequested();
+
+	/// Task panel context menu Add action
+	void contextAddTask();
+
+	/// Task panel context menu Edit/Delete action
+	void contextDeleteTask(int id);
+
+	void contextEditTask(int id);
+
+	/// Updates task descriptor panel on task selection.
+	void taskSelected();
+
+	/// Gives the user notifications of a task
+	void notify(Task::ID id);
 };
 
-#endif  // YOU_GUI_YOU_MAIN_GUI_H_
+
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_MAIN_WINDOW_H_

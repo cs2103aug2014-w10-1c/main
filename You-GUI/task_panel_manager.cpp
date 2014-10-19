@@ -2,39 +2,49 @@
 #include "stdafx.h"
 #include <QApplication>
 #include <QList>
+#include <QPair>
 #include "task_panel_manager.h"
+namespace You {
+namespace GUI {
 
-using Task = You::Controller::Task;
+using Date = boost::gregorian::date;
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
 
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_2 = "Index";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_3 = "Description";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
-const QString YouMainGUI::TaskPanelManager::TASK_COLUMN_5 = "Priority";
-
-YouMainGUI::TaskPanelManager::TaskPanelManager(YouMainGUI* const parentGUI)
-: BaseManager(parentGUI) {
+MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
+: BaseManager(parentGUI), deleteAction(QString("Delete"), this),
+editAction(QString("Edit"), this), addAction(QString("Add"), this),
+deleteSignalMapper(this), editSignalMapper(this) {
 }
 
-YouMainGUI::TaskPanelManager::~TaskPanelManager() {
+MainWindow::TaskPanelManager::~TaskPanelManager() {
 }
 
-void YouMainGUI::TaskPanelManager::setup() {
+void MainWindow::TaskPanelManager::setup() {
 	QStringList columnHeaders({
 		TASK_COLUMN_1,
 		TASK_COLUMN_2,
 		TASK_COLUMN_3,
 		TASK_COLUMN_4,
 		TASK_COLUMN_5,
+		TASK_COLUMN_6
 	});
-
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
+	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
+		parentGUI, SLOT(taskSelected()));
+
+	connect(taskTreePanel, SIGNAL(customContextMenuRequested(const QPoint &)),
+		this, SLOT(contextMenu(const QPoint &)));
 	taskTreePanel->setColumnCount(columnHeaders.size());
 	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
-
 	// TODO(angathorion): remove magic constants.
 	QHeaderView* header = taskTreePanel->header();
-	header->setStretchLastSection(false);
+	header->setStretchLastSection(true);
+
 	for (int i = 1; i < columnHeaders.size(); ++i) {
 		if (i == 2) {
 			continue;
@@ -42,83 +52,99 @@ void YouMainGUI::TaskPanelManager::setup() {
 		header->resizeSection(i, header->defaultSectionSize());
 	}
 
+	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
+	taskTreePanel->setColumnHidden(5, true);
 }
 
-void YouMainGUI::TaskPanelManager::addTask(const Task& task) {
+void MainWindow::TaskPanelManager::addTask(const Task& task) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
 	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
+void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	const QStringList& rowStrings) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
 	parent->addChild(item.release());
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::editTask(const Task& task) {
+void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QList<QTreeWidgetItem*> items = findItems(task.getID());
-
-	if (items.length() != 1) {
-		qDebug() << "editTask items.length() != 1" << endl;
-	} else {
-		QTreeWidgetItem item = *items.at(0);
-		QStringList wstr = taskToStrVec(task);
-		*items.at(0) = *createItem(wstr);
-	}
+	assert(items.length() == 1);
+	QTreeWidgetItem item = *items.at(0);
+	QStringList wstr = taskToStrVec(task);
+	*items.at(0) = *createItem(wstr);
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::deleteTask(Task::ID taskID) {
+void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
 	QList<QTreeWidgetItem*> items = findItems(taskID);
-
-	if (items.length() != 1) {
-		qDebug() << "deleteTask items.length() != 1" << endl;
-	} else {
-		deleteTask(items.at(0));
-	}
+	assert(items.length() == 1);
+	deleteTask(items.at(0));
 	updateRowNumbers();
 }
 
-void YouMainGUI::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
+void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const Task& task) {
 	return createItem(taskToStrVec(task));
 }
 
-std::unique_ptr<QTreeWidgetItem> YouMainGUI::TaskPanelManager::createItem(
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const QStringList& rowStrings) {
 	return std::make_unique<QTreeWidgetItem>(rowStrings);
 }
 
-QList<QTreeWidgetItem*> YouMainGUI::TaskPanelManager::findItems(
+QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 	You::Controller::Task::ID taskID) const {
 	return parentGUI->ui.taskTreePanel->findItems(
 		boost::lexical_cast<QString>(taskID), 0);
 }
 
-QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
+QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	const You::Controller::Task& task) {
 	QStringList result;
 
 	// Insert id
 	result.push_back(boost::lexical_cast<QString>(task.getID()));
 
-	// Insert count
+	// Insert dummy count
 	result.push_back("0");
 
 	// Insert description
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	result.push_back(boost::lexical_cast<QString>(task.getDeadline()));
+	std::wstringstream wss;
+	if (task.getDeadline() == Task::NEVER) {
+		wss << L"Never";
+	} else if (isPastDue(task.getDeadline())) {
+		wss << L"Overdue (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 0)) {
+		wss << L"Today (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 1)) {
+		wss << L"Tomorrow (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 2)) {
+		wss << L"In two days (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 7)) {
+		wss << L"Within one week (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 14)) {
+		wss << L"Within two weeks (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 21)) {
+		wss << L"Within three weeks (" << task.getDeadline() << L")";
+	} else if (isDueWithin(task.getDeadline(), 28)) {
+		wss << L"Within one month (" << task.getDeadline() << L")";
+	} else {
+		wss << L"More than a month away (" << task.getDeadline() << L")";
+	}
+	result.push_back(boost::lexical_cast<QString>(wss.str()));
 
-	// Iterate through task list and add it to the task panel
+	// Insert priority
 	QString priority[] { "High", "Normal" };
 
 	switch (task.getPriority()) {
@@ -128,14 +154,91 @@ QStringList YouMainGUI::TaskPanelManager::taskToStrVec(
 		result.push_back(priority[1]);
 	}
 
-	// TODO(angathorion): Deal with dependencies
+	// Insert dependencies
+	std::wstringstream ss;
+	if (task.getDependencies().size() != 0) {
+		ss << task.getDependencies().at(0);
+		for (int i = 1; i < task.getDependencies().size(); i++) {
+			ss << ", " << task.getDependencies().at(i);
+		}
+		result.push_back(QString::fromStdWString(ss.str()));
+	} else {
+		result.push_back("None");
+	}
 
 	return result;
 }
 
-void YouMainGUI::TaskPanelManager::updateRowNumbers() {
+void MainWindow::TaskPanelManager::updateRowNumbers() {
 	int rowNum = 0;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
 		(*it)->setData(1, Qt::DisplayRole, rowNum++);
 	}
 }
+
+bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
+	Task::Time now = boost::posix_time::second_clock::local_time();
+
+	if (deadline < now) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool MainWindow::TaskPanelManager::isDueAfter(
+		Task::Time deadline, int daysLeft) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::local_day();
+	if (by.modjulian_day() - today.modjulian_day() == daysLeft) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool MainWindow::TaskPanelManager::isDueWithin(
+	Task::Time deadline, int daysLeft) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::local_day();
+	if (by.julian_day() - today.julian_day() < daysLeft) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
+	/// Try to get the item at the position of the context menu
+	QTreeWidgetItem *item = parentGUI->ui.taskTreePanel->itemAt(pos);
+	itemContextMenu.reset(new QMenu(parentGUI->ui.taskTreePanel));
+
+	/// Adds the Add Task action. This is always present in the menu.
+	itemContextMenu->addAction(&addAction);
+	connect(&addAction, SIGNAL(triggered()), parentGUI, SLOT(contextAddTask()));
+
+	/// Adds the Edit Task and Delete Task actions if an item is selected.
+	/// QSignalMapper is necessary because arguments need to be passed
+	/// as part of the signal.
+	if (item) {
+		deleteSignalMapper.setMapping(&deleteAction, item->text(1).toInt());
+		connect(&deleteAction, SIGNAL(triggered()),
+			&deleteSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&deleteAction);
+		connect(&deleteSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextDeleteTask(int)));
+
+		editSignalMapper.setMapping(&editAction, item->text(1).toInt());
+		connect(&editAction, SIGNAL(triggered()),
+			&editSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&editAction);
+		connect(&editSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextEditTask(int)));
+	}
+
+	itemContextMenu->popup(
+		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
+}
+
+}  // namespace GUI
+}  // namespace You
