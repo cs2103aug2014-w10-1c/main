@@ -28,6 +28,9 @@ const QString MainWindow::CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE =
 const QString MainWindow::CONTEXT_REQUIRED_MESSAGE =
 "Error: A context is required.";
 
+const QString MainWindow::UNKNOWN_EXCEPTION_MESSAGE =
+"Error: An unknown exception was thrown.";
+
 const QString MainWindow::RESOURCE_RED =
 ":/Status_red.png";
 
