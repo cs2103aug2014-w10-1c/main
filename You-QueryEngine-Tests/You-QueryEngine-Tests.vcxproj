@@ -97,6 +97,8 @@
   <ItemGroup>
     <ClCompile Include="comparator_tests.cpp" />
     <ClCompile Include="filter_tests.cpp" />
+    <ClCompile Include="mocks\task.cpp" />
+    <ClCompile Include="mocks\task_list.cpp" />
     <ClCompile Include="query_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

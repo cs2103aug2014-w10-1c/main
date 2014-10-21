@@ -2,7 +2,6 @@
 #ifndef YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
 #define YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
 
-#include "../You-QueryEngine/internal/controller.h"
 #include "../You-QueryEngine/internal/model.h"
 
 namespace You {
@@ -12,26 +11,17 @@ namespace UnitTests {
 /// \name Various task lists for testing
 /// @{
 
-using Task = You::QueryEngine::Task;
+/// List of task with random descriptions.
+extern std::vector<Task::Description> TASK_DESCRIPTIONS();
+/// List of tasks with ID one to five.
+extern std::vector<Task> ID_ONE_TO_FIVE();
 
-std::vector<Task::Description> TASK_DESCRIPTIONS = {
-	std::wstring(L"CD"),
-	std::wstring(L"ABC"),
-	std::wstring(L"BCD"),
-	std::wstring(L"ABCD"),
-	std::wstring(L"EFGH"),
-};
+/// Helper to construct task from a list of description.
+extern std::vector<Task> fromDescription(
+	const std::vector<Task::Description>& v);
 
-std::vector<Task> fromDescription(const std::vector<Task::Description>& v) {
-	using Controller = You::QueryEngine::Internal::Controller;
-	std::vector<Task> result;
-	std::for_each(v.begin(), v.end(),
-		[&] (const Task::Description& d) {
-			result.push_back(Controller::Builder::get().description(d));
-		}
-	);
-	return result;
-}
+extern void populateStateWithTasks(
+	const std::vector<Task>& tasks);
 
 /// @}
 }  // namespace UnitTests

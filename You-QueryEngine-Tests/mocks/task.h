@@ -5,58 +5,41 @@
 #include "../You-QueryEngine/internal/controller.h"
 #include "../You-QueryEngine/internal/model.h"
 
-using boost::gregorian::greg_month;
-using boost::gregorian::greg_year;
-using boost::posix_time::ptime;
-using boost::posix_time::time_duration;
-using boost::gregorian::date;
-
 namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
 /// \name Various task examples for testing
 /// @{
+	/// Has specific ID
+	extern Task TASK_WITH_ID_1();
+	extern Task TASK_WITH_ID_2();
+	extern Task TASK_WITH_ID_3();
 
-using Task = You::QueryEngine::Task;
-using Controller = You::QueryEngine::Internal::Controller;
-const Task FEED_THE_DOGGY = Controller::Builder::get().
-	id(43L).
-	description(L"Feed the doggy");
+	/// Has description.
+	extern Task FEED_THE_DOGGY();
+	extern Task FEED_THE_KITTEN();
 
-const Task FEED_THE_KITTEN = Controller::Builder::get().
-	id(42L).
-	description(L"Feed the kitten");
+	/// Has priority
+	extern Task SUPER_IMPORTANT_TASK();
+	extern Task LESS_IMPORTANT_TASK();
 
-const Task SUPER_IMPORTANT_TASK = Controller::Builder::get().
-	id(42L).
-	description(L"Sleep").
-	priority(Task::Priority::HIGH);
+	/// Has due dates.
+	extern Task FOR_TOMMOROW();
+	extern Task FOR_NEXT_WEEK();
 
-const Task LESS_IMPORTANT_TASK = Controller::Builder::get().
-	id(42L).
-	description(L"Save the Earth").
-	priority(Task::Priority::NORMAL);
+	/// Has dependencies.
+	extern Task DEPENDS_ON_1_2_3();
+	extern Task DEPENDS_ON_3_4_5();
+	extern Task DEPENDS_ON_NOTHING();
+	extern Task TEN_DEPENDENCIES();
+	extern Task NINE_DEPENDENCIES();
 
-const Task FOR_TOMMOROW = Controller::Builder::get().
-	id(42L).
-	description(L"Save the Earth").
-	deadline(ptime(date(2014, 10, 7)));
-
-const Task FOR_NEXT_WEEK = Controller::Builder::get().
-	id(43L).
-	description(L"Save the Earth").
-	deadline(ptime(date(2014, 10, 14)));
-
-const Task TEN_DEPENDENCIES = Controller::Builder::get().
-	id(666L).
-	description(L"Impossible is nothing").
-	dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
-
-const Task NINE_DEPENDENCIES = Controller::Builder::get().
-	id(666L).
-	description(L"Impossible is nothing").
-	dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+	/// Due on various time point
+	extern Task OVERDUE();
+	extern Task DUE_THIS_MONTH();
+	extern Task DUE_THIS_WEEK();
+	extern Task DUE_TODAY();
 
 /// @}
 

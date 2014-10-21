@@ -2,6 +2,8 @@
 #include "CppUnitTest.h"
 
 #include "common.h"
+#include "mocks/task.h"
+#include "mocks/task_list.h"
 #include "internal/model.h"
 #include "internal/controller.h"
 #include "api.h"
@@ -13,62 +15,67 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-using boost::gregorian::date;
-using boost::gregorian::max_date_time;
+namespace {
+	using boost::gregorian::date;
+	using boost::gregorian::max_date_time;
 
-using You::QueryEngine::Task;
-using You::QueryEngine::Response;
-
-using You::QueryEngine::Filter;
-using You::QueryEngine::QueryEngine;
-
-using Task = You::QueryEngine::Task;
-using State = Internal::State;
-using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+	using State = You::QueryEngine::Internal::State;
+	using Controller = You::QueryEngine::Internal::Controller;
+	using F = You::QueryEngine::Filter;
+}
 
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;
 
-	static void populateStateWithMockedTasks() {
-		State::clear();
-		for (std::size_t i = 1; i <= N_TASK; i++) {
-			Internal::Controller::Graph::addTask(
-				State::get().graph(),
-				TaskBuilder::get().id(i).description(L"Clone"));
-		}
+	TEST_METHOD(implicitConversionFromFilterToLambda) {
+		Assert::IsTrue((F::anyTask())(FEED_THE_DOGGY()));
 	}
 
 	TEST_METHOD(filterAnyTask) {
-		populateStateWithMockedTasks();
-		using F = You::QueryEngine::Filter;
-		std::unique_ptr<Query> query =
-			QueryEngine::GetTask(F::anyTask());
-		auto result = QueryEngine::executeQuery(std::move(query));
-
-		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_TASK);
+		Assert::IsTrue((F::anyTask())(FEED_THE_KITTEN()));
+		Assert::IsFalse((!F::anyTask())(FEED_THE_KITTEN()));
 	}
 
 	TEST_METHOD(filterIdIsIn) {
-		populateStateWithMockedTasks();
-		std::size_t N_FILTERED = 5;
-		std::vector<Task::ID> mustBeHere;
-		for (std::size_t i = 1; i <= N_FILTERED; i++) {
-			mustBeHere.push_back((Task::ID) i);
-			Internal::Controller::Graph::addTask(
-				State::get().graph(),
-				TaskBuilder::get().id(i).description(L"Dummy"));
-		}
-		using F = You::QueryEngine::Filter;
-		auto result = QueryEngine::executeQuery(
-			QueryEngine::GetTask(F::idIsIn(mustBeHere)));
+		Assert::IsTrue((F::idIsIn({ 1, 2, 3 }))(TASK_WITH_ID_1()));
+		Assert::IsFalse((F::idIsIn({ 4, 4, 5, 6 }))(TASK_WITH_ID_1()));
+		Assert::IsTrue((F::idIsIn({ 2, 4 }) || F::idIsIn({ 3 , 5}))
+			(TASK_WITH_ID_3()));
+	}
 
-		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(),
-			N_FILTERED);
+	TEST_METHOD(filterByDependencies) {
+		Assert::IsTrue((F::dependsOn(1))(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(3))(DEPENDS_ON_1_2_3()));
+		Assert::IsFalse((F::dependsOn(4))(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(2) && F::dependsOn(3))
+			(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(4) || F::dependsOn(3))
+			(DEPENDS_ON_1_2_3()));
+	}
+
+	TEST_METHOD(filterByPriority) {
+		Assert::IsTrue((F::highPriority())(SUPER_IMPORTANT_TASK()));
+		Assert::IsTrue((F::normalPriority())(LESS_IMPORTANT_TASK()));
+	}
+
+	TEST_METHOD(filterOverdue) {
+		Assert::IsTrue((F::overdue())(OVERDUE()));
+	}
+
+	TEST_METHOD(filterDueToday) {
+		Assert::IsTrue((F::dueToday())(DUE_TODAY()));
+	}
+
+	TEST_METHOD(filterDueThisWeek) {
+		Assert::IsTrue((F::dueThisWeek())(DUE_THIS_WEEK()));
+	}
+
+	TEST_METHOD(filterDueThisMonth) {
+		Assert::IsTrue((F::dueThisMonth())(DUE_THIS_MONTH()));
 	}
 
 	TEST_METHOD(logicalAndTwoFilters) {
-		populateStateWithMockedTasks();
-		using F = You::QueryEngine::Filter;
+		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
 			QueryEngine::GetTask(alwaysEmpty));
@@ -77,18 +84,12 @@ TEST_CLASS(FilterTests) {
 	}
 
 	TEST_METHOD(logicalOrTwoFilters) {
-		populateStateWithMockedTasks();
-		using F = You::QueryEngine::Filter;
+		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = (!F::anyTask()) || (!F::anyTask());
 		auto result = QueryEngine::executeQuery(
 			QueryEngine::GetTask(alwaysEmpty));
 
 		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
-	}
-
-	TEST_METHOD(implicitConversionToLambda) {
-		using F = You::QueryEngine::Filter;
-		Assert::IsTrue((F::anyTask())(TaskBuilder::get().description(L"Hello")));
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
