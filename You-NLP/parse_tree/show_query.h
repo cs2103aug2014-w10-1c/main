@@ -26,10 +26,10 @@ struct SHOW_QUERY {
 	/// The predicate for filtering tasks.
 	enum class Predicate {
 		/// Equality.
-		EQUAL,
+		EQ,
 
 		/// Inequality
-		NOT_EQUAL,
+		NOT_EQ,
 
 		/// Less than
 		LESS_THAN,

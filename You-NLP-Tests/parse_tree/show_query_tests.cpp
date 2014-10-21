@@ -33,7 +33,7 @@ TEST_CLASS(ShowQueryTests) {
 
 	TEST_METHOD(comparesInequality) {
 		SHOW_QUERY local {
-			{},
+			{ { TaskField::DESCRIPTION, SHOW_QUERY::Predicate::EQ, L"" } },
 			{
 				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING }
 			}
@@ -53,7 +53,7 @@ TEST_CLASS(ShowQueryTests) {
 		local = DUMMY;
 		local.predicates.emplace_back(SHOW_QUERY::FIELD_FILTER {
 			TaskField::DESCRIPTION,
-			SHOW_QUERY::Predicate::EQUAL,
+			SHOW_QUERY::Predicate::EQ,
 			Utils::make_option<std::wstring>(L"")
 		});
 		Assert::AreNotEqual(DUMMY, local);
@@ -81,7 +81,7 @@ private:
 };
 
 const SHOW_QUERY ShowQueryTests::DUMMY {
-	{},
+	{ { TaskField::DESCRIPTION, SHOW_QUERY::Predicate::EQ, L"" } },
 	{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 };
 
