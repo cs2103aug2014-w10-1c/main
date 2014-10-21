@@ -86,7 +86,20 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQuery) {
-		QUERY q = QueryParser::parse(L"/show order by description ascending");
+		QUERY q = QueryParser::parse(L"/show description='\\\\\\'meh'");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::EQ,
+					L"\\\'meh"
+				}
+			},
+			{}
+		}), q);
+
+		q = QueryParser::parse(L"/show order by description ascending");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{},

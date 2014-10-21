@@ -82,9 +82,30 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Showing tasks
 	showCommand = (
 		-showCommandFiltering >>
-		(qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
-		showCommandSorting
+		-((qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
+		showCommandSorting)
 	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
+
+	showCommandFiltering %= (
+		showCommandFilteringColumn % (qi::lit(L",") | qi::lit(L"and"))
+	);
+
+	showCommandFilteringColumn = (
+		showCommandFields >>
+		showCommandFilteringPredicate >>
+		-utilityLexeme
+	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
+		qi::_1,
+		qi::_2,
+		qi::_3)];
+
+	showCommandFilteringPredicate.add
+		(L"=", SHOW_QUERY::Predicate::EQ)
+		(L"!=", SHOW_QUERY::Predicate::NOT_EQ)
+		(L"<", SHOW_QUERY::Predicate::LESS_THAN)
+		(L"<=", SHOW_QUERY::Predicate::LESS_THAN_EQ)
+		(L">", SHOW_QUERY::Predicate::GREATER_THAN)
+		(L">=", SHOW_QUERY::Predicate::GREATER_THAN_EQ);
 
 	showCommandSorting %= (
 		showCommandSortingColumn % (qi::lit(L",") | qi::lit(L"then"))
@@ -161,6 +182,16 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
 	deleteCommand.name("deleteCommand");
 	#pragma endregion
+
+	utilityLexeme %= (
+		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
+	);
+
+	utilityLexemeContents %= (
+		qi::lit("\\'")[qi::_val = L'\''] |
+		qi::lit("\\\\")[qi::_val = L'\\'] |
+		(ParserCharTraits::char_ - qi::lit('\''))
+	);
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));

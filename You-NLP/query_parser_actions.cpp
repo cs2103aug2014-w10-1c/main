@@ -43,14 +43,31 @@ ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
 }
 
 SHOW_QUERY QueryParser::constructShowQuery(
-	const boost::optional<std::vector<int>>& /*predicates*/,
-	const boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>>& ordering) {
+	boost::optional<std::vector<SHOW_QUERY::FIELD_FILTER>> filters,
+	boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>> ordering) {
 	SHOW_QUERY result;
+	if (static_cast<bool>(filters)) {
+		result.predicates = std::move(filters.get());
+	}
 	if (static_cast<bool>(ordering)) {
 		result.order = std::move(ordering.get());
 	}
 
 	return result;
+}
+
+SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
+	const TaskField& field,
+	const SHOW_QUERY::Predicate& predicate,
+	const boost::optional<LexemeType>& value) {
+	return SHOW_QUERY::FIELD_FILTER {
+		field,
+		predicate,
+		static_cast<bool>(value) ?
+			Utils::make_option<std::wstring>(
+				begin(value.get()), end(value.get())) :
+			Utils::Option<std::wstring>()
+	};
 }
 
 SHOW_QUERY::FIELD_ORDER QueryParser::constructShowQuerySortColumn(

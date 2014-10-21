@@ -87,13 +87,26 @@ private:
 	/// Process the non-terminal returned from the show query parse rule,
 	/// constructing the predicates and ordering.
 	///
-	/// \param[in] predicates The filter predicates.
+	/// \param[in] filters The filter predicates.
 	/// \param[in] ordering The ordering for display.
 	/// \return The synthesised value for the \ref showCommand rule.
 	static SHOW_QUERY constructShowQuery(
-		const boost::optional<std::vector<int>>& predicates,
-		const boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>>& ordering
+		boost::optional<std::vector<SHOW_QUERY::FIELD_FILTER>> filters,
+		boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>> ordering
 	);
+
+	/// Process the terminal returned from the show query filtering parse rule,
+	/// constructing one filter.
+	///
+	/// \param[in] field The field to sort by.
+	/// \param[in] predicate the predicate to apply.
+	/// \param[in] value The value to compare against the field.
+	/// \return The synthesised value for the \ref showQueryFilteringColumn
+	///         rule.
+	static SHOW_QUERY::FIELD_FILTER constructShowQueryFilteringColumn(
+		const TaskField& field,
+		const SHOW_QUERY::Predicate& predicate,
+		const boost::optional<LexemeType>& value);
 
 	/// Process the terminal returned from the show query ordering parse rule,
 	/// constructing one column's ordering.
@@ -194,8 +207,19 @@ private:
 		showCommand;
 
 	/// Show command filtering rule.
-	boost::spirit::qi::rule<IteratorType, std::vector<int>(), SkipperType>
+	boost::spirit::qi::rule<IteratorType,
+		std::vector<SHOW_QUERY::FIELD_FILTER>(), SkipperType>
 		showCommandFiltering;
+
+	/// Show command filtering rule for one filter
+	boost::spirit::qi::rule<IteratorType,
+		SHOW_QUERY::FIELD_FILTER(),
+		SkipperType> showCommandFilteringColumn;
+
+	/// The symbol mapping from task filter predicates to an actual predicate.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		SHOW_QUERY::Predicate> showCommandFilteringPredicate;
 
 	/// Show command sorting rule for multiple columns.
 	boost::spirit::qi::rule<IteratorType,
@@ -260,6 +284,18 @@ private:
 	#pragma region Deleting tasks
 	boost::spirit::qi::rule<IteratorType, DELETE_QUERY(), SkipperType>
 		deleteCommand;
+	#pragma endregion
+
+	#pragma region Utility rules
+	/// A utility rule which will process all characters verbatim. This is how
+	/// the user specifies that he does not want the parser to perform syntax
+	/// analysis for this part of the input.
+	boost::spirit::qi::rule<IteratorType, LexemeType()> utilityLexeme;
+
+	/// A utility rule which processes all characters within the quotes of
+	/// the verbatim string.
+	boost::spirit::qi::rule<IteratorType,
+		ParserCharEncoding::char_type()> utilityLexemeContents;
 	#pragma endregion
 };
 
