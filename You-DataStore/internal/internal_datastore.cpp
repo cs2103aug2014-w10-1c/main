@@ -115,8 +115,8 @@ void DataStore::executeTransaction(Transaction & transaction,
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
-		bool status = !operation->run(xml);
-		assert(!status);
+		bool status = operation->run(xml);
+		assert(status);
 		if (!status) {
 			// throw exception/assert
 		}
@@ -124,8 +124,8 @@ void DataStore::executeTransaction(Transaction & transaction,
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
-		bool status = !mergedOperation->run(xml);
-		assert(!status);
+		bool status = mergedOperation->run(xml);
+		assert(status);
 		if (!status) {
 			// throw exception/assert
 		}
