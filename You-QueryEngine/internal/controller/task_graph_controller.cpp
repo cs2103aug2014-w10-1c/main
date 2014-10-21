@@ -47,13 +47,15 @@ void TGC::addTask(TaskGraph& g, const Task& task) {
 	Vertex v = boost::add_vertex(g.graph);
 	g.graph[v] = task.getID();
 	g.taskTable.insert({ task.getID(), task });
-	addAllDependencies(g, task);
+	if (task.getDependencies().size() > 0) {
+		addAllDependencies(g, task);
+	}
 }
 
 void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
 	for (auto cid = std::cbegin(task.getDependencies());
 		 cid != std::cend(task.getDependencies()); ++cid) {
-		// addDependency(g, task.getID(), *cid);
+		 addDependency(g, task.getID(), *cid);
 	}
 }
 
