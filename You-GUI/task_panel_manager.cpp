@@ -155,13 +155,16 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	}
 
 	// Insert dependencies
-	std::ostringstream ss;
 	if (task.getDependencies().size() != 0) {
 		Task::Dependencies dependencies = task.getDependencies();
-		std::copy(dependencies.begin(), --dependencies.end(),
-			std::ostream_iterator<Task::ID>(ss, ", "));
-		ss << *--dependencies.end();
-		result.push_back(QString::fromStdString(ss.str()));
+		std::wstringstream ss;
+		std::wstring comma = L"";
+		for (auto iter = dependencies.begin();
+			iter != dependencies.end(); ++iter) {
+			ss << comma << *iter;
+			comma = L", ";
+		}
+		result.push_back(QString::fromStdWString(ss.str()));
 	} else {
 		result.push_back("None");
 	}
