@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "You-Utils/option.h"
 #include "task_field.h"
 
 namespace You {
@@ -43,6 +44,23 @@ struct SHOW_QUERY {
 		GREATER_THAN_EQ
 	};
 
+	/// A predicate for filtering tasks.
+	struct FIELD_FILTER {
+		/// Equality comparator.
+		///
+		/// \param[in] rhs The other field order object to compare with.
+		bool operator==(const FIELD_FILTER& rhs) const;
+
+		/// The field to filter.
+		TaskField field;
+
+		/// The predicate to apply.
+		Predicate predicate;
+
+		/// The value to compare against.
+		You::Utils::Option<std::wstring> value;
+	};
+
 	/// A pair containing the field and the order to sort by.
 	struct FIELD_ORDER {
 		/// Equality comparator.
@@ -61,6 +79,9 @@ struct SHOW_QUERY {
 	///
 	/// \param[in] rhs The other query object to compare with.
 	bool operator==(const SHOW_QUERY& rhs) const;
+
+	/// The predicates for filtering.
+	std::vector<FIELD_FILTER> predicates;
 
 	/// The order of the fields.
 	std::vector<FIELD_ORDER> order;

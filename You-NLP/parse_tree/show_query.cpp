@@ -52,8 +52,10 @@ bool SHOW_QUERY::FIELD_ORDER::operator==(const FIELD_ORDER& rhs) const {
 }
 
 bool SHOW_QUERY::operator==(const SHOW_QUERY& rhs) const {
-	return order.size() == rhs.order.size() &&
-		std::equal(order.begin(), order.end(), rhs.order.begin());
+	return predicates.size() == rhs.predicates.size() &&
+		std::equal(begin(predicates), end(predicates), begin(rhs.predicates)) &&
+		order.size() == rhs.order.size() &&
+		std::equal(begin(order), end(order), begin(rhs.order));
 }
 
 std::wstring ToString(const SHOW_QUERY& q) {

@@ -89,6 +89,7 @@ public:
 		QUERY q = QueryParser::parse(L"/show order by description ascending");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{},
 			{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 		}), q);
 
@@ -96,6 +97,7 @@ public:
 			L"priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{},
 			{
 				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
 				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }

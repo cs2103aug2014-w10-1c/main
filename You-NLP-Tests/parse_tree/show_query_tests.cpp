@@ -33,6 +33,7 @@ TEST_CLASS(ShowQueryTests) {
 
 	TEST_METHOD(comparesInequality) {
 		SHOW_QUERY local {
+			{},
 			{
 				SHOW_QUERY::FIELD_ORDER {
 					TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING
@@ -58,6 +59,7 @@ private:
 };
 
 const SHOW_QUERY ShowQueryTests::DUMMY {
+	{},
 	{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 };
 

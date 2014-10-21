@@ -17,6 +17,7 @@ extern const You::NLP::ADD_QUERY ADD_QUERY {
 };
 
 extern const You::NLP::SHOW_QUERY SHOW_QUERY {
+	{},
 	{
 		{
 			You::NLP::TaskField::DEADLINE,
