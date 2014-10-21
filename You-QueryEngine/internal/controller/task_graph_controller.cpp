@@ -32,6 +32,16 @@ Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	return maxID;
 }
 
+bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
+	bool isExist = true;
+	try {
+		graph.getTask(id);
+	} catch (const Exception::TaskNotFoundException& e) {
+		isExist = false;
+	}
+	return isExist;
+}
+
 void TGC::addTask(TaskGraph& g, const Task& task) {
 	Vertex v = boost::add_vertex(g.graph);
 	g.graph[v] = task.getID();

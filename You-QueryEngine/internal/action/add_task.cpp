@@ -32,6 +32,17 @@ Task AddTask::buildTask(const Task::ID newID) {
 		.priority(this->priority);
 }
 
+void AddTask::ensureDependencyIsValid() const {
+	std::for_each(dependencies.cbegin(), dependencies.cend(),
+		[=](const Task::ID& id) {
+			if (!Controller::Graph::isTaskExist(
+					State::get().graph(), id)) {
+				throw Exception::TaskNotFoundException();
+			}
+		}
+	);
+}
+
 void AddTask::addTaskToState(const Task& task,
 	State& state) const {
 	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
@@ -50,6 +61,7 @@ void AddTask::makeTransaction(const Task& newTask) const {
 
 Response AddTask::execute(State& state) {
 	auto newTask = buildTask(state.inquireNewID());
+	ensureDependencyIsValid();
 	addTaskToState(newTask, state);
 	makeTransaction(newTask);
 	return newTask;

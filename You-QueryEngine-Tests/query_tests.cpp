@@ -5,6 +5,7 @@
 
 #include <type_traits>
 #include "mocks/task_list.h"
+#include "../You-Utils/exceptions/query_engine_exception.h"
 #include "internal/controller/task_builder.h"
 #include "internal/model.h"
 #include "api.h"
@@ -86,6 +87,15 @@ TEST_CLASS(QueryEngineTests) {
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(addTaskWithInvalidDependency) {
+		Internal::State::clear();
+		Assert::ExpectException<Exception::TaskNotFoundException>([=] {
+			auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 });
+			QueryEngine::executeQuery(std::move(query));
+		});
 		Internal::State::clear();
 	}
 

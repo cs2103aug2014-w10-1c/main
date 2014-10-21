@@ -21,6 +21,10 @@ public:
 	/// \return The last task ID seen.
 	static Task::ID loadFromFile(TaskGraph& graph);
 
+	/// Return true if the task exist in the graph.
+	/// \param [in] id The id to be checked.
+	static bool isTaskExist(TaskGraph& graph, const Task::ID id);
+
 	/// Add a task to the graph if it is not exist.
 	/// May throw CircularDependencyException if it
 	/// causes circular dependency.
