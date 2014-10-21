@@ -63,10 +63,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 	return SHOW_QUERY::FIELD_FILTER {
 		field,
 		predicate,
-		static_cast<bool>(value) ?
-			Utils::make_option<std::wstring>(
-				begin(value.get()), end(value.get())) :
-			Utils::Option<std::wstring>()
+		std::wstring(begin(value.get()), end(value.get()))
 	};
 }
 

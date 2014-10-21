@@ -58,7 +58,7 @@ struct SHOW_QUERY {
 		Predicate predicate;
 
 		/// The value to compare against.
-		You::Utils::Option<std::wstring> value;
+		std::wstring value;
 	};
 
 	/// A pair containing the field and the order to sort by.

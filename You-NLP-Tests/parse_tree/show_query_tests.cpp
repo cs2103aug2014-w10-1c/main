@@ -54,7 +54,7 @@ TEST_CLASS(ShowQueryTests) {
 		local.predicates.emplace_back(SHOW_QUERY::FIELD_FILTER {
 			TaskField::DESCRIPTION,
 			SHOW_QUERY::Predicate::EQ,
-			Utils::make_option<std::wstring>(L"")
+			std::wstring()
 		});
 		Assert::AreNotEqual(DUMMY, local);
 

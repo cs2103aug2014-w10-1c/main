@@ -39,8 +39,7 @@ std::wstring getPredicateFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 		return (boost::wformat(FILTER_FIELD_FORMAT) %
 			filter.field %
 			filter.predicate %
-			(static_cast<bool>(filter.value) ?
-				filter.value.get() : L"(none)")).str();
+			filter.value).str();
 	});
 
 	if (predicateStrings.empty()) {
