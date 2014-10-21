@@ -80,6 +80,7 @@ void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
 		throw Exception::TaskNotFoundException();
 	} else {
 		g.taskTable.erase(id);
+		rebuildGraph(g);
 	}
 }
 
