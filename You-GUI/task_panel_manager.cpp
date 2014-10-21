@@ -160,7 +160,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		Task::Dependencies dependencies = task.getDependencies();
 		std::copy(dependencies.begin(), --dependencies.end(),
 			std::ostream_iterator<Task::ID>(ss, ", "));
-		ss << *dependencies.end();
+		ss << *--dependencies.end();
 		result.push_back(QString::fromStdString(ss.str()));
 	} else {
 		result.push_back("None");
