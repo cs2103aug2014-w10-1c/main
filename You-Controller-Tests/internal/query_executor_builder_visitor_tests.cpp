@@ -104,7 +104,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
-				return left.getDeadline() > right.getDeadline();
+				return left.getDeadline() >= right.getDeadline();
 		}));
 
 		{
@@ -123,7 +123,26 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
-			return left.getDescription() < right.getDescription();
+			return left.getDescription() <= right.getDescription();
+		}));
+
+		{
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.order = {
+					{
+						You::NLP::TaskField::PRIORITY,
+						You::NLP::SHOW_QUERY::Order::DESCENDING
+					}
+			};
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::is_sorted(begin(result.tasks), end(result.tasks),
+			[](const Task& left, const Task& right) {
+			return left.getPriority() >= right.getPriority();
 		}));
 	}
 
