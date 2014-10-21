@@ -286,6 +286,12 @@ private:
 		deleteCommand;
 	#pragma endregion
 
+	#pragma region Undoing tasks
+	/// Undo command rule.
+	boost::spirit::qi::rule<IteratorType, UNDO_QUERY(), SkipperType>
+		undoCommand;
+	#pragma endregion
+
 	#pragma region Utility rules
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax

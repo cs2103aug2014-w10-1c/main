@@ -37,7 +37,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L"add") >> addCommand) |
 		(qi::lit(L"show") >> showCommand) |
 		(qi::lit(L"edit") >> editCommand) |
-		(qi::lit(L"delete") >> deleteCommand)
+		(qi::lit(L"delete") >> deleteCommand) |
+		(qi::lit(L"undo") >> undoCommand)
 	);
 	explicitCommand.name("explicitCommand");
 
@@ -181,6 +182,12 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::uint_
 	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
 	deleteCommand.name("deleteCommand");
+	#pragma endregion
+
+	#pragma region Undoing tasks
+	undoCommand = (
+		qi::eps
+	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
 	#pragma endregion
 
 	utilityLexeme %= (
