@@ -4,6 +4,7 @@
 #include "You-NLP/parse_tree/task_priority.h"
 #include "internal/query_executor.h"
 #include "internal/query_executor_builder_visitor.h"
+#include "exceptions/context_index_out_of_range_exception.h"
 
 #include "../mocks/task_list.h"
 #include "../mocks/query.h"
@@ -104,7 +105,26 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
 				return left.getDeadline() > right.getDeadline();
-			}));
+		}));
+
+		{
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.order = {
+				{
+					You::NLP::TaskField::DESCRIPTION,
+					You::NLP::SHOW_QUERY::Order::ASCENDING
+				}
+			};
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::is_sorted(begin(result.tasks), end(result.tasks),
+			[](const Task& left, const Task& right) {
+			return left.getDescription() < right.getDescription();
+		}));
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
@@ -204,6 +224,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+	}
+
+	TEST_METHOD(editQueriesOutOfBoundsThrowsContextOutOfRange) {
+		Mocks::TaskList taskList(0);
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::EDIT_QUERY);
+		Assert::ExpectException<ContextIndexOutOfRangeException>([&]() {
+			boost::apply_visitor(visitor, query);
+		});
 	}
 
 	TEST_METHOD(getsCorrectTypeForDeleteQueries) {
