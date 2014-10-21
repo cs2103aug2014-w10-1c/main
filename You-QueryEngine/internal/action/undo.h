@@ -17,7 +17,7 @@ namespace Action {
 class Undo : public Query {
 public:
 	/// Construct EditTask query
-	Undo();
+	Undo() = default;
 
 	/// Disable assignment operator
 	Undo& operator=(const Undo&) = delete;
