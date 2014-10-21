@@ -60,9 +60,6 @@ public:
 	/// \returns true if id is in the dependency, false otherwise.
 	bool isDependOn(const Task::ID id) const;
 
-	/// Get deadline string
-	std::wstring getDeadlineString() const;
-
 	/// \name Field Setters
 	/// @{
 	void setDescription(const Description& description);
