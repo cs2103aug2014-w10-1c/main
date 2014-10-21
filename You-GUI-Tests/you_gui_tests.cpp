@@ -31,6 +31,7 @@ TEST_MODULE_CLEANUP(ModuleCleanup) {
 
 TEST_CLASS(MainWindowTests) {
 public:
+	/// These are generic tests for component visibility/invisibility
 	TEST_METHOD(isMainWindowVisible) {
 		MainWindow w;
 		Assert::IsTrue(w.isVisible());
@@ -81,6 +82,7 @@ public:
 		Assert::IsFalse(w.ui.menuBar->isVisible());
 	}
 
+	/// Basic task addition test
 	TEST_METHOD(addSingleTaskCount) {
 		MainWindow w;
 		w.clearTasks();
@@ -89,6 +91,7 @@ public:
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
 
+	/// Task addition content comparison
 	TEST_METHOD(addSingleTaskContent) {
 		MainWindow w;
 		w.clearTasks();
@@ -105,12 +108,15 @@ public:
 			(column3 == 0) && (column4 == 0));
 	}
 
+	/// Boundary test case for the equivalence partition for the lower
+	/// bound of the valid zone for testing if a task is due today
 	TEST_METHOD(testDueToday1) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
 		Assert::IsTrue(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
+	/// Generic test case for testing if a task is due today (deadline ahead)
 	TEST_METHOD(testDueToday2) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -118,6 +124,7 @@ public:
 		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
+	/// Generic test case for testing if a task is due today (deadline before)
 	TEST_METHOD(testDueToday3) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -125,6 +132,8 @@ public:
 		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
 	}
 
+	/// Generic test case for testing if a task is due
+	/// tomorrow (deadline after)
 	TEST_METHOD(testDueTomorrow1) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -132,7 +141,8 @@ public:
 		Assert::IsTrue(MainWindow::TaskPanelManager::isDueAfter(dl, 1));
 	}
 
-	/// Test if is past due, 1 minute before
+	/// Boundary test case for the equivalence partition for the upper
+	/// bound of the lower invalid zone for testing if a task is overdue
 	TEST_METHOD(testPastDue1) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -140,7 +150,7 @@ public:
 		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
 	}
 
-	/// Test if is past due, 1 day and 1 minute before
+	/// Generic test case for testing if a task is overdue
 	TEST_METHOD(testPastDue2) {
 		MainWindow w;
 		Task::Time dl = boost::posix_time::second_clock::local_time();
@@ -163,6 +173,7 @@ public:
 		Assert::IsFalse(MainWindow::TaskPanelManager::isPastDue(dl));
 	}
 
+	/// Generic task deletion test
 	TEST_METHOD(deleteSingleTaskCount) {
 		MainWindow w;
 		w.clearTasks();
@@ -175,6 +186,7 @@ public:
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
 
+	/// Generic task deletion test
 	TEST_METHOD(deleteSingleTaskFind) {
 		MainWindow w;
 		w.clearTasks();
