@@ -6,6 +6,9 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_MODEL_STATE_H_
 #define YOU_QUERYENGINE_INTERNAL_MODEL_STATE_H_
 
+#include <stack>
+#include <memory>
+#include "../../api.h"
 #include "task_graph.h"
 
 namespace You {
@@ -21,12 +24,16 @@ public:
 	/// Getter of the current instance.
 	static State& get();
 
+	/// Get the task graph.
+	inline TaskGraph& graph() const { return get().innerGraph;  }
+
 	/// Reset the state back to empty state. \n
 	/// Should be used only if necessary.
 	static void clear();
 
-	/// Get the task graph.
-	inline TaskGraph& graph() const { return get().innerGraph;  }
+	/// Get the undo stack.
+	inline std::stack<std::unique_ptr<Query>>& undoStack() {
+		return get().innerUndoStack; }
 
 	/// Inquire a new and unique task id.
 	Task::ID inquireNewID();
@@ -35,8 +42,10 @@ private:
 	State();
 	State(const State&) = delete;
 	State& operator=(const State&) = delete;
+
 	Task::ID maxID;
 	TaskGraph innerGraph;
+	std::stack<std::unique_ptr<Query>> innerUndoStack;
 };
 
 }  // namespace Internal
