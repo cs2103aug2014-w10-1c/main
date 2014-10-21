@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include <CppUnitTest.h>
+
 #include "datastore.h"
 #include "transaction.h"
 #include "internal/internal_datastore.h"

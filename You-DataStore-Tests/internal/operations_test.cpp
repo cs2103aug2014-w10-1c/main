@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
 #include "../mocks.h"
 #include "internal/operations/erase_operation.h"
