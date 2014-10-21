@@ -33,7 +33,7 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
-namespace Internal { class State; }
+namespace Internal { namespace Action { class Undo; } class State; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
@@ -44,6 +44,7 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
+	friend class Internal::Action::Undo;
 
 protected:
 	/// Get the reverse of this query for undo.

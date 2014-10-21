@@ -21,7 +21,11 @@ namespace {
 }
 
 Response Undo::execute(State& state) {
-	return 0L;
+	if (!State::get().undoStack().empty()) {
+		std::unique_ptr<Query> query = std::move(state.get().undoStack().top());
+		state.get().undoStack().pop();
+		return query->execute(state);
+	}
 }
 
 }  // namespace Action
