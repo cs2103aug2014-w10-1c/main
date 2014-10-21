@@ -23,6 +23,13 @@ namespace {
 const std::wstring UpdateTask::logCategory =
 	Query::logCategory + L"[UpdateTask]";
 
+std::unique_ptr<Query> UpdateTask::getReverse() {
+	return std::unique_ptr<Query>(new UpdateTask(
+		previous.getID(), previous.getDescription(),
+		previous.getDeadline(), previous.getPriority(),
+		previous.getDependencies()));
+}
+
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
@@ -59,6 +66,7 @@ void UpdateTask::makeTransaction(const Task& updated) const {
 }
 
 Response UpdateTask::execute(State& state) {
+	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
 	modifyState(state, updated);
 	return updated;

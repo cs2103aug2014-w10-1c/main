@@ -7,6 +7,7 @@
 
 #include "../model.h"
 #include "../controller.h"
+#include "delete_task.h"
 #include "add_task.h"
 
 namespace You {
@@ -23,6 +24,10 @@ namespace {
 /// \endcond
 
 const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
+
+std::unique_ptr<Query> AddTask::getReverse() {
+	return std::unique_ptr<Query>(new DeleteTask(insertedID));
+}
 
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
@@ -60,10 +65,12 @@ void AddTask::makeTransaction(const Task& newTask) const {
 }
 
 Response AddTask::execute(State& state) {
+	auto newId = state.inquireNewID();
 	auto newTask = buildTask(state.inquireNewID());
 	ensureDependencyIsValid();
 	addTaskToState(newTask, state);
 	makeTransaction(newTask);
+	insertedID = newId;
 	return newTask;
 }
 

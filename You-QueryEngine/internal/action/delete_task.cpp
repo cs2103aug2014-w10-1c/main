@@ -7,6 +7,7 @@
 
 #include "../model.h"
 #include "../controller.h"
+#include "add_task.h"
 #include "delete_task.h"
 
 namespace You {
@@ -23,6 +24,12 @@ namespace {
 const std::wstring DeleteTask::logCategory =
 	Query::logCategory + L"[DeleteTask]";
 
+std::unique_ptr<Query> DeleteTask::getReverse() {
+	return std::unique_ptr<Query>(new AddTask(
+		deletedTask.getDescription(), deletedTask.getDeadline(),
+		deletedTask.getPriority(), deletedTask.getDependencies()));
+}
+
 void DeleteTask::makeTransaction() {
 	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"\n")
 		% logCategory % id).str();
@@ -32,6 +39,7 @@ void DeleteTask::makeTransaction() {
 }
 
 Response DeleteTask::execute(State& state) {
+	deletedTask = state.get().graph().getTask(id);
 	Controller::Graph::deleteTask(state.graph(), this->id);
 	makeTransaction();
 	return this->id;

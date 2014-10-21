@@ -33,6 +33,9 @@ public:
 	virtual ~UpdateTask() = default;
 
 protected:
+	/// The reverse of updating is returning the original value.
+	std::unique_ptr<Query> getReverse() override;
+
 	static const std::wstring logCategory;
 
 private:
@@ -49,7 +52,9 @@ private:
 	const Task::Priority priority = Task::DEFAULT_PRIORITY;  ///< Priority.
 	const Task::Dependencies dependencies =
 		Task::DEFAULT_DEPENDENCIES;  ///< Dependencies.
-	const bool completed = false;  ///< Completed
+	const bool completed = false;  ///< Completed.
+	/// The previous state of the task.
+	Task previous;
 };
 
 }  // namespace Action

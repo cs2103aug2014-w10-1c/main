@@ -47,7 +47,7 @@ class Query {
 
 protected:
 	/// Get the reverse of this query for undo.
-	std::unique_ptr<Query> getReverse();
+	virtual std::unique_ptr<Query> getReverse();
 
 	/// String appended before each log message.
 	static const std::wstring logCategory;

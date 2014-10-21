@@ -70,7 +70,17 @@ QueryEngine::Undo() {
 }
 
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
-	return query->execute(Internal::State::get());
+	Response response;
+	bool hasUndo = true;
+	response = query->execute(Internal::State::get());
+	std::unique_ptr<Query> reverse;
+	try {
+		reverse = query->getReverse();
+		Internal::State::get().undoStack().emplace(std::move(reverse));
+	} catch (const Exception::NotUndoAbleException&) {
+		hasUndo = false;
+	}
+	return response;
 }
 
 }  // namespace QueryEngine
