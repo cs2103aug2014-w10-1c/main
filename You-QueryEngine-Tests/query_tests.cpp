@@ -96,6 +96,7 @@ TEST_CLASS(QueryEngineTests) {
 			auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 });
 			QueryEngine::executeQuery(std::move(query));
 		});
+		Assert::AreEqual(0, Internal::State::get().graph().getTaskCount());
 		Internal::State::clear();
 	}
 

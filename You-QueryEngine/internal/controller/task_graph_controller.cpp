@@ -60,18 +60,7 @@ void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
 }
 
 void TGC::addDependency(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
-	try {
-		boost::add_edge(g.graph[cid], g.graph[pid], g.graph);
-		CycleDetector cycleDetector;
-		boost::depth_first_search(g.graph, boost::visitor(cycleDetector));
-		if (cycleDetector.hasCycle()) {
-			throw Exception::CircularDependencyException();
-		}
-	} catch (const Exception::CircularDependencyException& e) {
-		boost::remove_edge(g.graph[cid], g.graph[pid], g.graph);
-		deleteTask(g, pid);
-		throw Exception::CircularDependencyException();
-	}
+	boost::add_edge(g.graph[cid], g.graph[pid], g.graph);
 }
 
 void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
@@ -99,7 +88,7 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 	auto found = g.taskTable.find(task.getID());
 	if (found != g.taskTable.end()) {
 		found->second = task;
-		rebuildGraph(g);
+		CycleDetector detector;
 	} else {
 		throw Exception::TaskNotFoundException();
 	}
