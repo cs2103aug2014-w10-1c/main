@@ -22,5 +22,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/visitors.hpp>
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_

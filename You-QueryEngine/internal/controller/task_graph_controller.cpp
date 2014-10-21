@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <boost/graph/topological_sort.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 #include "task_serializer.h"
@@ -37,7 +37,7 @@ bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
 	bool isExist = true;
 	try {
 		graph.getTask(id);
-	} catch (const Exception::TaskNotFoundException& e) {
+	} catch (const Exception::TaskNotFoundException&) {
 		isExist = false;
 	}
 	return isExist;
@@ -86,8 +86,22 @@ void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
 void TGC::updateTask(TaskGraph& g, const Task& task) {
 	auto found = g.taskTable.find(task.getID());
 	if (found != g.taskTable.end()) {
-		found->second = task;
-		CycleDetector detector;
+		bool dependencyIsChanged =
+			task.getDependencies() != (found->second).getDependencies();
+		if (dependencyIsChanged) {
+			auto backup = found->second;
+			found->second = task;
+			CycleDetector detector;
+			rebuildGraph(g);
+			boost::depth_first_search(g.graph, boost::visitor(detector));
+			if (detector.hasCycle) {
+				found->second = backup;
+				rebuildGraph(g);
+				throw Exception::CircularDependencyException();
+			}
+		} else {
+			found->second = task;
+		}
 	} else {
 		throw Exception::TaskNotFoundException();
 	}
@@ -99,6 +113,12 @@ void TGC::rebuildGraph(TaskGraph& g) {
 		++pair) {
 		Vertex v = boost::add_vertex(g.graph);
 		g.graph[v] = pair->first;
+	}
+	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
+		++pair) {
+		for (const auto& cid : (pair->second).getDependencies()) {
+			boost::add_edge(cid, pair->first, g.graph);
+		}
 	}
 }
 

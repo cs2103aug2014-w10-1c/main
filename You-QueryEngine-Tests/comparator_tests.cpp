@@ -47,7 +47,7 @@ TEST_CLASS(ComparatorTests) {
 		std::sort(t.begin(), t.end(), Comparator::byDescription());
 		Assert::IsTrue(std::is_sorted(t.begin(), t.end(),
 			[] (Task& lhs, Task& rhs) {
-				return lhs.getDescription() < lhs.getDescription();
+				return lhs.getDescription() < rhs.getDescription();
 			}));
 	}
 

@@ -6,6 +6,7 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
 #define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
 
+#include <boost/config.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include "../exception.h"
@@ -56,15 +57,10 @@ public:
 private:
 	/// Visitor to find back edge in the graph during
 	/// dfs (hence there is a cycle).
-	class CycleDetector : public boost::dfs_visitor<> {
-	public:
-		inline bool hasCycle() { return cycleDetected; }
-		template <class TEdge, class TGraph>
-		void back_edge(TEdge, TGraph&) {
-			cycleDetected = true;
-		}
-	private:
-		bool cycleDetected = false;
+	struct CycleDetector : public boost::dfs_visitor<> {
+		template <class Edge, class Graph>
+		void back_edge(Edge, Graph&) { hasCycle = true; }
+		bool hasCycle = false;
 	};
 
 private:
