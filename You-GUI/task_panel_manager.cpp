@@ -155,13 +155,13 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	}
 
 	// Insert dependencies
-	std::wstringstream ss;
+	std::ostringstream ss;
 	if (task.getDependencies().size() != 0) {
-		ss << task.getDependencies().at(0);
-		for (int i = 1; i < task.getDependencies().size(); i++) {
-			ss << ", " << task.getDependencies().at(i);
-		}
-		result.push_back(QString::fromStdWString(ss.str()));
+		Task::Dependencies dependencies = task.getDependencies();
+		std::copy(dependencies.begin(), dependencies.end() - 1,
+			std::ostream_iterator<Task::ID>(ss, ", "));
+		ss << dependencies.back();
+		result.push_back(QString::fromStdString(ss.str()));
 	} else {
 		result.push_back("None");
 	}
@@ -178,34 +178,21 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	Task::Time now = boost::posix_time::second_clock::local_time();
-
-	if (deadline < now) {
-		return true;
-	} else {
-		return false;
-	}
+	return deadline < now;
 }
 
 bool MainWindow::TaskPanelManager::isDueAfter(
 		Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
 	Date today = boost::gregorian::day_clock::local_day();
-	if (by.modjulian_day() - today.modjulian_day() == daysLeft) {
-		return true;
-	} else {
-		return false;
-	}
+	return by.modjulian_day() - today.modjulian_day() == daysLeft;
 }
 
 bool MainWindow::TaskPanelManager::isDueWithin(
 	Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());
 	Date today = boost::gregorian::day_clock::local_day();
-	if (by.julian_day() - today.julian_day() < daysLeft) {
-		return true;
-	} else {
-		return false;
-	}
+	return by.julian_day() - today.julian_day() < daysLeft;
 }
 
 void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {

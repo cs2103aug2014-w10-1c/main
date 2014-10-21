@@ -139,13 +139,16 @@ void MainWindow::sendQuery() {
 		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::NLP::ParserException& e) {
-		ui.statusMessage->setText(message);
+		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextRequiredException& e) {
 		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (...) {
+		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	}
 	ui.statusIcon->setPixmap(pixmap);

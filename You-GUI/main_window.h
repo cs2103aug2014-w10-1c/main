@@ -136,6 +136,7 @@ private:
 	static const QString RESOURCE_GREEN;
 	static const QString CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE;
 	static const QString CONTEXT_REQUIRED_MESSAGE;
+	static const QString UNKNOWN_EXCEPTION_MESSAGE;
 
 private slots:
 	/// Sends a query to Controller from the commandInputBox.
