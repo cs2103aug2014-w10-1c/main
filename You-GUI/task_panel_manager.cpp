@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QList>
 #include <QPair>
+#include "boost\algorithm\string\join.hpp"
+#include <boost/range/adaptor/transformed.hpp>
 #include "task_panel_manager.h"
 namespace You {
 namespace GUI {
@@ -157,14 +159,11 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	// Insert dependencies
 	if (task.getDependencies().size() != 0) {
 		Task::Dependencies dependencies = task.getDependencies();
-		std::wstringstream ss;
-		std::wstring comma = L"";
-		for (auto iter = dependencies.begin();
-			iter != dependencies.end(); ++iter) {
-			ss << comma << *iter;
-			comma = L", ";
-		}
-		result.push_back(QString::fromStdWString(ss.str()));
+		std::wstring temp = boost::algorithm::join(dependencies |
+			boost::adaptors::transformed(
+			static_cast<std::wstring(*)(Task::ID)>(std::to_wstring)),
+			L", ");
+		result.push_back(boost::lexical_cast<QString>(temp));
 	} else {
 		result.push_back("None");
 	}
