@@ -2,15 +2,21 @@
 #include "stdafx.h"
 #include <QtWidgets/QApplication>
 #include "../You-GUI/main_window.h"
+#include "../You-GUI/window_title.h"
+#include "windows.h"
 
 int main(int argc, char *argv[]) {
-	QSharedMemory shared("QtApplicationUniqueInstanceYouGUI");
-	if (shared.create(512, QSharedMemory::ReadWrite) == false) {
-		exit(0);
+	HANDLE hMutex;
+	hMutex = CreateMutex(NULL, FALSE, TEXT("YouGUIUniqueApplicationInstance"));
+	DWORD m_DwLastError = GetLastError();
+	if (m_DwLastError == ERROR_ALREADY_EXISTS) {
+		HWND hwnd = FindWindow(NULL, WINDOW_TITLE.c_str());
+		SetForegroundWindow(hwnd);
+		return 0;
+	} else {
+		QApplication a(argc, argv);
+		You::GUI::MainWindow w;
+		w.show();
+		return a.exec();
 	}
-
-	QApplication a(argc, argv);
-	You::GUI::MainWindow w;
-	w.show();
-	return a.exec();
 }

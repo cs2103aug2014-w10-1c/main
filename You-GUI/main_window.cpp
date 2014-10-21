@@ -3,6 +3,7 @@
 #include <functional>
 #include <QApplication>
 #include <QList>
+#include "window_title.h"
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
@@ -30,10 +31,11 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.setupUi(this);
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
+	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
+	sm->setup();
 	stm->setup();
 	qm->setup();
 	tpm->setup();
-	sm->setup();
 	initializeAllTimerNotifications();
 
 	ui.commandTextBox->installEventFilter(this);
