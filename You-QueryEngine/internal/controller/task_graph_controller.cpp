@@ -53,14 +53,13 @@ void TGC::addTask(TaskGraph& g, const Task& task) {
 }
 
 void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
-	for (auto cid = std::cbegin(task.getDependencies());
-		 cid != std::cend(task.getDependencies()); ++cid) {
-		 addDependency(g, task.getID(), *cid);
+	for (const auto& cid : task.getDependencies()) {
+		 addDependency(g, task.getID(), cid);
 	}
 }
 
 void TGC::addDependency(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
-	boost::add_edge(g.graph[cid], g.graph[pid], g.graph);
+	boost::add_edge(cid, pid, g.graph);
 }
 
 void TGC::deleteTask(TaskGraph& g, const Task::ID id) {

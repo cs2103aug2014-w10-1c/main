@@ -100,6 +100,28 @@ TEST_CLASS(QueryEngineTests) {
 		Internal::State::clear();
 	}
 
+	TEST_METHOD(addTaskWithValidDependency) {
+		Internal::State::clear();
+		Task::ID insertedID;
+		#pragma region Add a task
+		; {
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			insertedID = boost::get<Task>(response).getID();
+		}
+		#pragma endregion
+
+		#pragma region Add a task that depends on that task
+		; {
+			auto query = QueryEngine::AddTask(desc, dead, prio, { insertedID });
+			QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
+		Internal::State::clear();
+	}
+
 	TEST_METHOD(executeEditQuery) {
 		Internal::State::clear();
 
