@@ -18,7 +18,7 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
-	static void clearDataStoreState() {
+	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		DataStore::get().document.reset();
 		DataStore::get().saveData();
 	}
@@ -42,8 +42,6 @@ public:
 	}
 
 	TEST_METHOD(commitChangesXmlDocumentTree) {
-		clearDataStoreState();
-
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
 		sut.post(10, task1);
@@ -71,7 +69,6 @@ public:
 	}
 
 	TEST_METHOD(getAllTasksFromTree) {
-		clearDataStoreState();
 		DataStore& sut = DataStore::get();
 
 		// Create mock
@@ -83,7 +80,6 @@ public:
 	}
 
 	TEST_METHOD(getAllTaskFromFile) {
-		clearDataStoreState();
 		DataStore& sut = DataStore::get();
 
 		// Create mock
@@ -97,7 +93,6 @@ public:
 	}
 
 	TEST_METHOD(saveAndLoadTheSameThing) {
-		clearDataStoreState();
 		DataStore& sut = DataStore::get();
 
 		sut.document.append_child(L"task").
