@@ -46,6 +46,11 @@ public:
 	static Filter dueThisWeek();
 	/// Filter tasks that does not have deadline set (i.e never)
 	static Filter dueNever();
+	/// Filter tasks that due before a date
+	/// Date is assumed valid
+	static Filter dueBefore(std::int16_t year, std::int16_t month,
+		std::int16_t day, std::int16_t hour, std::int16_t minute,
+		std::int16_t seconds);
 
 	/// Compose using AND operation with another filter
 	/// \param[in] filter Filter object to combine with.

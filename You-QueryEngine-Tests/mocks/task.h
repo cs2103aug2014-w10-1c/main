@@ -40,6 +40,9 @@ namespace UnitTests {
 	extern Task DUE_THIS_MONTH();
 	extern Task DUE_THIS_WEEK();
 	extern Task DUE_TODAY();
+	extern Task DUE_ON_CHRISTMAS();
+	extern Task DUE_BEFORE_CHRISTMAS();
+	extern Task DUE_AFTER_CHRISTMAS();
 
 /// @}
 

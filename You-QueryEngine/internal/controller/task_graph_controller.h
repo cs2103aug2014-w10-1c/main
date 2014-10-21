@@ -61,6 +61,7 @@ private:
 		template <class Edge, class Graph>
 		void back_edge(Edge, Graph&) { hasCycle = true; }
 		bool& hasCycle;
+		CycleDetector& operator=(const CycleDetector&) = delete;
 	};
 
 private:
