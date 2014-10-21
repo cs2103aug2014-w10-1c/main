@@ -19,6 +19,9 @@ State& State::get() {
 
 void State::clear() {
 	get().innerGraph = TaskGraph();
+	while (!get().undoStack().empty()) {
+		get().undoStack().pop();
+	}
 }
 
 Task::ID State::inquireNewID() {

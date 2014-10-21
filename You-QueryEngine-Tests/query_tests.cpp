@@ -214,6 +214,110 @@ TEST_CLASS(QueryEngineTests) {
 		Internal::State::clear();
 	}
 
+	TEST_METHOD(undoAddQuery) {
+		Internal::State::clear();
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Undo Last action
+		{  // NOLINT
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(0));
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			0);
+
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(undoDeleteQuery) {
+		Internal::State::clear();
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Delete one task
+		{  // NOLINT
+			auto query = QueryEngine::DeleteTask(task.getID());
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(2));
+
+		#pragma region Undo last action
+		{  // NOLINT
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(), 1);
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(undoUpdateQuery) {
+		Internal::State::clear();
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT
+			auto query = QueryEngine::AddTask(desc, dead, prio, dep);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Update one task
+		{  // NOLINT
+			auto query = QueryEngine::UpdateTask(task.getID(),
+				L"De geso", task.getDeadline(), task.getPriority(),
+				task.getDependencies());
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(2));
+
+		#pragma region Undo last action
+		{  // NOLINT
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+		Assert::AreEqual(Internal::State::get().graph().getTask(task.getID())
+			.getDescription(), task.getDescription());
+
+		Internal::State::clear();
+	}
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

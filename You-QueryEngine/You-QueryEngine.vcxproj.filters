@@ -31,6 +31,12 @@
     <Filter Include="Header Files\internal\controller">
       <UniqueIdentifier>{ae690d2f-a6f0-4310-b0fc-db2f8672bca7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\internal\model">
+      <UniqueIdentifier>{95676204-54fd-4fc3-8b88-ecbc1e011615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\controller">
+      <UniqueIdentifier>{165dced8-06b3-45e2-90a0-ce96a5f9df20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -101,12 +107,6 @@
     <ClCompile Include="filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\controller\task_serializer.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\controller\task_builder.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\action\add_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
@@ -116,15 +116,6 @@
     <ClCompile Include="internal\action\update_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
-    <ClCompile Include="internal\controller\task_graph_controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\model\state.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\model\task_graph.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\action\get_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
@@ -133,6 +124,21 @@
     </ClCompile>
     <ClCompile Include="internal\action\undo.cpp">
       <Filter>Source Files\internal\action</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_builder.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_serializer.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\state.cpp">
+      <Filter>Source Files\internal\model</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_graph_controller.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\task_graph.cpp">
+      <Filter>Source Files\internal\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -66,7 +66,7 @@ void AddTask::makeTransaction(const Task& newTask) const {
 
 Response AddTask::execute(State& state) {
 	auto newId = state.inquireNewID();
-	auto newTask = buildTask(state.inquireNewID());
+	auto newTask = buildTask(newId);
 	ensureDependencyIsValid();
 	addTaskToState(newTask, state);
 	makeTransaction(newTask);
