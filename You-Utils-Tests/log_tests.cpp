@@ -57,6 +57,10 @@ TEST_CLASS(LogTests) {
 		Log::setLogLevel(LogSeverity::DEBUG);
 	}
 
+	TEST_METHOD(defaultLogSink) {
+		Log::debug[L"category"] << L"test";
+	}
+
 	TEST_METHOD(basicLogging) {
 		std::shared_ptr<LogTesterSink> tester(
 			std::make_shared<LogTesterSink>(LogSeverity::DEBUG, L"", L"lol2"));

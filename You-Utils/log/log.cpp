@@ -29,9 +29,6 @@ void Log::write(
 	}
 }
 
-}  // namespace Utils
-}  // namespace You
-
 namespace {
 
 /// The format for debug messages.
@@ -68,3 +65,5 @@ public:
 SetDefaultLogger setDefault;
 
 }  // namespace
+}  // namespace Utils
+}  // namespace You

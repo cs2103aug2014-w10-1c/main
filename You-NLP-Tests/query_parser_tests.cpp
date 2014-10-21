@@ -142,8 +142,8 @@ public:
 
 		// Boundary case: nonzero filter, nonzero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
-			L"priority<\'high\' order by description descending, "
-			L"priority");
+			L"priority<\'high\', priority>\'normal\', deadline>=\'3 oct\', "
+			L"deadline<=\'7 oct\' order by description descending, priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{
@@ -156,6 +156,21 @@ public:
 					TaskField::PRIORITY,
 					SHOW_QUERY::Predicate::LESS_THAN,
 					L"high"
+				},
+				{
+					TaskField::PRIORITY,
+					SHOW_QUERY::Predicate::GREATER_THAN,
+					L"normal"
+				},
+				{
+					TaskField::DEADLINE,
+					SHOW_QUERY::Predicate::GREATER_THAN_EQ,
+					L"3 oct"
+				},
+				{
+					TaskField::DEADLINE,
+					SHOW_QUERY::Predicate::LESS_THAN_EQ,
+					L"7 oct"
 				}
 			},
 			{
