@@ -57,6 +57,22 @@ TEST_CLASS(ShowQueryTests) {
 			Utils::make_option<std::wstring>(L"")
 		});
 		Assert::AreNotEqual(DUMMY, local);
+
+		SHOW_QUERY local2 = local;
+		local2.predicates.push_back(local2.predicates[0]);
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].field = TaskField::PRIORITY;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].predicate = SHOW_QUERY::Predicate::GREATER_THAN;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].value = std::wstring(L"not empty");
+		Assert::AreNotEqual(local, local2);
 	}
 
 private:
