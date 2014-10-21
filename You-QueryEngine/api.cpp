@@ -8,6 +8,7 @@
 #include "internal/action/get_task.h"
 #include "internal/action/delete_task.h"
 #include "internal/action/update_task.h"
+#include "internal/action/undo.h"
 #include "internal/model.h"
 #include "api.h"
 
@@ -55,6 +56,12 @@ std::unique_ptr<Query>
 QueryEngine::UpdateTask(Task::ID id, bool completed) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, completed));
+}
+
+std::unique_ptr<Query>
+QueryEngine::Undo() {
+	using Undo = Internal::Action::Undo;
+	return std::unique_ptr<Query>(new Undo());
 }
 
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
