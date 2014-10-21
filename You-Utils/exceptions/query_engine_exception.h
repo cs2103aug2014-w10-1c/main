@@ -32,6 +32,11 @@ class TaskNotFoundException : public BaseException {
 class CircularDependencyException : public BaseException {
 };
 
+/// An exception thrown when trying to undo an undoable
+/// query (e.g GetTask)
+class NotUndoAbleException : public BaseException {
+};
+
 }  // namespace Exception
 }  // namespace QueryEngine
 }  // namespace You

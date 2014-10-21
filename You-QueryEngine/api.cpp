@@ -18,6 +18,11 @@ namespace QueryEngine {
 const std::wstring Query::logCategory = L"[QE]";
 
 std::unique_ptr<Query>
+Query::getReverse() {
+	throw Exception::NotUndoAbleException();
+}
+
+std::unique_ptr<Query>
 QueryEngine::AddTask(Task::Description description, Task::Time deadline,
 	Task::Priority priority, Task::Dependencies dependencies) {
 	using AddTask = Internal::Action::AddTask;
