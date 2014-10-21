@@ -72,72 +72,36 @@ public:
 		Internal::PostOperation post(1, task2);
 		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
-
-		// Check the content
-		/*pugi::xml_node taskNode = document.child(L"task");
-		Assert::AreEqual(task1.at(TASK_ID).c_str(),
-			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
-			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEADLINE).c_str(),
-			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(task1.at(PRIORITY).c_str(),
-			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
-			taskNode.child(DEPENDENCIES.c_str()).child_value());*/
 	}
 
 	TEST_METHOD(postWithUsedId) {
 		Internal::PostOperation post(0, task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
-
-		// Check the content
-		/*pugi::xml_node taskNode = mockDocument.child(L"task");
-		Assert::IsTrue(taskNode.first_child().empty());*/
 	}
 
 	TEST_METHOD(putWithExistingId) {
 		Internal::PutOperation put(0, task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
-
-		// Check the content
-		pugi::xml_node taskNode = mockDocument.child(L"task");
-		Assert::AreEqual(task1.at(TASK_ID).c_str(),
-			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
-			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEADLINE).c_str(),
-			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(task1.at(PRIORITY).c_str(),
-			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
-			taskNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
 	TEST_METHOD(putNonExistentId) {
 		Internal::PutOperation put(1, task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
-
-		// Check the content
-		/*pugi::xml_node taskNode = mockDocument.child(L"task");
-		Assert::AreEqual(L"0", taskNode.attribute(L"id").value());*/
 	}
 
 	TEST_METHOD(eraseExistingId) {
 		Internal::EraseOperation erase(0);
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
-		/*Assert::IsTrue(mockDocument.first_child().empty());*/
 	}
 
 	TEST_METHOD(eraseNonExistentId) {
 		Internal::EraseOperation erase(1);
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
-		Assert::IsFalse(mockDocument.first_child().empty());
 	}
 };
 }  // namespace UnitTests
