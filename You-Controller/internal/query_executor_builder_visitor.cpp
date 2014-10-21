@@ -81,7 +81,7 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 
 	std::for_each(begin(query.order), end(query.order),
 		[&comparator](const SHOW_QUERY::FIELD_ORDER& field) {
-		Comparator comp(Comparator::notSorted());
+			Comparator comp(Comparator::notSorted());
 			switch (field.field) {
 			case TaskField::DESCRIPTION:
 				comp = Comparator::byDescription();
