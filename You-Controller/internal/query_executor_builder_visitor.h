@@ -61,6 +61,12 @@ private:
 	std::unique_ptr<QueryExecutor>
 		build(const You::NLP::DELETE_QUERY& query) const;
 
+	/// Builds a query engine query from the given undo syntax tree.
+	///
+	/// \param[in] query The syntax tree to build a query from.
+	std::unique_ptr<QueryExecutor>
+		build(const You::NLP::UNDO_QUERY& query) const;
+
 private:
 	/// The context for the query.
 	You::Controller::Controller::Context context;

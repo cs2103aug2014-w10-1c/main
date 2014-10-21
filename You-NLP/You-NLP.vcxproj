@@ -91,6 +91,7 @@
     <ClInclude Include="parse_tree\show_query.h" />
     <ClInclude Include="parse_tree\task_field.h" />
     <ClInclude Include="parse_tree\task_priority.h" />
+    <ClInclude Include="parse_tree\undo_query.h" />
     <ClInclude Include="query_parser.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -102,6 +103,7 @@
     <ClCompile Include="parse_tree\edit_query.cpp" />
     <ClCompile Include="parse_tree\show_query.cpp" />
     <ClCompile Include="parse_tree\task_field.cpp" />
+    <ClCompile Include="parse_tree\undo_query.cpp" />
     <ClCompile Include="query_parser.cpp" />
     <ClCompile Include="query_parser_actions.cpp" />
     <ClCompile Include="stdafx.cpp">

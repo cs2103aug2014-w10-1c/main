@@ -9,6 +9,7 @@
 #include "parse_tree/show_query.h"
 #include "parse_tree/edit_query.h"
 #include "parse_tree/delete_query.h"
+#include "parse_tree/undo_query.h"
 #include "parse_tree/task_priority.h"
 
 namespace You {
@@ -19,7 +20,8 @@ typedef boost::variant<
 	ADD_QUERY,
 	SHOW_QUERY,
 	EDIT_QUERY,
-	DELETE_QUERY
+	DELETE_QUERY,
+	UNDO_QUERY
 > QUERY;
 
 }  // namespace NLP

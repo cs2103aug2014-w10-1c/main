@@ -16,6 +16,7 @@ using You::NLP::ADD_QUERY;
 using You::NLP::SHOW_QUERY;
 using You::NLP::EDIT_QUERY;
 using You::NLP::DELETE_QUERY;
+using You::NLP::UNDO_QUERY;
 
 QueryExecutorBuilderVisitor::QueryExecutorBuilderVisitor(
 	const Controller::Context& context)
@@ -189,6 +190,11 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
+}
+
+std::unique_ptr<QueryExecutor>
+QueryExecutorBuilderVisitor::build(const UNDO_QUERY& query) const {
+	return nullptr;
 }
 
 }  // namespace Internal
