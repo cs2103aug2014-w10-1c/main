@@ -69,7 +69,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 
 	TEST_METHOD(getNonExistingTaskFromGraph) {
 		using Exception::TaskNotFoundException;
-		Assert::ExpectException<TaskNotFoundException>([=] {
+		Assert::ExpectException<TaskNotFoundException>([] {
 			TaskGraph graph;
 			graph.getTask(10L);
 		});
@@ -99,7 +99,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 		Task willFail = Controller::Builder::get()
 			.id(10L).description(L"Hello Marnie").dependencies({ secondTask.getID() });
 
-		Assert::ExpectException<Exception::CircularDependencyException>([&] {
+		Assert::ExpectException<Exception::CircularDependencyException>([&graph, &willFail] {
 			Controller::Graph::updateTask(graph, willFail);
 		});
 	}
@@ -107,7 +107,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 	TEST_METHOD(updateNonExistingTaskInGraph) {
 		using Exception::TaskNotFoundException;
 		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
-		Assert::ExpectException<TaskNotFoundException>([=] {
+		Assert::ExpectException<TaskNotFoundException>([t] {
 			TaskGraph graph;
 			Controller::Graph::updateTask(graph, t);
 		});

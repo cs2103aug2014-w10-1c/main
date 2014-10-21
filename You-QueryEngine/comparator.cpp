@@ -60,7 +60,7 @@ bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 void Comparator::negateAllComparators() {
 	std::vector<const ComparatorFunc> newComparators;
 	std::for_each(comparators.cbegin(), comparators.cend(),
-		[&] (const ComparatorFunc& func) {
+		[this, &newComparators] (const ComparatorFunc& func) {
 			newComparators.push_back(this->negate(func));
 		}
 	);
@@ -90,7 +90,7 @@ Comparator& Comparator::operator&&(const Comparator& rhs) {
 }
 
 Comparator::ComparatorFunc Comparator::negate(const ComparatorFunc& comp) {
-	return [=] (const Task& lhs, const Task& rhs) {
+	return [comp] (const Task& lhs, const Task& rhs) {
 		ComparisonResult result = comp(lhs, rhs);
 		if (result == ComparisonResult::LT) {
 			return ComparisonResult::GT;

@@ -96,9 +96,10 @@ Filter Filter::dueNever() {
 Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 	std::int16_t day, std::int16_t hour, std::int16_t minute,
 	std::int16_t seconds) {
-	return Filter([=] (const Task& task) {
-		return task.getDeadline() < ptime(date(year, month, day),
+	auto due = ptime(date(year, month, day),
 			time_duration(hour, minute, seconds));
+	return Filter([due] (const Task& task) {
+		return task.getDeadline() < due;
 	});
 }
 
@@ -124,19 +125,19 @@ bool Filter::operator()(const Task& task) const {
 }
 
 Filter::FFilter Filter::AND(const FFilter& f, const FFilter& g) {
-	return [=] (FFilter::argument_type x) {
+	return [f, g] (FFilter::argument_type x) {
 		return f(x) && g(x);
 	};
 }
 
 Filter::FFilter Filter::OR(const FFilter& f, const FFilter& g) {
-	return [=] (FFilter::argument_type x) {
+	return [f, g] (FFilter::argument_type x) {
 		return f(x) || g(x);
 	};
 }
 
 Filter::FFilter Filter::NOT(const FFilter& f) {
-	return [=] (FFilter::argument_type x) {
+	return [f] (FFilter::argument_type x) {
 		return !f(x);
 	};
 }

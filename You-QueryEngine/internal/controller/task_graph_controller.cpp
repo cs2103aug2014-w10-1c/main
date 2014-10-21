@@ -26,7 +26,7 @@ Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	auto serialized =
 		You::DataStore::DataStore::get().getAllTasks();
 	std::for_each(serialized.cbegin(), serialized.cend(),
-		[&] (const TaskSerializer::STask task) {
+		[&graph, &maxID] (const TaskSerializer::STask task) {
 		auto t = TaskSerializer::deserialize(task);
 		addTask(graph, t);
 		maxID = std::max(t.getID(), maxID);

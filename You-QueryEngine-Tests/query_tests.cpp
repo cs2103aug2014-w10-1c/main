@@ -92,8 +92,8 @@ TEST_CLASS(QueryEngineTests) {
 
 	TEST_METHOD(addTaskWithInvalidDependency) {
 		Internal::State::clear();
-		Assert::ExpectException<Exception::TaskNotFoundException>([=] {
-			auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 });
+		auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 });
+		Assert::ExpectException<Exception::TaskNotFoundException>([&query] {
 			QueryEngine::executeQuery(std::move(query));
 		});
 		Assert::AreEqual(0, Internal::State::get().graph().getTaskCount());

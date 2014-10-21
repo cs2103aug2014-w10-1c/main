@@ -34,7 +34,7 @@ Task AddTask::buildTask(const Task::ID newID) {
 
 void AddTask::ensureDependencyIsValid() const {
 	std::for_each(dependencies.cbegin(), dependencies.cend(),
-		[=](const Task::ID& id) {
+		[] (const Task::ID& id) {
 			if (!Controller::Graph::isTaskExist(
 					State::get().graph(), id)) {
 				throw Exception::TaskNotFoundException();
