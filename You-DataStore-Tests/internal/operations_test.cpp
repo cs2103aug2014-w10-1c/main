@@ -43,42 +43,38 @@ public:
 	}
 
 	TEST_METHOD(serializeOperation) {
-		pugi::xml_document document;
-		pugi::xml_node taskNode = document.append_child();
-		Internal::SerializationOperation::serialize(task1, taskNode);
-
-		Assert::AreEqual(task1.at(TASK_ID).c_str(),
-			taskNode.child(TASK_ID.c_str()).child_value());
-		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
-			taskNode.child(DESCRIPTION.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEADLINE).c_str(),
-			taskNode.child(DEADLINE.c_str()).child_value());
-		Assert::AreEqual(task1.at(PRIORITY).c_str(),
-			taskNode.child(PRIORITY.c_str()).child_value());
-		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
-			taskNode.child(DEPENDENCIES.c_str()).child_value());
+		pugi::xml_node newNode = mockDocument.append_child(L"new");
+		Internal::SerializationOperation::serialize(task2, newNode);
+		Assert::AreEqual(task2.at(TASK_ID).c_str(),
+			newNode.child(TASK_ID.c_str()).child_value());
+		Assert::AreEqual(task2.at(DESCRIPTION).c_str(),
+			newNode.child(DESCRIPTION.c_str()).child_value());
+		Assert::AreEqual(task2.at(DEADLINE).c_str(),
+			newNode.child(DEADLINE.c_str()).child_value());
+		Assert::AreEqual(task2.at(PRIORITY).c_str(),
+			newNode.child(PRIORITY.c_str()).child_value());
+		Assert::AreEqual(task2.at(DEPENDENCIES).c_str(),
+			newNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
 	TEST_METHOD(deserializeOperation) {
-		pugi::xml_document document;
-		pugi::xml_node taskNode = document.append_child();
-		taskNode.append_child(L"elementName").
-			append_child(pugi::xml_node_type::node_pcdata).set_value(L"pcdata");
+		using SerializationOperation = Internal::SerializationOperation;
 		SerializedTask task =
-			Internal::SerializationOperation::deserialize(taskNode);
-		Assert::AreEqual(L"pcdata", task.at(L"elementName").c_str());
+			SerializationOperation::deserialize(mockDocument.first_child());
+		Assert::AreEqual(task1.at(TASK_ID), task.at(TASK_ID));
+		Assert::AreEqual(task1.at(DESCRIPTION), task.at(DESCRIPTION));
+		Assert::AreEqual(task1.at(DEADLINE), task.at(DEADLINE));
+		Assert::AreEqual(task1.at(PRIORITY), task.at(PRIORITY));
+		Assert::AreEqual(task1.at(DEPENDENCIES), task.at(DEPENDENCIES));
 	}
 
 	TEST_METHOD(postWithNewId) {
-		pugi::xml_document document;
-		Assert::IsTrue(document.first_child().empty());
-
-		Internal::PostOperation post(0, task1);
-		bool status = post.run(document);
+		Internal::PostOperation post(1, task2);
+		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
 
 		// Check the content
-		pugi::xml_node taskNode = document.child(L"task");
+		/*pugi::xml_node taskNode = document.child(L"task");
 		Assert::AreEqual(task1.at(TASK_ID).c_str(),
 			taskNode.child(TASK_ID.c_str()).child_value());
 		Assert::AreEqual(task1.at(DESCRIPTION).c_str(),
@@ -88,22 +84,20 @@ public:
 		Assert::AreEqual(task1.at(PRIORITY).c_str(),
 			taskNode.child(PRIORITY.c_str()).child_value());
 		Assert::AreEqual(task1.at(DEPENDENCIES).c_str(),
-			taskNode.child(DEPENDENCIES.c_str()).child_value());
+			taskNode.child(DEPENDENCIES.c_str()).child_value());*/
 	}
 
 	TEST_METHOD(postWithUsedId) {
-		initializeMockDocument();
 		Internal::PostOperation post(0, task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 
 		// Check the content
-		pugi::xml_node taskNode = mockDocument.child(L"task");
-		Assert::IsTrue(taskNode.first_child().empty());
+		/*pugi::xml_node taskNode = mockDocument.child(L"task");
+		Assert::IsTrue(taskNode.first_child().empty());*/
 	}
 
 	TEST_METHOD(putWithExistingId) {
-		initializeMockDocument();
 		Internal::PutOperation put(0, task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
@@ -123,26 +117,23 @@ public:
 	}
 
 	TEST_METHOD(putNonExistentId) {
-		initializeMockDocument();
 		Internal::PutOperation put(1, task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 
 		// Check the content
-		pugi::xml_node taskNode = mockDocument.child(L"task");
-		Assert::AreEqual(L"0", taskNode.attribute(L"id").value());
+		/*pugi::xml_node taskNode = mockDocument.child(L"task");
+		Assert::AreEqual(L"0", taskNode.attribute(L"id").value());*/
 	}
 
 	TEST_METHOD(eraseExistingId) {
-		initializeMockDocument();
 		Internal::EraseOperation erase(0);
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
-		Assert::IsTrue(mockDocument.first_child().empty());
+		/*Assert::IsTrue(mockDocument.first_child().empty());*/
 	}
 
 	TEST_METHOD(eraseNonExistentId) {
-		initializeMockDocument();
 		Internal::EraseOperation erase(1);
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
