@@ -35,9 +35,7 @@ TEST_CLASS(ShowQueryTests) {
 		SHOW_QUERY local {
 			{},
 			{
-				SHOW_QUERY::FIELD_ORDER {
-					TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING
-				}
+				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING }
 			}
 		};
 
@@ -46,11 +44,19 @@ TEST_CLASS(ShowQueryTests) {
 		local.order[0].field = TaskField::DEADLINE;
 		Assert::AreNotEqual(DUMMY, local);
 
-		SHOW_QUERY local2 = local;
-		local2.order.push_back(SHOW_QUERY::FIELD_ORDER {
+		local = DUMMY;
+		local.order.push_back(SHOW_QUERY::FIELD_ORDER {
 			TaskField::DESCRIPTION
 		});
-		Assert::AreNotEqual(DUMMY, local2);
+		Assert::AreNotEqual(DUMMY, local);
+
+		local = DUMMY;
+		local.predicates.emplace_back(SHOW_QUERY::FIELD_FILTER {
+			TaskField::DESCRIPTION,
+			SHOW_QUERY::Predicate::EQUAL,
+			Utils::make_option<std::wstring>(L"")
+		});
+		Assert::AreNotEqual(DUMMY, local);
 	}
 
 private:

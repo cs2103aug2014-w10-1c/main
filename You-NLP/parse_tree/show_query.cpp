@@ -13,12 +13,31 @@ const boost::wformat STRING_FORMAT(L"Show tasks (criteria %1%, sort by %2%)");
 /// The format for displaying a field change.
 const boost::wformat SORT_FIELD_FORMAT(L"%1% %2%");
 
+/// Joins items together
+const std::wstring LIST_JOIN_SEPARATOR(L", ");
+
+/// None message
+const std::wstring NONE_MESSAGE(L"none");
+
 /// Sorted ascending
-const std::wstring ASCENDING_ORDER(L"ascending");
+const std::wstring ASCENDING_ORDER_MESSAGE(L"ascending");
 
 /// Sorted descending
-const std::wstring DESCENDING_ORDER(L"descending");
+const std::wstring DESCENDING_ORDER_MESSAGE(L"descending");
 
+/// Gets the predicate fields as a string.
+std::wstring getPredicateFieldsAsString(const You::NLP::SHOW_QUERY& q) {
+	std::vector<std::wstring> predicateStrings;
+	predicateStrings.reserve(q.predicates.size());
+
+	if (predicateStrings.empty()) {
+		return NONE_MESSAGE;
+	} else {
+		return boost::algorithm::join(predicateStrings, LIST_JOIN_SEPARATOR);
+	}
+}
+
+/// Gets the sorting fields as a string.
 std::wstring getSortFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 	std::vector<std::wstring> orderStrings;
 	orderStrings.reserve(q.order.size());
@@ -29,10 +48,14 @@ std::wstring getSortFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 			return (boost::wformat(SORT_FIELD_FORMAT) %
 				order.field %
 				(order.order == You::NLP::SHOW_QUERY::Order::ASCENDING ?
-					ASCENDING_ORDER : DESCENDING_ORDER)).str();
+					ASCENDING_ORDER_MESSAGE : DESCENDING_ORDER_MESSAGE)).str();
 		});
 
-	return boost::algorithm::join(orderStrings, L", ");
+	if (orderStrings.empty()) {
+		return NONE_MESSAGE;
+	} else {
+		return boost::algorithm::join(orderStrings, LIST_JOIN_SEPARATOR);
+	}
 }
 
 }  // namespace
@@ -41,9 +64,15 @@ namespace You {
 namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const SHOW_QUERY& q) {
-	std::wstring fields(L"none");
-	return s << (boost::wformat(STRING_FORMAT) % fields %
+	return s << (boost::wformat(STRING_FORMAT) %
+		getPredicateFieldsAsString(q) %
 		getSortFieldsAsString(q));
+}
+
+bool SHOW_QUERY::FIELD_FILTER::operator==(const FIELD_FILTER& rhs) const {
+	return field == rhs.field &&
+		predicate == rhs.predicate &&
+		value == rhs.value;
 }
 
 bool SHOW_QUERY::FIELD_ORDER::operator==(const FIELD_ORDER& rhs) const {
