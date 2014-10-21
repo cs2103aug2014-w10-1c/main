@@ -29,8 +29,6 @@ public:
 	static bool isTaskExist(TaskGraph& graph, const Task::ID id);
 
 	/// Add a task to the graph if it is not exist.
-	/// May throw CircularDependencyException if it
-	/// causes circular dependency.
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] task The task to be added.
 	/// \return true if the task is added, false otherwise.
@@ -47,6 +45,8 @@ public:
 	/// Rebuilds the graph if there is a dependency change.
 	/// May throw \ref Exception::TaskNotFoundException if trying
 	/// to update non existent task.
+	/// May throw CircularDependencyException if it
+	/// causes circular dependency.
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] task The updated task
 	static void updateTask(TaskGraph& graph, const Task& task);

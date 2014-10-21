@@ -90,6 +90,10 @@ public:
 
 	/// Construct mark task as done query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
+
+	/// Construct undo query.
+	static std::unique_ptr<Query> Undo();
+
 	#pragma endregion
 
 public:

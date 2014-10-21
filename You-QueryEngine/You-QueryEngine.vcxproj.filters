@@ -78,6 +78,9 @@
     <ClInclude Include="comparator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="internal\action\undo.h">
+      <Filter>Header Files\internal\action</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="comparator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\undo.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

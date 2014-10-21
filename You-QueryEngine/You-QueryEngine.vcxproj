@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClInclude Include="comparator.h" />
     <ClInclude Include="internal\action\delete_task.h" />
+    <ClInclude Include="internal\action\undo.h" />
     <ClInclude Include="internal\action\update_task.h" />
     <ClInclude Include="internal\action\get_task.h" />
     <ClInclude Include="internal\controller.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="internal\action\add_task.cpp" />
     <ClCompile Include="internal\action\delete_task.cpp" />
     <ClCompile Include="internal\action\get_task.cpp" />
+    <ClCompile Include="internal\action\undo.cpp" />
     <ClCompile Include="internal\action\update_task.cpp" />
     <ClCompile Include="filter.cpp" />
     <ClCompile Include="internal\controller\task_graph_controller.cpp" />
