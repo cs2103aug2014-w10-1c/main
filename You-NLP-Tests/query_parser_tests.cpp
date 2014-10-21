@@ -86,6 +86,7 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQuery) {
+		// Boundary case: one filter, zero sort.
 		QUERY q = QueryParser::parse(L"/show description='\\\\\\'meh'");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
@@ -99,6 +100,27 @@ public:
 			{}
 		}), q);
 
+		// Boundary case: more than one filter, zero sort.
+		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
+			L"priority<\'high\'");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+				{
+					{
+						TaskField::DESCRIPTION,
+						SHOW_QUERY::Predicate::NOT_EQ,
+						L"\\\'meh"
+					},
+					{
+						TaskField::PRIORITY,
+						SHOW_QUERY::Predicate::LESS_THAN,
+						L"high"
+					}
+				},
+				{}
+		}), q);
+
+		// Boundary case: zero filter, one sort.
 		q = QueryParser::parse(L"/show order by description ascending");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
@@ -106,11 +128,36 @@ public:
 			{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 		}), q);
 
+		// Boundary case: zero filter, more than one sort.
 		q = QueryParser::parse(L"/show order by description descending, "
 			L"priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{},
+			{
+				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
+				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
+			}
+		}), q);
+
+		// Boundary case: nonzero filter, nonzero sort.
+		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
+			L"priority<\'high\' order by description descending, "
+			L"priority");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::NOT_EQ,
+					L"\\\'meh"
+				},
+				{
+					TaskField::PRIORITY,
+					SHOW_QUERY::Predicate::LESS_THAN,
+					L"high"
+				}
+			},
 			{
 				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
 				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
