@@ -36,6 +36,11 @@ public:
 	}
 };
 
+template<typename T, typename... ParamTypes>
+inline Option<T> make_option(ParamTypes&&... arguments) {
+	return T(std::forward<ParamTypes>(arguments)...);
+}
+
 }  // namespace Utils
 }  // namespace You
 
