@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include <boost/graph/graphviz.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
@@ -44,8 +45,7 @@ bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
 }
 
 void TGC::addTask(TaskGraph& g, const Task& task) {
-	Vertex v = boost::add_vertex(g.graph);
-	g.graph[v] = task.getID();
+	boost::add_vertex(task.getID(), g.graph);
 	g.taskTable.insert({ task.getID(), task });
 	if (task.getDependencies().size() > 0) {
 		addAllDependencies(g, task);
@@ -91,10 +91,11 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 		if (dependencyIsChanged) {
 			auto backup = found->second;
 			found->second = task;
-			CycleDetector detector;
+			bool hasCycle = false;
+			CycleDetector detector(hasCycle);
 			rebuildGraph(g);
 			boost::depth_first_search(g.graph, boost::visitor(detector));
-			if (detector.hasCycle) {
+			if (hasCycle) {
 				found->second = backup;
 				rebuildGraph(g);
 				throw Exception::CircularDependencyException();

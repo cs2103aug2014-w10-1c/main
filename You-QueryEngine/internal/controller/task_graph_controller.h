@@ -55,12 +55,12 @@ public:
 	static void rebuildGraph(TaskGraph& graph);
 
 private:
-	/// Visitor to find back edge in the graph during
-	/// dfs (hence there is a cycle).
+	/// Visitor to find back edge in the graph during DFS.
 	struct CycleDetector : public boost::dfs_visitor<> {
+		explicit CycleDetector(bool& hasCycle) : hasCycle(hasCycle) {}
 		template <class Edge, class Graph>
 		void back_edge(Edge, Graph&) { hasCycle = true; }
-		bool hasCycle = false;
+		bool& hasCycle;
 	};
 
 private:
