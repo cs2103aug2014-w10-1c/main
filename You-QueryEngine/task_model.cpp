@@ -77,7 +77,7 @@ const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 
-const std::wstring Task::DEADLINE_OVERDUE = L"overdue by %1%";
+const std::wstring Task::DEADLINE_OVERDUE = L"overdue by %1% days";
 const std::wstring Task::DEADLINE_TODAY = L"today";
 const std::wstring Task::DEADLINE_WITHIN_DAYS = L"in %1% days";
 const std::wstring Task::DEADLINE_WITHIN_MONTHS = L"in %1% months";

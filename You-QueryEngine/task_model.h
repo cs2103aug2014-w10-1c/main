@@ -47,13 +47,13 @@ public:
 
 	/// \name Inlined Field Getters.
 	/// @{
-	inline ID getID() const { return id; }
-	inline Description getDescription() const { return description; }
-	inline Time getDeadline() const { return deadline; }
-	inline Dependencies getDependencies() const { return dependencies; }
-	inline Dependencies getChildren() const { return dependencies; }
-	inline Priority getPriority() const { return priority; }
-	inline bool isCompleted() const { return completed; }
+	ID getID() const { return id; }
+	Description getDescription() const { return description; }
+	Time getDeadline() const { return deadline; }
+	Dependencies getDependencies() const { return dependencies; }
+	Dependencies getChildren() const { return dependencies; }
+	Priority getPriority() const { return priority; }
+	bool isCompleted() const { return completed; }
 	/// @}
 
 	/// Check dependency
