@@ -41,7 +41,7 @@ public:
 	typedef int64_t ID;
 	typedef std::wstring Description;
 	typedef boost::posix_time::ptime Time;
-	typedef std::unordered_set<Task::ID> Dependencies;
+	typedef std::set<Task::ID> Dependencies;
 	enum class Priority { NORMAL, HIGH };
 	/// @}
 

@@ -27,6 +27,11 @@ class EmptyTaskDescriptionException : public BaseException {
 class TaskNotFoundException : public BaseException {
 };
 
+/// An exception thrown when dependency of two or more tasks
+/// is circular
+class CircularDependencyException : public BaseException {
+};
+
 }  // namespace Exception
 }  // namespace QueryEngine
 }  // namespace You

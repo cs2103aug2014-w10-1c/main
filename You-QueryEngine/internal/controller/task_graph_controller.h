@@ -6,6 +6,8 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
 #define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
 
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/depth_first_search.hpp>
 #include "../exception.h"
 #include "../model.h"
 
@@ -52,11 +54,25 @@ public:
 	static void rebuildGraph(TaskGraph& graph);
 
 private:
+	/// Visitor to find back edge in the graph during
+	/// dfs (hence there is a cycle).
+	class CycleDetector : public boost::dfs_visitor<> {
+	public:
+		inline bool hasCycle() { return cycleDetected; }
+		template <class TEdge, class TGraph>
+		void back_edge(TEdge, TGraph&) {
+			cycleDetected = true;
+		}
+	private:
+		bool cycleDetected = false;
+	};
+
+private:
 	/// Make task of id parent depends on all task in children.
-	/// Calls connectChild on each task.
+	/// Insert (parent, dependency) edges to the graph.
 	/// \param [out] graph The graph to be modified.
-	/// \param [in] parent The id of the parent task.
-	static void connectChildren(TaskGraph& graph, const Task::ID parent);
+	/// \param [in] parent The parent task.
+	static void addAllDependencies(TaskGraph& graph, const Task& parent);
 
 	/// Make task of id parent depends or sub on child.
 	/// Connect an edge from the child to the parent.
@@ -64,7 +80,7 @@ private:
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] parent The id of the parent vertex.
 	/// \param [in] child The id of the child vertex.
-	static void connectChild(TaskGraph& graph, const Task::ID parent,
+	static void addDependency(TaskGraph& graph, const Task::ID parent,
 		const Task::ID child);
 };
 

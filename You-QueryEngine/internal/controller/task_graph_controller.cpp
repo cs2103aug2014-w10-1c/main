@@ -1,8 +1,12 @@
 #include "stdafx.h"
-#include "task_graph_controller.h"
 
+#include <boost/graph/topological_sort.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/visitors.hpp>
 #include "task_serializer.h"
 #include "../../../You-DataStore/datastore.h"
+
+#include "task_graph_controller.h"
 
 namespace You {
 namespace QueryEngine {
@@ -43,6 +47,29 @@ void TGC::addTask(TaskGraph& g, const Task& task) {
 	Vertex v = boost::add_vertex(g.graph);
 	g.graph[v] = task.getID();
 	g.taskTable.insert({ task.getID(), task });
+	addAllDependencies(g, task);
+}
+
+void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
+	for (auto cid = std::cbegin(task.getDependencies());
+		 cid != std::cend(task.getDependencies()); ++cid) {
+		// addDependency(g, task.getID(), *cid);
+	}
+}
+
+void TGC::addDependency(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
+	try {
+		boost::add_edge(g.graph[cid], g.graph[pid], g.graph);
+		CycleDetector cycleDetector;
+		boost::depth_first_search(g.graph, boost::visitor(cycleDetector));
+		if (cycleDetector.hasCycle()) {
+			throw Exception::CircularDependencyException();
+		}
+	} catch (const Exception::CircularDependencyException& e) {
+		boost::remove_edge(g.graph[cid], g.graph[pid], g.graph);
+		deleteTask(g, pid);
+		throw Exception::CircularDependencyException();
+	}
 }
 
 void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
@@ -63,7 +90,6 @@ void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
 		throw Exception::TaskNotFoundException();
 	} else {
 		g.taskTable.erase(id);
-		rebuildGraph(g);
 	}
 }
 
