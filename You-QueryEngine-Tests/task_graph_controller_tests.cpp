@@ -99,7 +99,8 @@ TEST_CLASS(TaskGraphControllerTests) {
 		Task willFail = Controller::Builder::get()
 			.id(10L).description(L"Hello Marnie").dependencies({ secondTask.getID() });
 
-		Assert::ExpectException<Exception::CircularDependencyException>([&graph, &willFail] {
+		Assert::ExpectException<Exception::CircularDependencyException>(
+			[&graph, &willFail] {
 			Controller::Graph::updateTask(graph, willFail);
 		});
 	}
