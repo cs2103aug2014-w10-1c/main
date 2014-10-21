@@ -87,6 +87,13 @@ struct SHOW_QUERY {
 	std::vector<FIELD_ORDER> order;
 };
 
+/// Defines an output formatter for SHOW_QUERY predicates.
+///
+/// \param[in,out] s The stream to write to.
+/// \param[in] p The predicate to display.
+/// \return The stream object passed to the formatter.
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p);
+
 /// Defines an output formatter for SHOW_QUERY queries.
 ///
 /// \param[in,out] s The stream to write to.

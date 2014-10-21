@@ -13,14 +13,14 @@ TEST_CLASS(ShowQueryTests) {
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			std::wstring(L"Show tasks (criteria none, sort by "
+			std::wstring(L"Show tasks (criteria Description=, sort by "
 				L"Description ascending)"),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			std::wstring(L"Show tasks (criteria none, sort by "
+			std::wstring(L"Show tasks (criteria Description=, sort by "
 				L"Description ascending)"),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
