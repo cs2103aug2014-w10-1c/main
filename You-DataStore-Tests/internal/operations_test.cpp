@@ -19,10 +19,27 @@ static pugi::xml_document mockDocument;
 /// Unit Test Class for DataStore class
 TEST_CLASS(DataStoreOperationsTest) {
 public:
-	static void initializeMockDocument() {
+	/// Create a mock xml_document containing a task with content
+	/// as specified in \ref task1
+	TEST_METHOD_INITIALIZE(initializeMockDocument) {
 		mockDocument.reset();
 		pugi::xml_node node = mockDocument.append_child(L"task");
 		node.append_attribute(L"id").set_value(L"0");
+		node.append_child(TASK_ID.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(TASK_ID).c_str());
+		node.append_child(DESCRIPTION.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DESCRIPTION).c_str());
+		node.append_child(DEADLINE.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DEADLINE).c_str());
+		node.append_child(PRIORITY.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(PRIORITY).c_str());
+		node.append_child(DEPENDENCIES.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DEPENDENCIES).c_str());
 	}
 
 	TEST_METHOD(serializeOperation) {
