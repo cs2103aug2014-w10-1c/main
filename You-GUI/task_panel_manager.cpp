@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include <QPair>
-#include "boost\algorithm\string\join.hpp"
+#include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include "task_panel_manager.h"
 namespace You {
