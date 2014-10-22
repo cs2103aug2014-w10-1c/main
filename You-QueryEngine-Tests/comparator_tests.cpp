@@ -69,12 +69,12 @@ TEST_CLASS(ComparatorTests) {
 
 	TEST_METHOD(compareByPriority) {
 		Assert::IsTrue((Comparator::byPriority())
-			(SUPER_IMPORTANT_TASK(), LESS_IMPORTANT_TASK()));
+			(LESS_IMPORTANT_TASK(), SUPER_IMPORTANT_TASK()));
 	}
 
 	TEST_METHOD(compareByDependencies) {
-		Assert::IsTrue((Comparator::byPriority())
-			(TEN_DEPENDENCIES(), NINE_DEPENDENCIES()));
+		Assert::IsTrue((Comparator::byDependenciesCount())
+			(NINE_DEPENDENCIES(), TEN_DEPENDENCIES()));
 	}
 
 	ComparatorTests& operator=(const ComparatorTests&) = delete;

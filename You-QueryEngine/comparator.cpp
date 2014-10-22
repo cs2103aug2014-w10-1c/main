@@ -31,9 +31,9 @@ Comparator Comparator::byDependenciesCount() {
 Comparator Comparator::byPriority() {
 	return byApplying<int>([](const Task& task) {
 		if (task.getPriority() == Task::Priority::NORMAL) {
-			return 1;
-		} else {
 			return 0;
+		} else {
+			return 1;
 		}
 	});
 }
