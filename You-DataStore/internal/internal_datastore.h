@@ -76,7 +76,7 @@ private:
 	///
 	/// \param[in] opQueue operations queue to be executed
 	/// \param[in] xml xml document to be modified by the operations
-	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
+	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
 
 private:
 	static const std::wstring FILE_PATH;

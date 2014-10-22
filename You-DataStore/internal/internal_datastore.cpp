@@ -113,7 +113,7 @@ void DataStore::loadData() {
 }
 
 void DataStore::executeTransaction(Transaction & transaction,
-	pugi::xml_document& xml) {
+	pugi::xml_node& xml) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
