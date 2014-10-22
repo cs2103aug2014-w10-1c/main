@@ -11,9 +11,9 @@ namespace You {
 namespace NLP { enum class TaskPriority; }
 namespace Controller {
 namespace Internal {
-	class QueryExecutorBuilderVisitor;
+class QueryExecutorBuilderVisitor;
 
-	namespace UnitTests { class QueryExecutorBuilderVisitorTests; }
+namespace UnitTests { class QueryExecutorBuilderVisitorTests; }
 }  // namespace Internal
 namespace UnitTests { class ControllerContextTests; }
 

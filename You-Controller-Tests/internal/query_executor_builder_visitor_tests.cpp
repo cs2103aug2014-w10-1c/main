@@ -169,7 +169,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		appliesCorrectFilters<You::NLP::TaskField::DESCRIPTION>(
 			std::bind(&Task::getDescription, std::placeholders::_1),
 			std::wstring(L"meh 1"));
-		
+
 		auto runTime = boost::posix_time::second_clock::local_time();
 		appliesCorrectFilters<You::NLP::TaskField::DEADLINE>(
 			std::bind(&Task::getDeadline, std::placeholders::_1),

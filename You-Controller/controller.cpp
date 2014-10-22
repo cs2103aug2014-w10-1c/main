@@ -53,7 +53,8 @@ TaskList Controller::getTasks() const {
 	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }
 
-Task::Priority Controller::nlpToQueryEnginePriority(NLP::TaskPriority priority) {
+Task::Priority
+Controller::nlpToQueryEnginePriority(NLP::TaskPriority priority) {
 	 auto iterator = nlpToQueryEnginePriorityMap.find(priority);
 	 assert(iterator != end(nlpToQueryEnginePriorityMap));
 	 return iterator->second;
