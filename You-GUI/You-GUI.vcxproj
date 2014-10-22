@@ -139,9 +139,11 @@
     <ClCompile Include="task_panel_manager.cpp" />
     <ClCompile Include="main_window.cpp" />
     <ClCompile Include="tray_hotkey_handler.cpp" />
+    <ClCompile Include="window_title.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_window_messages.h" />
+    <ClInclude Include="window_title.h" />
     <CustomBuild Include="syntax_highlighter.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing syntax_highlighter.h...</Message>

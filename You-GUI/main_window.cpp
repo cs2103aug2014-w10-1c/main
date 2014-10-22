@@ -30,10 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.setupUi(this);
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
+	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
+	sm->setup();
 	stm->setup();
 	qm->setup();
 	tpm->setup();
-	sm->setup();
 	initializeAllTimerNotifications();
 
 	ui.commandTextBox->installEventFilter(this);
