@@ -23,6 +23,11 @@ public:
 		DataStore::get().saveData();
 	}
 
+	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
+		DataStore::get().document.reset();
+		DataStore::get().saveData();
+	}
+
 	TEST_METHOD(beginTransactionAddsToTransactionStack) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());

@@ -22,6 +22,11 @@ public:
 		Internal::DataStore::get().saveData();
 	}
 
+	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
+	}
+
 	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		Transaction sut(DataStore::get().begin());
 		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
