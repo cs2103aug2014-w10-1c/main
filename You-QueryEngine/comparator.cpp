@@ -43,18 +43,20 @@ Comparator::Comparator(const ComparatorFunc& func) {
 }
 
 bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
+	ComparisonResult result = ComparisonResult::EQ;
 	for (auto comparator = comparators.cbegin();
 		 comparator != comparators.cend();
 		 ++comparator) {
-		ComparisonResult result = (*comparator)(lhs, rhs);
+		result = (*comparator)(lhs, rhs);
 		if (result != ComparisonResult::EQ) {
-			return result == ComparisonResult::LT;
+			break;
 		} else {
 			continue;
 		}
 	}
-	/// If identical, assume greater than.
-	return true;
+
+	// If identical, it is NOT less than.
+	return result == ComparisonResult::LT;
 }
 
 void Comparator::negateAllComparators() {
