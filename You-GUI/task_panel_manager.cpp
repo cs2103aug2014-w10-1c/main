@@ -161,7 +161,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		Task::Dependencies dependencies = task.getDependencies();
 		std::wstring temp = boost::algorithm::join(dependencies |
 			boost::adaptors::transformed(
-			static_cast<std::wstring(*)(Task::ID)>(std::to_wstring)),
+			static_cast<std::wstring (*)(Task::ID)>(&std::to_wstring)),
 			L", ");
 		result.push_back(boost::lexical_cast<QString>(temp));
 	} else {
