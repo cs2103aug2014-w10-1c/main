@@ -39,7 +39,8 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		executeTransaction(transaction, temp);
+		pugi::xml_node tasksNode = getTasksNode();
+		executeTransaction(transaction, tasksNode);
 		document.reset(temp);
 		committedTransaction.push(self);
 		saveData();
@@ -93,8 +94,9 @@ void DataStore::erase(TaskId rawId) {
 
 std::vector<KeyValuePairs> DataStore::getAllTask() {
 	loadData();
+	pugi::xml_node tasksNode = getTasksNode();
 	std::vector<KeyValuePairs> allTask;
-	for (auto i = document.begin(); i != document.end(); ++i) {
+	for (auto i = tasksNode.begin(); i != tasksNode.end(); ++i) {
 		allTask.push_back(SerializationOperation::deserialize(*i));
 	}
 	return allTask;
