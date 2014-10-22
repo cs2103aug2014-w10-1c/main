@@ -318,6 +318,16 @@ TEST_CLASS(QueryEngineTests) {
 
 		Internal::State::clear();
 	}
+
+	TEST_METHOD(undoWithEmptyStackShouldThrowException) {
+		Internal::State::clear();
+		Assert::ExpectException<Exception::NotUndoAbleException>([] {
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		});
+		Internal::State::clear();
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

@@ -25,6 +25,8 @@ Response Undo::execute(State& state) {
 		std::unique_ptr<Query> query = std::move(state.get().undoStack().top());
 		state.get().undoStack().pop();
 		return query->execute(state);
+	} else {
+		throw Exception::NotUndoAbleException();
 	}
 }
 
