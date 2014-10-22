@@ -1,6 +1,5 @@
 //@author A0097630B
 #include "stdafx.h"
-#include <unordered_map>
 #include "You-NLP/parse_tree/task_priority.h"
 #include "internal/query_executor.h"
 #include "internal/query_executor_builder_visitor.h"
@@ -167,7 +166,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
-		Assert::AreEqual(nlpPriorityToTaskPriority(
+		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
 			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
@@ -191,7 +190,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
 			result.task.getDescription());
-		Assert::AreEqual(nlpPriorityToTaskPriority(
+		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
 			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(taskList.front().getDeadline(),
@@ -215,7 +214,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getID());
 		Assert::AreEqual(taskList.front().getDescription(),
 			result.task.getDescription());
-		Assert::AreEqual(nlpPriorityToTaskPriority(
+		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
 			Mocks::Queries::EDIT_QUERY.priority.get()),
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
@@ -291,24 +290,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		// TODO(lowjoel): test for..?
 	}
-
-private:
-	Task::Priority nlpPriorityToTaskPriority(NLP::TaskPriority priority) {
-		auto iterator = nlpPriorityToTaskPriorityMap.find(priority);
-		assert(iterator != end(nlpPriorityToTaskPriorityMap));
-		return iterator->second;
-	}
-
-private:
-	static const std::unordered_map<NLP::TaskPriority, Task::Priority>
-		nlpPriorityToTaskPriorityMap;
 };
-
-const std::unordered_map<NLP::TaskPriority, Task::Priority>
-QueryExecutorBuilderVisitorTests::nlpPriorityToTaskPriorityMap({
-	{ NLP::TaskPriority::NORMAL, Task::Priority::NORMAL },
-	{ NLP::TaskPriority::HIGH, Task::Priority::HIGH }
-});
 
 }  // namespace UnitTests
 }  // namespace Internal

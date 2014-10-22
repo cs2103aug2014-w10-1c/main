@@ -16,6 +16,12 @@ using QueryParseTree = You::NLP::QUERY;
 using AbstractQuery = QueryEngine::Query;
 
 Controller Controller::instance;
+const std::unordered_map<NLP::TaskPriority, Task::Priority>
+Controller::nlpToQueryEnginePriorityMap({
+	{ NLP::TaskPriority::NORMAL, Task::Priority::NORMAL },
+	{ NLP::TaskPriority::HIGH, Task::Priority::HIGH }
+});
+
 
 Controller& Controller::get() {
 	return instance;
@@ -46,6 +52,12 @@ TaskList Controller::getTasks() const {
 
 	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
 }
+
+Task::Priority Controller::nlpToQueryEnginePriority(NLP::TaskPriority priority) {
+	 auto iterator = nlpToQueryEnginePriorityMap.find(priority);
+	 assert(iterator != end(nlpToQueryEnginePriorityMap));
+	 return iterator->second;
+ }
 
 }  // namespace Controller
 }  // namespace You

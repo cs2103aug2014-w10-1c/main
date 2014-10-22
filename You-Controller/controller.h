@@ -4,10 +4,17 @@
 #define YOU_CONTROLLER_CONTROLLER_H_
 
 #include <string>
+#include <unordered_map>
 #include "result.h"
 
 namespace You {
+namespace NLP { enum class TaskPriority; }
 namespace Controller {
+namespace Internal {
+	class QueryExecutorBuilderVisitor;
+
+	namespace UnitTests { class QueryExecutorBuilderVisitorTests; }
+}  // namespace Internal
 namespace UnitTests { class ControllerContextTests; }
 
 /// The entry-point for all communications with the rest of the You
@@ -16,6 +23,8 @@ namespace UnitTests { class ControllerContextTests; }
 /// This is a singleton class.
 class Controller {
 	friend class UnitTests::ControllerContextTests;
+	friend class Internal::QueryExecutorBuilderVisitor;
+	friend class Internal::UnitTests::QueryExecutorBuilderVisitorTests;
 
 public:
 	class Context;
@@ -51,9 +60,20 @@ private:
 	Controller& operator=(const Controller&) = delete;
 	Controller() = default;
 
+
+private:
+	/// Converts an NLP Task Priority to the equivalent Query Engine task
+	/// priority.
+	static Task::Priority nlpToQueryEnginePriority(NLP::TaskPriority priority);
+
 private:
 	/// The global singleton instance of the controller.
 	static Controller instance;
+
+	/// The map for converting NLP Task priorities to actual Query Engine
+	/// task priorities.
+	static const std::unordered_map<NLP::TaskPriority, Task::Priority>
+		nlpToQueryEnginePriorityMap;
 };
 
 }  // namespace Controller
