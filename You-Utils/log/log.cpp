@@ -20,15 +20,6 @@ LogSeverity Log::logLevel = LogSeverity::WARNING;
 #endif
 std::shared_ptr<LogSink> Log::sink;
 
-void Log::write(
-	LogSeverity severity,
-	const std::wstring& category,
-	const std::wstring& message) {
-	if (severity >= Log::logLevel && sink) {
-		sink->onLog(severity, category, message);
-	}
-}
-
 namespace {
 
 /// The format for debug messages.
@@ -58,12 +49,26 @@ class DebugLogger : public You::Utils::LogSink {
 class SetDefaultLogger {
 public:
 	SetDefaultLogger() {
-		You::Utils::Log::setSink(std::make_shared<DebugLogger>());
+		You::Utils::Log::restoreSink();
 	}
 };
 
 SetDefaultLogger setDefault;
 
 }  // namespace
+
+void Log::restoreSink() {
+	setSink(std::make_shared<DebugLogger>());
+}
+
+void Log::write(
+	LogSeverity severity,
+	const std::wstring& category,
+	const std::wstring& message) {
+	if (severity >= Log::logLevel && sink) {
+		sink->onLog(severity, category, message);
+	}
+}
+
 }  // namespace Utils
 }  // namespace You

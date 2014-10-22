@@ -80,6 +80,9 @@ public:
 		Log::sink = sink;
 	}
 
+	/// Restores the default log sink.
+	static void restoreSink();
+
 private:
 	Log() = delete;
 
