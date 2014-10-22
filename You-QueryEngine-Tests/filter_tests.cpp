@@ -86,6 +86,42 @@ TEST_CLASS(FilterTests) {
 		Assert::IsFalse(beforeChristmas(DUE_AFTER_CHRISTMAS()));
 	}
 
+	TEST_METHOD(filterGetterLessThan) {
+		F lt = F::lessThan(F::descriptionGetter,
+			std::wstring(L"ZZZZ"));
+		Assert::IsTrue(lt(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterGetterLessThanOrEqual) {
+		F lt = F::lessThan(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		F eq = F::equal(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		F ltOrEq = lt || eq;
+		Assert::IsTrue(ltOrEq(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterGetterEqual) {
+		F eq = F::equal(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		Assert::IsTrue(eq(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterGetterGreaterThan) {
+		F gt = F::greaterThan(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		Assert::IsTrue(gt(FEED_THE_KITTEN()));
+	}
+
+	TEST_METHOD(filterGetterGreaterThanOrEqual) {
+		F gt = F::greaterThan(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		F eq = F::equal(F::descriptionGetter,
+			std::wstring(FEED_THE_DOGGY().getDescription()));
+		F gtOrEq = gt || eq;
+		Assert::IsTrue(gtOrEq(FEED_THE_DOGGY()));
+	}
+
 	TEST_METHOD(logicalAndTwoFilters) {
 		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());

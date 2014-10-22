@@ -105,6 +105,30 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 #pragma endregion
 
+#pragma region Getters
+
+const std::function<Task::Description(const Task&)>
+Filter::descriptionGetter = [] (const Task& t) {
+	return t.getDescription();
+};
+
+const std::function<Task::Time(const Task&)>
+Filter::deadlineGetter = [] (const Task& t) {
+	return t.getDeadline();
+};
+
+const std::function<Task::Dependencies(const Task&)>
+Filter::dependenciesGetter = [] (const Task& t) {
+	return t.getDependencies();
+};
+
+const std::function<Task::Priority(const Task&)>
+Filter::priorityGetter = [] (const Task& t) {
+	return t.getPriority();
+};
+
+#pragma endregion
+
 Filter& Filter::operator&&(const Filter& filter) {
 	ffilter = AND(ffilter, filter.ffilter);
 	return *this;

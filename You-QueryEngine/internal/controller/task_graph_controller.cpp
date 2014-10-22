@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <boost/graph/graphviz.hpp>
+#include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
@@ -59,7 +59,8 @@ void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
 }
 
 void TGC::addDependency(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
-	boost::add_edge(cid, pid, g.graph);
+	boost::add_edge(static_cast<unsigned int>(cid),
+		static_cast<unsigned int>(pid), g.graph);
 }
 
 void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
@@ -119,7 +120,8 @@ void TGC::rebuildGraph(TaskGraph& g) {
 	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
 		++pair) {
 		for (const auto& cid : (pair->second).getDependencies()) {
-			boost::add_edge(cid, pair->first, g.graph);
+			boost::add_edge(static_cast<unsigned int>(cid),
+				static_cast<unsigned int>(pair->first), g.graph);
 		}
 	}
 }
