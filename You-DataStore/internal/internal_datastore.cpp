@@ -134,6 +134,24 @@ void DataStore::executeTransaction(Transaction & transaction,
 	}
 }
 
+pugi::xml_node DataStore::getTasksNode() {
+	pugi::xml_node tasksNode = document.child(TASKS_NODE.c_str());
+	if (tasksNode.empty()) {
+		tasksNode = document.append_child(TASKS_NODE.c_str());
+		return tasksNode;
+	}
+	return tasksNode;
+}
+
+pugi::xml_node DataStore::getDataNode() {
+	pugi::xml_node dataNode = document.child(DATA_NODE.c_str());
+	if (dataNode.empty()) {
+		dataNode = document.append_child(DATA_NODE.c_str());
+		return dataNode;
+	}
+	return dataNode;
+}
+
 }  // namespace Internal
 }  // namespace DataStore
 }  // namespace You

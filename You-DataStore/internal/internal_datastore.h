@@ -78,6 +78,16 @@ private:
 	/// \param[in] xml xml document to be modified by the operations
 	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
 
+	/// Get the handle for XML node containing the task list
+	///
+	/// \return \ref pugi::xml_node for tasks node
+	pugi::xml_node getTasksNode();
+
+	/// Get the handle for XML node containing miscellaneous data
+	///
+	/// \return \ref pugi::xml_node for data node
+	pugi::xml_node getDataNode();
+
 private:
 	static const std::wstring FILE_PATH;
 	static const std::wstring TASKS_NODE;
