@@ -59,7 +59,7 @@ SHOW_QUERY QueryParser::constructShowQuery(
 SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 	const TaskField& field,
 	const SHOW_QUERY::Predicate& predicate,
-	const boost::optional<LexemeType>& value) {
+	const LexemeType& value) {
 	return SHOW_QUERY::FIELD_FILTER {
 		field,
 		predicate,

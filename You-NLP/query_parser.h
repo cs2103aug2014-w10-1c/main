@@ -106,7 +106,7 @@ private:
 	static SHOW_QUERY::FIELD_FILTER constructShowQueryFilteringColumn(
 		const TaskField& field,
 		const SHOW_QUERY::Predicate& predicate,
-		const boost::optional<LexemeType>& value);
+		const LexemeType& value);
 
 	/// Process the terminal returned from the show query ordering parse rule,
 	/// constructing one column's ordering.
