@@ -101,6 +101,13 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			boost::get<SHOW_RESULT>(executor->execute()));
 
 		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+				[](const Task& task) {
+					return task.getDeadline() >
+						boost::posix_time::second_clock::local_time() +
+						boost::posix_time::hours(1);
+			}));
+		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
 				return left.getDeadline() > right.getDeadline();

@@ -113,6 +113,8 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 			default:
 				assert(false); abort();
 			}
+
+			filter = filter && Filter(currentFilter);
 		});
 
 	std::for_each(begin(query.order), end(query.order),
