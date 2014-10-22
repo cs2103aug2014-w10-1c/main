@@ -12,6 +12,8 @@ namespace DataStore {
 namespace Internal {
 
 const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
+const std::wstring DataStore::TASKS_NODE = std::wstring(L"tasks");
+const std::wstring DataStore::DATA_NODE = std::wstring(L"data");
 
 DataStore& DataStore::get() {
 	static DataStore store;
