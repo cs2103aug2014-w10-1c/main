@@ -94,7 +94,7 @@ public:
 				{
 					TaskField::DESCRIPTION,
 					SHOW_QUERY::Predicate::EQ,
-					L"\\\'meh"
+					std::wstring(L"\\\'meh")
 				}
 			},
 			{}
@@ -109,12 +109,12 @@ public:
 					{
 						TaskField::DESCRIPTION,
 						SHOW_QUERY::Predicate::NOT_EQ,
-						L"\\\'meh"
+						std::wstring(L"\\\'meh")
 					},
 					{
 						TaskField::PRIORITY,
 						SHOW_QUERY::Predicate::LESS_THAN,
-						L"high"
+						std::wstring(L"high")
 					}
 				},
 				{}
@@ -150,27 +150,27 @@ public:
 				{
 					TaskField::DESCRIPTION,
 					SHOW_QUERY::Predicate::NOT_EQ,
-					L"\\\'meh"
+					std::wstring(L"\\\'meh")
 				},
 				{
 					TaskField::PRIORITY,
 					SHOW_QUERY::Predicate::LESS_THAN,
-					L"high"
+					std::wstring(L"high")
 				},
 				{
 					TaskField::PRIORITY,
 					SHOW_QUERY::Predicate::GREATER_THAN,
-					L"normal"
+					std::wstring(L"normal")
 				},
 				{
 					TaskField::DEADLINE,
 					SHOW_QUERY::Predicate::GREATER_THAN_EQ,
-					L"3 oct"
+					std::wstring(L"3 oct")
 				},
 				{
 					TaskField::DEADLINE,
 					SHOW_QUERY::Predicate::LESS_THAN_EQ,
-					L"7 oct"
+					std::wstring(L"7 oct")
 				}
 			},
 			{

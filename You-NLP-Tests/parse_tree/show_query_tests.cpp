@@ -33,7 +33,13 @@ TEST_CLASS(ShowQueryTests) {
 
 	TEST_METHOD(comparesInequality) {
 		SHOW_QUERY local {
-			{ { TaskField::DESCRIPTION, SHOW_QUERY::Predicate::EQ, L"" } },
+			{
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::EQ,
+					std::wstring(L"")
+				}
+			},
 			{
 				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING }
 			}
@@ -81,7 +87,11 @@ private:
 };
 
 const SHOW_QUERY ShowQueryTests::DUMMY {
-	{ { TaskField::DESCRIPTION, SHOW_QUERY::Predicate::EQ, L"" } },
+	{ {
+		TaskField::DESCRIPTION,
+		SHOW_QUERY::Predicate::EQ,
+		std::wstring(L"")
+		} },
 	{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 };
 
