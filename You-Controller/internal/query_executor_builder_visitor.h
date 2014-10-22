@@ -57,7 +57,7 @@ private:
 	/// \param predicate The predicate to use when comparing against the value.
 	/// \param value The value to compare the task property against.
 	template<typename TValue>
-	static std::function<bool (const Task&)> buildComparator(
+	static std::function<bool(const Task&)> buildComparator(
 		TValue (QueryEngine::Task::*selector)() const,
 		You::NLP::SHOW_QUERY::Predicate predicate,
 		const TValue& value);
