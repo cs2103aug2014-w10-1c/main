@@ -9,7 +9,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PutOperation::PutOperation(TaskId id, const SerializedTask& stask) {
+PutOperation::PutOperation(TaskId id, const KeyValuePairs& stask) {
 	taskId = id;
 	task = stask;
 }

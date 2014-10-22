@@ -10,13 +10,13 @@ namespace Internal {
 
 class PutOperation : public SerializationOperation {
 public:
-	PutOperation(TaskId, const SerializedTask&);
+	PutOperation(TaskId, const KeyValuePairs&);
 	bool run(pugi::xml_document& document) override;
 	virtual ~PutOperation() = default;
 
 private:
 	/// The new task contents.
-	SerializedTask task;
+	KeyValuePairs task;
 };
 }  // namespace Internal
 }  // namespace DataStore

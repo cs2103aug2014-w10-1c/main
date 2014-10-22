@@ -27,16 +27,16 @@ public:
 	/// Modifying methods
 	/// @{
 	/// Push a post operation to operation queue
-	void post(TaskId, const SerializedTask&);
+	void post(TaskId, const KeyValuePairs&);
 	/// Push a put operation to operation queue
-	void put(TaskId, const SerializedTask&);
+	void put(TaskId, const KeyValuePairs&);
 	/// Push an erase operation to operation queue
 	void erase(TaskId);
 	/// @}
 
 	/// Get all tasks
 	/// \return a vector of SerializedTasks
-	std::vector<SerializedTask> getAllTasks();
+	std::vector<KeyValuePairs> getAllTasks();
 
 private:
 	/// Default constructor. Use \ref get to get the singleton instance.

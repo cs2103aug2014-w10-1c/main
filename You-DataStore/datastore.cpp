@@ -14,11 +14,11 @@ Transaction DataStore::begin() {
 	return Internal::DataStore::get().begin();
 }
 
-void DataStore::post(TaskId taskId, const SerializedTask& task) {
+void DataStore::post(TaskId taskId, const KeyValuePairs& task) {
 	Internal::DataStore::get().post(taskId, task);
 }
 
-void DataStore::put(TaskId taskId, const SerializedTask& task) {
+void DataStore::put(TaskId taskId, const KeyValuePairs& task) {
 	Internal::DataStore::get().put(taskId, task);
 }
 
@@ -26,7 +26,7 @@ void DataStore::erase(TaskId taskId) {
 	Internal::DataStore::get().erase(taskId);
 }
 
-std::vector<SerializedTask> DataStore::getAllTasks() {
+std::vector<KeyValuePairs> DataStore::getAllTasks() {
 	return Internal::DataStore::get().getAllTask();
 }
 

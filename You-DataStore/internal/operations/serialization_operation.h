@@ -11,10 +11,10 @@ namespace Internal {
 class SerializationOperation : public IOperation {
 public:
 	/// Serialize task to an xml node
-	static void serialize(const SerializedTask&, pugi::xml_node&);
+	static void serialize(const KeyValuePairs&, pugi::xml_node&);
 
 	/// Deserialize task from an xml node
-	static SerializedTask deserialize(const pugi::xml_node&);
+	static KeyValuePairs deserialize(const pugi::xml_node&);
 };
 
 }  // namespace Internal

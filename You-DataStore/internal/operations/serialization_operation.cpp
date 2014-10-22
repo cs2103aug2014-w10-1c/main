@@ -5,7 +5,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-void SerializationOperation::serialize(const SerializedTask& stask,
+void SerializationOperation::serialize(const KeyValuePairs& stask,
 	pugi::xml_node& node) {
 	for (auto iter = stask.begin(); iter != stask.end(); ++iter) {
 		pugi::xml_node keyNode =
@@ -16,9 +16,9 @@ void SerializationOperation::serialize(const SerializedTask& stask,
 	}
 }
 
-SerializedTask SerializationOperation::deserialize(
+KeyValuePairs SerializationOperation::deserialize(
 	const pugi::xml_node& taskNode) {
-	SerializedTask stask;
+	KeyValuePairs stask;
 	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
 		stask.insert(KeyValuePair(Key(iter->name()),
 			Value(iter->child_value())));

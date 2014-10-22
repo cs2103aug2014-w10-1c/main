@@ -59,7 +59,7 @@ public:
 
 	TEST_METHOD(deserializeOperation) {
 		using SerializationOperation = Internal::SerializationOperation;
-		SerializedTask task =
+		KeyValuePairs task =
 			SerializationOperation::deserialize(mockDocument.first_child());
 		Assert::AreEqual(task1.at(TASK_ID), task.at(TASK_ID));
 		Assert::AreEqual(task1.at(DESCRIPTION), task.at(DESCRIPTION));

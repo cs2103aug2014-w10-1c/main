@@ -4,10 +4,6 @@
 #include "datastore.h"
 #include "transaction.h"
 #include "internal/internal_datastore.h"
-#include "internal/internal_transaction.h"
-#include "internal/operations/post_operation.h"
-#include "internal/operations/put_operation.h"
-#include "internal/operations/erase_operation.h"
 #include "mocks.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -15,30 +11,18 @@ using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 namespace You {
 namespace DataStore {
 namespace UnitTests {
+
+/// Unit test for DataStore API that is exposed to Query Engine, namely
+/// \ref DataStore and \ref Transaction
 TEST_CLASS(DataStoreApiTest) {
 public:
-	TEST_METHOD(pushOperationsToTransaction) {
-		Transaction sut(DataStore::get().begin());
-
-		std::unique_ptr<Internal::IOperation> postOp =
-			std::make_unique<Internal::PostOperation>(0, task1);
-		sut->push(std::move(postOp));
-		Assert::AreEqual(1U, sut->operationsQueue.size());
-
-		std::unique_ptr<Internal::IOperation> putOp =
-			std::make_unique<Internal::PutOperation>(0, task2);
-		sut->push(std::move(putOp));
-		Assert::AreEqual(2U, sut->operationsQueue.size());
-
-		std::unique_ptr<Internal::IOperation> eraseOp =
-			std::make_unique<Internal::EraseOperation>(0);
-		sut->push(std::move(eraseOp));
-		Assert::AreEqual(3U, sut->operationsQueue.size());
-
-		sut->operationsQueue.clear();
+	/// Clears xml document tree and save empty xml file
+	TEST_METHOD_INITIALIZE(clearDataStoreState) {
+		Internal::DataStore::get().document.reset();
+		Internal::DataStore::get().saveData();
 	}
 
-	TEST_METHOD(transactionRollback) {
+	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		Transaction sut(DataStore::get().begin());
 		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
 
@@ -46,9 +30,7 @@ public:
 		Assert::AreEqual(0U, Internal::DataStore::get().transactionStack.size());
 	}
 
-	TEST_METHOD(constructTransactionWithDataStoreBegin) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+	TEST_METHOD(dataStoreOperationPushedToOperationsQueue) {
 		Transaction sut(DataStore::get().begin());
 
 		DataStore::get().post(0, task1);
@@ -59,15 +41,9 @@ public:
 
 		DataStore::get().erase(0);
 		Assert::AreEqual(3U, sut->operationsQueue.size());
-		sut.commit();
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 
-	TEST_METHOD(commitTransaction) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+	TEST_METHOD(commitTransactionModifyData) {
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
@@ -76,20 +52,17 @@ public:
 		sut.commit();
 		auto sizeAfter = DataStore::get().getAllTasks().size();
 		Assert::AreEqual(sizeBefore + 1, sizeAfter);
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 
-	TEST_METHOD(nestedTransaction) {
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 
 		Transaction sut2(DataStore::get().begin());
 		DataStore::get().post(1, task2);
 
+		// Data must not be modified since the first transaction has not been
+		// committed
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut2.commit();
@@ -99,6 +72,9 @@ public:
 
 		Transaction sut3(DataStore::get().begin());
 		DataStore::get().erase(0);
+
+		// Data must not be modified since the first transaction has not been
+		// committed
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut3.commit();
@@ -107,15 +83,15 @@ public:
 			Assert::AreEqual(sizeAfter, sizeBefore);
 		}
 
+		// Execute all the operations, with the follow order:
+		// add task 0, add task 1, erase task 0
+		// Therefore the end result should be sizeBefore + 1
 		; {
 			auto sizeBefore = DataStore::get().getAllTasks().size();
 			sut.commit();
 			auto sizeAfter = DataStore::get().getAllTasks().size();
 			Assert::AreEqual(sizeBefore + 1, sizeAfter);
 		}
-
-		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
 	}
 };
 

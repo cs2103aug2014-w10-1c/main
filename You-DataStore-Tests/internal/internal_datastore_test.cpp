@@ -75,7 +75,7 @@ public:
 		sut.document.append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 
-		std::vector<SerializedTask> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
 	}
 
@@ -88,7 +88,7 @@ public:
 		sut.document.save_file(sut.FILE_PATH.c_str());
 		sut.document.reset();
 
-		std::vector<SerializedTask> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAllTask();
 		Assert::AreEqual(1U, result.size());
 	}
 
