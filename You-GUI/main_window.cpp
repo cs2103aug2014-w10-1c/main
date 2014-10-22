@@ -3,7 +3,6 @@
 #include <functional>
 #include <QApplication>
 #include <QList>
-#include "window_title.h"
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"

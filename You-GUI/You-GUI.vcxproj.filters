@@ -104,6 +104,9 @@
     <ClCompile Include="syntax_highlighter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="window_title.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
