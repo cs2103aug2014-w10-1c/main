@@ -94,7 +94,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	showCommandFilteringColumn = (
 		showCommandFields >>
 		showCommandFilteringPredicate >>
-		-utilityLexeme
+		utilityLexeme
 	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
 		qi::_1,
 		qi::_2,

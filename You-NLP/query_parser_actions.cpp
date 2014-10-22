@@ -63,7 +63,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 	return SHOW_QUERY::FIELD_FILTER {
 		field,
 		predicate,
-		std::wstring(begin(value.get()), end(value.get()))
+		std::wstring(begin(value), end(value))
 	};
 }
 
