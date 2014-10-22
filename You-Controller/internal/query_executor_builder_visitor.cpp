@@ -99,7 +99,9 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 				break;
 			case TaskField::COMPLETE:
 				assert(boost::get<bool>(&field.value));
-				// TODO(lowjoel): wait for completion flag.
+				currentFilter = buildComparator(&Task::isCompleted,
+					field.predicate,
+					boost::get<bool>(field.value));
 				break;
 			case TaskField::PRIORITY:
 				assert(boost::get<TaskPriority>(&field.value));
