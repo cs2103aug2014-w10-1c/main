@@ -25,6 +25,7 @@ typedef You::QueryEngine::QueryEngine QueryEngine;
 #include "results/show_result.h"
 #include "results/delete_result.h"
 #include "results/edit_result.h"
+#include "results/undo_result.h"
 #include "results/result.h"
 
 #endif  // YOU_CONTROLLER_RESULT_H_

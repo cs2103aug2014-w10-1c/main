@@ -269,6 +269,29 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task);
 	}
 
+	TEST_METHOD(deleteQueriesOutOfBoundsThrowsContextOutOfRange) {
+		Mocks::TaskList taskList(0);
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::DELETE_QUERY);
+		Assert::ExpectException<ContextIndexOutOfRangeException>([&]() {
+			boost::apply_visitor(visitor, query);
+		});
+	}
+
+	TEST_METHOD(getsCorrectTypeForUndoQueries) {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::QUERY query(Mocks::Queries::UNDO_QUERY);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		UNDO_RESULT result(
+			boost::get<UNDO_RESULT>(executor->execute()));
+
+		// TODO(lowjoel): test for..?
+	}
+
 private:
 	Task::Priority nlpPriorityToTaskPriority(NLP::TaskPriority priority) {
 		auto iterator = nlpPriorityToTaskPriorityMap.find(priority);

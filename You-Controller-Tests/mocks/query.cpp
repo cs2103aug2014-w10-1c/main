@@ -40,6 +40,9 @@ extern const You::NLP::DELETE_QUERY DELETE_QUERY {
 	0
 };
 
+extern const You::NLP::UNDO_QUERY UNDO_QUERY {
+};
+
 }  // namespace Queries
 }  // namespace Mocks
 }  // namespace UnitTests

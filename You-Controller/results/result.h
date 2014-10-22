@@ -13,7 +13,8 @@ typedef boost::variant<
 	ADD_RESULT,
 	SHOW_RESULT,
 	EDIT_RESULT,
-	DELETE_RESULT
+	DELETE_RESULT,
+	UNDO_RESULT
 > Result;
 
 }  // namespace Controller

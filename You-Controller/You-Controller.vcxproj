@@ -90,6 +90,7 @@
     <ClInclude Include="results\edit_result.h" />
     <ClInclude Include="results\result.h" />
     <ClInclude Include="results\show_result.h" />
+    <ClInclude Include="results\undo_result.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
