@@ -156,8 +156,10 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 
 	// Insert dependencies
 	std::ostringstream ss;
-	if (task.getDependencies().size() != 0) {
-		Task::Dependencies dependencies = task.getDependencies();
+	if (task.getDependencies().size() > 0) {
+		std::vector<Task::ID> dependencies;
+		std::copy(task.getDependencies().begin(), task.getDependencies().end(),
+			dependencies.begin());
 		std::copy(dependencies.begin(), dependencies.end() - 1,
 			std::ostream_iterator<Task::ID>(ss, ", "));
 		ss << dependencies.back();

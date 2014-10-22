@@ -1,14 +1,18 @@
 #include "stdafx.h"
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "filter.h"
 
 namespace You {
 namespace QueryEngine {
 
 namespace {
-	using day_clock = boost::gregorian::day_clock;
-	using weeks = boost::gregorian::weeks;
+	using boost::posix_time::ptime;
+	using boost::posix_time::time_duration;
+	using boost::gregorian::date;
 	using boost::gregorian::to_tm;
+	using boost::gregorian::day_clock;
+	using boost::gregorian::weeks;
 }
 
 #pragma region Common Filters
@@ -83,6 +87,22 @@ Filter Filter::dueThisWeek() {
 	});
 }
 
+Filter Filter::dueNever() {
+	return Filter([] (const Task& task) {
+		return task.getDeadline() == Task::NEVER;
+	});
+}
+
+Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
+	std::int16_t day, std::int16_t hour, std::int16_t minute,
+	std::int16_t seconds) {
+	auto due = ptime(date(year, month, day),
+			time_duration(hour, minute, seconds));
+	return Filter([due] (const Task& task) {
+		return task.getDeadline() < due;
+	});
+}
+
 #pragma endregion
 
 Filter& Filter::operator&&(const Filter& filter) {
@@ -105,19 +125,19 @@ bool Filter::operator()(const Task& task) const {
 }
 
 Filter::FFilter Filter::AND(const FFilter& f, const FFilter& g) {
-	return [=] (FFilter::argument_type x) {
+	return [f, g] (FFilter::argument_type x) {
 		return f(x) && g(x);
 	};
 }
 
 Filter::FFilter Filter::OR(const FFilter& f, const FFilter& g) {
-	return [=] (FFilter::argument_type x) {
+	return [f, g] (FFilter::argument_type x) {
 		return f(x) || g(x);
 	};
 }
 
 Filter::FFilter Filter::NOT(const FFilter& f) {
-	return [=] (FFilter::argument_type x) {
+	return [f] (FFilter::argument_type x) {
 		return !f(x);
 	};
 }

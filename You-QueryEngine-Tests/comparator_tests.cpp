@@ -47,14 +47,16 @@ TEST_CLASS(ComparatorTests) {
 		std::sort(t.begin(), t.end(), Comparator::byDescription());
 		Assert::IsTrue(std::is_sorted(t.begin(), t.end(),
 			[] (Task& lhs, Task& rhs) {
-				return lhs.getDescription() < lhs.getDescription();
+				return lhs.getDescription() < rhs.getDescription();
 			}));
 	}
 
 	TEST_METHOD(compareByDeadline) {
 		Assert::IsTrue((Comparator::byDeadline())
+			(FOR_TOMMOROW(), FEED_THE_DOGGY()));
+		Assert::IsTrue((Comparator::byDeadline())
 			(FOR_TOMMOROW(), FOR_NEXT_WEEK()));
-		Assert::IsTrue((Comparator::byDescription().descending())
+		Assert::IsTrue((Comparator::byDeadline().descending())
 			(FOR_NEXT_WEEK(), FOR_TOMMOROW()));
 	}
 
@@ -67,12 +69,12 @@ TEST_CLASS(ComparatorTests) {
 
 	TEST_METHOD(compareByPriority) {
 		Assert::IsTrue((Comparator::byPriority())
-			(SUPER_IMPORTANT_TASK(), LESS_IMPORTANT_TASK()));
+			(LESS_IMPORTANT_TASK(), SUPER_IMPORTANT_TASK()));
 	}
 
 	TEST_METHOD(compareByDependencies) {
-		Assert::IsTrue((Comparator::byPriority())
-			(TEN_DEPENDENCIES(), NINE_DEPENDENCIES()));
+		Assert::IsTrue((Comparator::byDependenciesCount())
+			(NINE_DEPENDENCIES(), TEN_DEPENDENCIES()));
 	}
 
 	ComparatorTests& operator=(const ComparatorTests&) = delete;

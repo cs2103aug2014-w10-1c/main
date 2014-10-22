@@ -151,6 +151,30 @@ Task DUE_TODAY() {
 		deadline(ptime(now));
 }
 
+Task DUE_ON_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Christmas").
+		deadline(ptime(date(2014, 12, 25),
+					   time_duration(0, 0, 0)));
+}
+
+Task DUE_BEFORE_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Before Christmas").
+		deadline(ptime(date(2014, 12, 24),
+					   time_duration(0, 0, 0)));
+}
+
+Task DUE_AFTER_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"After Christmas").
+		deadline(ptime(date(2014, 12, 26),
+					   time_duration(0, 0, 0)));
+}
+
 }  // namespace UnitTests
 }  // namespace QueryEngine
 }  // namespace You

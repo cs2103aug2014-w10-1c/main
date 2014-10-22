@@ -44,6 +44,13 @@ public:
 	static Filter dueToday();
 	/// Filter tasks that due this month.
 	static Filter dueThisWeek();
+	/// Filter tasks that does not have deadline set (i.e never)
+	static Filter dueNever();
+	/// Filter tasks that due before a date
+	/// Date is assumed valid
+	static Filter dueBefore(std::int16_t year, std::int16_t month,
+		std::int16_t day, std::int16_t hour, std::int16_t minute,
+		std::int16_t seconds);
 
 	/// Compose using AND operation with another filter
 	/// \param[in] filter Filter object to combine with.
@@ -72,9 +79,11 @@ public:
 	/// Copy construct a filter.
 	Filter(const Filter& filter) : ffilter(filter.ffilter) {}
 
-private:
+	/// Construct a filter from a filtering function.
+	/// \see FFilter
 	explicit Filter(const FFilter& ffilter) : ffilter(ffilter) {}
 
+private:
 	static FFilter AND(const FFilter& f, const FFilter& g);
 	static FFilter OR(const FFilter& f, const FFilter& g);
 	static FFilter NOT(const FFilter& f);

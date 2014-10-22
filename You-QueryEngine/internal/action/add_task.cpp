@@ -7,6 +7,7 @@
 
 #include "../model.h"
 #include "../controller.h"
+#include "delete_task.h"
 #include "add_task.h"
 
 namespace You {
@@ -24,12 +25,27 @@ namespace {
 
 const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
 
+std::unique_ptr<Query> AddTask::getReverse() {
+	return std::unique_ptr<Query>(new DeleteTask(insertedID));
+}
+
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
 		.description(this->description)
 		.deadline(this->deadline)
 		.dependencies(this->dependencies)
 		.priority(this->priority);
+}
+
+void AddTask::ensureDependencyIsValid() const {
+	std::for_each(dependencies.cbegin(), dependencies.cend(),
+		[] (const Task::ID& id) {
+			if (!Controller::Graph::isTaskExist(
+					State::get().graph(), id)) {
+				throw Exception::TaskNotFoundException();
+			}
+		}
+	);
 }
 
 void AddTask::addTaskToState(const Task& task,
@@ -49,9 +65,12 @@ void AddTask::makeTransaction(const Task& newTask) const {
 }
 
 Response AddTask::execute(State& state) {
-	auto newTask = buildTask(state.inquireNewID());
+	auto newId = state.inquireNewID();
+	auto newTask = buildTask(newId);
+	ensureDependencyIsValid();
 	addTaskToState(newTask, state);
 	makeTransaction(newTask);
+	insertedID = newId;
 	return newTask;
 }
 

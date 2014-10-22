@@ -26,13 +26,19 @@ public:
 	virtual ~DeleteTask() = default;
 
 protected:
+	/// The reverse of deletion is adding.
+	std::unique_ptr<Query> getReverse() override;
+
 	static const std::wstring logCategory;
 
 private:
 	/// Execute delete task.
 	Response execute(State& tasks) override;
 	void makeTransaction();
-	const Task::ID id;  ///< ID of the task to delete
+	/// ID of the task to delete.
+	const Task::ID id;
+	/// The object that has been deleted.
+	Task deletedTask;
 };
 
 }  // namespace Action

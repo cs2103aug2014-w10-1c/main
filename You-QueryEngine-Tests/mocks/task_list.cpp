@@ -35,7 +35,7 @@ std::vector<Task> ID_ONE_TO_FIVE() {
 std::vector<Task> fromDescription(const std::vector<Task::Description>& v) {
 	std::vector<Task> result;
 	std::for_each(v.begin(), v.end(),
-		[&] (const Task::Description& d) {
+		[&result] (const Task::Description& d) {
 			result.push_back(Controller::Builder::get().description(d));
 		}
 	);
@@ -44,7 +44,7 @@ std::vector<Task> fromDescription(const std::vector<Task::Description>& v) {
 
 void populateStateWithTasks(const std::vector<Task>& tasks) {
 	State::clear();
-	std::for_each(tasks.begin(), tasks.end(), [&](const Task t) {
+	std::for_each(tasks.begin(), tasks.end(), [] (const Task t) {
 		Controller::Graph::addTask(State::get().graph(), t);
 	});
 }

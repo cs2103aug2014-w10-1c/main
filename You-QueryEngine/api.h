@@ -33,7 +33,7 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
-namespace Internal { class State; }
+namespace Internal { namespace Action { class Undo; } class State; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
@@ -44,8 +44,13 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
+	friend class Internal::Action::Undo;
 
 protected:
+	/// Get the reverse of this query for undo.
+	virtual std::unique_ptr<Query> getReverse();
+
+	/// String appended before each log message.
 	static const std::wstring logCategory;
 
 private:
@@ -90,6 +95,10 @@ public:
 
 	/// Construct mark task as done query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
+
+	/// Construct undo query.
+	static std::unique_ptr<Query> Undo();
+
 	#pragma endregion
 
 public:

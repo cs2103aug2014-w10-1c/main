@@ -74,6 +74,18 @@ TEST_CLASS(FilterTests) {
 		Assert::IsTrue((F::dueThisMonth())(DUE_THIS_MONTH()));
 	}
 
+	TEST_METHOD(filterDueNever) {
+		Assert::IsTrue((F::dueNever())(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterBeforeTime) {
+		auto beforeChristmas =
+			F::dueBefore(2014, 12, 25, 0, 0, 0);
+		Assert::IsTrue(beforeChristmas(DUE_BEFORE_CHRISTMAS()));
+		Assert::IsFalse(beforeChristmas(DUE_ON_CHRISTMAS()));
+		Assert::IsFalse(beforeChristmas(DUE_AFTER_CHRISTMAS()));
+	}
+
 	TEST_METHOD(logicalAndTwoFilters) {
 		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());

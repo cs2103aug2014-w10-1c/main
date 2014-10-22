@@ -1,15 +1,16 @@
 /// \author A0112054Y
 #include "stdafx.h"
-
 #include "internal/controller.h"
+#include "filter.h"
 #include "task_model.h"
 
-using boost::posix_time::ptime;
-using boost::posix_time::hours;
-using boost::gregorian::date;
-using boost::gregorian::max_date_time;
-
 namespace {
+	using boost::posix_time::ptime;
+	using boost::posix_time::hours;
+	using boost::gregorian::date;
+	using boost::gregorian::max_date_time;
+	using boost::gregorian::day_clock;
+
 	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%]";
 }  // namespace
 
@@ -49,6 +50,12 @@ const Task::Time Task::NEVER = ptime(date(max_date_time), hours(0));
 const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
+
+const std::wstring Task::DEADLINE_OVERDUE = L"overdue by %1% days";
+const std::wstring Task::DEADLINE_TODAY = L"today";
+const std::wstring Task::DEADLINE_WITHIN_DAYS = L"in %1% days";
+const std::wstring Task::DEADLINE_WITHIN_MONTHS = L"in %1% months";
+const std::wstring Task::DEADLINE_NEVER = L"never";
 
 bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;

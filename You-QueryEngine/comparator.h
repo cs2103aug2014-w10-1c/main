@@ -30,7 +30,7 @@ public:
 private:
 	template <class T>
 	static Comparator byApplying(std::function<T(const Task&)> func) {
-		return Comparator([=] (const Task& lhs, const Task& rhs) {
+		return Comparator([func] (const Task& lhs, const Task& rhs) {
 			if (func(lhs) < func(rhs)) {
 				return ComparisonResult::LT;
 			} else if (func(lhs) > func(rhs)) {

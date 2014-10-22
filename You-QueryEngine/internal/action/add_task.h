@@ -29,15 +29,22 @@ public:
 	virtual ~AddTask() = default;
 
 protected:
+	/// The reverse of addition is deletion.
+	std::unique_ptr<Query> getReverse() override;
+
 	static const std::wstring logCategory;
 
 private:
 	Task buildTask(const Task::ID id);
+
 	void addTaskToState(const Task& task, State& state) const;
 	void makeTransaction(const Task& newTask) const;
+	void ensureDependencyIsValid() const;
+
 	/// Execute add task.
 	Response execute(State& tasks) override;
 
+	Task::ID insertedID;  ///< Inserted ID
 	const Task::Description description;  ///< Description.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.

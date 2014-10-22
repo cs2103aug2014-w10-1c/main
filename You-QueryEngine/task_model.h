@@ -47,13 +47,13 @@ public:
 
 	/// \name Inlined Field Getters.
 	/// @{
-	inline ID getID() const { return id; }
-	inline Description getDescription() const { return description; }
-	inline Time getDeadline() const { return deadline; }
-	inline Dependencies getDependencies() const { return dependencies; }
-	inline Dependencies getChildren() const { return dependencies; }
-	inline Priority getPriority() const { return priority; }
-	inline bool isCompleted() const { return completed; }
+	ID getID() const { return id; }
+	Description getDescription() const { return description; }
+	Time getDeadline() const { return deadline; }
+	Dependencies getDependencies() const { return dependencies; }
+	Dependencies getChildren() const { return dependencies; }
+	Priority getPriority() const { return priority; }
+	bool isCompleted() const { return completed; }
 	/// @}
 
 	/// Check dependency
@@ -96,6 +96,15 @@ private:
 	/// Two taks are strictly equal if all fields are equal
 	/// \returns The strict equality of two tasks.
 	bool isStrictEqual(const Task& task) const;
+
+	/// \name Deadline String Format
+	/// @{
+	static const std::wstring DEADLINE_OVERDUE;
+	static const std::wstring DEADLINE_TODAY;
+	static const std::wstring DEADLINE_WITHIN_DAYS;
+	static const std::wstring DEADLINE_WITHIN_MONTHS;
+	static const std::wstring DEADLINE_NEVER;
+	/// @}
 
 	/// \name Private Fields
 	/// @{

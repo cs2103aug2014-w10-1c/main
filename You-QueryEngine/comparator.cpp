@@ -31,9 +31,9 @@ Comparator Comparator::byDependenciesCount() {
 Comparator Comparator::byPriority() {
 	return byApplying<int>([](const Task& task) {
 		if (task.getPriority() == Task::Priority::NORMAL) {
-			return 1;
-		} else {
 			return 0;
+		} else {
+			return 1;
 		}
 	});
 }
@@ -43,24 +43,26 @@ Comparator::Comparator(const ComparatorFunc& func) {
 }
 
 bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
+	ComparisonResult result = ComparisonResult::EQ;
 	for (auto comparator = comparators.cbegin();
 		 comparator != comparators.cend();
 		 ++comparator) {
-		ComparisonResult result = (*comparator)(lhs, rhs);
+		result = (*comparator)(lhs, rhs);
 		if (result != ComparisonResult::EQ) {
-			return result == ComparisonResult::LT;
+			break;
 		} else {
 			continue;
 		}
 	}
-	/// If identical, assume greater than.
-	return true;
+
+	// If identical, it is NOT less than.
+	return result == ComparisonResult::LT;
 }
 
 void Comparator::negateAllComparators() {
 	std::vector<const ComparatorFunc> newComparators;
 	std::for_each(comparators.cbegin(), comparators.cend(),
-		[&] (const ComparatorFunc& func) {
+		[this, &newComparators] (const ComparatorFunc& func) {
 			newComparators.push_back(this->negate(func));
 		}
 	);
@@ -90,7 +92,7 @@ Comparator& Comparator::operator&&(const Comparator& rhs) {
 }
 
 Comparator::ComparatorFunc Comparator::negate(const ComparatorFunc& comp) {
-	return [=] (const Task& lhs, const Task& rhs) {
+	return [comp] (const Task& lhs, const Task& rhs) {
 		ComparisonResult result = comp(lhs, rhs);
 		if (result == ComparisonResult::LT) {
 			return ComparisonResult::GT;

@@ -8,6 +8,7 @@
 #include "internal/action/get_task.h"
 #include "internal/action/delete_task.h"
 #include "internal/action/update_task.h"
+#include "internal/action/undo.h"
 #include "internal/model.h"
 #include "api.h"
 
@@ -15,6 +16,11 @@ namespace You {
 namespace QueryEngine {
 
 const std::wstring Query::logCategory = L"[QE]";
+
+std::unique_ptr<Query>
+Query::getReverse() {
+	throw Exception::NotUndoAbleException();
+}
 
 std::unique_ptr<Query>
 QueryEngine::AddTask(Task::Description description, Task::Time deadline,
@@ -57,8 +63,22 @@ QueryEngine::UpdateTask(Task::ID id, bool completed) {
 	return std::unique_ptr<Query>(new UpdateTask(id, completed));
 }
 
+std::unique_ptr<Query>
+QueryEngine::Undo() {
+	using Undo = Internal::Action::Undo;
+	return std::unique_ptr<Query>(new Undo());
+}
+
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
-	return query->execute(Internal::State::get());
+	Response response;
+	response = query->execute(Internal::State::get());
+	std::unique_ptr<Query> reverse;
+	try {
+		reverse = query->getReverse();
+		Internal::State::get().undoStack().emplace(std::move(reverse));
+	} catch (const Exception::NotUndoAbleException&) {
+	}
+	return response;
 }
 
 }  // namespace QueryEngine

@@ -25,6 +25,18 @@
     <Filter Include="Source Files\internal\action">
       <UniqueIdentifier>{96f5e0b1-ca86-4a69-ae0d-532603b3c72b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\internal\model">
+      <UniqueIdentifier>{c3aa8b25-8774-41bf-bf2f-11dd6b33af72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\internal\controller">
+      <UniqueIdentifier>{ae690d2f-a6f0-4310-b0fc-db2f8672bca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\model">
+      <UniqueIdentifier>{95676204-54fd-4fc3-8b88-ecbc1e011615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal\controller">
+      <UniqueIdentifier>{165dced8-06b3-45e2-90a0-ce96a5f9df20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -36,17 +48,8 @@
     <ClInclude Include="api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="task_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="filter.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\controller\task_serializer.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\controller\task_builder.h">
-      <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="internal\action\add_task.h">
       <Filter>Header Files\internal\action</Filter>
@@ -57,25 +60,37 @@
     <ClInclude Include="internal\action\update_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="internal\controller\task_graph_controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="internal\controller.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\model.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\model\state.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\model\task_graph.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="internal\action\get_task.h">
       <Filter>Header Files\internal\action</Filter>
     </ClInclude>
     <ClInclude Include="comparator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\action\undo.h">
+      <Filter>Header Files\internal\action</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\controller\task_builder.h">
+      <Filter>Header Files\internal\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\controller\task_serializer.h">
+      <Filter>Header Files\internal\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model\state.h">
+      <Filter>Header Files\internal\model</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\controller\task_graph_controller.h">
+      <Filter>Header Files\internal\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\model\task_graph.h">
+      <Filter>Header Files\internal\model</Filter>
+    </ClInclude>
+    <ClInclude Include="task_model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,12 +107,6 @@
     <ClCompile Include="filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="internal\controller\task_serializer.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\controller\task_builder.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\action\add_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
@@ -107,20 +116,29 @@
     <ClCompile Include="internal\action\update_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
-    <ClCompile Include="internal\controller\task_graph_controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\model\state.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\model\task_graph.cpp">
-      <Filter>Source Files\internal</Filter>
-    </ClCompile>
     <ClCompile Include="internal\action\get_task.cpp">
       <Filter>Source Files\internal\action</Filter>
     </ClCompile>
     <ClCompile Include="comparator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\undo.cpp">
+      <Filter>Source Files\internal\action</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_builder.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_serializer.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\state.cpp">
+      <Filter>Source Files\internal\model</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\controller\task_graph_controller.cpp">
+      <Filter>Source Files\internal\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\model\task_graph.cpp">
+      <Filter>Source Files\internal\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
