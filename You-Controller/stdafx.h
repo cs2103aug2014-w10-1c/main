@@ -9,6 +9,7 @@
 
 #include <SDKDDKVer.h>
 
+#include <random>
 #include <string>
 #include <stdexcept>
 #include <unordered_map>

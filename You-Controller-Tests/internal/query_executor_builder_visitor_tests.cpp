@@ -115,6 +115,13 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		{  // NOLINT(whitespace/braces)
 			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+				{
+					You::NLP::TaskField::PRIORITY,
+					You::NLP::SHOW_QUERY::Predicate::EQ,
+					You::NLP::TaskPriority::NORMAL
+				}
+			};
 			templ.order = {
 				{
 					You::NLP::TaskField::DESCRIPTION,
@@ -127,6 +134,12 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		result = boost::get<SHOW_RESULT>(executor->execute());
 
 		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[](const Task& task) {
+			return task.getPriority() ==
+				You::QueryEngine::Task::Priority::NORMAL;
+		}));
+		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
 			return left.getDescription() < right.getDescription();
@@ -134,6 +147,13 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		{  // NOLINT(whitespace/braces)
 			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+				{
+					You::NLP::TaskField::COMPLETE,
+					You::NLP::SHOW_QUERY::Predicate::EQ,
+					false
+				}
+			};
 			templ.order = {
 				{
 					You::NLP::TaskField::PRIORITY,
@@ -146,9 +166,101 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		result = boost::get<SHOW_RESULT>(executor->execute());
 
 		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[](const Task& task) {
+			return !task.isCompleted();
+		}));
+		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
 			return left.getPriority() > right.getPriority();
+		}));
+
+		// Test filters more rigourously
+		{  // NOLINT(whitespace/braces)
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+				{
+					You::NLP::TaskField::DESCRIPTION,
+					You::NLP::SHOW_QUERY::Predicate::NOT_EQ,
+					std::wstring(L"meh 1")
+				}
+			};
+			templ.order.clear();
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[](const Task& task) {
+			return task.getDescription() != L"meh 1";
+		}));
+
+		auto runTime = boost::posix_time::second_clock::local_time();
+		{  // NOLINT(whitespace/braces)
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+				{
+					You::NLP::TaskField::DEADLINE,
+					You::NLP::SHOW_QUERY::Predicate::LESS_THAN_EQ,
+					runTime
+				}
+			};
+			templ.order.clear();
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[&runTime](const Task& task) {
+			return task.getDeadline() <= runTime;
+		}));
+
+		runTime += boost::posix_time::hours(1);
+		{  // NOLINT(whitespace/braces)
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+				{
+					You::NLP::TaskField::DEADLINE,
+					You::NLP::SHOW_QUERY::Predicate::LESS_THAN,
+					runTime
+				}
+			};
+			templ.order.clear();
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[&runTime](const Task& task) {
+			return task.getDeadline() < runTime;
+		}));
+
+		{  // NOLINT(whitespace/braces)
+			You::NLP::SHOW_QUERY templ = Mocks::Queries::SHOW_QUERY;
+			templ.predicates = {
+					{
+						You::NLP::TaskField::DEADLINE,
+						You::NLP::SHOW_QUERY::Predicate::GREATER_THAN_EQ,
+						runTime
+					}
+			};
+			templ.order.clear();
+			query = std::move(templ);
+		}
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<SHOW_RESULT>(executor->execute());
+
+		Assert::IsTrue(
+			std::all_of(begin(result.tasks), end(result.tasks),
+			[&runTime](const Task& task) {
+			return task.getDeadline() >= runTime;
 		}));
 	}
 

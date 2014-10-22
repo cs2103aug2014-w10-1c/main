@@ -159,29 +159,29 @@ QueryExecutorBuilderVisitor::buildComparator(
 	const TValue& value) {
 	switch (predicate) {
 	case SHOW_QUERY::Predicate::EQ:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() == value;
-		};
+		return std::bind(std::equal_to<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	case SHOW_QUERY::Predicate::NOT_EQ:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() != value;
-		};
+		return std::bind(std::not_equal_to<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	case SHOW_QUERY::Predicate::LESS_THAN:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() < value;
-		};
+		return std::bind(std::less<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	case SHOW_QUERY::Predicate::LESS_THAN_EQ:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() <= value;
-		};
+		return std::bind(std::less_equal<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	case SHOW_QUERY::Predicate::GREATER_THAN:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() > value;
-		};
+		return std::bind(std::greater<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	case SHOW_QUERY::Predicate::GREATER_THAN_EQ:
-		return [selector, value](const Task& task) {
-			return (task.*selector)() >= value;
-		};
+		return std::bind(std::greater_equal<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
 	default:
 		assert(false);
 		abort();

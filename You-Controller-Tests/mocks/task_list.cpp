@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <random>
 #include "task_list.h"
 
 namespace You {
@@ -12,11 +13,14 @@ TaskList::TaskList(size_t count) {
 }
 
 Task TaskList::createTask() {
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(0, 1);
+
 	std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
-		L"meh",
+		L"meh " + boost::lexical_cast<std::wstring>(size()),
 		boost::posix_time::second_clock::local_time() +
 			boost::posix_time::hours(size()),
-		QueryEngine::Task::DEFAULT_PRIORITY,
+			static_cast<QueryEngine::Task::Priority>(distribution(generator)),
 		QueryEngine::Task::Dependencies());
 
 	QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
