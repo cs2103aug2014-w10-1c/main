@@ -17,7 +17,7 @@ namespace UnitTests {
 TEST_CLASS(DataStoreApiTest) {
 public:
 	/// Clears xml document tree and save empty xml file
-	static void clearDataStoreState() {
+	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		Internal::DataStore::get().document.reset();
 		Internal::DataStore::get().saveData();
 	}
@@ -31,7 +31,6 @@ public:
 	}
 
 	TEST_METHOD(dataStoreOperationPushedToOperationsQueue) {
-		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 
 		DataStore::get().post(0, task1);
@@ -45,7 +44,6 @@ public:
 	}
 
 	TEST_METHOD(commitTransactionModifyData) {
-		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
@@ -57,7 +55,6 @@ public:
 	}
 
 	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
-		clearDataStoreState();
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
 
