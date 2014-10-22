@@ -83,17 +83,33 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 
 	std::for_each(begin(query.predicates), end(query.predicates),
 		[&filter](const SHOW_QUERY::FIELD_FILTER& field) {
+			std::function<bool(const Task&)> currentFilter;
 			switch (field.field) {
 			case TaskField::DESCRIPTION:
-				filter = filter &&
-					QueryEngine::Filter(
-						buildComparator(&Task::getDescription,
-							field.predicate, field.value));
+				assert(boost::get<std::wstring>(&field.value));
+				currentFilter = buildComparator(&Task::getDescription,
+					field.predicate,
+					boost::get<std::wstring>(field.value));
 				break;
 			case TaskField::DEADLINE:
-			case TaskField::COMPLETE:
-			case TaskField::PRIORITY:
+				assert(boost::get<boost::posix_time::ptime>(&field.value));
+				currentFilter = buildComparator(&Task::getDeadline,
+					field.predicate,
+					boost::get<boost::posix_time::ptime>(field.value));
 				break;
+			case TaskField::COMPLETE:
+				assert(boost::get<bool>(&field.value));
+				// TODO(lowjoel): wait for completion flag.
+				break;
+			case TaskField::PRIORITY:
+				assert(boost::get<TaskPriority>(&field.value));
+				currentFilter = buildComparator(&Task::getPriority,
+					field.predicate,
+					Controller::nlpToQueryEnginePriority(
+						boost::get<TaskPriority>(field.value)));
+				break;
+			default:
+				assert(false); abort();
 			}
 		});
 

@@ -8,6 +8,7 @@
 
 #include "You-Utils/option.h"
 #include "task_field.h"
+#include "task_priority.h"
 
 namespace You {
 namespace NLP {
@@ -58,7 +59,11 @@ struct SHOW_QUERY {
 		Predicate predicate;
 
 		/// The value to compare against.
-		std::wstring value;
+		boost::variant<
+			std::wstring,
+			TaskPriority,
+			boost::posix_time::ptime,
+			bool> value;
 	};
 
 	/// A pair containing the field and the order to sort by.
