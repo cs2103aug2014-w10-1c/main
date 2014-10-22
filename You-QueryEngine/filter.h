@@ -79,9 +79,11 @@ public:
 	/// Copy construct a filter.
 	Filter(const Filter& filter) : ffilter(filter.ffilter) {}
 
-private:
+	/// Construct a filter from a filtering function.
+	/// \see FFilter
 	explicit Filter(const FFilter& ffilter) : ffilter(ffilter) {}
 
+private:
 	static FFilter AND(const FFilter& f, const FFilter& g);
 	static FFilter OR(const FFilter& f, const FFilter& g);
 	static FFilter NOT(const FFilter& f);
