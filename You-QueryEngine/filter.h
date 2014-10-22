@@ -22,6 +22,39 @@ public:
 	/// Type of the predicate function using in Filter
 	typedef std::function<bool(const Task&)> FFilter;
 
+	/// Given a getter and a bound, construct a filter that filter the task
+	/// that the result of the getter is less than the bound
+	template <typename T>
+	static Filter lessThan(const std::function<T(const Task&)> g, const T& v) {
+		return Filter([g, v] (const Task& t) {
+			return g(t) < v;
+		});
+	}
+
+	/// Given a getter and a bound, construct a filter that filter the task
+	/// that the result of the getter is equal the bound
+	template <typename T>
+	static Filter equal(const std::function<T(const Task&)> g, const T& v) {
+		return Filter([g, v] (const Task& t) {
+			return g(t) == v;
+		});
+	}
+
+	/// Given a getter and a bound, construct a filter that filter the task
+	/// that the result of the getter is greater than the bound
+	template <typename T>
+	static Filter greaterThan(const std::function<T(const Task&)> g, const T& v) {
+		return Filter([g, v] (const Task& t) {
+			return g(t) > v;
+		});
+	}
+
+	/// Getters
+	static const std::function<Task::Description(const Task&)> descriptionGetter;
+	static const std::function<Task::Time(const Task&)> deadlineGetter;
+	static const std::function<Task::Dependencies(const Task&)> dependenciesGetter;
+	static const std::function<Task::Priority(const Task&)> priorityGetter;
+
 	/// Filter any task.
 	static Filter anyTask();
 	/// Filter tasks that id is in a list.
