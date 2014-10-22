@@ -39,7 +39,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		pugi::xml_node tasksNode = getTasksNode();
+		pugi::xml_node tasksNode = getTasksNode(temp);
 		executeTransaction(transaction, tasksNode);
 		document.reset(temp);
 		committedTransaction.push(self);
@@ -94,7 +94,7 @@ void DataStore::erase(TaskId rawId) {
 
 std::vector<KeyValuePairs> DataStore::getAllTask() {
 	loadData();
-	pugi::xml_node tasksNode = getTasksNode();
+	pugi::xml_node tasksNode = getTasksNode(document);
 	std::vector<KeyValuePairs> allTask;
 	for (auto i = tasksNode.begin(); i != tasksNode.end(); ++i) {
 		allTask.push_back(SerializationOperation::deserialize(*i));
@@ -136,19 +136,19 @@ void DataStore::executeTransaction(Transaction & transaction,
 	}
 }
 
-pugi::xml_node DataStore::getTasksNode() {
-	pugi::xml_node tasksNode = document.child(TASKS_NODE.c_str());
+pugi::xml_node DataStore::getTasksNode(pugi::xml_document& xml) {
+	pugi::xml_node tasksNode = xml.child(TASKS_NODE.c_str());
 	if (tasksNode.empty()) {
-		tasksNode = document.append_child(TASKS_NODE.c_str());
+		tasksNode = xml.append_child(TASKS_NODE.c_str());
 		return tasksNode;
 	}
 	return tasksNode;
 }
 
-pugi::xml_node DataStore::getDataNode() {
-	pugi::xml_node dataNode = document.child(DATA_NODE.c_str());
+pugi::xml_node DataStore::getDataNode(pugi::xml_document& xml) {
+	pugi::xml_node dataNode = xml.child(DATA_NODE.c_str());
 	if (dataNode.empty()) {
-		dataNode = document.append_child(DATA_NODE.c_str());
+		dataNode = xml.append_child(DATA_NODE.c_str());
 		return dataNode;
 	}
 	return dataNode;

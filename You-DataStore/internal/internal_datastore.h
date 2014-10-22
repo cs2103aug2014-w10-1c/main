@@ -79,14 +79,18 @@ private:
 	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
 
 	/// Get the handle for XML node containing the task list
+	/// from the xml_document given
 	///
-	/// \return \ref pugi::xml_node for tasks node
-	pugi::xml_node getTasksNode();
+	/// \param[in] xml the xml_document to get the tasks node handle from
+	/// \return \ref pugi::xml_node for the tasks node
+	pugi::xml_node getTasksNode(pugi::xml_document& xml);
 
 	/// Get the handle for XML node containing miscellaneous data
+	/// from the xml_document given
 	///
-	/// \return \ref pugi::xml_node for data node
-	pugi::xml_node getDataNode();
+	/// \param[in] xml the xml_document to get the data node handle from
+	/// \return \ref pugi::xml_node for the data node
+	pugi::xml_node getDataNode(pugi::xml_document& xml);
 
 private:
 	static const std::wstring FILE_PATH;
