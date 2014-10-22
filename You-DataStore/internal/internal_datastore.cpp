@@ -26,6 +26,7 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
+	// TODO(digawp): commit not the latest transaction
 	// assume only transaction on top of the stack may be committed
 	assert(*transactionStack.top().lock() == transaction);
 
@@ -50,57 +51,42 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
+	// TODO(digawp): rollback not the latest transaction
 	assert(*(transactionStack.top().lock()) == transaction);
 	transactionStack.pop();
 }
 
-bool DataStore::post(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::post(TaskId rawId, const SerializedTask& sTask) {
+	assert(!transactionStack.empty());
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PostOperation>(rawId, sTask);
 
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
 }
 
-bool DataStore::put(TaskId rawId, const SerializedTask& sTask) {
+void DataStore::put(TaskId rawId, const SerializedTask& sTask) {
+	assert(!transactionStack.empty());
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::PutOperation>(rawId, sTask);
 
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
 }
 
-bool DataStore::erase(TaskId rawId) {
+void DataStore::erase(TaskId rawId) {
+	assert(!transactionStack.empty());
+
 	std::unique_ptr<Internal::IOperation> operation =
 		std::make_unique<Internal::EraseOperation>(rawId);
-	if (!transactionStack.empty()) {
-		if (auto transaction = transactionStack.top().lock()) {
-			transaction->push(std::move(operation));
-			return true;
-		}
+
+	if (auto transaction = transactionStack.top().lock()) {
+		transaction->push(std::move(operation));
 	}
-
-	return operation->run(document);
-}
-
-SerializedTask DataStore::getTask(TaskId rawId) {
-	std::wstring taskId = boost::lexical_cast<std::wstring>(rawId);
-	pugi::xml_node toGet =
-		document.find_child_by_attribute(L"id", taskId.c_str());
-
-	return SerializationOperation::deserialize(toGet);
 }
 
 std::vector<SerializedTask> DataStore::getAllTask() {
@@ -118,8 +104,7 @@ bool DataStore::saveData() {
 }
 
 void DataStore::loadData() {
-	bool isInitialized =
-		document.first_child().type() != pugi::xml_node_type::node_null;
+	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
 		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
 	}
@@ -130,8 +115,8 @@ void DataStore::executeTransaction(Transaction & transaction,
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
-		bool status = !operation->run(xml);
-		assert(!status);
+		bool status = operation->run(xml);
+		assert(status);
 		if (!status) {
 			// throw exception/assert
 		}
@@ -139,8 +124,8 @@ void DataStore::executeTransaction(Transaction & transaction,
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
-		bool status = !mergedOperation->run(xml);
-		assert(!status);
+		bool status = mergedOperation->run(xml);
+		assert(status);
 		if (!status) {
 			// throw exception/assert
 		}

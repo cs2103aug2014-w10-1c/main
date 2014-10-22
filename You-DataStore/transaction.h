@@ -6,7 +6,7 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreApiTest; }
+namespace UnitTests { class DataStoreApiTest; class DataStoreTest; }
 namespace Internal { class DataStore; class Transaction; }
 
 /// Represents a collection of operations that need to collectively succeed or
@@ -17,6 +17,7 @@ namespace Internal { class DataStore; class Transaction; }
 class Transaction : protected std::shared_ptr<Internal::Transaction> {
 	friend class Internal::DataStore;
 	friend class UnitTests::DataStoreApiTest;
+	friend class UnitTests::DataStoreTest;
 
 public:
 	/// Move constructor. We only allow a transaction to have one strong

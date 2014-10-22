@@ -13,4 +13,6 @@
 
 #include "You-DataStore/stdafx.h"
 
+#include "exclusions.h"
+
 #endif  // YOU_DATASTORE_TESTS_STDAFX_H_
