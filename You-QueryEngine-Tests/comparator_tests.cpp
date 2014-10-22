@@ -53,6 +53,8 @@ TEST_CLASS(ComparatorTests) {
 
 	TEST_METHOD(compareByDeadline) {
 		Assert::IsTrue((Comparator::byDeadline())
+			(FOR_TOMMOROW(), FEED_THE_DOGGY()));
+		Assert::IsTrue((Comparator::byDeadline())
 			(FOR_TOMMOROW(), FOR_NEXT_WEEK()));
 		Assert::IsTrue((Comparator::byDeadline().descending())
 			(FOR_NEXT_WEEK(), FOR_TOMMOROW()));

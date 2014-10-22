@@ -54,7 +54,7 @@ bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 		}
 	}
 	/// If identical, assume greater than.
-	return true;
+	return false;
 }
 
 void Comparator::negateAllComparators() {
