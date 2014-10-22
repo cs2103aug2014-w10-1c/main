@@ -104,7 +104,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
-				return left.getDeadline() >= right.getDeadline();
+				return left.getDeadline() > right.getDeadline();
 		}));
 
 		{  // NOLINT(whitespace/braces)
@@ -123,7 +123,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
-			return left.getDescription() <= right.getDescription();
+			return left.getDescription() < right.getDescription();
 		}));
 
 		{  // NOLINT(whitespace/braces)
@@ -142,7 +142,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
-			return left.getPriority() >= right.getPriority();
+			return left.getPriority() > right.getPriority();
 		}));
 	}
 
