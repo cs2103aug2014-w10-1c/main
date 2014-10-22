@@ -14,7 +14,8 @@ TaskList::TaskList(size_t count) {
 Task TaskList::createTask() {
 	std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
 		L"meh",
-		QueryEngine::Task::DEFAULT_DEADLINE + boost::posix_time::hours(size()),
+		boost::posix_time::second_clock::local_time() +
+			boost::posix_time::hours(size()),
 		QueryEngine::Task::DEFAULT_PRIORITY,
 		QueryEngine::Task::Dependencies());
 
