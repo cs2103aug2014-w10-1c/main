@@ -120,6 +120,7 @@ void MainWindow::editTask(const Task& task) {
 	initializeSingleTimerNotification(task);
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
+	emit(taskSelected());
 }
 
 void MainWindow::sendQuery() {
