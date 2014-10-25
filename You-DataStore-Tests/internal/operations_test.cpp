@@ -6,6 +6,7 @@
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/operations/serialization_operation.h"
+#include "internal/operations/branch_operation.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -102,6 +103,18 @@ public:
 		Internal::EraseOperation erase(1);
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
+	}
+
+	TEST_METHOD(createNewNodeWithBranchOperation) {
+		Internal::BranchOperation::get(mockDocument, L"tasks");
+		Assert::IsFalse(mockDocument.child(L"tasks").empty());
+	}
+
+	TEST_METHOD(getExistingNodeWithBranchOperation) {
+		pugi::xml_node expected = mockDocument.append_child(L"tasks");
+		pugi::xml_node actual =
+			Internal::BranchOperation::get(mockDocument, L"tasks");
+		Assert::IsTrue(expected == actual);
 	}
 };
 }  // namespace UnitTests

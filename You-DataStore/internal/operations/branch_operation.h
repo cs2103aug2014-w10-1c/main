@@ -19,7 +19,6 @@ public:
 	/// \param[in] nodeName the name of the node to get the handler of
 	static pugi::xml_node get(pugi::xml_document& document,
 		std::wstring nodeName);
-
 };
 }  // namespace Internal
 }  // namespace DataStore
