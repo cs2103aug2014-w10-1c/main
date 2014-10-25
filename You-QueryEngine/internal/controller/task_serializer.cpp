@@ -140,7 +140,7 @@ std::vector<std::wstring> TS::tokenize(const std::wstring& input) {
 	boost::tokenizer<boost::char_separator<wchar_t>,
 		std::wstring::const_iterator, std::wstring> tokens(input, sep);
 	for (const auto& token : tokens) {
-		output.push_back(std::wstring(token.begin(), token.end()));
+		output.push_back(std::wstring(std::begin(token), std::end(token)));
 	}
 	return output;
 }

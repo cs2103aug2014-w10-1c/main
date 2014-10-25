@@ -44,10 +44,8 @@ Comparator::Comparator(const ComparatorFunc& func) {
 
 bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 	ComparisonResult result = ComparisonResult::EQ;
-	for (auto comparator = comparators.cbegin();
-		 comparator != comparators.cend();
-		 ++comparator) {
-		result = (*comparator)(lhs, rhs);
+	for (const auto& comparator : comparators) {
+		result = comparator(lhs, rhs);
 		if (result != ComparisonResult::EQ) {
 			break;
 		} else {
@@ -85,7 +83,7 @@ Comparator& Comparator::descending() {
 
 Comparator& Comparator::operator&&(const Comparator& rhs) {
 	comparators.insert(comparators.end(),
-		rhs.comparators.begin(), rhs.comparators.end());
+		std::begin(rhs.comparators), std::end(rhs.comparators));
 	return *this;
 }
 

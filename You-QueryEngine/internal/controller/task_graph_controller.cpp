@@ -110,15 +110,13 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 
 void TGC::rebuildGraph(TaskGraph& g) {
 	g.graph = TaskGraph::Graph();
-	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
-		++pair) {
+	for (const auto& idTaskPair : g.taskTable) {
 		Vertex v = boost::add_vertex(g.graph);
-		g.graph[v] = pair->first;
+		g.graph[v] = idTaskPair.first;
 	}
-	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
-		++pair) {
-		for (const auto& cid : (pair->second).getDependencies()) {
-			boost::add_edge(cid, pair->first, g.graph);
+	for (const auto& idTaskPair : g.taskTable) {
+		for (const auto& cid : idTaskPair.second.getDependencies()) {
+			boost::add_edge(cid, idTaskPair.first, g.graph);
 		}
 	}
 }
