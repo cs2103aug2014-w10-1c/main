@@ -66,6 +66,9 @@
     <ClInclude Include="internal\operations\branch_operation.h">
       <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
+    <ClInclude Include="internal\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -97,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="internal\operations\branch_operation.cpp">
       <Filter>Source Files\internal\operations</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\constants.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -79,9 +79,6 @@ private:
 	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
 
 private:
-	static const std::wstring FILE_PATH;
-	static const std::wstring TASKS_NODE;
-	static const std::wstring DATA_NODE;
 	pugi::xml_document document;
 
 	/// The current stack of active transactions.
