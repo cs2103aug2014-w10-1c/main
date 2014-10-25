@@ -35,8 +35,12 @@ public:
 	/// @}
 
 	/// Get all tasks
-	/// \return a vector of SerializedTasks
+	/// \return a vector of KeyValuePairs
 	std::vector<KeyValuePairs> getAllTasks();
+
+	/// Get all resources
+	/// \return a vector of KeyValuePairs
+	std::vector<KeyValuePairs> getAllResources();
 
 private:
 	/// Default constructor. Use \ref get to get the singleton instance.
