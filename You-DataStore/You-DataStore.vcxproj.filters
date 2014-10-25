@@ -63,6 +63,9 @@
     <ClInclude Include="internal\operations\serialization_operation.h">
       <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
+    <ClInclude Include="internal\operations\branch_operation.h">
+      <Filter>Header Files\internal\operations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source Files\internal</Filter>
     </ClCompile>
     <ClCompile Include="internal\operations\serialization_operation.cpp">
+      <Filter>Source Files\internal\operations</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\operations\branch_operation.cpp">
       <Filter>Source Files\internal\operations</Filter>
     </ClCompile>
   </ItemGroup>
