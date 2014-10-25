@@ -4,6 +4,7 @@
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
 #include "operations/erase_operation.h"
+#include "operations/branch_operation.h"
 #include "internal_transaction.h"
 #include "internal_datastore.h"
 
@@ -39,7 +40,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		pugi::xml_node tasksNode = getTasksNode(temp);
+		pugi::xml_node tasksNode = BranchOperation::get(temp, TASKS_NODE);
 		executeTransaction(transaction, tasksNode);
 		document.reset(temp);
 		committedTransaction.push(self);
@@ -94,7 +95,7 @@ void DataStore::erase(TaskId rawId) {
 
 std::vector<KeyValuePairs> DataStore::getAllTask() {
 	loadData();
-	pugi::xml_node tasksNode = getTasksNode(document);
+	pugi::xml_node tasksNode = BranchOperation::get(document, TASKS_NODE);
 	std::vector<KeyValuePairs> allTask;
 	for (auto i = tasksNode.begin(); i != tasksNode.end(); ++i) {
 		allTask.push_back(SerializationOperation::deserialize(*i));
@@ -134,24 +135,6 @@ void DataStore::executeTransaction(Transaction & transaction,
 			// throw exception/assert
 		}
 	}
-}
-
-pugi::xml_node DataStore::getTasksNode(pugi::xml_document& xml) {
-	pugi::xml_node tasksNode = xml.child(TASKS_NODE.c_str());
-	if (tasksNode.empty()) {
-		tasksNode = xml.append_child(TASKS_NODE.c_str());
-		return tasksNode;
-	}
-	return tasksNode;
-}
-
-pugi::xml_node DataStore::getDataNode(pugi::xml_document& xml) {
-	pugi::xml_node dataNode = xml.child(DATA_NODE.c_str());
-	if (dataNode.empty()) {
-		dataNode = xml.append_child(DATA_NODE.c_str());
-		return dataNode;
-	}
-	return dataNode;
 }
 
 }  // namespace Internal
