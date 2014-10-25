@@ -1,8 +1,8 @@
 //@author A0094446X
 #include "stdafx.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <QApplication>
 #include <QList>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "query_manager.h"
 namespace You {
 namespace GUI {

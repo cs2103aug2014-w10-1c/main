@@ -2,7 +2,6 @@
 #pragma once
 #ifndef YOU_GUI_MAIN_WINDOW_MESSAGES_H_
 #define YOU_GUI_MAIN_WINDOW_MESSAGES_H_
-#include "stdafx.h"
 #include "main_window.h"
 
 namespace You {
