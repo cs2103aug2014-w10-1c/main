@@ -25,12 +25,11 @@ Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;
 	auto serialized =
 		You::DataStore::DataStore::get().getAllTasks();
-	std::for_each(serialized.cbegin(), serialized.cend(),
-		[&graph, &maxID] (const TaskSerializer::STask task) {
+	for (const auto& task : serialized) {
 		auto t = TaskSerializer::deserialize(task);
 		addTask(graph, t);
 		maxID = std::max(t.getID(), maxID);
-	});
+	}
 	return maxID;
 }
 

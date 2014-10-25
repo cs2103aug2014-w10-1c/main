@@ -38,14 +38,12 @@ Task AddTask::buildTask(const Task::ID newID) {
 }
 
 void AddTask::ensureDependencyIsValid() const {
-	std::for_each(dependencies.cbegin(), dependencies.cend(),
-		[] (const Task::ID& id) {
-			if (!Controller::Graph::isTaskExist(
-					State::get().graph(), id)) {
-				throw Exception::TaskNotFoundException();
-			}
+	for (const auto& id : dependencies) {
+		if (!Controller::Graph::isTaskExist(
+			State::get().graph(), id)) {
+			throw Exception::TaskNotFoundException();
 		}
-	);
+	}
 }
 
 void AddTask::addTaskToState(const Task& task,

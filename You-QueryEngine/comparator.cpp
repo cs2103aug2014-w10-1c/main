@@ -61,11 +61,9 @@ bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 
 void Comparator::negateAllComparators() {
 	std::vector<const ComparatorFunc> newComparators;
-	std::for_each(comparators.cbegin(), comparators.cend(),
-		[this, &newComparators] (const ComparatorFunc& func) {
-			newComparators.push_back(this->negate(func));
-		}
-	);
+	for (const auto& func : comparators) {
+		newComparators.push_back(this->negate(func));
+	}
 	comparators = newComparators;
 }
 

@@ -78,8 +78,9 @@ TS::Value TS::serializeDeadline(const Task::Time& deadline) {
 		date.year(), date.month(), date.day(),
 		time.hours(), time.minutes(), time.seconds()
 	};
-	std::for_each(fields.begin(), fields.end(),
-		[&wss](int m) { wss << m << VALUE_DELIMITER; });
+	for (const auto& field : fields) {
+		wss << field << VALUE_DELIMITER;
+	}
 	return wss.str();
 }
 
@@ -89,12 +90,10 @@ TS::Value TS::serializePriority(const Task::Priority& priority) {
 
 TS::Value TS::serializeDependencies(const Task::Dependencies& dependencies) {
 	std::wstringstream ws;
-	std::for_each(dependencies.cbegin(), dependencies.cend(),
-		[&ws] (const Task::ID id) {
-			ws << TS::serializeID(id);
-			ws << TS::VALUE_DELIMITER;
-		}
-	);
+	for (const auto& id : dependencies) {
+		ws << TS::serializeID(id);
+		ws << TS::VALUE_DELIMITER;
+	}
 	return ws.str();
 }
 
@@ -109,12 +108,9 @@ Task::Description TS::deserializeDescription(const Value& description) {
 Task::Time TS::deserializeDeadline(const Value& deadline) {
 	std::vector<std::int16_t> numbers;
 	std::vector<std::wstring> tokens = tokenize(deadline);
-	std::for_each(tokens.cbegin(), tokens.cend(),
-		[&numbers](const std::wstring token) {
-			numbers.push_back(
-				boost::lexical_cast<std::int16_t>(token));
-		}
-	);
+	for (const auto& token : tokens) {
+		numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+	}
 	auto year = numbers[0];
 	auto month = numbers[1];
 	auto day = numbers[2];
@@ -132,11 +128,9 @@ Task::Priority TS::deserializePriority(const Value& priority) {
 Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
 	Task::Dependencies deps;
 	std::vector<std::wstring> tokens = tokenize(dependencies);
-	std::for_each(tokens.cbegin(), tokens.cend(),
-		[&deps] (const std::wstring token) {
-			deps.insert(boost::lexical_cast<Task::ID>(token));
-		}
-	);
+	for (const auto& token : tokens) {
+		deps.insert(boost::lexical_cast<Task::ID>(token));
+	}
 	return deps;
 }
 
@@ -145,11 +139,9 @@ std::vector<std::wstring> TS::tokenize(const std::wstring& input) {
 	boost::char_separator<wchar_t> sep(VALUE_DELIMITER.c_str());
 	boost::tokenizer<boost::char_separator<wchar_t>,
 		std::wstring::const_iterator, std::wstring> tokens(input, sep);
-	std::for_each(tokens.begin(), tokens.end(),
-		[&output] (std::wstring s) {
-			output.push_back(std::wstring(s.begin(), s.end()));
-		}
-	);
+	for (const auto& token : tokens) {
+		output.push_back(std::wstring(token.begin(), token.end()));
+	}
 	return output;
 }
 
