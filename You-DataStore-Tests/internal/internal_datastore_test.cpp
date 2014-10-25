@@ -6,6 +6,7 @@
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
+#include "internal/constants.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -79,27 +80,27 @@ public:
 		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(getAllTasksFromTree) {
+	TEST_METHOD(getAllFromTree) {
 		DataStore& sut = DataStore::get();
 
 		// Create mock
 		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 
-		std::vector<KeyValuePairs> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
 		Assert::AreEqual(1U, result.size());
 	}
 
-	TEST_METHOD(getAllTaskFromFile) {
+	TEST_METHOD(getAllFromFile) {
 		DataStore& sut = DataStore::get();
 
 		// Create mock
 		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
-		sut.document.save_file(sut.FILE_PATH.c_str());
+		sut.document.save_file(Internal::FILE_PATH.c_str());
 		sut.document.reset();
 
-		std::vector<KeyValuePairs> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
 		Assert::AreEqual(1U, result.size());
 	}
 
