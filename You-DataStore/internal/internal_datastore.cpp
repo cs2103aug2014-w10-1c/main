@@ -90,14 +90,14 @@ void DataStore::erase(TaskId rawId) {
 	}
 }
 
-std::vector<KeyValuePairs> DataStore::getAllTask() {
+std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 	loadData();
-	pugi::xml_node tasksNode = BranchOperation::get(document, TASKS_NODE);
-	std::vector<KeyValuePairs> allTask;
-	for (auto i = tasksNode.begin(); i != tasksNode.end(); ++i) {
-		allTask.push_back(SerializationOperation::deserialize(*i));
+	pugi::xml_node dataNode = BranchOperation::get(document, nodeName);
+	std::vector<KeyValuePairs> allData;
+	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
+		allData.push_back(SerializationOperation::deserialize(*i));
 	}
-	return allTask;
+	return allData;
 }
 
 bool DataStore::saveData() {
