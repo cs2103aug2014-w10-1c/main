@@ -27,28 +27,28 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 	return std::unique_ptr<Query>(new UpdateTask(
 		previous.getID(), previous.getDescription(),
 		previous.getDeadline(), previous.getPriority(),
-		previous.getDependencies()));
+		previous.getDependencies(), previous.isCompleted()));
 }
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
-	if (this->description == Task::DEFAULT_DESCRIPTION) {
-		builder.description(current.getDescription());
-	} else {
-		builder.description(this->description);
+	if (boost::optional<Task::Description> _ = this->description) {
+		builder.description(this->description.get());
 	}
-	if (this->deadline != Task::DEFAULT_DEADLINE) {
-		builder.deadline(this->deadline);
+	if (boost::optional<Task::Time> _ = this->deadline) {
+		builder.deadline(this->deadline.get());
 	}
-	if (this->priority != Task::DEFAULT_PRIORITY) {
-		builder.priority(this->priority);
+	if (boost::optional<Task::Priority> _ = this->priority) {
+		builder.priority(this->priority.get());
 	}
-	if (this->dependencies != Task::DEFAULT_DEPENDENCIES) {
-		builder.dependencies(this->dependencies);
+	if (boost::optional<Task::Dependencies> _ = this->dependencies) {
+		builder.dependencies(this->dependencies.get());
 	}
 	Task newTask = builder;
-	newTask.setCompleted(this->completed);
+	if (boost::optional<bool> _ = this->completed) {
+		newTask.setCompleted(this->completed.get());
+	}
 	return newTask;
 }
 

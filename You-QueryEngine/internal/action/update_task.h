@@ -6,6 +6,7 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
 #define YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
 
+#include <boost/optional.hpp>
 #include "../../api.h"
 
 namespace You {
@@ -17,13 +18,18 @@ namespace Action {
 class UpdateTask : public Query {
 public:
 	/// Construct EditTask query
-	explicit UpdateTask(Task::ID id, Task::Description description,
-		Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies)
-		: id(id), description(description), deadline(deadline),
-			priority(priority), dependencies(dependencies) {}
-
-   /// Construct mark task as completed/uncompleted
-	explicit UpdateTask(Task::ID id, bool completed) : id(id),
+	explicit UpdateTask(
+		Task::ID id,
+		boost::optional<Task::Description> description,
+		boost::optional<Task::Time> deadline,
+		boost::optional<Task::Priority> priority,
+		boost::optional<Task::Dependencies> dependencies,
+		boost::optional<bool> completed) :
+		id(id),
+		description(description),
+		deadline(deadline),
+		priority(priority),
+		dependencies(dependencies),
 		completed(completed) {}
 
 	/// Disable assignment operator
@@ -46,13 +52,11 @@ private:
 	Response execute(State& tasks) override;
 
 	const Task::ID id;
-	const Task::Description description =
-		Task::DEFAULT_DESCRIPTION;  ///< Description.
-	const Task::Time deadline = Task::DEFAULT_DEADLINE;  ///< Deadline.
-	const Task::Priority priority = Task::DEFAULT_PRIORITY;  ///< Priority.
-	const Task::Dependencies dependencies =
-		Task::DEFAULT_DEPENDENCIES;  ///< Dependencies.
-	const bool completed = false;  ///< Completed.
+	const boost::optional<Task::Description> description;  ///< Description.
+	const boost::optional<Task::Time> deadline;  ///< Deadline.
+	const boost::optional<Task::Priority> priority;  ///< Priority.
+	const boost::optional<Task::Dependencies> dependencies;  ///< Dependencies.
+	const boost::optional<bool> completed = false;  ///< Completed.
 	/// The previous state of the task.
 	Task previous;
 };
