@@ -8,21 +8,19 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PostOperation::PostOperation(TaskId id, const KeyValuePairs& stask) {
-	taskId = id;
-	task = stask;
+PostOperation::PostOperation(std::wstring id, const KeyValuePairs& kvp) {
+	nodeId = id;
+	task = kvp;
 }
 
 bool PostOperation::run(pugi::xml_node& document) {
-	// Consider changing parameter to std::wstring altogether
-	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
-	if (document.find_child_by_attribute(L"id", idString.c_str())) {
+	if (document.find_child_by_attribute(L"id", nodeId.c_str())) {
 		return false;
 	}
 	pugi::xml_node newTask = document.append_child(L"task");
 
 	pugi::xml_attribute id = newTask.append_attribute(L"id");
-	id.set_value(idString.c_str());
+	id.set_value(nodeId.c_str());
 	serialize(task, newTask);
 	return true;
 }

@@ -10,7 +10,7 @@ namespace Internal {
 
 class PostOperation : public SerializationOperation {
 public:
-	PostOperation(TaskId, const KeyValuePairs&);
+	PostOperation(std::wstring id, const KeyValuePairs& kvp);
 	bool run(pugi::xml_node& document) override;
 	virtual ~PostOperation() = default;
 

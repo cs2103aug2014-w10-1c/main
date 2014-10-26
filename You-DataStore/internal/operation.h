@@ -21,8 +21,8 @@ public:
 	virtual ~IOperation() = default;
 
 protected:
-	/// The Task ID to modify
-	TaskId taskId;
+	/// The "id" attribute of the XML node to modify
+	std::wstring nodeId;
 };
 
 }  // namespace Internal

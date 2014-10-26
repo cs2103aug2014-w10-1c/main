@@ -10,7 +10,7 @@ namespace Internal {
 
 class PutOperation : public SerializationOperation {
 public:
-	PutOperation(TaskId, const KeyValuePairs&);
+	PutOperation(std::wstring id, const KeyValuePairs& kvp);
 	bool run(pugi::xml_node& document) override;
 	virtual ~PutOperation() = default;
 

@@ -10,7 +10,7 @@ namespace Internal {
 
 class EraseOperation : public IOperation {
 public:
-	explicit EraseOperation(TaskId);
+	explicit EraseOperation(std::wstring id);
 	bool run(pugi::xml_node& document) override;
 	virtual ~EraseOperation() = default;
 };

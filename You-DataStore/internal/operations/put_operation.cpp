@@ -9,22 +9,21 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PutOperation::PutOperation(TaskId id, const KeyValuePairs& stask) {
-	taskId = id;
-	task = stask;
+PutOperation::PutOperation(std::wstring id, const KeyValuePairs& kvp) {
+	nodeId = id;
+	task = kvp;
 }
 
 bool PutOperation::run(pugi::xml_node& document) {
-	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	pugi::xml_node toEdit =
-		document.find_child_by_attribute(L"id", idString.c_str());
+		document.find_child_by_attribute(L"id", nodeId.c_str());
 	if (!toEdit) {
 		return false;
 	}
 
 	document.remove_child(toEdit);
 
-	PostOperation post(taskId, task);
+	PostOperation post(nodeId, task);
 	return post.run(document);
 }
 

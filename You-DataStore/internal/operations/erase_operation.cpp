@@ -6,14 +6,13 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-EraseOperation::EraseOperation(TaskId id) {
-	taskId = id;
+EraseOperation::EraseOperation(std::wstring id) {
+	nodeId = id;
 }
 
 bool EraseOperation::run(pugi::xml_node& document) {
-	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", idString.c_str());
+		document.find_child_by_attribute(L"id", nodeId.c_str());
 	return document.remove_child(toErase);
 }
 
