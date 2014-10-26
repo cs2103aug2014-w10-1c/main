@@ -8,6 +8,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+/// Intermediate parent class of \ref Operation requiring serialization
 class SerializationOperation : public IOperation {
 public:
 	/// Serialize task to an xml node

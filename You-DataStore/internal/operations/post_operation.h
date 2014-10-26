@@ -8,8 +8,14 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+/// An \ref Operation class for post operation
+/// Adds a node to the XML when \ref run is called
 class PostOperation : public SerializationOperation {
 public:
+	/// Constructor
+	///
+	/// \param[in] id the id attribute of the node to be added
+	/// \param[in] kvp the KeyValuePairs of the node to be added
 	PostOperation(std::wstring id, const KeyValuePairs& kvp);
 	bool run(pugi::xml_node& document) override;
 	virtual ~PostOperation() = default;

@@ -8,8 +8,13 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+/// An \ref Operation class for erase operation
+/// Erases a node from the XML when \ref run is called
 class EraseOperation : public IOperation {
 public:
+	/// Constructor
+	///
+	/// \param[in] id the id attribute of the node to be erased
 	explicit EraseOperation(std::wstring id);
 	bool run(pugi::xml_node& document) override;
 	virtual ~EraseOperation() = default;
