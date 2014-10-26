@@ -70,37 +70,37 @@ public:
 	}
 
 	TEST_METHOD(postWithNewId) {
-		Internal::PostOperation post(1, task2);
+		Internal::PostOperation post(L"1", task2);
 		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(postWithUsedId) {
-		Internal::PostOperation post(0, task1);
+		Internal::PostOperation post(L"0", task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	TEST_METHOD(putWithExistingId) {
-		Internal::PutOperation put(0, task1);
+		Internal::PutOperation put(L"0", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(putNonExistentId) {
-		Internal::PutOperation put(1, task1);
+		Internal::PutOperation put(L"1", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	TEST_METHOD(eraseExistingId) {
-		Internal::EraseOperation erase(0);
+		Internal::EraseOperation erase(L"0");
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(eraseNonExistentId) {
-		Internal::EraseOperation erase(1);
+		Internal::EraseOperation erase(L"1");
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
 	}
