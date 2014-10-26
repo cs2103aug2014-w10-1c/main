@@ -10,7 +10,7 @@ namespace Internal {
 
 /// An \ref Operation class for erase operation
 /// Erases a node from the XML when \ref run is called
-class EraseOperation : public IOperation {
+class EraseOperation : public Operation {
 public:
 	/// Constructor
 	///

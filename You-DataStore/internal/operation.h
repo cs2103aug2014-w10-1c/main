@@ -10,7 +10,7 @@ namespace DataStore {
 namespace Internal {
 
 /// A pure virtual class of operations to be put into transaction stack
-class IOperation {
+class Operation {
 public:
 	/// Executes the operation
 	///
@@ -18,7 +18,7 @@ public:
 	/// \return True if the operation succeeded.
 	virtual bool run(pugi::xml_node& document) = 0;
 
-	virtual ~IOperation() = default;
+	virtual ~Operation() = default;
 
 protected:
 	/// The "id" attribute of the XML node to modify
