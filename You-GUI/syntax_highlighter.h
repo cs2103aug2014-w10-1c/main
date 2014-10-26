@@ -19,12 +19,16 @@ private:
 	struct HighlightingRule {
 		QRegExp pattern;
 		QTextCharFormat format;
+		QTextCharFormat secondaryFormat;
 	};
 
-	QVector<HighlightingRule> highlightingRules;
+	QVector<HighlightingRule> commandHighlightingRules;
+	QVector<HighlightingRule> paramHighlightingRules;
 
-	QTextCharFormat actionKeywordFormat;
+
+	QTextCharFormat commandNameFormat;
 	QTextCharFormat parameterNameFormat;
+	QTextCharFormat parameterPrefixFormat;
 };
 
 }  // namespace GUI

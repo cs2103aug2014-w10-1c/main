@@ -142,6 +142,7 @@
     <ClCompile Include="window_title.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="keywords.h" />
     <ClInclude Include="main_window_messages.h" />
     <ClInclude Include="window_title.h" />
     <CustomBuild Include="syntax_highlighter.h">
