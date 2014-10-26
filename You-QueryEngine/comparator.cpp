@@ -83,7 +83,7 @@ Comparator& Comparator::descending() {
 
 Comparator& Comparator::operator&&(const Comparator& rhs) {
 	comparators.insert(comparators.end(),
-		std::begin(rhs.comparators), std::end(rhs.comparators));
+		begin(rhs.comparators), end(rhs.comparators));
 	return *this;
 }
 

@@ -21,7 +21,7 @@ Response GetTask::execute(State& state) {
 		}
 	}
 	if (sortAfterFilter) {
-		std::sort(std::begin(result), std::end(result), comparator);
+		std::sort(begin(result), end(result), comparator);
 	}
 	return result;
 }

@@ -33,22 +33,26 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
-	if (boost::optional<Task::Description> _ = this->description) {
+
+	#pragma region Update the fields iff it is requested
+	if (static_cast<bool>(this->description)) {
 		builder.description(this->description.get());
 	}
-	if (boost::optional<Task::Time> _ = this->deadline) {
+	if (static_cast<bool>(this->deadline)) {
 		builder.deadline(this->deadline.get());
 	}
-	if (boost::optional<Task::Priority> _ = this->priority) {
+	if (static_cast<bool>(this->priority)) {
 		builder.priority(this->priority.get());
 	}
-	if (boost::optional<Task::Dependencies> _ = this->dependencies) {
+	if (static_cast<bool>(this->dependencies)) {
 		builder.dependencies(this->dependencies.get());
 	}
 	Task newTask = builder;
-	if (boost::optional<bool> _ = this->completed) {
+	if (static_cast<bool>(this->completed)) {
 		newTask.setCompleted(this->completed.get());
 	}
+	#pragma endregion
+
 	return newTask;
 }
 
