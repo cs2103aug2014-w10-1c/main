@@ -96,7 +96,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	showCommandFilteringColumn = (
 		showCommandFields >>
 		showCommandFilteringPredicate >>
-		utilityLexeme
+		utilityValue
 	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
 		qi::_1,
 		qi::_2,
@@ -159,7 +159,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (
-		qi::lit(L"priority") >> qi::lit('=') >> editCommandFieldPriorities
+		qi::lit(L"priority") >> qi::lit('=') >> utilityTaskPriority
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
 	editCommandRulePriorities.name("editCommandRulePriorities");
 
@@ -172,11 +172,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
 	editCommandFieldsNullary.name("editCommandFieldsNullary");
-
-	editCommandFieldPriorities.add
-		(L"normal", TaskPriority::NORMAL)
-		(L"high", TaskPriority::HIGH);
-	editCommandFieldPriorities.name("editCommandFieldPriorities");
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -192,12 +187,17 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
 	#pragma endregion
 
-	utilityValue %= (
+	utilityValue = (
 		(qi::int_) |
 		(qi::bool_) |
-		utilityLexeme |
-		utilityTime
-	);
+		utilityTaskPriority |
+		utilityLexeme
+	)[qi::_val = phoenix::bind(&constructValue, qi::_1)];
+
+	utilityTaskPriority.add
+		(L"normal", TaskPriority::NORMAL)
+		(L"high", TaskPriority::HIGH);
+	utilityTaskPriority.name("utilityTaskPriority");
 
 	utilityTime = (
 		+ParserCharTraits::char_

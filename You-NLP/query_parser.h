@@ -33,6 +33,7 @@ public:
 	typedef boost::variant<
 		int,
 		bool,
+		TaskPriority,
 		LexemeType,
 		boost::posix_time::ptime> ValueType;
 
@@ -122,7 +123,7 @@ private:
 	static SHOW_QUERY::FIELD_FILTER constructShowQueryFilteringColumn(
 		const TaskField& field,
 		const SHOW_QUERY::Predicate& predicate,
-		const LexemeType& value);
+		const ValueType& value);
 
 	/// Process the terminal returned from the show query ordering parse rule,
 	/// constructing one column's ordering.
@@ -192,6 +193,12 @@ private:
 	/// \param[in] lexeme The lexeme to construct the time from.
 	/// \return The synthesised value for the \ref utilityTime rule.
 	static boost::posix_time::ptime constructDateTime(const LexemeType& lexeme);
+
+	/// Constructs a value from the given lexemes.
+	///
+	/// \param[in] value The value from the parser.
+	/// \return The concrete synthesised value for the \ref utilityValue rule.
+	static ValueType constructValue(ValueType value);
 
 private:
 	/// The start rule.
@@ -296,11 +303,6 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
-
-	/// The symbol mapping from priority strings to task priorities.
-	boost::spirit::qi::symbols<
-		ParserCharEncoding::char_type,
-		TaskPriority> editCommandFieldPriorities;
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -318,6 +320,11 @@ private:
 	/// A utility rule which converts numbers to ints, booleans to bools,
 	/// dates to posix_time::ptime, and strings verbatim.
 	boost::spirit::qi::rule<IteratorType, ValueType()> utilityValue;
+
+	/// The symbol mapping from priority strings to task priorities.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		TaskPriority> utilityTaskPriority;
 
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.

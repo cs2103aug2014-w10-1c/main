@@ -102,7 +102,7 @@ public:
 
 		// Boundary case: more than one filter, zero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
-			L"priority<\'high\'");
+			L"priority<high");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 				{
@@ -114,7 +114,7 @@ public:
 					{
 						TaskField::PRIORITY,
 						SHOW_QUERY::Predicate::LESS_THAN,
-						std::wstring(L"high")
+						TaskPriority::HIGH
 					}
 				},
 				{}
@@ -142,8 +142,8 @@ public:
 
 		// Boundary case: nonzero filter, nonzero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
-			L"priority<\'high\', priority>\'normal\', deadline>=\'3 oct\', "
-			L"deadline<=\'7 oct\' order by description descending, priority");
+			L"priority<high, priority>normal, deadline>='3 oct', "
+			L"deadline<='7 oct' order by description descending, priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{
@@ -155,22 +155,26 @@ public:
 				{
 					TaskField::PRIORITY,
 					SHOW_QUERY::Predicate::LESS_THAN,
-					std::wstring(L"high")
+					TaskPriority::HIGH
 				},
 				{
 					TaskField::PRIORITY,
 					SHOW_QUERY::Predicate::GREATER_THAN,
-					std::wstring(L"normal")
+					TaskPriority::NORMAL
 				},
 				{
 					TaskField::DEADLINE,
 					SHOW_QUERY::Predicate::GREATER_THAN_EQ,
-					std::wstring(L"3 oct")
+					boost::posix_time::ptime(
+						boost::gregorian::date(2015, 10, 3),
+						boost::posix_time::hours(0))
 				},
 				{
 					TaskField::DEADLINE,
 					SHOW_QUERY::Predicate::LESS_THAN_EQ,
-					std::wstring(L"7 oct")
+					boost::posix_time::ptime(
+						boost::gregorian::date(2015, 10, 7),
+						boost::posix_time::hours(0))
 				}
 			},
 			{
@@ -195,7 +199,7 @@ public:
 			L"meh with spaces"
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set deadline=oct 2014");
+		q = QueryParser::parse(L"/edit 10 set deadline='oct 2014'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
@@ -225,7 +229,7 @@ public:
 
 	TEST_METHOD(parsesEditQueryWithWrongType) {
 		Assert::ExpectException<ParserTypeException>([]() {
-			QueryParser::parse(L"/edit 10 set description=14 oct");
+			QueryParser::parse(L"/edit 10 set description='14 oct'");
 		});
 	}
 
