@@ -124,10 +124,11 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[](const Task& task) {
-			return task.getPriority() ==
-				You::QueryEngine::Task::Priority::NORMAL;
-		}));
+			std::bind(
+				std::equal_to<You::QueryEngine::Task::Priority>(),
+				std::bind(&Task::getPriority, std::placeholders::_1),
+				You::QueryEngine::Task::Priority::NORMAL))
+		);
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {
@@ -152,14 +153,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[](const Task& task) {
-			return !task.isCompleted();
-		}));
+				std::bind(
+					std::not_equal_to<bool>(),
+					std::bind(&Task::isCompleted, std::placeholders::_1),
+					true)));
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
-			[](const Task& left, const Task& right) {
-			return left.getPriority() > right.getPriority();
-		}));
+				std::bind(
+					std::greater<Task::Priority>(),
+					std::bind(&Task::getPriority, std::placeholders::_1),
+					std::bind(&Task::getPriority, std::placeholders::_1))));
 
 		appliesCorrectFilters();
 	}
@@ -174,6 +177,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		appliesCorrectFilters<You::NLP::TaskField::DEADLINE>(
 			std::bind(&Task::getDeadline, std::placeholders::_1),
 			runTime + boost::posix_time::hours(1));
+
+		appliesCorrectFilters<You::NLP::TaskField::COMPLETE>(
+			std::bind(&Task::isCompleted, std::placeholders::_1),
+			true);
 
 #if 0
 		// TODO(lowjoel): Implement comparators for priorities.
@@ -197,27 +204,30 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			}));
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) == value;
-		}));
+				std::bind(
+					std::equal_to<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 
 		result = runShowQuery(You::NLP::SHOW_QUERY {
 			{ { field, You::NLP::SHOW_QUERY::Predicate::NOT_EQ, value } }, {}
 		});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) != value;
-		}));
+				std::bind(
+					std::not_equal_to<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 
 		result = runShowQuery(You::NLP::SHOW_QUERY {
 			{ { field, You::NLP::SHOW_QUERY::Predicate::LESS_THAN, value } }, {}
 		});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) < value;
-		}));
+				std::bind(
+					std::less<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 
 		result = runShowQuery(You::NLP::SHOW_QUERY {
 			{ {
@@ -228,9 +238,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) <= value;
-		}));
+				std::bind(
+					std::less_equal<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 
 		result = runShowQuery(You::NLP::SHOW_QUERY {
 			{ {
@@ -241,9 +252,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) > value;
-		}));
+				std::bind(
+					std::greater<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 
 		result = runShowQuery(You::NLP::SHOW_QUERY {
 			{ {
@@ -254,9 +266,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		});
 		Assert::IsTrue(
 			std::all_of(begin(result.tasks), end(result.tasks),
-			[&getter, &value](const Task& task) {
-			return getter(task) >= value;
-		}));
+				std::bind(
+					std::greater_equal<TValue>(),
+					std::bind(getter, std::placeholders::_1),
+					value)));
 	}
 
 	SHOW_RESULT runShowQuery(const You::NLP::QUERY& query) {
