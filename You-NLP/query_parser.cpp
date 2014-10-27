@@ -152,7 +152,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> qi::lexeme[*ParserCharTraits::char_])
+		editCommandFieldsUnary >> utilityLexeme)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
