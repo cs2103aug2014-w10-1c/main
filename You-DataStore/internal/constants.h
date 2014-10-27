@@ -8,7 +8,6 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-extern const std::wstring FILE_PATH;
 extern const std::wstring TASKS_NODE;
 extern const std::wstring RESOURCES_NODE;
 

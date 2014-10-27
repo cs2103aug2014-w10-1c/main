@@ -83,6 +83,7 @@ private:
 	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
 
 private:
+	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
 	/// The current stack of active transactions.
