@@ -81,6 +81,20 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	return response;
 }
 
+std::wstring ToString(const Task& task) {
+	using Serializer = Internal::TaskSerializer;
+	auto serialized = Serializer::serialize(task);
+	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%]";
+	return (boost::wformat(TASK_FORMAT)
+		% serialized.at(Serializer::KEY_ID)
+		% serialized.at(Serializer::KEY_DESCRIPTION)
+		% serialized.at(Serializer::KEY_PRIORITY)
+		% serialized.at(Serializer::KEY_DEADLINE)
+		% serialized.at(Serializer::KEY_DEPENDENCIES)
+		% serialized.at(Serializer::KEY_PARENT)
+		% serialized.at(Serializer::KEY_SUBTASKS)).str();
+}
+
 }  // namespace QueryEngine
 }  // namespace You
 

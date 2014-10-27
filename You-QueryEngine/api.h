@@ -113,6 +113,12 @@ private:
 	QueryEngine() = delete;
 };  // class QueryEngine
 
+/// String representation of a task, for testing and logging.
+///
+/// \param[in] task The task object, assumed all fields are valid
+/// \return A string representation of the task
+std::wstring ToString(const Task& task);
+
 }  // namespace QueryEngine
 }  // namespace You
 

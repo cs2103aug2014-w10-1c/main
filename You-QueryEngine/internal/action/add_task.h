@@ -18,9 +18,9 @@ class AddTask : public Query {
 public:
 	/// Constructor
 	explicit AddTask(Task::Description description, Task::Time deadline,
-		Task::Priority priority, Task::Dependencies dependencies) :
-		description(description), deadline(deadline), priority(priority),
-		dependencies(dependencies) { }
+		Task::Priority priority, Task::Dependencies dependencies)
+	: description(description), deadline(deadline), priority(priority),
+	  dependencies(dependencies) {}
 
 	/// Disable assignment operator
 	AddTask& operator=(const AddTask&) = delete;

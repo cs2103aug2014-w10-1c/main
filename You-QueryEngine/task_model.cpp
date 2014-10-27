@@ -1,7 +1,5 @@
 /// \author A0112054Y
 #include "stdafx.h"
-#include "internal/controller.h"
-#include "filter.h"
 #include "task_model.h"
 
 namespace {
@@ -10,15 +8,10 @@ namespace {
 	using boost::gregorian::date;
 	using boost::gregorian::max_date_time;
 	using boost::gregorian::day_clock;
-
-	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%]";
 }  // namespace
 
 namespace You {
 namespace QueryEngine {
-
-Task::Task() {
-}
 
 void Task::setDescription(const Task::Description &description) {
 	this->description = description;
@@ -71,17 +64,6 @@ bool Task::isStrictEqual(const Task& task) const {
 	return idIsEqual && descriptionIsEqual && priorityIsEqual
 		&& dependenciesIsEqual && deadlineIsEqual && subtasksIsEqual
 		&& completedIsEqual;
-}
-
-std::wstring ToString(const Task& task) {
-	using Serializer = Internal::TaskSerializer;
-	auto serialized = Serializer::serialize(task);
-	return (boost::wformat(TASK_FORMAT)
-		% serialized.at(Serializer::KEY_ID)
-		% serialized.at(Serializer::KEY_DESCRIPTION)
-		% serialized.at(Serializer::KEY_PRIORITY)
-		% serialized.at(Serializer::KEY_DEADLINE)
-		% serialized.at(Serializer::KEY_DEPENDENCIES)).str();
 }
 
 }  // namespace QueryEngine

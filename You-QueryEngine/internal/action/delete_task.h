@@ -17,7 +17,8 @@ namespace Action {
 class DeleteTask : public Query {
 public:
 	/// Constructor
-	explicit DeleteTask(Task::ID id) : id(id) { }
+	explicit DeleteTask(Task::ID id)
+	: id(id) {}
 
 	/// Disable assignment operator
 	DeleteTask& operator=(const DeleteTask&) = delete;

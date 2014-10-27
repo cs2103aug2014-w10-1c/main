@@ -13,10 +13,11 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for updating task (e.g marking it as done)
+/// Update a task task.
+/// (e.g changing its description or marking it as done)
 class UpdateTask : public Query {
 public:
-	/// Construct EditTask query
+	/// Constructor for UpdateTask query
 	explicit UpdateTask(
 		Task::ID id,
 		You::Utils::Option<Task::Description> description,
@@ -26,14 +27,14 @@ public:
 		You::Utils::Option<bool> completed,
 		You::Utils::Option<Task::ID> parent,
 		You::Utils::Option<Task::Subtasks> subtasks)
-		: id(id),
-		description(description),
-		deadline(deadline),
-		priority(priority),
-		dependencies(dependencies),
-		completed(completed),
-		parent(parent),
-		subtasks(subtasks) {}
+	: id(id),
+	  description(description),
+	  deadline(deadline),
+	  priority(priority),
+	  dependencies(dependencies),
+	  completed(completed),
+	  parent(parent),
+	  subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
@@ -52,7 +53,7 @@ private:
 	void updateDependencyGraph(State& state, const Task& updated) const;
 	void updateSubtaskGraph(State& state, const Task& updated) const;
 	void makeTransaction(const Task& updated) const;
-	/// Execute add task.
+
 	Response execute(State& tasks) override;
 
 	const Task::ID id;

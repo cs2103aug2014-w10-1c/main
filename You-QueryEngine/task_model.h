@@ -32,8 +32,8 @@ namespace Internal { class TaskSerializer; class TaskBuilder; }
 class Task {
 	friend class Internal::TaskBuilder;
 public:
-	/// Constructor
-	Task();
+	/// Default Constructor
+	Task() = default;
 
 	/// \name Typedefs
 	/// @{
@@ -93,10 +93,10 @@ private:
 	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, Priority priority, ID parent,
-		Subtasks subtasks) :
-		id(id), description(description), deadline(deadline),
-		dependencies(dependencies), priority(priority), completed(false),
-		parent(parent), subtasks(subtasks) {}
+		Subtasks subtasks)
+	: id(id), description(description), deadline(deadline),
+	  dependencies(dependencies), priority(priority), completed(false),
+	  parent(parent), subtasks(subtasks) {}
 
 	/// Check if the task is strictly equal with another task
 	/// Two taks are strictly equal if all fields are equal
@@ -115,12 +115,6 @@ private:
 	Subtasks subtasks;
 	/// @}
 };
-
-/// String representation of a task, for testing and logging.
-///
-/// \param[in] task The task object, assumed all fields are valid
-/// \return A string representation of the task
-std::wstring ToString(const Task& task);
 
 }  // namespace QueryEngine
 }  // namespace You

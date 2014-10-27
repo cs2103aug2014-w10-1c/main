@@ -18,7 +18,7 @@ namespace Internal {
 ///
 ///  Example usage:
 ///  \code{.cpp}
-/// 	Task newTask = TaskBuilder::get().description("Feed");
+/// 	Task newTask = Controller::Builder::get().description("Feed");
 ///  \endcode
 ///
 ///	 \note At least description must be provided.
@@ -56,7 +56,8 @@ private:
 	TaskBuilder();
 
 	/// Copy constructor from instance.
-	explicit TaskBuilder(const Task& instance) : instance(instance) {}
+	explicit TaskBuilder(const Task& instance)
+	: instance(instance) {}
 
 	/// Instance that will be returned by the builder
 	Task instance;

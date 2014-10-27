@@ -13,19 +13,21 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for updating task (e.g marking it as done)
+/// Undo last action, then reapply the current filter
+/// and comparator and return the task list as a
+/// response.
+/// - The undo of add task is delete task and vice versa.
+/// - The undo of update task is update task.
 class Undo : public Query {
 public:
-	/// Construct EditTask query
+	/// Construct Undo query
 	Undo() = default;
-
-	/// Disable assignment operator
-	Undo& operator=(const Undo&) = delete;
 
 	/// Destructor
 	virtual ~Undo() = default;
+private:
+	Undo& operator=(const Undo&) = delete;
 
-	/// Execute add task.
 	Response execute(State& tasks) override;
 };
 

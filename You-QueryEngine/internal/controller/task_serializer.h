@@ -55,7 +55,7 @@ public:
 
 private:
 	/// Disable constructor, this is a utility class
-	TaskSerializer();
+	TaskSerializer() = delete;
 
 	/// \name Serializer for each fields.
 	/// @{
