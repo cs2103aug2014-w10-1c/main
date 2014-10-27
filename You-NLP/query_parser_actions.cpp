@@ -108,8 +108,7 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 
 	try {
 		switch (field) {
-		case TaskField::DESCRIPTION:
-		{
+		case TaskField::DESCRIPTION: {
 			const LexemeType& newValueString = boost::get<LexemeType>(newValue);
 			result.description = StringType(newValueString.begin(),
 				newValueString.end());
