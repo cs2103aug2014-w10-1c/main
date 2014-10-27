@@ -7,6 +7,7 @@
 #include "internal/operations/put_operation.h"
 #include "internal/operations/serialization_operation.h"
 #include "internal/operations/branch_operation.h"
+#include "internal/constants.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -70,37 +71,37 @@ public:
 	}
 
 	TEST_METHOD(postWithNewId) {
-		Internal::PostOperation post(L"1", task2);
+		Internal::PostOperation post(Internal::TASKS_NODE, L"1", task2);
 		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(postWithUsedId) {
-		Internal::PostOperation post(L"0", task1);
+		Internal::PostOperation post(Internal::TASKS_NODE, L"0", task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	TEST_METHOD(putWithExistingId) {
-		Internal::PutOperation put(L"0", task1);
+		Internal::PutOperation put(Internal::TASKS_NODE, L"0", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(putNonExistentId) {
-		Internal::PutOperation put(L"1", task1);
+		Internal::PutOperation put(Internal::TASKS_NODE, L"1", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	TEST_METHOD(eraseExistingId) {
-		Internal::EraseOperation erase(L"0");
+		Internal::EraseOperation erase(Internal::TASKS_NODE, L"0");
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	TEST_METHOD(eraseNonExistentId) {
-		Internal::EraseOperation erase(L"1");
+		Internal::EraseOperation erase(Internal::TASKS_NODE, L"1");
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
 	}

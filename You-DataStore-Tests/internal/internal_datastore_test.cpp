@@ -123,17 +123,17 @@ public:
 		Internal::Transaction sut;
 
 		std::unique_ptr<Internal::Operation> post =
-			std::make_unique<Internal::PostOperation>(L"0", task1);
+			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
 		sut.push(std::move(post));
 		Assert::AreEqual(1U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::Operation> put =
-			std::make_unique<Internal::PutOperation>(L"0", task1);
+			std::make_unique<Internal::PutOperation>(Internal::TASKS_NODE, L"0", task1);
 		sut.push(std::move(put));
 		Assert::AreEqual(2U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::Operation> erase =
-			std::make_unique<Internal::EraseOperation>(L"0");
+			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
 		sut.push(std::move(erase));
 		Assert::AreEqual(3U, sut.operationsQueue.size());
 
@@ -145,9 +145,9 @@ public:
 		boost::ptr_deque<Internal::Operation> q2;
 
 		std::unique_ptr<Internal::Operation> post =
-			std::make_unique<Internal::PostOperation>(L"0", task1);
+			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
 		std::unique_ptr<Internal::Operation> erase =
-			std::make_unique<Internal::EraseOperation>(L"0");
+			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
 		q1.push_back(post.release());
 		q2.push_back(erase.release());
 
