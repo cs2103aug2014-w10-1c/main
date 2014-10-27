@@ -150,8 +150,8 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.description,
 					query.deadline,
 					priority,
-					Utils::Option<Task::Dependencies>(),
-					Utils::Option<bool>())));
+					boost::none,
+					boost::none)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}

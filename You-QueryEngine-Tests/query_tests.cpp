@@ -74,11 +74,11 @@ TEST_CLASS(QueryEngineTests) {
 	TEST_METHOD(constructEditTaskQuery) {
 		auto query = QueryEngine::UpdateTask(
 			Task::DEFAULT_ID,
-			You::Utils::Option<Task::Description>(),
-			You::Utils::Option<Task::Time>(),
-			You::Utils::Option<Task::Priority>(),
-			You::Utils::Option<Task::Dependencies>(),
-			You::Utils::Option<bool>());
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none);
 		Assert::IsNotNull(&query);
 	}
 
@@ -143,10 +143,10 @@ TEST_CLASS(QueryEngineTests) {
 			auto query = QueryEngine::UpdateTask(
 				task.getID(),
 				desc2,
-				You::Utils::Option<Task::Time>(),
-				You::Utils::Option<Task::Priority>(),
-				You::Utils::Option<Task::Dependencies>(),
-				You::Utils::Option<bool>());
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none);
 			auto response = QueryEngine::executeQuery(std::move(query));
 
 			Task::ID id = boost::get<Task>(response).getID();
@@ -177,10 +177,10 @@ TEST_CLASS(QueryEngineTests) {
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(
 				task.getID(),
-				You::Utils::Option<Task::Description>(),
-				You::Utils::Option<Task::Time>(),
-				You::Utils::Option<Task::Priority>(),
-				You::Utils::Option<Task::Dependencies>(),
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none,
 				true);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -194,10 +194,10 @@ TEST_CLASS(QueryEngineTests) {
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(
 				task.getID(),
-				You::Utils::Option<Task::Description>(),
-				You::Utils::Option<Task::Time>(),
-				You::Utils::Option<Task::Priority>(),
-				You::Utils::Option<Task::Dependencies>(),
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none,
 				false);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
