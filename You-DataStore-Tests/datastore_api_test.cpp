@@ -40,23 +40,35 @@ public:
 
 		DataStore::get().post(0, task1);
 		Assert::AreEqual(1U, sut->operationsQueue.size());
-
 		DataStore::get().put(0, task2);
 		Assert::AreEqual(2U, sut->operationsQueue.size());
-
 		DataStore::get().erase(0);
 		Assert::AreEqual(3U, sut->operationsQueue.size());
+		DataStore::get().post(LAST_ID, res2);
+		Assert::AreEqual(4U, sut->operationsQueue.size());
+		DataStore::get().put(LAST_ID, res1);
+		Assert::AreEqual(5U, sut->operationsQueue.size());
+		DataStore::get().erase(LAST_ID);
+		Assert::AreEqual(6U, sut->operationsQueue.size());
 	}
 
 	TEST_METHOD(commitTransactionModifyData) {
 		Transaction sut(DataStore::get().begin());
+		// Operations to task
 		DataStore::get().post(0, task1);
 		DataStore::get().post(1, task2);
 		DataStore::get().erase(0);
-		auto sizeBefore = DataStore::get().getAllTasks().size();
+		// Operations to resource
+		DataStore::get().post(LAST_ID, res1);
+		DataStore::get().post(COLOUR, res2);
+		DataStore::get().erase(LAST_ID);
+		auto taskSizeBefore = DataStore::get().getAllTasks().size();
+		auto resourceSizeBefore = DataStore::get().getAllResources().size();
 		sut.commit();
-		auto sizeAfter = DataStore::get().getAllTasks().size();
-		Assert::AreEqual(sizeBefore + 1, sizeAfter);
+		auto taskSizeAfter = DataStore::get().getAllTasks().size();
+		auto resourceSizeAfter = DataStore::get().getAllResources().size();
+		Assert::AreEqual(taskSizeBefore + 1, taskSizeAfter);
+		Assert::AreEqual(resourceSizeBefore + 1, resourceSizeAfter);
 	}
 
 	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
