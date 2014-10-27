@@ -40,7 +40,7 @@ void CommandTextBox::setCompleter() {
 
 	for each (std::wstring item in ORDERS) {
 		wss.str(L"");
-		wss << item << L" ";
+		wss << item;
 		wordList.append(QString::fromStdWString(wss.str()));
 	}
 
@@ -85,8 +85,7 @@ void CommandTextBox::focusInEvent(QFocusEvent *e) {
 	QTextEdit::focusInEvent(e);
 }
 
-void CommandTextBox::keyPressEvent(QKeyEvent *e)
-{
+void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 	if (completer && completer->popup()->isVisible()) {
 		// The following keys are forwarded by the completer to the widget
 		switch (e->key()) {
@@ -96,7 +95,7 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e)
 		case Qt::Key_Tab:
 		case Qt::Key_Backtab:
 			e->ignore();
-			return; // let the completer do default behavior
+			return;
 		default:
 			break;
 		}
@@ -113,7 +112,7 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e)
 	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-="); // end of word
 	bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
 	QString completionPrefix = textUnderCursor();
-	if (!isShortcut && (hasModifier || e->text().isEmpty() || completionPrefix.length() < 1
+	if ((hasModifier || e->text().isEmpty() || completionPrefix.length() < 1
 		|| eow.contains(e->text().right(1)))) {
 		completer->popup()->hide();
 		return;

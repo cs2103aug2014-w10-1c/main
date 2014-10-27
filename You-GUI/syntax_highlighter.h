@@ -20,12 +20,17 @@ private:
 		QRegExp pattern;
 		QTextCharFormat format;
 		QTextCharFormat secondaryFormat;
-		QTextCharFormat tertiaryFormat;
 	};
 
+	HighlightingRule makeRule(std::wstring input, QTextCharFormat format,
+		QTextCharFormat secondaryFormat);
+	void setColors();
+	void buildRules();
 	QVector<HighlightingRule> commandHighlightingRules;
 	QVector<HighlightingRule> paramHighlightingRules;
 	QVector<HighlightingRule> orderHighlightingRules;
+	QVector<HighlightingRule> orderPrefixHighlightingRule;
+
 
 	QTextCharFormat commandNameFormat;
 	QTextCharFormat parameterNameFormat;
