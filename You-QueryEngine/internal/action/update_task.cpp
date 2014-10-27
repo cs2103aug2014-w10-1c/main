@@ -64,12 +64,15 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 }
 
 void UpdateTask::updateDependencyGraph(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Updating %2% - \"%3%\"\n") %
+	Log::debug << (boost::wformat(L"%1% : Updating Dependency Graph %2% - \"%3%\"\n") %
 		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.graph(), task);
 }
 
 void UpdateTask::updateSubtaskGraph(State& state, const Task& task) const {
+	Log::debug << (boost::wformat(L"%1% : Updating Subtask Graph %2% - \"%3%\"\n") %
+		logCategory % task.getID() % task.getDescription()).str();
+	Controller::Graph::updateTask(state.sgraph(), task);
 }
 
 void UpdateTask::makeTransaction(const Task& updated) const {
@@ -83,6 +86,7 @@ Response UpdateTask::execute(State& state) {
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
 	updateDependencyGraph(state, updated);
+	updateSubtaskGraph(state, updated);
 	return updated;
 }
 

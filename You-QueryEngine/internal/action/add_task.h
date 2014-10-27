@@ -37,7 +37,7 @@ protected:
 private:
 	Task buildTask(const Task::ID id);
 
-	void addTaskToState(const Task& task, State& state) const;
+	void addTaskToGraphs(const Task& task, State& state) const;
 	void makeTransaction(const Task& newTask) const;
 	void ensureDependencyIsValid() const;
 

@@ -46,11 +46,12 @@ void AddTask::ensureDependencyIsValid() const {
 	}
 }
 
-void AddTask::addTaskToState(const Task& task,
+void AddTask::addTaskToGraphs(const Task& task,
 	State& state) const {
 	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
 		logCategory % task.getDescription()).str();
 	Controller::Graph::addTask(state.graph(), task);
+	Controller::Graph::addTask(state.sgraph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
@@ -66,7 +67,7 @@ Response AddTask::execute(State& state) {
 	auto newId = state.inquireNewID();
 	auto newTask = buildTask(newId);
 	ensureDependencyIsValid();
-	addTaskToState(newTask, state);
+	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
 	insertedID = newId;
 	return newTask;

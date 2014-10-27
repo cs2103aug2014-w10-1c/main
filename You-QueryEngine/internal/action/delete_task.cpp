@@ -41,6 +41,7 @@ void DeleteTask::makeTransaction() {
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
 	Controller::Graph::deleteTask(state.graph(), this->id);
+	Controller::Graph::deleteTask(state.sgraph(), this->id);
 	makeTransaction();
 	return this->id;
 }
