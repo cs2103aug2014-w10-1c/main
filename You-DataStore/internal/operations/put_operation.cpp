@@ -24,7 +24,7 @@ bool PutOperation::run(pugi::xml_node& document) {
 
 	document.remove_child(toEdit);
 
-	PostOperation post(nodeId, task);
+	PostOperation post(branchName, nodeId, task);
 	return post.run(document);
 }
 

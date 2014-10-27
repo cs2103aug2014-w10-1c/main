@@ -62,7 +62,7 @@ void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
 
 	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::PostOperation>(stringId, sTask);
+		std::make_unique<Internal::PostOperation>(TASKS_NODE, stringId, sTask);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -74,7 +74,7 @@ void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
 
 	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::PutOperation>(stringId, sTask);
+		std::make_unique<Internal::PutOperation>(TASKS_NODE, stringId, sTask);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -86,7 +86,7 @@ void DataStore::erase(TaskId rawId) {
 
 	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::EraseOperation>(stringId);
+		std::make_unique<Internal::EraseOperation>(TASKS_NODE, stringId);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
