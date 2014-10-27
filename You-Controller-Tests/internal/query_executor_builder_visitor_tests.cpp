@@ -127,8 +127,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::bind(
 				std::equal_to<You::QueryEngine::Task::Priority>(),
 				std::bind(&Task::getPriority, std::placeholders::_1),
-				You::QueryEngine::Task::Priority::NORMAL))
-		);
+				You::QueryEngine::Task::Priority::NORMAL)));
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
 			[](const Task& left, const Task& right) {

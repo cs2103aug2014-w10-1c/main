@@ -126,6 +126,7 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 		throw ParserTypeException();
 	}
 }
+
 EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	EDIT_QUERY result;
 	result.priority = priority;
