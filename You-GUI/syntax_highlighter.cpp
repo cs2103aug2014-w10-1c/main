@@ -20,9 +20,9 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 		commandHighlightingRules.append(rule);
 		wss.str(L"");
 	}
-	
+
 	wss.str(L"");
-	
+
 	parameterNameFormat.setFontWeight(QFont::Bold);
 	parameterNameFormat.setForeground(Qt::darkMagenta);
 	parameterPrefixFormat.setFontWeight(QFont::Bold);
@@ -37,7 +37,6 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 		wss.str(L"");
 	}
 }
-
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
 	for each(const HighlightingRule &rule in commandHighlightingRules) {

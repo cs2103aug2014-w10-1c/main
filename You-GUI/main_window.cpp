@@ -9,8 +9,8 @@
 #include "query_manager.h"
 #include "main_window_messages.h"
 #include "window_title.h"
+#include "keywords.h"
 #include "You-Controller/exception.h"
-
 namespace You {
 namespace GUI {
 
@@ -35,7 +35,16 @@ MainWindow::MainWindow(QWidget *parent)
 	qm->setup();
 	tpm->setup();
 	initializeAllTimerNotifications();
+	ctb = new CommandTextBox(ui.splitter);
+	ui.horizontalLayout->insertWidget(0, ctb);
 
+	ctb->installEventFilter(this);
+	ctb->setTabChangesFocus(true);
+	ctb->setWordWrapMode(QTextOption::NoWrap);
+	ctb->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ctb->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ctb->setFixedHeight(20);
+	ctb->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 	ui.commandTextBox->installEventFilter(this);
 	ui.commandTextBox->setTabChangesFocus(true);
 	ui.commandTextBox->setWordWrapMode(QTextOption::NoWrap);
@@ -47,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
 		new SyntaxHighlighter(ui.commandTextBox->document()));
 
 
+	setupAutoComplete();
 	populateTaskPanel();
 }
 
@@ -262,6 +272,23 @@ void MainWindow::contextEditTask(int id) {
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
+}
+
+void MainWindow::setupAutoComplete() {
+	QStringList wordList;
+	for each (std::wstring item in PARAMS) {
+		wordList.append(QString::fromStdWString(item));
+	}
+
+	for each (std::wstring item in COMMANDS) {
+		wordList.append(QString::fromStdWString(item));
+	}
+	for each (QString qstr  in wordList) {
+		qDebug() << qstr;
+	}
+	completer = new QCompleter(wordList, ui.commandTextBox);
+	completer->setCaseSensitivity(Qt::CaseInsensitive);
+	completer->setCompletionMode(QCompleter::PopupCompletion);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event) {

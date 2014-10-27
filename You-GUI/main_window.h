@@ -8,6 +8,7 @@
 #include "You-Controller/result.h"
 #include "syntax_highlighter.h"
 
+#include "command_text_box.h"
 namespace You {
 namespace GUI {
 namespace UnitTests { class MainWindowTests; }
@@ -104,6 +105,8 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
+	CommandTextBox *ctb;
+
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
 
@@ -125,6 +128,10 @@ private:
 
 	/// Initializes single timer
 	void initializeSingleTimerNotification(Task task);
+
+	void MainWindow::setupAutoComplete();
+
+	QCompleter *completer;
 
 private:
 	static const QString READY_MESSAGE;
