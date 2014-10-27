@@ -141,7 +141,4 @@
       <Filter>Source Files\internal\model</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
 </Project>
