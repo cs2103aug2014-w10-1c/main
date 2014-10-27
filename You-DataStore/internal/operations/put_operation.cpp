@@ -15,7 +15,7 @@ PutOperation::PutOperation(std::wstring branch, std::wstring id, const KeyValueP
 	task = kvp;
 }
 
-bool PutOperation::run(pugi::xml_node& document) {
+bool PutOperation::run(pugi::xml_document& document) {
 	pugi::xml_node toEdit =
 		document.find_child_by_attribute(L"id", nodeId.c_str());
 	if (!toEdit) {

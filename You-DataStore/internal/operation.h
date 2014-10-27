@@ -16,7 +16,7 @@ public:
 	///
 	/// \param[in] document The document to modify.
 	/// \return True if the operation succeeded.
-	virtual bool run(pugi::xml_node& document) = 0;
+	virtual bool run(pugi::xml_document& document) = 0;
 
 	virtual ~Operation() = default;
 

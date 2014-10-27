@@ -11,7 +11,7 @@ EraseOperation::EraseOperation(std::wstring branch, std::wstring id) {
 	nodeId = id;
 }
 
-bool EraseOperation::run(pugi::xml_node& document) {
+bool EraseOperation::run(pugi::xml_document& document) {
 	pugi::xml_node toErase =
 		document.find_child_by_attribute(L"id", nodeId.c_str());
 	return document.remove_child(toErase);

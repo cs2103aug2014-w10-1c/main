@@ -14,7 +14,7 @@ PostOperation::PostOperation(std::wstring branch, std::wstring id, const KeyValu
 	task = kvp;
 }
 
-bool PostOperation::run(pugi::xml_node& document) {
+bool PostOperation::run(pugi::xml_document& document) {
 	if (document.find_child_by_attribute(L"id", nodeId.c_str())) {
 		return false;
 	}

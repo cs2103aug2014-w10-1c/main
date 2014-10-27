@@ -18,7 +18,7 @@ public:
 	/// \param[in] id the id attribute of the node to be edited
 	/// \param[in] kvp the KeyValuePairs to be written over the old one
 	PutOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
-	bool run(pugi::xml_node& document) override;
+	bool run(pugi::xml_document& document) override;
 	virtual ~PutOperation() = default;
 
 private:
