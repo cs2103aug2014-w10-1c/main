@@ -184,7 +184,6 @@ public:
 	TEST_METHOD(toggleTrayIcon) {
 		MainWindow w;
 		w.clearTasks();
-		
 		Assert::IsTrue(true);
 	}
 };
