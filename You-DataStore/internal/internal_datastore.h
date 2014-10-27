@@ -50,13 +50,13 @@ public:
 	/// @}
 
 	/// Pushes \ref PostOperation into the active \ref Transaction
-	void post(TaskId, const KeyValuePairs&);
+	void post(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 
 	/// Pushes \ref PutOperation into the active \ref Transaction
-	void put(TaskId, const KeyValuePairs&);
+	void put(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 
 	/// Pushes \ref EraseOperation into the active \ref Transaction
-	void erase(TaskId);
+	void erase(std::wstring branch, std::wstring id);
 
 	/// General all getter of a data from the direct child of
 	/// the root node of the XML document
