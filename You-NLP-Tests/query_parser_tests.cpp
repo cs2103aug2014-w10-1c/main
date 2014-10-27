@@ -199,8 +199,8 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
-			Utils::Option<std::wstring>(),
-			Utils::Option<TaskPriority>(),
+			boost::none,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
 		}), q);
 
@@ -208,9 +208,9 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
-			Utils::Option<std::wstring>(),
-			Utils::Option<TaskPriority>(),
-			Utils::Option<boost::posix_time::ptime>(),
+			boost::none,
+			boost::none,
+			boost::none,
 			true
 		}), q);
 
@@ -218,7 +218,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
-			Utils::Option<std::wstring>(),
+			boost::none,
 			TaskPriority::HIGH
 		}), q);
 	}
