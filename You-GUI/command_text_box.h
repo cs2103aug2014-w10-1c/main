@@ -2,17 +2,16 @@
 #pragma once
 #ifndef YOU_GUI_COMMAND_TEXT_BOX_H_
 #define YOU_GUI_COMMAND_TEXT_BOX_H_
-
 #include <QTextEdit>
 
 namespace You {
 namespace GUI {
-class CommandTextBox : public QTextEdit
-{
+
+class CommandTextBox : public QTextEdit {
 	Q_OBJECT
 
 public:
-	CommandTextBox(QWidget *parent = 0);
+	explicit CommandTextBox(QWidget *parent = 0);
 	~CommandTextBox();
 
 	void setCompleter();
@@ -28,6 +27,6 @@ protected:
 private:
 	QString textUnderCursor() const;
 };
-}
-}
-#endif // YOU_GUI_COMMAND_TEXT_BOX_H_
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_COMMAND_TEXT_BOX_H_

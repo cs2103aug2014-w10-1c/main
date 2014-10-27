@@ -8,9 +8,11 @@
 #include "You-Controller/result.h"
 #include "You-Controller/controller_context.h"
 #include "base_manager.h"
+
 namespace You {
 namespace GUI {
-namespace UnitTests { class MainWindowTests; }
+
+	namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;

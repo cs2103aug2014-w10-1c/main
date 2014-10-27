@@ -1,17 +1,13 @@
 //@author A0094446X
 #include "stdafx.h"
 #include <QCompleter>
-#include <QKeyEvent>
-#include <QAbstractItemView>
-#include <QtDebug>
 #include <QApplication>
-#include <QModelIndex>
-#include <QAbstractItemModel>
-#include <QScrollBar>
 #include "command_text_box.h"
 #include "keywords.h"
+
 namespace You {
 namespace GUI {
+
 CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
 	setCompleter();
 }

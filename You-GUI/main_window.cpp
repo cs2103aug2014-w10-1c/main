@@ -11,6 +11,7 @@
 #include "window_title.h"
 #include "keywords.h"
 #include "You-Controller/exception.h"
+
 namespace You {
 namespace GUI {
 
@@ -50,8 +51,6 @@ MainWindow::MainWindow(QWidget *parent)
 	syntaxHighlighter.reset(
 		new SyntaxHighlighter(commandTextBox->document()));
 
-
-	setupAutoComplete();
 	populateTaskPanel();
 }
 
@@ -267,23 +266,6 @@ void MainWindow::contextEditTask(int id) {
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
-}
-
-void MainWindow::setupAutoComplete() {
-	QStringList wordList;
-	for each (std::wstring item in PARAMS) {
-		wordList.append(QString::fromStdWString(item));
-	}
-
-	for each (std::wstring item in COMMANDS) {
-		wordList.append(QString::fromStdWString(item));
-	}
-	for each (QString qstr  in wordList) {
-		qDebug() << qstr;
-	}
-	completer = new QCompleter(wordList, commandTextBox);
-	completer->setCaseSensitivity(Qt::CaseInsensitive);
-	completer->setCompletionMode(QCompleter::PopupCompletion);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event) {

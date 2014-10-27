@@ -5,6 +5,7 @@
 
 namespace You {
 namespace GUI {
+
 const std::wstring COMMAND_ADD = L"/add";
 const std::wstring COMMAND_DELETE = L"/delete";
 const std::wstring COMMAND_EDIT = L"/edit";
@@ -29,6 +30,6 @@ const std::wstring ORDER_DESCENDING = L"descending";
 const std::array<std::wstring, 2> ORDERS = { ORDER_ASCENDING,
 ORDER_DESCENDING };
 
-}
-}
+}  // namespace GUI
+}  // namespace You
 #endif  // YOU_GUI_KEYWORDS_H_

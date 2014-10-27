@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QList>
 #include "session_manager.h"
+
 namespace You {
 namespace GUI {
 

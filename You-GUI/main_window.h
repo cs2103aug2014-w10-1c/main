@@ -4,13 +4,14 @@
 #define YOU_GUI_MAIN_WINDOW_H_
 #include <memory>
 #include <QtWidgets/QMainWindow>
-#include "ui_yougui.h"
 #include "You-Controller/result.h"
+#include "ui_yougui.h"
 #include "syntax_highlighter.h"
-
 #include "command_text_box.h"
+
 namespace You {
 namespace GUI {
+
 namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
@@ -128,10 +129,6 @@ private:
 
 	/// Initializes single timer
 	void initializeSingleTimerNotification(Task task);
-
-	void MainWindow::setupAutoComplete();
-
-	QCompleter *completer;
 
 private:
 	static const QString READY_MESSAGE;

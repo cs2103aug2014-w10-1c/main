@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "syntax_highlighter.h"
 #include "keywords.h"
+
 namespace You {
 namespace GUI {
 
@@ -23,8 +24,8 @@ SyntaxHighlighter::HighlightingRule SyntaxHighlighter::makeRule(
 
 void SyntaxHighlighter::setColors() {
 	commandNameFormat.setForeground(Qt::darkBlue);
-	commandNameFormat.setFontWeight(QFont::Bold);	
-	
+	commandNameFormat.setFontWeight(QFont::Bold);
+
 	parameterNameFormat.setFontWeight(QFont::Bold);
 	parameterNameFormat.setForeground(Qt::darkMagenta);
 
@@ -118,7 +119,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		while (index >= 0) {
 			int length = expression.matchedLength();
 			setFormat(index, length - offset, rule.format);
-			setFormat(index + length - offset, 
+			setFormat(index + length - offset,
 				length - offset, rule.secondaryFormat);
 			index = expression.indexIn(text, index + length);
 		}
