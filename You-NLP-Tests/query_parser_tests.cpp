@@ -223,12 +223,24 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesEditQueryWithWrongType) {
+		Assert::ExpectException<ParserTypeException>([]() {
+			QueryParser::parse(L"/edit 10 set description=14 oct");
+		});
+	}
+
 	TEST_METHOD(parsesDeleteQuery) {
 		QUERY q = QueryParser::parse(L"/delete 10");
 
 		Assert::AreEqual(QUERY(DELETE_QUERY {
 			10
 		}), q);
+	}
+
+	TEST_METHOD(parsesUndoQuery) {
+		QUERY q = QueryParser::parse(L"/undo");
+
+		Assert::AreEqual(QUERY(UNDO_QUERY {}), q);
 	}
 };
 
