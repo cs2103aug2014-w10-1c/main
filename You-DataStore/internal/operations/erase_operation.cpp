@@ -12,9 +12,10 @@ EraseOperation::EraseOperation(std::wstring branch, std::wstring id) {
 }
 
 bool EraseOperation::run(pugi::xml_document& document) {
+	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
 	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", nodeId.c_str());
-	return document.remove_child(toErase);
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+	return xmlBranch.remove_child(toErase);
 }
 
 }  // namespace Internal

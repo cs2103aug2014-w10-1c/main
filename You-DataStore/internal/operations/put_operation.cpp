@@ -16,13 +16,14 @@ PutOperation::PutOperation(std::wstring branch, std::wstring id, const KeyValueP
 }
 
 bool PutOperation::run(pugi::xml_document& document) {
+	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
 	pugi::xml_node toEdit =
-		document.find_child_by_attribute(L"id", nodeId.c_str());
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
 	if (!toEdit) {
 		return false;
 	}
 
-	document.remove_child(toEdit);
+	xmlBranch.remove_child(toEdit);
 
 	PostOperation post(branchName, nodeId, task);
 	return post.run(document);
