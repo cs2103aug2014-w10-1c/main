@@ -25,7 +25,9 @@ public:
 	/// as specified in \ref task1
 	TEST_METHOD_INITIALIZE(initializeMockDocument) {
 		mockDocument.reset();
-		pugi::xml_node node = mockDocument.append_child(L"task");
+		pugi::xml_node node = mockDocument.
+			append_child(Internal::TASKS_NODE.c_str()).
+			append_child(L"task");
 		node.append_attribute(L"id").set_value(L"0");
 		node.append_child(TASK_ID.c_str()).
 			append_child(pugi::xml_node_type::node_pcdata).
@@ -61,8 +63,8 @@ public:
 
 	TEST_METHOD(deserializeOperation) {
 		using SerializationOperation = Internal::SerializationOperation;
-		KeyValuePairs task =
-			SerializationOperation::deserialize(mockDocument.first_child());
+		pugi::xml_node toDeserialize = mockDocument.first_child().first_child();
+		KeyValuePairs task = SerializationOperation::deserialize(toDeserialize);
 		Assert::AreEqual(task1.at(TASK_ID), task.at(TASK_ID));
 		Assert::AreEqual(task1.at(DESCRIPTION), task.at(DESCRIPTION));
 		Assert::AreEqual(task1.at(DEADLINE), task.at(DEADLINE));
@@ -112,9 +114,9 @@ public:
 	}
 
 	TEST_METHOD(getExistingNodeWithBranchOperation) {
-		pugi::xml_node expected = mockDocument.append_child(L"tasks");
+		pugi::xml_node expected = mockDocument.append_child(L"resources");
 		pugi::xml_node actual =
-			Internal::BranchOperation::get(mockDocument, L"tasks");
+			Internal::BranchOperation::get(mockDocument, L"resources");
 		Assert::IsTrue(expected == actual);
 	}
 };
