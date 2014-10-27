@@ -1,15 +1,15 @@
 #include "stdafx.h"
-#include <boost/lexical_cast.hpp>
 #include "../../task_typedefs.h"
-#include "../internal_datastore.h"
 #include "post_operation.h"
 #include "put_operation.h"
+#include "branch_operation.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
 
-PutOperation::PutOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp) {
+PutOperation::PutOperation(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
 	branchName = branch;
 	nodeId = id;
 	task = kvp;
