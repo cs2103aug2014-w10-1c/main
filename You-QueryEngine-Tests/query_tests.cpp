@@ -5,7 +5,7 @@
 
 #include <type_traits>
 #include "mocks/task_list.h"
-#include "../You-Utils/exceptions/query_engine_exception.h"
+#include "exception.h"
 #include "internal/controller/task_builder.h"
 #include "internal/model.h"
 #include "api.h"

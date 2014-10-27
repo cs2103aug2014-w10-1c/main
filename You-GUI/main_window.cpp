@@ -10,8 +10,6 @@
 #include "main_window_messages.h"
 #include "window_title.h"
 #include "You-Controller/exception.h"
-#include "You-Utils/exceptions/query_engine_exception.h"
-#include "You-NLP/exception.h"
 
 namespace You {
 namespace GUI {
@@ -132,16 +130,16 @@ void MainWindow::sendQuery() {
 	ui.statusMessage->setText(message);
 	try {
 		qm->query(inputString, getTaskList());
-	} catch (You::QueryEngine::Exception::EmptyTaskDescriptionException& e) {
+	} catch (You::Controller::EmptyTaskDescriptionException& e) {
 		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch(You::QueryEngine::Exception::TaskNotFoundException& e) {
+	} catch(You::Controller::TaskNotFoundException& e) {
 		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (You::NLP::ParseErrorException& e) {
+	} catch (You::Controller::ParseErrorException& e) {
 		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (You::NLP::ParserException& e) {
+	} catch (You::Controller::ParserException& e) {
 		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextIndexOutOfRangeException& e) {

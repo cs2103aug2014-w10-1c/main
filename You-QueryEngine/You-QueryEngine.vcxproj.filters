@@ -42,9 +42,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\exception.h">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
       <Filter>Header Files\internal\model</Filter>
     </ClInclude>
     <ClInclude Include="task_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -140,8 +140,5 @@
     <ClCompile Include="internal\model\task_graph.cpp">
       <Filter>Source Files\internal\model</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

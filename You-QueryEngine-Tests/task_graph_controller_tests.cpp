@@ -4,7 +4,7 @@
 
 #include "common.h"
 #include "internal/controller.h"
-#include "internal/exception.h"
+#include "exception.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;

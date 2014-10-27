@@ -33,9 +33,6 @@
     <ClInclude Include="option.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exceptions\query_engine_exception.h">
-      <Filter>Header Files\exceptions</Filter>
-    </ClInclude>
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>

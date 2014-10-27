@@ -80,7 +80,6 @@
     <ClInclude Include="log\log_severity.h" />
     <ClInclude Include="log\log_sink.h" />
     <ClInclude Include="option.h" />
-    <ClInclude Include="exceptions\query_engine_exception.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
