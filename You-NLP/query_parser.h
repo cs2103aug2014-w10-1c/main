@@ -39,10 +39,18 @@ public:
 public:
 	QueryParser();
 
+	/// Parses the given input string into a date.
+	///
+	/// \param[in] string The string to parse.
+	/// \param[out] result The parsed date/time object.
+	/// \return True if parsing was successful.
+	static bool parse(const StringType& string, QUERY& result);
+
 	/// Parses the given input string into a query.
 	///
 	/// \param[in] string The string to parse.
 	/// \return The query tree representing the given query.
+	/// \exception ParserException When parsing fails.
 	static QUERY parse(const StringType& string);
 
 private:

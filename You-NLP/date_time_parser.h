@@ -44,6 +44,7 @@ public:
 	///
 	/// \param[in] string The string to parse.
 	/// \return The date/time representing the string.
+	/// \exception ParserException When parsing fails.
 	static boost::posix_time::ptime parse(const StringType& string);
 
 private:

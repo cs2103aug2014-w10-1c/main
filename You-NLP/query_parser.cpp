@@ -10,20 +10,23 @@ namespace spirit = boost::spirit;
 namespace qi = spirit::qi;
 namespace phoenix = boost::phoenix;
 
-QUERY QueryParser::parse(const QueryParser::StringType& string) {
+QUERY QueryParser::parse(const StringType& string) {
 	QUERY result;
-	bool success = qi::phrase_parse(
+
+	if (parse(string, result)) {
+		return result;
+	} else {
+		throw ParserException();
+	}
+}
+
+bool QueryParser::parse(const StringType& string, QUERY& result) {
+	return qi::phrase_parse(
 		begin(string),
 		end(string),
 		QueryParser(),
 		ParserSkipperType(),
 		result);
-
-	if (success) {
-		return result;
-	} else {
-		throw ParserException();
-	}
 }
 
 QueryParser::QueryParser() : QueryParser::base_type(start) {
