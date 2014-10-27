@@ -35,20 +35,20 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 	auto builder = Controller::Builder::fromTask(current);
 
 	#pragma region Update the fields iff it is requested
-	if (static_cast<bool>(this->description)) {
+	if (this->description) {
 		builder.description(this->description.get());
 	}
-	if (static_cast<bool>(this->deadline)) {
+	if (this->deadline) {
 		builder.deadline(this->deadline.get());
 	}
-	if (static_cast<bool>(this->priority)) {
+	if (this->priority) {
 		builder.priority(this->priority.get());
 	}
-	if (static_cast<bool>(this->dependencies)) {
+	if (this->dependencies) {
 		builder.dependencies(this->dependencies.get());
 	}
 	Task newTask = builder;
-	if (static_cast<bool>(this->completed)) {
+	if (this->completed) {
 		newTask.setCompleted(this->completed.get());
 	}
 	#pragma endregion
