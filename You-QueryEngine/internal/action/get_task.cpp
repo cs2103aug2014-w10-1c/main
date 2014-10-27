@@ -22,7 +22,11 @@ Response GetTask::execute(State& state) {
 	}
 	if (sortAfterFilter) {
 		std::sort(begin(result), end(result), comparator);
+		state.setActiveComparator(comparator);
+	} else {
+		state.setActiveComparator(Comparator::notSorted());
 	}
+	state.setActiveFilter(filter);
 	return result;
 }
 
