@@ -1,3 +1,4 @@
+//@author A0094446X
 #include "stdafx.h"
 #include <QCompleter>
 #include <QKeyEvent>
@@ -100,32 +101,24 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 			break;
 		}
 	}
-
-	bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_E); // CTRL+E
-	if (!completer || !isShortcut) // do not process the shortcut when we have a completer
-		QTextEdit::keyPressEvent(e);
-
-	const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
-	if (!completer || (ctrlOrShift && e->text().isEmpty()))
-		return;
-	
-	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-="); // end of word
-	bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
+	QTextEdit::keyPressEvent(e);
+	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-=");
 	QString completionPrefix = textUnderCursor();
-	if ((hasModifier || e->text().isEmpty() || completionPrefix.length() < 1
+	if ((e->text().isEmpty() || completionPrefix.length() < 1
 		|| eow.contains(e->text().right(1)))) {
 		completer->popup()->hide();
 		return;
 	}
 	if (completionPrefix != completer->completionPrefix()) {
 		completer->setCompletionPrefix(completionPrefix);
-		completer->popup()->setCurrentIndex(completer->completionModel()->index(0, 0));
+		completer->popup()->setCurrentIndex(
+			completer->completionModel()->index(0, 0));
 	}
-	
+
 	QRect cr = cursorRect();
 	cr.setWidth(completer->popup()->sizeHintForColumn(0)
 		+ completer->popup()->verticalScrollBar()->sizeHint().width());
-	completer->complete(cr); // popup it up!
+	completer->complete(cr);
 }
-}
-}
+}  // namespace GUI
+}  // namespace You

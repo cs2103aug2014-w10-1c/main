@@ -69,6 +69,7 @@ void SyntaxHighlighter::buildRules() {
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
+	// Highlight the basic commands
 	for each(const HighlightingRule &rule in commandHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
@@ -79,6 +80,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		}
 	}
 
+	// Highlight parameters and the 'set' prefix such as 'set description'
 	for each(const HighlightingRule &rule in paramHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
@@ -90,6 +92,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		}
 	}
 
+	// Highlights the 'order by' keywords
 	QRegExp expression(orderPrefixHighlightingRule.at(0).pattern);
 	HighlightingRule rule = orderPrefixHighlightingRule.at(0);
 	int index = expression.indexIn(text);
@@ -99,6 +102,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		index = expression.indexIn(text, index + length);
 	}
 
+	// Highlights parameter 'ascending' or 'descending'
 	for each(const HighlightingRule &rule in orderHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int offset = 0;
