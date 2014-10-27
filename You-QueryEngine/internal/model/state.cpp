@@ -7,9 +7,11 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-State::State() {
-	innerGraph = TaskGraph();
+State::State()
+: innerGraph(TaskGraph(TaskGraph::GraphType::DEPENDENCY)),
+  innerSubtaskGraph(TaskGraph(TaskGraph::GraphType::SUBTASK)) {
 	maxID = TaskGraphController::loadFromFile(innerGraph);
+	TaskGraphController::loadFromFile(innerSubtaskGraph);
 }
 
 State& State::get() {
@@ -18,7 +20,8 @@ State& State::get() {
 }
 
 void State::clear() {
-	get().innerGraph = TaskGraph();
+	get().innerGraph = TaskGraph(TaskGraph::GraphType::DEPENDENCY);
+	get().innerSubtaskGraph = TaskGraph(TaskGraph::GraphType::SUBTASK);
 	while (!get().undoStack().empty()) {
 		get().undoStack().pop();
 	}
