@@ -15,9 +15,12 @@
 #pragma managed(push, off)
 
 ExcludeFromCodeCoverage(boost, L"boost::*");
-
+ExcludeFromCodeCoverage(You_NLP, L"You::NLP::*");
+ExcludeFromCodeCoverage(You_QueryEngine, L"You::QueryEngine::*");
+ExcludeFromCodeCoverage(You_Utils, L"You::Utils::*");
+ExcludeFromCodeCoverage(You_Controller, L"You::Controller::*");
+ExcludeFromCodeCoverage(You_DataStore, L"You::DataStore::*");
 #pragma managed(pop)
-
 #endif  // MS_CPP_CODECOVERAGE
 
 #endif  // YOU_GUI_TESTS_EXCLUSIONS_H_

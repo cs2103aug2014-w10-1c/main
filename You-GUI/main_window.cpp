@@ -35,25 +35,20 @@ MainWindow::MainWindow(QWidget *parent)
 	qm->setup();
 	tpm->setup();
 	initializeAllTimerNotifications();
-	ctb = new CommandTextBox(ui.splitter);
-	ui.horizontalLayout->insertWidget(0, ctb);
+	commandTextBox = new CommandTextBox(ui.splitter);
+	ui.horizontalLayout->insertWidget(0, commandTextBox);
 
-	ctb->installEventFilter(this);
-	ctb->setTabChangesFocus(true);
-	ctb->setWordWrapMode(QTextOption::NoWrap);
-	ctb->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	ctb->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	ctb->setFixedHeight(20);
-	ctb->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
-	ui.commandTextBox->installEventFilter(this);
-	ui.commandTextBox->setTabChangesFocus(true);
-	ui.commandTextBox->setWordWrapMode(QTextOption::NoWrap);
-	ui.commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	ui.commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	ui.commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+	commandTextBox->setVisible(true);
+	commandTextBox->installEventFilter(this);
+	commandTextBox->setTabChangesFocus(true);
+	commandTextBox->setWordWrapMode(QTextOption::NoWrap);
+	commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	commandTextBox->setFixedHeight(20);
+	commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 
 	syntaxHighlighter.reset(
-		new SyntaxHighlighter(ui.commandTextBox->document()));
+		new SyntaxHighlighter(commandTextBox->document()));
 
 
 	setupAutoComplete();
@@ -131,7 +126,7 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
-	QString inputString = ui.commandTextBox->toPlainText();
+	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
 	pixmap.load(RESOURCE_GREEN, 0);
@@ -162,7 +157,7 @@ void MainWindow::sendQuery() {
 		pixmap.load(RESOURCE_RED, 0);
 	}
 	ui.statusIcon->setPixmap(pixmap);
-	ui.commandTextBox->setPlainText(QString());
+	commandTextBox->setPlainText(QString());
 }
 
 void MainWindow::commandEnterPressed() {
@@ -198,7 +193,7 @@ void MainWindow::clearTasks() {
 	taskList.reset(new TaskList);
 	ui.taskTreePanel->clear();
 	ui.taskDescriptor->clear();
-	ui.commandTextBox->clear();
+	commandTextBox->clear();
 }
 
 void MainWindow::taskSelected() {
@@ -249,25 +244,25 @@ void MainWindow::notify(Task::ID id) {
 }
 
 void MainWindow::contextAddTask() {
-	ui.commandTextBox->setPlainText(QString("/add "));
-	ui.commandTextBox->setFocus();
-	ui.commandTextBox->moveCursor(QTextCursor::End);
+	commandTextBox->setPlainText(QString("/add "));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::contextDeleteTask(int id) {
 	std::wstringstream wss;
 	wss << L"/delete " << id;
-	ui.commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
-	ui.commandTextBox->setFocus();
-	ui.commandTextBox->moveCursor(QTextCursor::End);
+	commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::contextEditTask(int id) {
 	std::wstringstream wss;
 	wss << L"/edit " << id << L" set ";
-	ui.commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
-	ui.commandTextBox->setFocus();
-	ui.commandTextBox->moveCursor(QTextCursor::End);
+	commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
@@ -286,17 +281,17 @@ void MainWindow::setupAutoComplete() {
 	for each (QString qstr  in wordList) {
 		qDebug() << qstr;
 	}
-	completer = new QCompleter(wordList, ui.commandTextBox);
+	completer = new QCompleter(wordList, commandTextBox);
 	completer->setCaseSensitivity(Qt::CaseInsensitive);
 	completer->setCompletionMode(QCompleter::PopupCompletion);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-	if (object == ui.commandTextBox && event->type() == QEvent::KeyPress) {
+	if (object == commandTextBox && event->type() == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 		if (keyEvent->key() == Qt::Key_Return) {
 			commandEnterPressed();
-			ui.commandTextBox->setFocus();
+			commandTextBox->setFocus();
 			return true;
 		} else {
 			return QMainWindow::eventFilter(object, event);

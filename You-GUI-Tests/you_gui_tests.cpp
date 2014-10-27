@@ -54,7 +54,7 @@ public:
 
 	TEST_METHOD(isCommandTextBoxVisible) {
 		MainWindow w;
-		Assert::IsTrue(w.ui.commandTextBox->isVisible());
+		Assert::IsTrue(w.commandTextBox->isVisible());
 	}
 
 	TEST_METHOD(isStatusBarVisible) {
@@ -86,7 +86,7 @@ public:
 	TEST_METHOD(addSingleTaskCount) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
@@ -95,7 +95,7 @@ public:
 	TEST_METHOD(addSingleTaskContent) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 2099"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 2099"));
 		w.commandEnterPressed();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(1), QString("0"));
@@ -177,11 +177,11 @@ public:
 	TEST_METHOD(deleteSingleTaskCount) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/delete 1"));
+		w.commandTextBox->setPlainText(QString("/delete 1"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
@@ -190,11 +190,11 @@ public:
 	TEST_METHOD(deleteSingleTaskFind) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/delete 1"));
+		w.commandTextBox->setPlainText(QString("/delete 1"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->findItems(
 			QString("1"), Qt::MatchExactly, 1).size() == 0);

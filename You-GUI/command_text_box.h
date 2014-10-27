@@ -15,7 +15,7 @@ public:
 	CommandTextBox(QWidget *parent = 0);
 	~CommandTextBox();
 
-	void setCompleter(QCompleter *c);
+	void setCompleter();
 	QCompleter *completer;
 
 protected:
@@ -27,9 +27,6 @@ protected:
 
 private:
 	QString textUnderCursor() const;
-
-private:
-	QCompleter *c;
 };
 }
 }

@@ -20,15 +20,18 @@ private:
 		QRegExp pattern;
 		QTextCharFormat format;
 		QTextCharFormat secondaryFormat;
+		QTextCharFormat tertiaryFormat;
 	};
 
 	QVector<HighlightingRule> commandHighlightingRules;
 	QVector<HighlightingRule> paramHighlightingRules;
-
+	QVector<HighlightingRule> orderHighlightingRules;
 
 	QTextCharFormat commandNameFormat;
 	QTextCharFormat parameterNameFormat;
 	QTextCharFormat parameterPrefixFormat;
+	QTextCharFormat orderPrefixFormat;
+	QTextCharFormat orderNameFormat;
 };
 
 }  // namespace GUI

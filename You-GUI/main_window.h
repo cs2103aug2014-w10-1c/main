@@ -105,7 +105,7 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
-	CommandTextBox *ctb;
+	CommandTextBox *commandTextBox;
 
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;

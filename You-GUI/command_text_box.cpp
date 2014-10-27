@@ -11,74 +11,83 @@
 #include "keywords.h"
 namespace You {
 namespace GUI {
-CommandTextBox::CommandTextBox(QWidget *parent)
-	: QTextEdit(parent), c(0)
-{
-	setPlainText(tr("This TextEdit provides autocompletions for words that have more than"
-		" 3 characters. You can trigger autocompletion using ") +
-		QKeySequence("Ctrl+E").toString(QKeySequence::NativeText));
-	setCompleter(completer);
+CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
+	setCompleter();
 }
 
-CommandTextBox::~CommandTextBox()
-{
-}
+CommandTextBox::~CommandTextBox() {}
 
-void CommandTextBox::setCompleter(QCompleter *completer)
-{
-	if (c)
-		QObject::disconnect(c, 0, this, 0);
-
+void CommandTextBox::setCompleter() {
 	QStringList wordList;
+	std::wstringstream wss;
+	wss << PARAM_PREFIX << L" ";
+	wordList.append(QString::fromStdWString(wss.str()));
+	wss.str(L"");
+	wss << ORDER_PREFIX << L" ";
+	wordList.append(QString::fromStdWString(wss.str()));
+
 	for each (std::wstring item in PARAMS) {
-		wordList.append(QString::fromStdWString(item));
+		wss.str(L"");
+		wss << item << L" ";
+		wordList.append(QString::fromStdWString(wss.str()));
 	}
 
 	for each (std::wstring item in COMMANDS) {
-		wordList.append(QString::fromStdWString(item));
+		wss.str(L"");
+		wss << item << L" ";
+		wordList.append(QString::fromStdWString(wss.str()));
 	}
-	c = completer;
 
-	c = new QCompleter(wordList, this);
-	if (!c)
-		return;
+	for each (std::wstring item in ORDERS) {
+		wss.str(L"");
+		wss << item << L" ";
+		wordList.append(QString::fromStdWString(wss.str()));
+	}
 
-	c->setWidget(this);
-	c->setCompletionMode(QCompleter::PopupCompletion);
-	c->setCaseSensitivity(Qt::CaseInsensitive);
-	QObject::connect(c, SIGNAL(activated(QString)),
+	this->completer = new QCompleter(wordList, this);
+	this->completer->setWidget(this);
+	this->completer->setCompletionMode(QCompleter::PopupCompletion);
+	this->completer->setCaseSensitivity(Qt::CaseInsensitive);
+	QObject::connect(this->completer, SIGNAL(activated(QString)),
 		this, SLOT(insertCompletion(QString)));
 }
 
-void CommandTextBox::insertCompletion(const QString& completion)
-{
-	if (c->widget() != this)
+void CommandTextBox::insertCompletion(const QString& completion) {
+	if (completer->widget() != this)
 		return;
 	QTextCursor tc = textCursor();
-	int extra = completion.length() - c->completionPrefix().length();
+	int extra = completion.length() - completer->completionPrefix().length();
 	tc.movePosition(QTextCursor::Left);
 	tc.movePosition(QTextCursor::EndOfWord);
 	tc.insertText(completion.right(extra));
 	setTextCursor(tc);
 }
 
-QString CommandTextBox::textUnderCursor() const
-{
+QString CommandTextBox::textUnderCursor() const {
 	QTextCursor tc = textCursor();
-	tc.select(QTextCursor::WordUnderCursor);
+	tc.movePosition(QTextCursor::StartOfWord);
+	if (tc.position() != 0) {
+		if (this->toPlainText().at(tc.position() - 1) == "/") {
+			tc.setPosition(tc.position() - 1);
+			tc.movePosition(tc.NextWord, QTextCursor::KeepAnchor, 2);
+			return tc.selectedText();
+		} else {
+			tc.movePosition(tc.NextWord, QTextCursor::KeepAnchor, 1);
+			return tc.selectedText();
+		}
+	}
 	return tc.selectedText();
 }
 
-void CommandTextBox::focusInEvent(QFocusEvent *e)
-{
-	if (c)
-		c->setWidget(this);
+void CommandTextBox::focusInEvent(QFocusEvent *e) {
+	if (completer)
+		completer->setWidget(this);
 	QTextEdit::focusInEvent(e);
 }
 
 void CommandTextBox::keyPressEvent(QKeyEvent *e)
 {
-	if (c && c->popup()->isVisible()) {
+	if (completer && completer->popup()->isVisible()) {
 		// The following keys are forwarded by the completer to the widget
 		switch (e->key()) {
 		case Qt::Key_Enter:
@@ -94,31 +103,30 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e)
 	}
 
 	bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_E); // CTRL+E
-	if (!c || !isShortcut) // do not process the shortcut when we have a completer
+	if (!completer || !isShortcut) // do not process the shortcut when we have a completer
 		QTextEdit::keyPressEvent(e);
 
 	const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
-	if (!c || (ctrlOrShift && e->text().isEmpty()))
+	if (!completer || (ctrlOrShift && e->text().isEmpty()))
 		return;
-
-	static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+	
+	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-="); // end of word
 	bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
 	QString completionPrefix = textUnderCursor();
-
-	if (!isShortcut && (hasModifier || e->text().isEmpty() || completionPrefix.length() < 3
+	if (!isShortcut && (hasModifier || e->text().isEmpty() || completionPrefix.length() < 1
 		|| eow.contains(e->text().right(1)))) {
-		c->popup()->hide();
+		completer->popup()->hide();
 		return;
 	}
-
-	if (completionPrefix != c->completionPrefix()) {
-		c->setCompletionPrefix(completionPrefix);
-		c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
+	if (completionPrefix != completer->completionPrefix()) {
+		completer->setCompletionPrefix(completionPrefix);
+		completer->popup()->setCurrentIndex(completer->completionModel()->index(0, 0));
 	}
+	
 	QRect cr = cursorRect();
-	cr.setWidth(c->popup()->sizeHintForColumn(0)
-		+ c->popup()->verticalScrollBar()->sizeHint().width());
-	c->complete(cr); // popup it up!
+	cr.setWidth(completer->popup()->sizeHintForColumn(0)
+		+ completer->popup()->verticalScrollBar()->sizeHint().width());
+	completer->complete(cr); // popup it up!
 }
 }
 }
