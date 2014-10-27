@@ -81,6 +81,7 @@
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\parser_exception.h" />
+    <ClInclude Include="exceptions\parser_type_exception.h" />
     <ClInclude Include="exceptions\parse_error_exception.h" />
     <ClInclude Include="nlp.h" />
     <ClInclude Include="parser.h" />

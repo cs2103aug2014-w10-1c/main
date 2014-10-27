@@ -78,6 +78,9 @@
     <ClInclude Include="parse_tree\undo_query.h">
       <Filter>Header Files\parse_tree</Filter>
     </ClInclude>
+    <ClInclude Include="exceptions\parser_type_exception.h">
+      <Filter>Header Files\exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
