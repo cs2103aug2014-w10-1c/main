@@ -23,6 +23,9 @@ public:
 protected:
 	/// The "id" attribute of the XML node to modify
 	std::wstring nodeId;
+
+	/// The name of the XML branch to modify
+	std::wstring branchName;
 };
 
 }  // namespace Internal

@@ -8,7 +8,8 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PostOperation::PostOperation(std::wstring id, const KeyValuePairs& kvp) {
+PostOperation::PostOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp) {
+	branchName = branch;
 	nodeId = id;
 	task = kvp;
 }

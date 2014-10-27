@@ -6,7 +6,8 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-EraseOperation::EraseOperation(std::wstring id) {
+EraseOperation::EraseOperation(std::wstring branch, std::wstring id) {
+	branchName = branch;
 	nodeId = id;
 }
 

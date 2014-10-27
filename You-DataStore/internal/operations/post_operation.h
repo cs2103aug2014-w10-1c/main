@@ -14,9 +14,10 @@ class PostOperation : public SerializationOperation {
 public:
 	/// Constructor
 	///
+	/// \param[in] branch the name of the branch to modify
 	/// \param[in] id the id attribute of the node to be added
 	/// \param[in] kvp the KeyValuePairs of the node to be added
-	PostOperation(std::wstring id, const KeyValuePairs& kvp);
+	PostOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 	bool run(pugi::xml_node& document) override;
 	virtual ~PostOperation() = default;
 

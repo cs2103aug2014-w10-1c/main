@@ -9,7 +9,8 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-PutOperation::PutOperation(std::wstring id, const KeyValuePairs& kvp) {
+PutOperation::PutOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp) {
+	branchName = branch;
 	nodeId = id;
 	task = kvp;
 }

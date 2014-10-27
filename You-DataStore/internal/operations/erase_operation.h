@@ -14,8 +14,9 @@ class EraseOperation : public Operation {
 public:
 	/// Constructor
 	///
+	/// \param[in] branch the name of the branch to modify
 	/// \param[in] id the id attribute of the node to be erased
-	explicit EraseOperation(std::wstring id);
+	EraseOperation(std::wstring branch, std::wstring id);
 	bool run(pugi::xml_node& document) override;
 	virtual ~EraseOperation() = default;
 };
