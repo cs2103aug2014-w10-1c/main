@@ -13,7 +13,7 @@ PostOperation::PostOperation(TaskId id, const KeyValuePairs& stask) {
 	task = stask;
 }
 
-bool PostOperation::run(pugi::xml_document& document) {
+bool PostOperation::run(pugi::xml_node& document) {
 	// Consider changing parameter to std::wstring altogether
 	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	if (document.find_child_by_attribute(L"id", idString.c_str())) {

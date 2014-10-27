@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "internal/internal_datastore.h"
+#include "internal/constants.h"
 #include "datastore.h"
 
 namespace You {
@@ -27,7 +28,11 @@ void DataStore::erase(TaskId taskId) {
 }
 
 std::vector<KeyValuePairs> DataStore::getAllTasks() {
-	return Internal::DataStore::get().getAllTask();
+	return Internal::DataStore::get().getAll(Internal::TASKS_NODE);
+}
+
+std::vector<KeyValuePairs> DataStore::getAllResources() {
+	return Internal::DataStore::get().getAll(Internal::RESOURCES_NODE);
 }
 
 }  // namespace DataStore

@@ -75,6 +75,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="internal\constants.h" />
+    <ClInclude Include="internal\operations\branch_operation.h" />
     <ClInclude Include="datastore.h" />
     <ClInclude Include="internal\operations\erase_operation.h" />
     <ClInclude Include="internal\operations\post_operation.h" />
@@ -89,6 +91,8 @@
     <ClInclude Include="transaction.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="internal\constants.cpp" />
+    <ClCompile Include="internal\operations\branch_operation.cpp" />
     <ClCompile Include="datastore.cpp" />
     <ClCompile Include="internal\internal_datastore.cpp" />
     <ClCompile Include="internal\internal_transaction.cpp" />

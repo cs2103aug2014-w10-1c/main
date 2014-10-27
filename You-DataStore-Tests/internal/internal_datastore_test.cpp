@@ -6,6 +6,7 @@
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
+#include "internal/constants.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -50,19 +51,25 @@ public:
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
 		sut.post(10, task1);
+
+		// Note: To check if document is not changed after commit requires
+		// 2 first_child()s because the first one retrieves the tasks node
+		// while the second one is to check if the children of the tasks node
+		// is empty
+
 		// document must not change without commit
-		Assert::IsTrue(sut.document.first_child().empty());
+		Assert::IsTrue(sut.document.first_child().first_child().empty());
 		t.commit();
 		// document changes after commit
-		Assert::IsFalse(sut.document.first_child().empty());
+		Assert::IsFalse(sut.document.first_child().first_child().empty());
 
 		Transaction t2(sut.begin());
 		sut.erase(10);
 		// document must not change without commit
-		Assert::IsFalse(sut.document.first_child().empty());
+		Assert::IsFalse(sut.document.first_child().first_child().empty());
 		t2.commit();
 		// document changes after commit
-		Assert::IsTrue(sut.document.first_child().empty());
+		Assert::IsTrue(sut.document.first_child().first_child().empty());
 	}
 
 	TEST_METHOD(rollbackDeleteTransactionFromStack) {
@@ -73,27 +80,27 @@ public:
 		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
-	TEST_METHOD(getAllTasksFromTree) {
+	TEST_METHOD(getAllFromTree) {
 		DataStore& sut = DataStore::get();
 
 		// Create mock
-		sut.document.append_child(L"task").
+		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 
-		std::vector<KeyValuePairs> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
 		Assert::AreEqual(1U, result.size());
 	}
 
-	TEST_METHOD(getAllTaskFromFile) {
+	TEST_METHOD(getAllFromFile) {
 		DataStore& sut = DataStore::get();
 
 		// Create mock
-		sut.document.append_child(L"task").
+		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
-		sut.document.save_file(sut.FILE_PATH.c_str());
+		sut.document.save_file(Internal::FILE_PATH.c_str());
 		sut.document.reset();
 
-		std::vector<KeyValuePairs> result = sut.getAllTask();
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
 		Assert::AreEqual(1U, result.size());
 	}
 

@@ -58,9 +58,13 @@ public:
 	/// Pushes \ref EraseOperation into the active \ref Transaction
 	void erase(TaskId);
 
-	/// Get all tasks
-	/// \return a vector of all tasks in unordered map form
-	std::vector<KeyValuePairs> getAllTask();
+	/// General all getter of a data from the direct child of
+	/// the root node of the XML document
+	///
+	/// \param[in] nodeName the name of the child
+	/// \return a vector of unordered map of data in the xml node
+	/// with the specified nodeName
+	std::vector<KeyValuePairs> getAll(std::wstring nodeName);
 
 private:
 	DataStore() = default;
@@ -76,10 +80,9 @@ private:
 	///
 	/// \param[in] opQueue operations queue to be executed
 	/// \param[in] xml xml document to be modified by the operations
-	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
+	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
 
 private:
-	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
 	/// The current stack of active transactions.

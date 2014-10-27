@@ -11,7 +11,7 @@ namespace Internal {
 class PostOperation : public SerializationOperation {
 public:
 	PostOperation(TaskId, const KeyValuePairs&);
-	bool run(pugi::xml_document& document) override;
+	bool run(pugi::xml_node& document) override;
 	virtual ~PostOperation() = default;
 
 private:

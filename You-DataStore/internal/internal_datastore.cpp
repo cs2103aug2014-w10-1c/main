@@ -4,14 +4,14 @@
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
 #include "operations/erase_operation.h"
+#include "operations/branch_operation.h"
 #include "internal_transaction.h"
 #include "internal_datastore.h"
+#include "constants.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
-
-const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -37,7 +37,8 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		executeTransaction(transaction, temp);
+		pugi::xml_node tasksNode = BranchOperation::get(temp, TASKS_NODE);
+		executeTransaction(transaction, tasksNode);
 		document.reset(temp);
 		committedTransaction.push(self);
 		saveData();
@@ -89,13 +90,14 @@ void DataStore::erase(TaskId rawId) {
 	}
 }
 
-std::vector<KeyValuePairs> DataStore::getAllTask() {
+std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 	loadData();
-	std::vector<KeyValuePairs> allTask;
-	for (auto i = document.begin(); i != document.end(); ++i) {
-		allTask.push_back(SerializationOperation::deserialize(*i));
+	pugi::xml_node dataNode = BranchOperation::get(document, nodeName);
+	std::vector<KeyValuePairs> allData;
+	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
+		allData.push_back(SerializationOperation::deserialize(*i));
 	}
-	return allTask;
+	return allData;
 }
 
 bool DataStore::saveData() {
@@ -111,7 +113,7 @@ void DataStore::loadData() {
 }
 
 void DataStore::executeTransaction(Transaction & transaction,
-	pugi::xml_document& xml) {
+	pugi::xml_node& xml) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {

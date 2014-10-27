@@ -11,7 +11,7 @@ namespace Internal {
 class PutOperation : public SerializationOperation {
 public:
 	PutOperation(TaskId, const KeyValuePairs&);
-	bool run(pugi::xml_document& document) override;
+	bool run(pugi::xml_node& document) override;
 	virtual ~PutOperation() = default;
 
 private:

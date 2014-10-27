@@ -14,7 +14,7 @@ PutOperation::PutOperation(TaskId id, const KeyValuePairs& stask) {
 	task = stask;
 }
 
-bool PutOperation::run(pugi::xml_document& document) {
+bool PutOperation::run(pugi::xml_node& document) {
 	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
 	pugi::xml_node toEdit =
 		document.find_child_by_attribute(L"id", idString.c_str());
