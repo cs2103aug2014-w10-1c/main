@@ -55,10 +55,12 @@ QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<Task::Time> deadline,
 	You::Utils::Option<Task::Priority> priority,
 	You::Utils::Option<Task::Dependencies> dependencies,
-	You::Utils::Option<bool> completed) {
+	You::Utils::Option<bool> completed,
+	You::Utils::Option<Task::ID> parent,
+	You::Utils::Option<Task::Subtasks> subtasks) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, description,
-		deadline, priority, dependencies, completed));
+		deadline, priority, dependencies, completed, parent, subtasks));
 }
 
 std::unique_ptr<Query>

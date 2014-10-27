@@ -23,13 +23,17 @@ public:
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,
-		You::Utils::Option<bool> completed) :
-		id(id),
+		You::Utils::Option<bool> completed,
+		You::Utils::Option<Task::ID> parent,
+		You::Utils::Option<Task::Subtasks> subtasks)
+		: id(id),
 		description(description),
 		deadline(deadline),
 		priority(priority),
 		dependencies(dependencies),
-		completed(completed) {}
+		completed(completed),
+		parent(parent),
+		subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
@@ -45,7 +49,8 @@ protected:
 
 private:
 	Task buildUpdatedTask(const State& state) const;
-	void modifyState(State& state, const Task& updated) const;
+	void updateDependencyGraph(State& state, const Task& updated) const;
+	void updateSubtaskGraph(State& state, const Task& updated) const;
 	void makeTransaction(const Task& updated) const;
 	/// Execute add task.
 	Response execute(State& tasks) override;
@@ -55,7 +60,10 @@ private:
 	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
 	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
 	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.
-	const You::Utils::Option<bool> completed = false;  ///< Completed.
+	const You::Utils::Option<bool> completed;  ///< Completed.
+	const You::Utils::Option<Task::ID> parent;  ///< Parent.
+	const You::Utils::Option<Task::Subtasks> subtasks;  ///< Parent.
+
 	/// The previous state of the task.
 	Task previous;
 };

@@ -95,7 +95,9 @@ public:
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,
-		You::Utils::Option<bool> completed);
+		You::Utils::Option<bool> completed,
+		You::Utils::Option<Task::ID> parent,
+		You::Utils::Option<Task::Subtasks> subtasks);
 
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
