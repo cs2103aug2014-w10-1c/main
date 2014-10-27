@@ -26,6 +26,7 @@
 
 #include <memory>
 #include <boost/variant.hpp>
+#include "../You-Utils/option.h"
 #include "task_model.h"
 #include "filter.h"
 #include "comparator.h"
@@ -90,11 +91,11 @@ public:
 
 	/// Construct update task query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id,
-		Task::Description description, Task::Time deadline,
-		Task::Priority priority, Task::Dependencies dependencies);
-
-	/// Construct mark task as done query.
-	static std::unique_ptr<Query> UpdateTask(Task::ID id, bool completed);
+		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> deadline,
+		You::Utils::Option<Task::Priority> priority,
+		You::Utils::Option<Task::Dependencies> dependencies,
+		You::Utils::Option<bool> completed);
 
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();

@@ -24,7 +24,7 @@ Filter Filter::anyTask() {
 
 Filter Filter::idIsIn(std::vector<Task::ID> taskIDs) {
 	return Filter([taskIDs] (const Task& task) {
-		return std::find(taskIDs.begin(), taskIDs.end(),
+		return std::find(begin(taskIDs), end(taskIDs),
 			task.getID()) != taskIDs.end();
 	});
 }

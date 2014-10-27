@@ -14,17 +14,14 @@ const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
 
 Response GetTask::execute(State& state) {
 	std::vector<Task> result;
-	auto filter = this->filter;
 	std::vector<Task> all = state.graph().asTaskList();
-	std::for_each(all.begin(), all.end(),
-		[filter, &result] (const Task task) {
-			if (filter(task)) {
-				result.push_back(task);
-			}
+	for (const auto& task : all) {
+		if (filter(task)) {
+			result.push_back(task);
 		}
-	);
+	}
 	if (sortAfterFilter) {
-		std::sort(result.begin(), result.end(), comparator);
+		std::sort(begin(result), end(result), comparator);
 	}
 	return result;
 }

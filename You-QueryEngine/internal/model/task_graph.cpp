@@ -17,9 +17,8 @@ Task TaskGraph::getTask(const Task::ID id) const {
 
 std::vector<Task> TaskGraph::asTaskList() const {
 	std::vector<Task> result;
-	for (auto pair = taskTable.cbegin(); pair != taskTable.cend();
-			++pair) {
-		result.push_back(pair->second);
+	for (const auto& idTaskPair : taskTable) {
+		result.push_back(idTaskPair.second);
 	}
 	return result;
 }

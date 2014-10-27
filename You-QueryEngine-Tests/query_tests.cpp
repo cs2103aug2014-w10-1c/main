@@ -72,9 +72,13 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(constructEditTaskQuery) {
-		auto query = QueryEngine::UpdateTask(Task::DEFAULT_ID,
-				Task::DEFAULT_DESCRIPTION, Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY, Task::DEFAULT_DEPENDENCIES);
+		auto query = QueryEngine::UpdateTask(
+			Task::DEFAULT_ID,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none);
 		Assert::IsNotNull(&query);
 	}
 
@@ -137,9 +141,12 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Update the description
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(
-				task.getID(), desc2,
-				Task::DEFAULT_DEADLINE, Task::DEFAULT_PRIORITY,
-				Task::DEFAULT_DEPENDENCIES);
+				task.getID(),
+				desc2,
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none);
 			auto response = QueryEngine::executeQuery(std::move(query));
 
 			Task::ID id = boost::get<Task>(response).getID();
@@ -168,7 +175,13 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Mark the task added as done
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(task.getID(), true);
+			auto query = QueryEngine::UpdateTask(
+				task.getID(),
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none,
+				true);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsTrue(task.isCompleted());
@@ -179,7 +192,13 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Mark the task added as undone again
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(task.getID(), false);
+			auto query = QueryEngine::UpdateTask(
+				task.getID(),
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none,
+				false);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsFalse(task.isCompleted());
@@ -295,8 +314,8 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Update one task
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(task.getID(),
-				L"De geso", task.getDeadline(), task.getPriority(),
-				task.getDependencies());
+				std::wstring(L"De geso"), task.getDeadline(), task.getPriority(),
+				task.getDependencies(), boost::none);
 			auto response = QueryEngine::executeQuery(std::move(query));
 		}
 		#pragma endregion

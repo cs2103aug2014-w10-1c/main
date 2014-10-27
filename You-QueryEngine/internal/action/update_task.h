@@ -17,13 +17,18 @@ namespace Action {
 class UpdateTask : public Query {
 public:
 	/// Construct EditTask query
-	explicit UpdateTask(Task::ID id, Task::Description description,
-		Task::Time deadline, Task::Priority priority, Task::Dependencies dependencies)
-		: id(id), description(description), deadline(deadline),
-			priority(priority), dependencies(dependencies) {}
-
-   /// Construct mark task as completed/uncompleted
-	explicit UpdateTask(Task::ID id, bool completed) : id(id),
+	explicit UpdateTask(
+		Task::ID id,
+		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> deadline,
+		You::Utils::Option<Task::Priority> priority,
+		You::Utils::Option<Task::Dependencies> dependencies,
+		You::Utils::Option<bool> completed) :
+		id(id),
+		description(description),
+		deadline(deadline),
+		priority(priority),
+		dependencies(dependencies),
 		completed(completed) {}
 
 	/// Disable assignment operator
@@ -46,13 +51,11 @@ private:
 	Response execute(State& tasks) override;
 
 	const Task::ID id;
-	const Task::Description description =
-		Task::DEFAULT_DESCRIPTION;  ///< Description.
-	const Task::Time deadline = Task::DEFAULT_DEADLINE;  ///< Deadline.
-	const Task::Priority priority = Task::DEFAULT_PRIORITY;  ///< Priority.
-	const Task::Dependencies dependencies =
-		Task::DEFAULT_DEPENDENCIES;  ///< Dependencies.
-	const bool completed = false;  ///< Completed.
+	const You::Utils::Option<Task::Description> description;  ///< Description.
+	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
+	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
+	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.
+	const You::Utils::Option<bool> completed = false;  ///< Completed.
 	/// The previous state of the task.
 	Task previous;
 };

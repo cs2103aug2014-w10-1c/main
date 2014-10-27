@@ -19,6 +19,11 @@ public:
 	inline Option() {
 	}
 
+	/// Copy construct from boost::none
+	inline Option(const boost::none_t& value)  // NOLINT(runtime/explicit)
+		: boost::optional<T>(value) {
+	}
+
 	/// Move constructor. This initialises a value from an existing value.
 	inline Option(T&& value)  // NOLINT(runtime/explicit)
 	: boost::optional<T>(std::move(value)) {

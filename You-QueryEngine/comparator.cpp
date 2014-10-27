@@ -44,10 +44,8 @@ Comparator::Comparator(const ComparatorFunc& func) {
 
 bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 	ComparisonResult result = ComparisonResult::EQ;
-	for (auto comparator = comparators.cbegin();
-		 comparator != comparators.cend();
-		 ++comparator) {
-		result = (*comparator)(lhs, rhs);
+	for (const auto& comparator : comparators) {
+		result = comparator(lhs, rhs);
 		if (result != ComparisonResult::EQ) {
 			break;
 		} else {
@@ -61,11 +59,9 @@ bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
 
 void Comparator::negateAllComparators() {
 	std::vector<const ComparatorFunc> newComparators;
-	std::for_each(comparators.cbegin(), comparators.cend(),
-		[this, &newComparators] (const ComparatorFunc& func) {
-			newComparators.push_back(this->negate(func));
-		}
-	);
+	for (const auto& func : comparators) {
+		newComparators.push_back(this->negate(func));
+	}
 	comparators = newComparators;
 }
 
@@ -87,7 +83,7 @@ Comparator& Comparator::descending() {
 
 Comparator& Comparator::operator&&(const Comparator& rhs) {
 	comparators.insert(comparators.end(),
-		rhs.comparators.begin(), rhs.comparators.end());
+		begin(rhs.comparators), end(rhs.comparators));
 	return *this;
 }
 

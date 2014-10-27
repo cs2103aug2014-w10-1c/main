@@ -25,12 +25,11 @@ Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;
 	auto serialized =
 		You::DataStore::DataStore::get().getAllTasks();
-	std::for_each(serialized.cbegin(), serialized.cend(),
-		[&graph, &maxID] (const TaskSerializer::STask task) {
+	for (const auto& task : serialized) {
 		auto t = TaskSerializer::deserialize(task);
 		addTask(graph, t);
 		maxID = std::max(t.getID(), maxID);
-	});
+	}
 	return maxID;
 }
 
@@ -111,15 +110,13 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 
 void TGC::rebuildGraph(TaskGraph& g) {
 	g.graph = TaskGraph::Graph();
-	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
-		++pair) {
+	for (const auto& idTaskPair : g.taskTable) {
 		Vertex v = boost::add_vertex(g.graph);
-		g.graph[v] = pair->first;
+		g.graph[v] = idTaskPair.first;
 	}
-	for (auto pair = g.taskTable.cbegin(); pair != g.taskTable.cend();
-		++pair) {
-		for (const auto& cid : (pair->second).getDependencies()) {
-			boost::add_edge(cid, pair->first, g.graph);
+	for (const auto& idTaskPair : g.taskTable) {
+		for (const auto& cid : idTaskPair.second.getDependencies()) {
+			boost::add_edge(cid, idTaskPair.first, g.graph);
 		}
 	}
 }

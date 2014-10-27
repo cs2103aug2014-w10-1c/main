@@ -209,25 +209,23 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 
 	try {
 		const Task& task = context.at(query.taskID);
-		std::wstring description = query.description ?
-			query.description.get() :
-			Task::DEFAULT_DESCRIPTION;
-		boost::posix_time::ptime deadline = query.deadline ?
-			query.deadline.get() :
-			Task::DEFAULT_DEADLINE;
-		Task::Priority priority = query.priority ?
-			(query.priority == TaskPriority::HIGH ?
-				Task::Priority::HIGH : Task::Priority::NORMAL) :
-			Task::DEFAULT_PRIORITY;
-
+		You::Utils::Option<Task::Priority> priority;
+		if (query.priority) {
+			if (query.priority.get() == TaskPriority::NORMAL) {
+				priority = Task::Priority::NORMAL;
+			} else {
+				priority = Task::Priority::HIGH;
+			}
+		}
 		return std::unique_ptr<QueryExecutor>(
 			new EditTaskQueryExecutor(
 				QueryEngine::UpdateTask(
 					task.getID(),
-					description,
-					deadline,
+					query.description,
+					query.deadline,
 					priority,
-					Task::Dependencies())));
+					boost::none,
+					boost::none)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
