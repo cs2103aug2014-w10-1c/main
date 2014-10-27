@@ -13,7 +13,10 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreTest; }
+namespace UnitTests {
+class DataStoreTest;
+class DataStoreApiTest;
+}
 
 /// The internal components of DataStore
 namespace Internal {
@@ -21,8 +24,8 @@ namespace Internal {
 /// The most primitive class that does the changes to the actual xml file
 class DataStore {
 	/// Test classes
-	friend class You::DataStore::UnitTests::DataStoreTest;
-	friend class You::DataStore::UnitTests::DataStoreApiTest;
+	friend class UnitTests::DataStoreTest;
+	friend class UnitTests::DataStoreApiTest;
 public:
 	/// Gets the singleton instance of the internal data store.
 	///

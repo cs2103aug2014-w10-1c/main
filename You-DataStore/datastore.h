@@ -8,14 +8,11 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreApiTest; }
 
 /// The public methods of the data store.
 ///
 /// This is actually a facade for the \ref Internal::DataStore class.
 class DataStore {
-	friend class UnitTests::DataStoreApiTest;
-
 public:
 	/// Get the instance of DataStore
 	static DataStore& get();
