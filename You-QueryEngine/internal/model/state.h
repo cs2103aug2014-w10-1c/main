@@ -31,7 +31,8 @@ public:
 	inline Filter& getActiveFilter() const { return get().activeFilter; }
 
 	/// Get the current active comparator.
-	inline Comparator& getActiveComparator() const { return get().activeComparator; }
+	inline Comparator& getActiveComparator() const {
+		return get().activeComparator; }
 
 	/// Update the active filter
 	void setActiveFilter(const Filter& filter);
