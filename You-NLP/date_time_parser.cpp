@@ -15,18 +15,20 @@ namespace phoenix = boost::phoenix;
 
 ptime DateTimeParser::parse(const StringType& string) {
 	ptime result;
-	bool success = qi::phrase_parse(
+	if (parse(string, result)) {
+		return result;
+	} else {
+		throw ParserException();
+	}
+}
+
+bool DateTimeParser::parse(const StringType& string, ptime& result) {
+	return qi::phrase_parse(
 		begin(string),
 		end(string),
 		DateTimeParser(),
 		ParserSkipperType(),
 		result);
-
-	if (success) {
-		return result;
-	} else {
-		throw ParserException();
-	}
 }
 
 DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {

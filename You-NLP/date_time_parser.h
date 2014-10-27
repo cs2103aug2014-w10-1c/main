@@ -31,7 +31,16 @@ public:
 	typedef std::basic_string<ParserCharEncoding::char_type> StringType;
 
 public:
-	/// Parses the given input string into date.
+	/// Parses the given input string into a date.
+	///
+	/// \param[in] string The string to parse.
+	/// \param[out] result The parsed date/time object.
+	/// \return True if parsing was successful.
+	static bool parse(
+		const StringType& string,
+		boost::posix_time::ptime& result);
+
+	/// Parses the given input string into a date.
 	///
 	/// \param[in] string The string to parse.
 	/// \return The date/time representing the string.
