@@ -24,12 +24,12 @@ namespace {
 /// Test the functionality of \ref TaskGraphController
 TEST_CLASS(TaskGraphControllerTests) {
 	TEST_METHOD(createTaskGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
 	}
 
 	TEST_METHOD(addTaskToGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Controller::Graph::addTask(graph, Controller::Builder::get()
 			.id(10L).description(L"Hello World"));
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
@@ -41,7 +41,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
 		using Exception::TaskNotFoundException;
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task task = Controller::Builder::get().id(10L).description(L"Hello Warld");
 		Controller::Graph::addTask(graph, task);
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
@@ -50,16 +50,16 @@ TEST_CLASS(TaskGraphControllerTests) {
 	}
 
 	TEST_METHOD(deleteNonExistingTaskFromGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			Controller::Graph::deleteTask(graph, 10L);
 		});
 	}
 
 	TEST_METHOD(getExistingTaskFromGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task task = Controller::Builder::get()
 			.id(10L).description(L"Hello Warld");
 		Controller::Graph::addTask(graph, task);
@@ -70,14 +70,14 @@ TEST_CLASS(TaskGraphControllerTests) {
 	TEST_METHOD(getNonExistingTaskFromGraph) {
 		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			graph.getTask(10L);
 		});
 	}
 
 	TEST_METHOD(updateExistingTaskInGraph) {
 		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Controller::Graph::addTask(graph, t);
 		Task u = Controller::Builder::get().id(10L).description(L"Hello Marnie");
 		Controller::Graph::updateTask(graph, u);
@@ -86,7 +86,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 	}
 
 	TEST_METHOD(updateExistingTaskInGraphThatCausesCycle) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task firstTask = Controller::Builder::get()
 			.id(10L).description(L"Hello World");
 		Controller::Graph::addTask(graph, firstTask);
@@ -109,7 +109,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 		using Exception::TaskNotFoundException;
 		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
 		Assert::ExpectException<TaskNotFoundException>([t] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			Controller::Graph::updateTask(graph, t);
 		});
 	}

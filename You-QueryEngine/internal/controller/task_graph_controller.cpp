@@ -46,18 +46,20 @@ bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
 void TGC::addTask(TaskGraph& g, const Task& task) {
 	boost::add_vertex(task.getID(), g.graph);
 	g.taskTable.insert({ task.getID(), task });
-	if (task.getDependencies().size() > 0) {
-		addAllDependencies(g, task);
+	auto neighbors = g.getAdjacentTasks(task);
+	if (neighbors.size() > 0) {
+		connectEdges(g, task);
 	}
 }
 
-void TGC::addAllDependencies(TaskGraph& g, const Task& task) {
-	for (const auto& cid : task.getDependencies()) {
-		 addDependency(g, task.getID(), cid);
+void TGC::connectEdges(TaskGraph& g, const Task& task) {
+	auto neighbors = g.getAdjacentTasks(task);
+	for (const auto& cid : neighbors) {
+		 connectEdge(g, task.getID(), cid);
 	}
 }
 
-void TGC::addDependency(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
+void TGC::connectEdge(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
 	boost::add_edge(cid, pid, g.graph);
 }
 
@@ -86,9 +88,10 @@ void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
 void TGC::updateTask(TaskGraph& g, const Task& task) {
 	auto found = g.taskTable.find(task.getID());
 	if (found != g.taskTable.end()) {
-		bool dependencyIsChanged =
-			task.getDependencies() != (found->second).getDependencies();
-		if (dependencyIsChanged) {
+		auto neighborBefore = g.getAdjacentTasks(task);
+		auto neighborAfter = g.getAdjacentTasks(found->second);
+		bool neighborIsChanged = neighborBefore != neighborAfter;
+		if (neighborIsChanged) {
 			auto backup = found->second;
 			found->second = task;
 			bool hasCycle = false;
@@ -115,7 +118,7 @@ void TGC::rebuildGraph(TaskGraph& g) {
 		g.graph[v] = idTaskPair.first;
 	}
 	for (const auto& idTaskPair : g.taskTable) {
-		for (const auto& cid : idTaskPair.second.getDependencies()) {
+		for (const auto& cid : g.getAdjacentTasks(idTaskPair.second)) {
 			boost::add_edge(cid, idTaskPair.first, g.graph);
 		}
 	}

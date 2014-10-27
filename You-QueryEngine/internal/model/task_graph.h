@@ -28,6 +28,12 @@ public:
 	typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
 	/// Type of the vertex iterator
 	typedef boost::graph_traits<Graph>::vertex_iterator VIterator;
+	/// Type of the graph
+	enum class GraphType { DEPENDENCY, SUBTASK };
+
+	/// Construct a task graph with type.
+	explicit TaskGraph(GraphType type)
+	: type(type), graph(Graph()), taskTable() {};
 
 	/// Retrieve a single task from the graph
 	/// May throw Exception::TaskNotFoundException
@@ -42,9 +48,14 @@ public:
 	/// Return number of task resided in the graph.
 	inline int getTaskCount() const { return taskTable.size(); }
 
+	/// Return either task dependency list or subtask list
+	/// depends on the type of the graph.
+	Task::Dependencies getAdjacentTasks(const Task& task) const;
+
 private:
 	Graph graph;
 	std::unordered_map<Task::ID, Task> taskTable;
+	GraphType type;
 };
 
 }  // namespace Internal
