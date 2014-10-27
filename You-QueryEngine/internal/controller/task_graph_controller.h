@@ -9,7 +9,7 @@
 #include <boost/config.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include "../exception.h"
+#include "../../exception.h"
 #include "../model.h"
 
 namespace You {

@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 #include "../model.h"
-#include "../exception.h"
+#include "../../exception.h"
 #include "task_builder.h"
 
 namespace You {

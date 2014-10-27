@@ -49,6 +49,7 @@
       <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -64,6 +65,7 @@
       <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -74,13 +76,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="comparator.h" />
+    <ClInclude Include="exception.h" />
     <ClInclude Include="internal\action\delete_task.h" />
     <ClInclude Include="internal\action\undo.h" />
     <ClInclude Include="internal\action\update_task.h" />
     <ClInclude Include="internal\action\get_task.h" />
     <ClInclude Include="internal\controller.h" />
     <ClInclude Include="internal\controller\task_graph_controller.h" />
-    <ClInclude Include="internal\exception.h" />
     <ClInclude Include="internal\action\add_task.h" />
     <ClInclude Include="filter.h" />
     <ClInclude Include="internal\model.h" />

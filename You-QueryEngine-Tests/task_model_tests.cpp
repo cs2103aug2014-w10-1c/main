@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "internal/controller/task_builder.h"
-#include "internal/exception.h"
+#include "exception.h"
 
 #include "common.h"
 

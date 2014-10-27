@@ -3,11 +3,10 @@
 /// \author A0112054Y
 
 #pragma once
-#ifndef YOU_UTILS_EXCEPTIONS_QUERY_ENGINE_EXCEPTION_H_
-#define YOU_UTILS_EXCEPTIONS_QUERY_ENGINE_EXCEPTION_H_
+#ifndef YOU_QUERYENGINE_EXCEPTION_H_
+#define YOU_QUERYENGINE_EXCEPTION_H_
 
-#include <stdexcept>
-#include "exception.h"
+#include "You-Utils/exceptions/exception.h"
 
 namespace You {
 namespace QueryEngine {
@@ -41,4 +40,4 @@ class NotUndoAbleException : public BaseException {
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_UTILS_EXCEPTIONS_QUERY_ENGINE_EXCEPTION_H_
+#endif  // YOU_QUERYENGINE_EXCEPTION_H_
