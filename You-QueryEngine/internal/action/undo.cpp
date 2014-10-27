@@ -7,6 +7,7 @@
 
 #include "../model.h"
 #include "../controller.h"
+#include "get_task.h"
 #include "undo.h"
 
 namespace You {
@@ -24,7 +25,10 @@ Response Undo::execute(State& state) {
 	if (!State::get().undoStack().empty()) {
 		std::unique_ptr<Query> query = std::move(state.get().undoStack().top());
 		state.get().undoStack().pop();
-		return query->execute(state);
+		query->execute(state);
+		std::unique_ptr<Query> refresh = std::unique_ptr<Query>(new GetTask(
+			state.getActiveFilter(), state.getActiveComparator()));
+		return refresh->execute(state);
 	} else {
 		throw Exception::NotUndoAbleException();
 	}
