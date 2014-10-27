@@ -97,8 +97,7 @@ std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p) {
 		string = L"<=";
 		break;
 	default:
-		assert(false);
-		abort();
+		assert(false); abort();
 	}
 
 	return s << string;

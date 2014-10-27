@@ -132,7 +132,7 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 				break;
 			case TaskField::COMPLETE:
 			default:
-				assert(false);
+				assert(false); abort();
 			}
 
 			if (field.order == SHOW_QUERY::Order::ASCENDING) {
@@ -183,8 +183,7 @@ QueryExecutorBuilderVisitor::buildComparator(
 			std::bind(selector, std::placeholders::_1),
 			value);
 	default:
-		assert(false);
-		abort();
+		assert(false); abort();
 	}
 }
 

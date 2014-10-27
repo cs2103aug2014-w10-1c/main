@@ -95,7 +95,7 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 		result.complete = true;
 		break;
 	default:
-		assert(false);
+		assert(false); abort();
 	}
 
 	return result;
