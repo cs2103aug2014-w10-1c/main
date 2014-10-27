@@ -28,6 +28,7 @@ namespace UnitTests {
 TEST_CLASS(OptionTests) {
 	TEST_METHOD(defaultConstructorConstructsFalseyObject) {
 		Assert::IsFalse(Option<int>());
+		Assert::IsFalse(Option<int>(boost::none));
 	}
 
 	TEST_METHOD(constructorWithFalseyValueIsTrue) {

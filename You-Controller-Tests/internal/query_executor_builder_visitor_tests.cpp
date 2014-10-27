@@ -57,8 +57,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 
 		You::NLP::ADD_QUERY queryWithoutDeadline(Mocks::Queries::ADD_QUERY);
-		queryWithoutDeadline.deadline =
-			You::Utils::Option<boost::posix_time::ptime>();
+		queryWithoutDeadline.deadline = boost::none;
 		query = queryWithoutDeadline;
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<ADD_RESULT>(executor->execute());
@@ -314,8 +313,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.deadline =
-			You::Utils::Option<boost::posix_time::ptime>();
+		query2.deadline = boost::none;
 		You::NLP::QUERY query(query2);
 		std::unique_ptr<QueryExecutor> executor(
 			boost::apply_visitor(visitor, query));
@@ -338,8 +336,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.description =
-			You::Utils::Option<std::wstring>();
+		query2.description = boost::none;
 		You::NLP::QUERY query(query2);
 		std::unique_ptr<QueryExecutor> executor(
 			boost::apply_visitor(visitor, query));
@@ -362,8 +359,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.priority =
-			You::Utils::Option<You::NLP::TaskPriority>();
+		query2.priority = boost::none;
 		You::NLP::QUERY query(query2);
 		std::unique_ptr<QueryExecutor> executor(
 			boost::apply_visitor(visitor, query));
