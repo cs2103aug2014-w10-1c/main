@@ -15,7 +15,9 @@ TaskBuilder TaskBuilder::get() {
 		Task::DEFAULT_DESCRIPTION,
 		Task::DEFAULT_DEADLINE,
 		Task::DEFAULT_DEPENDENCIES,
-		Task::DEFAULT_PRIORITY);
+		Task::DEFAULT_PRIORITY,
+		Task::DEFAULT_ID,
+		Task::DEFAULT_SUBTASKS);
 	TaskBuilder builder(defaultTask);
 	return builder;
 }
@@ -26,6 +28,7 @@ TaskBuilder TaskBuilder::fromTask(const Task& task) {
 
 TaskBuilder& TaskBuilder::id(Task::ID id) {
 	instance.id = id;
+	instance.parent = id;
 	return *this;
 }
 
@@ -46,6 +49,16 @@ TaskBuilder& TaskBuilder::dependencies(const Task::Dependencies &dependencies) {
 
 TaskBuilder& TaskBuilder::priority(Task::Priority priority) {
 	instance.setPriority(priority);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::parent(const Task::ID parent) {
+	instance.setParent(parent);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::subtasks(const Task::Subtasks &subtasks) {
+	instance.setSubtasks(subtasks);
 	return *this;
 }
 

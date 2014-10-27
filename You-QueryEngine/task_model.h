@@ -30,7 +30,6 @@ namespace Internal { class TaskSerializer; class TaskBuilder; }
 ///		- priority
 ///		- dependencies
 class Task {
-	friend class Internal::TaskSerializer;
 	friend class Internal::TaskBuilder;
 public:
 	/// Constructor
@@ -43,6 +42,7 @@ public:
 	typedef boost::posix_time::ptime Time;
 	typedef std::unordered_set<Task::ID> Dependencies;
 	enum class Priority { NORMAL, HIGH };
+	typedef std::unordered_set<Task::ID> Subtasks;
 	/// @}
 
 	/// \name Inlined Field Getters.
@@ -51,9 +51,10 @@ public:
 	Description getDescription() const { return description; }
 	Time getDeadline() const { return deadline; }
 	Dependencies getDependencies() const { return dependencies; }
-	Dependencies getChildren() const { return dependencies; }
 	Priority getPriority() const { return priority; }
 	bool isCompleted() const { return completed; }
+	ID getParent() const { return parent; }
+	Subtasks getSubtasks() const { return subtasks; }
 	/// @}
 
 	/// Check dependency
@@ -67,6 +68,8 @@ public:
 	void setDependencies(const Dependencies& dependencies);
 	void setPriority(Priority priority);
 	void setCompleted(bool completed);
+	void setParent(const Task::ID parent);
+	void setSubtasks(const Subtasks& subtasks);
 	/// @}
 
 	/// \name Field Default Values
@@ -77,6 +80,7 @@ public:
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
+	static const Subtasks DEFAULT_SUBTASKS;
 	/// @}
 
 	/// Check equality of two tasks by comparing field by field.
@@ -88,23 +92,16 @@ public:
 private:
 	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
-		const Dependencies& dependencies, Priority priority) :
+		const Dependencies& dependencies, Priority priority, ID parent,
+		Subtasks subtasks) :
 		id(id), description(description), deadline(deadline),
-		dependencies(dependencies), priority(priority), completed(false) {}
+		dependencies(dependencies), priority(priority), completed(false),
+		parent(parent), subtasks(subtasks) {}
 
 	/// Check if the task is strictly equal with another task
 	/// Two taks are strictly equal if all fields are equal
 	/// \returns The strict equality of two tasks.
 	bool isStrictEqual(const Task& task) const;
-
-	/// \name Deadline String Format
-	/// @{
-	static const std::wstring DEADLINE_OVERDUE;
-	static const std::wstring DEADLINE_TODAY;
-	static const std::wstring DEADLINE_WITHIN_DAYS;
-	static const std::wstring DEADLINE_WITHIN_MONTHS;
-	static const std::wstring DEADLINE_NEVER;
-	/// @}
 
 	/// \name Private Fields
 	/// @{
@@ -114,6 +111,8 @@ private:
 	Dependencies dependencies;
 	Priority priority;
 	bool completed;
+	ID parent;
+	Subtasks subtasks;
 	/// @}
 };
 

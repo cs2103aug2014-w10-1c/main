@@ -69,7 +69,7 @@ private:
 	/// Insert (parent, dependency) edges to the graph.
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] parent The parent task.
-	static void addAllDependencies(TaskGraph& graph, const Task& parent);
+	static void connectEdges(TaskGraph& graph, const Task& parent);
 
 	/// Make task of id parent depends or sub on child.
 	/// Connect an edge from the child to the parent.
@@ -77,7 +77,7 @@ private:
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] parent The id of the parent vertex.
 	/// \param [in] child The id of the child vertex.
-	static void addDependency(TaskGraph& graph, const Task::ID parent,
+	static void connectEdge(TaskGraph& graph, const Task::ID parent,
 		const Task::ID child);
 };
 
