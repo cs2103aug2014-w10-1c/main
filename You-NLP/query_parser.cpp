@@ -69,9 +69,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	addCommandDeadline = (
 		(qi::lit("by") | qi::lit("before")) >>
-		qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadline, qi::_1)];
+		utilityTime
+	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
 	addCommandDeadline.name("addCommandDeadline");
 
 	addCommandDeadlineOptional = (
@@ -135,7 +134,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Editing tasks
 	editCommand = (
 		qi::uint_ >> qi::lit(L"set") >> editCommandRule
-	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
+	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
 	editCommand.name("editCommand");
 
@@ -152,7 +151,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> utilityLexeme)
+		editCommandFieldsUnary >> utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
@@ -180,7 +179,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Deleting tasks
 	deleteCommand = (
 		qi::uint_
-	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
+	)[qi::_val = phoenix::bind(&constructDeleteQuery, qi::_1)];
 	deleteCommand.name("deleteCommand");
 	#pragma endregion
 
@@ -189,6 +188,17 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::eps
 	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
 	#pragma endregion
+
+	utilityValue %= (
+		(qi::int_) |
+		(qi::bool_) |
+		utilityLexeme |
+		utilityTime
+	);
+
+	utilityTime = (
+		+ParserCharTraits::char_
+	)[qi::_val = phoenix::bind(&constructDateTime, qi::_1)];
 
 	utilityLexeme %= (
 		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
@@ -201,7 +211,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	);
 
 	qi::on_error<qi::fail>(start,
-		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
+		phoenix::bind(&onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
 }
 
 void QueryParser::onFailure(
