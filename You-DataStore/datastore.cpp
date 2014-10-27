@@ -30,6 +30,18 @@ void DataStore::erase(TaskId taskId) {
 	Internal::DataStore::get().erase(Internal::TASKS_NODE, stringId);
 }
 
+void DataStore::post(std::wstring resourceId, const KeyValuePairs& kvp) {
+	Internal::DataStore::get().post(Internal::RESOURCES_NODE, resourceId, kvp);
+}
+
+void DataStore::put(std::wstring resourceId, const KeyValuePairs& kvp) {
+	Internal::DataStore::get().put(Internal::RESOURCES_NODE, resourceId, kvp);
+}
+
+void DataStore::erase(std::wstring resourceId) {
+	Internal::DataStore::get().erase(Internal::RESOURCES_NODE, resourceId);
+}
+
 std::vector<KeyValuePairs> DataStore::getAllTasks() {
 	return Internal::DataStore::get().getAll(Internal::TASKS_NODE);
 }
