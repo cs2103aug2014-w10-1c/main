@@ -143,7 +143,8 @@ public:
 		// Boundary case: nonzero filter, nonzero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
 			L"priority<high, priority>normal, deadline>='3 oct', "
-			L"deadline<='7 oct', complete=true order by description descending, priority");
+			L"deadline<='7 oct', complete=true "
+			L"order by description descending, priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{
