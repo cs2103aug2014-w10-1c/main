@@ -32,6 +32,7 @@ public:
 	static TaskBuilder fromTask(const Task& task);
 
 	/// Initialize task id.
+	/// This also initialize parent's id to self.
 	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
 	TaskBuilder& description(const Task::Description& description);
@@ -41,6 +42,11 @@ public:
 	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
 	/// Initialize task priority.
 	TaskBuilder& priority(Task::Priority priority);
+	/// Initialize task's parent.
+	/// Parent id assumed exist.
+	TaskBuilder& parent(const Task::ID id);
+	/// Initialize task's subtasks.
+	TaskBuilder& subtasks(const Task::Subtasks& subtasks);
 
 	/// Convert the builder to task implicitly
 	operator Task() const;

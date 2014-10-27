@@ -34,8 +34,14 @@ public:
 			time_duration(1, 2, 3));
 		Task::Dependencies dep = { 1, 2, 3 };
 		Task::Priority prio = Task::Priority::HIGH;
-		return TaskBuilder::get().description(desc).deadline(dead).
-			priority(prio).dependencies(dep);
+		Task::ID parent = 43L;
+		return TaskBuilder::get()
+			.description(desc)
+			.deadline(dead)
+			.priority(prio)
+			.dependencies(dep)
+			.parent(parent)
+			.subtasks(dep);
 	}
 
 	TEST_METHOD(taskSerializerIsUtilityClass) {
@@ -50,12 +56,16 @@ public:
 		auto serialized = TaskSerializer::serialize(task);
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
+		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
+			std::wstring(L"2002;1;10;1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
 			std::wstring(L"HIGH"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
 			std::wstring(L"1;2;3;"));
-		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
-			std::wstring(L"2002;1;10;1;2;3;"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_PARENT],
+			std::wstring(L"43"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_SUBTASKS],
+			std::wstring(L"1;2;3;"));
 	}
 
 	/// Should be able to deserialize a complex task.

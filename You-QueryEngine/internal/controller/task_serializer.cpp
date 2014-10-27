@@ -6,6 +6,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "task_builder.h"
 #include "task_serializer.h"
 
 namespace You {
@@ -28,6 +29,8 @@ const TS::Key TS::KEY_DESCRIPTION = L"description";
 const TS::Key TS::KEY_DEADLINE = L"deadline";
 const TS::Key TS::KEY_PRIORITY = L"priority";
 const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
+const TS::Key TS::KEY_PARENT = L"parent";
+const TS::Key TS::KEY_SUBTASKS = L"subtasks";
 
 const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
 const TS::Value TS::VALUE_PRIORITY_HIGH = L"HIGH";
@@ -39,12 +42,16 @@ TS::STask TS::serialize(const Task& task) {
 	Value value_deadline = serializeDeadline(task.getDeadline());
 	Value value_priority = serializePriority(task.getPriority());
 	Value value_dependencies = serializeDependencies(task.getDependencies());
+	Value value_subtasks = serializeSubtasks(task.getSubtasks());
+	Value value_parent = serializeParent(task.getParent());
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
 		{ KEY_DEADLINE, value_deadline },
 		{ KEY_PRIORITY, value_priority },
 		{ KEY_DEPENDENCIES, value_dependencies },
+		{ KEY_PARENT, value_parent },
+		{ KEY_SUBTASKS, value_subtasks }
 	};
 }
 
@@ -59,7 +66,18 @@ Task TS::deserialize(const STask& stask) {
 		deserializePriority(stask.at(KEY_PRIORITY));
 	Task::Dependencies dependencies =
 		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
-	return Task(id, description, deadline, dependencies, priority);
+	Task::ID parent =
+		deserializeParent(stask.at(KEY_PARENT));
+	Task::Dependencies subtasks =
+		deserializeSubtasks(stask.at(KEY_SUBTASKS));
+	return TaskBuilder::get()
+		.id(id)
+		.description(description)
+		.deadline(deadline)
+		.dependencies(dependencies)
+		.priority(priority)
+		.parent(parent)
+		.subtasks(subtasks);
 }
 
 TS::Value TS::serializeID(const Task::ID id) {
@@ -97,6 +115,14 @@ TS::Value TS::serializeDependencies(const Task::Dependencies& dependencies) {
 	return ws.str();
 }
 
+TS::Value TS::serializeParent(const Task::ID parent) {
+	return serializeID(parent);
+}
+
+TS::Value TS::serializeSubtasks(const Task::Subtasks& subtasks) {
+	return serializeDependencies(subtasks);
+}
+
 Task::ID TS::deserializeID(const Value& id) {
 	return boost::lexical_cast<Task::ID>(id);
 }
@@ -132,6 +158,14 @@ Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
 		deps.insert(boost::lexical_cast<Task::ID>(token));
 	}
 	return deps;
+}
+
+Task::ID TS::deserializeParent(const Value& parent) {
+	return deserializeID(parent);
+}
+
+Task::Subtasks TS::deserializeSubtasks(const Value& subtasks) {
+	return deserializeDependencies(subtasks);
 }
 
 std::vector<std::wstring> TS::tokenize(const std::wstring& input) {
