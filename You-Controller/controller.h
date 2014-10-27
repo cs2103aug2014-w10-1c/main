@@ -66,6 +66,11 @@ private:
 	/// priority.
 	static Task::Priority nlpToQueryEnginePriority(NLP::TaskPriority priority);
 
+	/// Converts an Query Engine Task Priority to the equivalent NLP Task
+	/// Priority.
+	static NLP::TaskPriority queryEngineToNlpPriority(
+		QueryEngine::Task::Priority priority);
+
 private:
 	/// The global singleton instance of the controller.
 	static Controller instance;
@@ -74,6 +79,11 @@ private:
 	/// task priorities.
 	static const std::unordered_map<NLP::TaskPriority, Task::Priority>
 		nlpToQueryEnginePriorityMap;
+
+	/// The map for converting Query Engine task priorities to NLP Task
+	/// priorities.
+	static const std::unordered_map<Task::Priority, NLP::TaskPriority>
+		queryEngineToNlpPriorityMap;
 };
 
 }  // namespace Controller

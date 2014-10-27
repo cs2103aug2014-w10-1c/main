@@ -181,12 +181,13 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::bind(&Task::isCompleted, std::placeholders::_1),
 			true);
 
-#if 0
 		// TODO(lowjoel): Implement comparators for priorities.
 		appliesCorrectFilters<You::NLP::TaskField::PRIORITY>(
-			std::bind(&Task::getPriority, std::placeholders::_1),
+			[](const Task& task) {
+				return Controller::queryEngineToNlpPriority(
+					task.getPriority());
+			},
 			You::NLP::TaskPriority::HIGH);
-#endif
 	}
 
 	/// This is a very useful template function. Because it tests all 7
