@@ -33,7 +33,7 @@ public:
 
 	/// Construct a task graph with type.
 	explicit TaskGraph(GraphType type)
-	: type(type), graph(Graph()), taskTable() {};
+	: type(type), graph(Graph()), taskTable() {}
 
 	/// Retrieve a single task from the graph
 	/// May throw Exception::TaskNotFoundException
