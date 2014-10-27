@@ -72,9 +72,13 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(constructEditTaskQuery) {
-		auto query = QueryEngine::UpdateTask(Task::DEFAULT_ID,
-			boost::none, boost::none, boost::none, boost::none,
-			boost::none);
+		auto query = QueryEngine::UpdateTask(
+			Task::DEFAULT_ID,
+			You::Utils::Option<Task::Description>(),
+			You::Utils::Option<Task::Time>(),
+			You::Utils::Option<Task::Priority>(),
+			You::Utils::Option<Task::Dependencies>(),
+			You::Utils::Option<bool>());
 		Assert::IsNotNull(&query);
 	}
 
@@ -137,8 +141,12 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Update the description
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(
-				task.getID(), desc2, boost::none, boost::none,
-				boost::none, boost::none);
+				task.getID(),
+				desc2,
+				You::Utils::Option<Task::Time>(),
+				You::Utils::Option<Task::Priority>(),
+				You::Utils::Option<Task::Dependencies>(),
+				You::Utils::Option<bool>());
 			auto response = QueryEngine::executeQuery(std::move(query));
 
 			Task::ID id = boost::get<Task>(response).getID();
@@ -168,9 +176,12 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Mark the task added as done
 		{  // NOLINT(whitespace/braces)
 			auto query = QueryEngine::UpdateTask(
-				task.getID(), boost::none,
-				boost::none, boost::none,
-				boost::none, true);
+				task.getID(),
+				You::Utils::Option<Task::Description>(),
+				You::Utils::Option<Task::Time>(),
+				You::Utils::Option<Task::Priority>(),
+				You::Utils::Option<Task::Dependencies>(),
+				true);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsTrue(task.isCompleted());
@@ -181,9 +192,13 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Mark the task added as undone again
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(task.getID(),
-				boost::none, boost::none, boost::none,
-				boost::none, false);
+			auto query = QueryEngine::UpdateTask(
+				task.getID(),
+				You::Utils::Option<Task::Description>(),
+				You::Utils::Option<Task::Time>(),
+				You::Utils::Option<Task::Priority>(),
+				You::Utils::Option<Task::Dependencies>(),
+				false);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsFalse(task.isCompleted());

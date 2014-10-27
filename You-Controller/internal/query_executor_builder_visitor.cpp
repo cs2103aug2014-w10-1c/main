@@ -135,15 +135,13 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 
 	try {
 		const Task& task = context.at(query.taskID);
-		boost::optional<Task::Priority> priority;
+		You::Utils::Option<Task::Priority> priority;
 		if (query.priority) {
 			if (query.priority.get() == TaskPriority::NORMAL) {
 				priority = Task::Priority::NORMAL;
 			} else {
 				priority = Task::Priority::HIGH;
 			}
-		} else {
-			priority = boost::none;
 		}
 		return std::unique_ptr<QueryExecutor>(
 			new EditTaskQueryExecutor(
@@ -152,8 +150,8 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.description,
 					query.deadline,
 					priority,
-					boost::none,
-					boost::none)));
+					Utils::Option<Task::Dependencies>(),
+					Utils::Option<bool>())));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}

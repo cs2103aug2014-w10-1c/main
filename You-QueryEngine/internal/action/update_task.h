@@ -6,7 +6,6 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
 #define YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
 
-#include <boost/optional.hpp>
 #include "../../api.h"
 
 namespace You {
@@ -20,11 +19,11 @@ public:
 	/// Construct EditTask query
 	explicit UpdateTask(
 		Task::ID id,
-		boost::optional<Task::Description> description,
-		boost::optional<Task::Time> deadline,
-		boost::optional<Task::Priority> priority,
-		boost::optional<Task::Dependencies> dependencies,
-		boost::optional<bool> completed) :
+		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> deadline,
+		You::Utils::Option<Task::Priority> priority,
+		You::Utils::Option<Task::Dependencies> dependencies,
+		You::Utils::Option<bool> completed) :
 		id(id),
 		description(description),
 		deadline(deadline),
@@ -52,11 +51,11 @@ private:
 	Response execute(State& tasks) override;
 
 	const Task::ID id;
-	const boost::optional<Task::Description> description;  ///< Description.
-	const boost::optional<Task::Time> deadline;  ///< Deadline.
-	const boost::optional<Task::Priority> priority;  ///< Priority.
-	const boost::optional<Task::Dependencies> dependencies;  ///< Dependencies.
-	const boost::optional<bool> completed = false;  ///< Completed.
+	const You::Utils::Option<Task::Description> description;  ///< Description.
+	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
+	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
+	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.
+	const You::Utils::Option<bool> completed = false;  ///< Completed.
 	/// The previous state of the task.
 	Task previous;
 };

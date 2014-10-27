@@ -51,11 +51,11 @@ QueryEngine::DeleteTask(Task::ID id) {
 
 std::unique_ptr<Query>
 QueryEngine::UpdateTask(Task::ID id,
-	boost::optional<Task::Description> description,
-	boost::optional<Task::Time> deadline,
-	boost::optional<Task::Priority> priority,
-	boost::optional<Task::Dependencies> dependencies,
-	boost::optional<bool> completed) {
+	You::Utils::Option<Task::Description> description,
+	You::Utils::Option<Task::Time> deadline,
+	You::Utils::Option<Task::Priority> priority,
+	You::Utils::Option<Task::Dependencies> dependencies,
+	You::Utils::Option<bool> completed) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, description,
 		deadline, priority, dependencies, completed));
