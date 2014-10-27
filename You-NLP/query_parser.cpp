@@ -151,12 +151,12 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> utilityValue)
+		editCommandFieldsUnary >> qi::lit('=') >> utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (
-		qi::lit(L"priority") >> editCommandFieldPriorities
+		qi::lit(L"priority") >> qi::lit('=') >> editCommandFieldPriorities
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
 	editCommandRulePriorities.name("editCommandRulePriorities");
 
