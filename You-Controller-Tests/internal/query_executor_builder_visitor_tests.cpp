@@ -97,8 +97,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::all_of(begin(result.tasks), end(result.tasks),
 			[](const Task& task) {
 			return task.getDeadline() >
-				boost::posix_time::second_clock::local_time() +
-				boost::posix_time::hours(1);
+				boost::get<boost::posix_time::ptime>(
+					Mocks::Queries::SHOW_QUERY.predicates[0].value);
 		}));
 		Assert::IsTrue(
 			std::is_sorted(begin(result.tasks), end(result.tasks),
@@ -175,8 +175,12 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::bind(&Task::getDeadline, std::placeholders::_1),
 			runTime + boost::posix_time::hours(1));
 
-		appliesCorrectFilters<You::NLP::TaskField::DEADLINE>(
-			std::bind(&Task::isCompleted, std::placeholders::_1), true);
+#if 0
+		// TODO(lowjoel): Implement comparators for priorities.
+		appliesCorrectFilters<You::NLP::TaskField::PRIORITY>(
+			std::bind(&Task::getPriority, std::placeholders::_1),
+			You::NLP::TaskPriority::HIGH);
+#endif
 	}
 
 	/// This is a very useful template function. Because it tests all 7
