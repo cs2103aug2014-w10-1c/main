@@ -22,6 +22,9 @@ extern const You::NLP::EDIT_QUERY EDIT_QUERY;
 /// A default Edit Query.
 extern const You::NLP::DELETE_QUERY DELETE_QUERY;
 
+/// A default Undo Query.
+extern const You::NLP::UNDO_QUERY UNDO_QUERY;
+
 }  // namespace Queries
 }  // namespace Mocks
 }  // namespace UnitTests

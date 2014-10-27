@@ -16,6 +16,16 @@ using QueryParseTree = You::NLP::QUERY;
 using AbstractQuery = QueryEngine::Query;
 
 Controller Controller::instance;
+const std::unordered_map<NLP::TaskPriority, Task::Priority>
+Controller::nlpToQueryEnginePriorityMap({
+	{ NLP::TaskPriority::NORMAL, Task::Priority::NORMAL },
+	{ NLP::TaskPriority::HIGH, Task::Priority::HIGH }
+});
+const std::unordered_map<Task::Priority, NLP::TaskPriority>
+Controller::queryEngineToNlpPriorityMap({
+	{ Task::Priority::NORMAL, NLP::TaskPriority::NORMAL },
+	{ Task::Priority::HIGH, NLP::TaskPriority::HIGH }
+});
 
 Controller& Controller::get() {
 	return instance;
@@ -45,6 +55,20 @@ TaskList Controller::getTasks() const {
 		QueryEngine::GetTask(QueryEngine::Filter::anyTask());
 
 	return boost::get<TaskList>(QueryEngine::executeQuery(std::move(query)));
+}
+
+Task::Priority Controller::nlpToQueryEnginePriority(
+	NLP::TaskPriority priority) {
+	 auto iterator = nlpToQueryEnginePriorityMap.find(priority);
+	 assert(iterator != end(nlpToQueryEnginePriorityMap));
+	 return iterator->second;
+}
+
+NLP::TaskPriority Controller::queryEngineToNlpPriority(
+	QueryEngine::Task::Priority priority) {
+	auto iterator = queryEngineToNlpPriorityMap.find(priority);
+	assert(iterator != end(queryEngineToNlpPriorityMap));
+	return iterator->second;
 }
 
 }  // namespace Controller

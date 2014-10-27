@@ -6,7 +6,9 @@
 #include <string>
 #include <vector>
 
+#include "You-Utils/option.h"
 #include "task_field.h"
+#include "task_priority.h"
 
 namespace You {
 namespace NLP {
@@ -25,10 +27,10 @@ struct SHOW_QUERY {
 	/// The predicate for filtering tasks.
 	enum class Predicate {
 		/// Equality.
-		EQUAL,
+		EQ,
 
 		/// Inequality
-		NOT_EQUAL,
+		NOT_EQ,
 
 		/// Less than
 		LESS_THAN,
@@ -41,6 +43,27 @@ struct SHOW_QUERY {
 
 		/// Greater than or equal
 		GREATER_THAN_EQ
+	};
+
+	/// A predicate for filtering tasks.
+	struct FIELD_FILTER {
+		/// Equality comparator.
+		///
+		/// \param[in] rhs The other field order object to compare with.
+		bool operator==(const FIELD_FILTER& rhs) const;
+
+		/// The field to filter.
+		TaskField field;
+
+		/// The predicate to apply.
+		Predicate predicate;
+
+		/// The value to compare against.
+		boost::variant<
+			std::wstring,
+			TaskPriority,
+			boost::posix_time::ptime,
+			bool> value;
 	};
 
 	/// A pair containing the field and the order to sort by.
@@ -62,9 +85,19 @@ struct SHOW_QUERY {
 	/// \param[in] rhs The other query object to compare with.
 	bool operator==(const SHOW_QUERY& rhs) const;
 
+	/// The predicates for filtering.
+	std::vector<FIELD_FILTER> predicates;
+
 	/// The order of the fields.
 	std::vector<FIELD_ORDER> order;
 };
+
+/// Defines an output formatter for SHOW_QUERY predicates.
+///
+/// \param[in,out] s The stream to write to.
+/// \param[in] p The predicate to display.
+/// \return The stream object passed to the formatter.
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p);
 
 /// Defines an output formatter for SHOW_QUERY queries.
 ///

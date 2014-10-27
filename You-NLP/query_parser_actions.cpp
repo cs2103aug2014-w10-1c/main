@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "exception.h"
 #include "date_time_parser.h"
 #include "query_parser.h"
 
@@ -24,11 +25,12 @@ ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
 	return result;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(const LexemeType& lexeme) {
+ADD_QUERY QueryParser::constructAddQueryWithDeadline(
+	const boost::posix_time::ptime& deadline) {
 	return ADD_QUERY {
 		std::wstring(),
 		TaskPriority::NORMAL,
-		DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()))
+		deadline
 	};
 }
 
@@ -43,14 +45,28 @@ ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
 }
 
 SHOW_QUERY QueryParser::constructShowQuery(
-	const boost::optional<std::vector<int>>& /*predicates*/,
-	const boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>>& ordering) {
+	boost::optional<std::vector<SHOW_QUERY::FIELD_FILTER>> filters,
+	boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>> ordering) {
 	SHOW_QUERY result;
+	if (static_cast<bool>(filters)) {
+		result.predicates = std::move(filters.get());
+	}
 	if (static_cast<bool>(ordering)) {
 		result.order = std::move(ordering.get());
 	}
 
 	return result;
+}
+
+SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
+	const TaskField& field,
+	const SHOW_QUERY::Predicate& predicate,
+	const LexemeType& value) {
+	return SHOW_QUERY::FIELD_FILTER {
+		field,
+		predicate,
+		std::wstring(begin(value), end(value))
+	};
 }
 
 SHOW_QUERY::FIELD_ORDER QueryParser::constructShowQuerySortColumn(
@@ -79,7 +95,7 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 		result.complete = true;
 		break;
 	default:
-		assert(false);
+		assert(false); abort();
 	}
 
 	return result;
@@ -87,22 +103,28 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 
 EDIT_QUERY QueryParser::constructEditQueryUnary(
 	TaskField field,
-	const LexemeType& newValue) {
-	StringType newStringValue(newValue.begin(), newValue.end());
+	const ValueType& newValue) {
 	EDIT_QUERY result;
 
-	switch (field) {
-	case TaskField::DESCRIPTION:
-		result.description = newStringValue;
-		break;
-	case TaskField::DEADLINE:
-		result.deadline = DateTimeParser::parse(newStringValue);
-		break;
-	default:
-		assert(false);
-	}
+	try {
+		switch (field) {
+		case TaskField::DESCRIPTION: {
+			const LexemeType& newValueString = boost::get<LexemeType>(newValue);
+			result.description = StringType(newValueString.begin(),
+				newValueString.end());
+			break;
+		}
+		case TaskField::DEADLINE:
+			result.deadline = boost::get<boost::posix_time::ptime>(newValue);
+			break;
+		default:
+			assert(false);
+		}
 
-	return result;
+		return result;
+	} catch (boost::bad_get&) {
+		throw ParserTypeException();
+	}
 }
 
 EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
@@ -118,6 +140,10 @@ DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
 	};
 }
 
+boost::posix_time::ptime QueryParser::constructDateTime(
+	const LexemeType& lexeme) {
+	return DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()));
+}
 
 }  // namespace NLP
 }  // namespace You

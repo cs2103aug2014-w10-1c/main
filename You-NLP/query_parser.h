@@ -29,6 +29,13 @@ public:
 	/// The type of input strings accepted by this parser.
 	typedef std::basic_string<ParserCharEncoding::char_type> StringType;
 
+	/// The type of values on the RHS of any expression in the grammar.
+	typedef boost::variant<
+		int,
+		bool,
+		LexemeType,
+		boost::posix_time::ptime> ValueType;
+
 public:
 	QueryParser();
 
@@ -67,9 +74,10 @@ private:
 	/// \see addQueryDeadline
 	/// The production rule associated with this semantic action.
 	///
-	/// \param[in] lexeme The deadline from the parser.
+	/// \param[in] deadline The deadline from the parser.
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
-	static ADD_QUERY constructAddQueryWithDeadline(const LexemeType& lexeme);
+	static ADD_QUERY constructAddQueryWithDeadline(
+		const boost::posix_time::ptime& deadline);
 
 	/// Process the end-of-input nonterminal, potentially including a deadline.
 	/// This captures the deadline, if one is present.
@@ -87,13 +95,26 @@ private:
 	/// Process the non-terminal returned from the show query parse rule,
 	/// constructing the predicates and ordering.
 	///
-	/// \param[in] predicates The filter predicates.
+	/// \param[in] filters The filter predicates.
 	/// \param[in] ordering The ordering for display.
 	/// \return The synthesised value for the \ref showCommand rule.
 	static SHOW_QUERY constructShowQuery(
-		const boost::optional<std::vector<int>>& predicates,
-		const boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>>& ordering
+		boost::optional<std::vector<SHOW_QUERY::FIELD_FILTER>> filters,
+		boost::optional<std::vector<SHOW_QUERY::FIELD_ORDER>> ordering
 	);
+
+	/// Process the terminal returned from the show query filtering parse rule,
+	/// constructing one filter.
+	///
+	/// \param[in] field The field to sort by.
+	/// \param[in] predicate the predicate to apply.
+	/// \param[in] value The value to compare against the field.
+	/// \return The synthesised value for the \ref showQueryFilteringColumn
+	///         rule.
+	static SHOW_QUERY::FIELD_FILTER constructShowQueryFilteringColumn(
+		const TaskField& field,
+		const SHOW_QUERY::Predicate& predicate,
+		const LexemeType& value);
 
 	/// Process the terminal returned from the show query ordering parse rule,
 	/// constructing one column's ordering.
@@ -129,7 +150,7 @@ private:
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryUnary(
 		TaskField field,
-		const LexemeType& newValue);
+		const ValueType& newValue);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -157,6 +178,12 @@ private:
 	/// \return The synthesised value for the \ref deleteCommand rule.
 	static DELETE_QUERY constructDeleteQuery(const size_t offset);
 	#pragma endregion
+
+	/// Constructs a posix_time::ptime from the given string.
+	///
+	/// \param[in] lexeme The lexeme to construct the time from.
+	/// \return The synthesised value for the \ref utilityTime rule.
+	static boost::posix_time::ptime constructDateTime(const LexemeType& lexeme);
 
 private:
 	/// The start rule.
@@ -194,8 +221,19 @@ private:
 		showCommand;
 
 	/// Show command filtering rule.
-	boost::spirit::qi::rule<IteratorType, std::vector<int>(), SkipperType>
+	boost::spirit::qi::rule<IteratorType,
+		std::vector<SHOW_QUERY::FIELD_FILTER>(), SkipperType>
 		showCommandFiltering;
+
+	/// Show command filtering rule for one filter
+	boost::spirit::qi::rule<IteratorType,
+		SHOW_QUERY::FIELD_FILTER(),
+		SkipperType> showCommandFilteringColumn;
+
+	/// The symbol mapping from task filter predicates to an actual predicate.
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		SHOW_QUERY::Predicate> showCommandFilteringPredicate;
 
 	/// Show command sorting rule for multiple columns.
 	boost::spirit::qi::rule<IteratorType,
@@ -260,6 +298,33 @@ private:
 	#pragma region Deleting tasks
 	boost::spirit::qi::rule<IteratorType, DELETE_QUERY(), SkipperType>
 		deleteCommand;
+	#pragma endregion
+
+	#pragma region Undoing tasks
+	/// Undo command rule.
+	boost::spirit::qi::rule<IteratorType, UNDO_QUERY(), SkipperType>
+		undoCommand;
+	#pragma endregion
+
+	#pragma region Utility rules
+	/// A utility rule which converts numbers to ints, booleans to bools,
+	/// dates to posix_time::ptime, and strings verbatim.
+	boost::spirit::qi::rule<IteratorType, ValueType()> utilityValue;
+
+	/// A utility rule which converts raw strings (unquoted) into a
+	/// posix_time::ptime.
+	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
+		utilityTime;
+
+	/// A utility rule which will process all characters verbatim. This is how
+	/// the user specifies that he does not want the parser to perform syntax
+	/// analysis for this part of the input.
+	boost::spirit::qi::rule<IteratorType, LexemeType()> utilityLexeme;
+
+	/// A utility rule which processes all characters within the quotes of
+	/// the verbatim string.
+	boost::spirit::qi::rule<IteratorType,
+		ParserCharEncoding::char_type()> utilityLexemeContents;
 	#pragma endregion
 };
 

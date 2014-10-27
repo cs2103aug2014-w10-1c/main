@@ -86,16 +86,93 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQuery) {
-		QUERY q = QueryParser::parse(L"/show order by description ascending");
+		// Boundary case: one filter, zero sort.
+		QUERY q = QueryParser::parse(L"/show description='\\\\\\'meh'");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::EQ,
+					std::wstring(L"\\\'meh")
+				}
+			},
+			{}
+		}), q);
+
+		// Boundary case: more than one filter, zero sort.
+		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
+			L"priority<\'high\'");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+				{
+					{
+						TaskField::DESCRIPTION,
+						SHOW_QUERY::Predicate::NOT_EQ,
+						std::wstring(L"\\\'meh")
+					},
+					{
+						TaskField::PRIORITY,
+						SHOW_QUERY::Predicate::LESS_THAN,
+						std::wstring(L"high")
+					}
+				},
+				{}
+		}), q);
+
+		// Boundary case: zero filter, one sort.
+		q = QueryParser::parse(L"/show order by description ascending");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{},
 			{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 		}), q);
 
+		// Boundary case: zero filter, more than one sort.
 		q = QueryParser::parse(L"/show order by description descending, "
 			L"priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{},
+			{
+				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
+				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
+			}
+		}), q);
+
+		// Boundary case: nonzero filter, nonzero sort.
+		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
+			L"priority<\'high\', priority>\'normal\', deadline>=\'3 oct\', "
+			L"deadline<=\'7 oct\' order by description descending, priority");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::NOT_EQ,
+					std::wstring(L"\\\'meh")
+				},
+				{
+					TaskField::PRIORITY,
+					SHOW_QUERY::Predicate::LESS_THAN,
+					std::wstring(L"high")
+				},
+				{
+					TaskField::PRIORITY,
+					SHOW_QUERY::Predicate::GREATER_THAN,
+					std::wstring(L"normal")
+				},
+				{
+					TaskField::DEADLINE,
+					SHOW_QUERY::Predicate::GREATER_THAN_EQ,
+					std::wstring(L"3 oct")
+				},
+				{
+					TaskField::DEADLINE,
+					SHOW_QUERY::Predicate::LESS_THAN_EQ,
+					std::wstring(L"7 oct")
+				}
+			},
 			{
 				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::DESCENDING },
 				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
@@ -104,21 +181,21 @@ public:
 	}
 
 	TEST_METHOD(parsesEditQuery) {
-		QUERY q = QueryParser::parse(L"/edit 10 set description meh");
+		QUERY q = QueryParser::parse(L"/edit 10 set description='meh'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			L"meh"
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set description meh with spaces");
+		q = QueryParser::parse(L"/edit 10 set description='meh with spaces'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
 			L"meh with spaces"
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set deadline oct 2014");
+		q = QueryParser::parse(L"/edit 10 set deadline=oct 2014");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
@@ -137,7 +214,7 @@ public:
 			true
 		}), q);
 
-		q = QueryParser::parse(L"/edit 10 set priority high");
+		q = QueryParser::parse(L"/edit 10 set priority=high");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
@@ -146,12 +223,24 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesEditQueryWithWrongType) {
+		Assert::ExpectException<ParserTypeException>([]() {
+			QueryParser::parse(L"/edit 10 set description=14 oct");
+		});
+	}
+
 	TEST_METHOD(parsesDeleteQuery) {
 		QUERY q = QueryParser::parse(L"/delete 10");
 
 		Assert::AreEqual(QUERY(DELETE_QUERY {
 			10
 		}), q);
+	}
+
+	TEST_METHOD(parsesUndoQuery) {
+		QUERY q = QueryParser::parse(L"/undo");
+
+		Assert::AreEqual(QUERY(UNDO_QUERY {}), q);
 	}
 };
 

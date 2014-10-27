@@ -16,6 +16,7 @@ using You::NLP::ADD_QUERY;
 using You::NLP::SHOW_QUERY;
 using You::NLP::EDIT_QUERY;
 using You::NLP::DELETE_QUERY;
+using You::NLP::UNDO_QUERY;
 
 QueryExecutorBuilderVisitor::QueryExecutorBuilderVisitor(
 	const Controller::Context& context)
@@ -75,13 +76,50 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 		}
 	};
 
+	using You::QueryEngine::Filter;
 	using You::QueryEngine::Comparator;
-	QueryEngine::Filter filter = QueryEngine::Filter::anyTask();
+	Filter filter = Filter::anyTask();
 	Comparator comparator(Comparator::notSorted());
+
+	std::for_each(begin(query.predicates), end(query.predicates),
+		[&filter](const SHOW_QUERY::FIELD_FILTER& field) {
+			std::function<bool(const Task&)> currentFilter;
+			switch (field.field) {
+			case TaskField::DESCRIPTION:
+				assert(boost::get<std::wstring>(&field.value));
+				currentFilter = buildComparator(&Task::getDescription,
+					field.predicate,
+					boost::get<std::wstring>(field.value));
+				break;
+			case TaskField::DEADLINE:
+				assert(boost::get<boost::posix_time::ptime>(&field.value));
+				currentFilter = buildComparator(&Task::getDeadline,
+					field.predicate,
+					boost::get<boost::posix_time::ptime>(field.value));
+				break;
+			case TaskField::COMPLETE:
+				assert(boost::get<bool>(&field.value));
+				currentFilter = buildComparator(&Task::isCompleted,
+					field.predicate,
+					boost::get<bool>(field.value));
+				break;
+			case TaskField::PRIORITY:
+				assert(boost::get<TaskPriority>(&field.value));
+				currentFilter = buildComparator(&Task::getPriority,
+					field.predicate,
+					Controller::nlpToQueryEnginePriority(
+						boost::get<TaskPriority>(field.value)));
+				break;
+			default:
+				assert(false); abort();
+			}
+
+			filter = filter && Filter(currentFilter);
+		});
 
 	std::for_each(begin(query.order), end(query.order),
 		[&comparator](const SHOW_QUERY::FIELD_ORDER& field) {
-		Comparator comp(Comparator::notSorted());
+			Comparator comp(Comparator::notSorted());
 			switch (field.field) {
 			case TaskField::DESCRIPTION:
 				comp = Comparator::byDescription();
@@ -94,7 +132,7 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 				break;
 			case TaskField::COMPLETE:
 			default:
-				assert(false);
+				assert(false); abort();
 			}
 
 			if (field.order == SHOW_QUERY::Order::ASCENDING) {
@@ -111,6 +149,42 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 			QueryEngine::GetTask(filter, comparator)
 		)
 	);
+}
+
+template<typename TValue>
+std::function<bool(const Task&)>
+QueryExecutorBuilderVisitor::buildComparator(
+	TValue(QueryEngine::Task::*selector)() const,
+	SHOW_QUERY::Predicate predicate,
+	const TValue& value) {
+	switch (predicate) {
+	case SHOW_QUERY::Predicate::EQ:
+		return std::bind(std::equal_to<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::NOT_EQ:
+		return std::bind(std::not_equal_to<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::LESS_THAN:
+		return std::bind(std::less<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::LESS_THAN_EQ:
+		return std::bind(std::less_equal<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::GREATER_THAN:
+		return std::bind(std::greater<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::GREATER_THAN_EQ:
+		return std::bind(std::greater_equal<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	default:
+		assert(false); abort();
+	}
 }
 
 std::unique_ptr<QueryExecutor>
@@ -189,6 +263,30 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
+}
+
+std::unique_ptr<QueryExecutor>
+QueryExecutorBuilderVisitor::build(const UNDO_QUERY& query) const {
+	class UndoTaskQueryExecutor : public QueryExecutor {
+	public:
+		explicit UndoTaskQueryExecutor(
+			std::unique_ptr<QueryEngine::Query>&& query)
+			: QueryExecutor(std::move(query)) {
+		}
+
+		virtual ~UndoTaskQueryExecutor() = default;
+
+	protected:
+		Result processResponse(
+			const You::QueryEngine::Response& response) override {
+			return UNDO_RESULT {
+			};
+		}
+	};
+
+	return std::unique_ptr<QueryExecutor>(
+		new UndoTaskQueryExecutor(
+			QueryEngine::Undo()));
 }
 
 }  // namespace Internal

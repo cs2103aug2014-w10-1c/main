@@ -55,6 +55,11 @@ private:
 TEST_CLASS(LogTests) {
 	TEST_METHOD_INITIALIZE(setLogSeverity) {
 		Log::setLogLevel(LogSeverity::DEBUG);
+		Log::restoreSink();
+	}
+
+	TEST_METHOD(defaultLogSink) {
+		Log::debug[L"category"] << L"test";
 	}
 
 	TEST_METHOD(basicLogging) {

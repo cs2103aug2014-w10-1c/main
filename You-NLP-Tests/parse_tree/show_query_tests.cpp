@@ -13,14 +13,14 @@ TEST_CLASS(ShowQueryTests) {
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			std::wstring(L"Show tasks (criteria none, sort by "
+			std::wstring(L"Show tasks (criteria Description=, sort by "
 				L"Description ascending)"),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			std::wstring(L"Show tasks (criteria none, sort by "
+			std::wstring(L"Show tasks (criteria Description=, sort by "
 				L"Description ascending)"),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
@@ -34,9 +34,14 @@ TEST_CLASS(ShowQueryTests) {
 	TEST_METHOD(comparesInequality) {
 		SHOW_QUERY local {
 			{
-				SHOW_QUERY::FIELD_ORDER {
-					TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING
+				{
+					TaskField::DESCRIPTION,
+					SHOW_QUERY::Predicate::EQ,
+					std::wstring(L"")
 				}
+			},
+			{
+				{ TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING }
 			}
 		};
 
@@ -45,11 +50,35 @@ TEST_CLASS(ShowQueryTests) {
 		local.order[0].field = TaskField::DEADLINE;
 		Assert::AreNotEqual(DUMMY, local);
 
-		SHOW_QUERY local2 = local;
-		local2.order.push_back(SHOW_QUERY::FIELD_ORDER {
+		local = DUMMY;
+		local.order.push_back(SHOW_QUERY::FIELD_ORDER {
 			TaskField::DESCRIPTION
 		});
-		Assert::AreNotEqual(DUMMY, local2);
+		Assert::AreNotEqual(DUMMY, local);
+
+		local = DUMMY;
+		local.predicates.emplace_back(SHOW_QUERY::FIELD_FILTER {
+			TaskField::DESCRIPTION,
+			SHOW_QUERY::Predicate::EQ,
+			std::wstring()
+		});
+		Assert::AreNotEqual(DUMMY, local);
+
+		SHOW_QUERY local2 = local;
+		local2.predicates.push_back(local2.predicates[0]);
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].field = TaskField::PRIORITY;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].predicate = SHOW_QUERY::Predicate::GREATER_THAN;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.predicates[0].value = std::wstring(L"not empty");
+		Assert::AreNotEqual(local, local2);
 	}
 
 private:
@@ -58,6 +87,11 @@ private:
 };
 
 const SHOW_QUERY ShowQueryTests::DUMMY {
+	{ {
+		TaskField::DESCRIPTION,
+		SHOW_QUERY::Predicate::EQ,
+		std::wstring(L"")
+		} },
 	{ { TaskField::DESCRIPTION, SHOW_QUERY::Order::ASCENDING } }
 };
 

@@ -49,6 +49,19 @@ private:
 	static std::unique_ptr<QueryExecutor>
 		build(const You::NLP::SHOW_QUERY& query);
 
+	/// Builds a query engine filter functor from the given task getter,
+	/// predicate, and value to compare against.
+	///
+	/// \tparam TValue The return type of the getter.
+	/// \param selector The selector to get the property of the task.
+	/// \param predicate The predicate to use when comparing against the value.
+	/// \param value The value to compare the task property against.
+	template<typename TValue>
+	static std::function<bool(const Task&)> buildComparator(
+		TValue (QueryEngine::Task::*selector)() const,
+		You::NLP::SHOW_QUERY::Predicate predicate,
+		const TValue& value);
+
 	/// Builds a query engine query from the given edit syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.
@@ -60,6 +73,12 @@ private:
 	/// \param[in] query The syntax tree to build a query from.
 	std::unique_ptr<QueryExecutor>
 		build(const You::NLP::DELETE_QUERY& query) const;
+
+	/// Builds a query engine query from the given undo syntax tree.
+	///
+	/// \param[in] query The syntax tree to build a query from.
+	std::unique_ptr<QueryExecutor>
+		build(const You::NLP::UNDO_QUERY& query) const;
 
 private:
 	/// The context for the query.

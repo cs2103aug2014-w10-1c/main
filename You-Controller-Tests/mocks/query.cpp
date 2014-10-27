@@ -20,6 +20,14 @@ extern const You::NLP::SHOW_QUERY SHOW_QUERY {
 	{
 		{
 			You::NLP::TaskField::DEADLINE,
+			You::NLP::SHOW_QUERY::Predicate::GREATER_THAN,
+			boost::posix_time::second_clock::local_time() +
+				boost::posix_time::hours(1),
+		}
+	},
+	{
+		{
+			You::NLP::TaskField::DEADLINE,
 			You::NLP::SHOW_QUERY::Order::DESCENDING
 		}
 	}
@@ -37,6 +45,9 @@ extern const You::NLP::EDIT_QUERY EDIT_QUERY {
 
 extern const You::NLP::DELETE_QUERY DELETE_QUERY {
 	0
+};
+
+extern const You::NLP::UNDO_QUERY UNDO_QUERY {
 };
 
 }  // namespace Queries

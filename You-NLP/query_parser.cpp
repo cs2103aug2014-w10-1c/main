@@ -37,7 +37,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L"add") >> addCommand) |
 		(qi::lit(L"show") >> showCommand) |
 		(qi::lit(L"edit") >> editCommand) |
-		(qi::lit(L"delete") >> deleteCommand)
+		(qi::lit(L"delete") >> deleteCommand) |
+		(qi::lit(L"undo") >> undoCommand)
 	);
 	explicitCommand.name("explicitCommand");
 
@@ -68,9 +69,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	addCommandDeadline = (
 		(qi::lit("by") | qi::lit("before")) >>
-		qi::lexeme[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(
-		&QueryParser::constructAddQueryWithDeadline, qi::_1)];
+		utilityTime
+	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
 	addCommandDeadline.name("addCommandDeadline");
 
 	addCommandDeadlineOptional = (
@@ -82,9 +82,30 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Showing tasks
 	showCommand = (
 		-showCommandFiltering >>
-		(qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
-		showCommandSorting
+		-((qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
+		showCommandSorting)
 	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
+
+	showCommandFiltering %= (
+		showCommandFilteringColumn % (qi::lit(L",") | qi::lit(L"and"))
+	);
+
+	showCommandFilteringColumn = (
+		showCommandFields >>
+		showCommandFilteringPredicate >>
+		utilityLexeme
+	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
+		qi::_1,
+		qi::_2,
+		qi::_3)];
+
+	showCommandFilteringPredicate.add
+		(L"=", SHOW_QUERY::Predicate::EQ)
+		(L"!=", SHOW_QUERY::Predicate::NOT_EQ)
+		(L"<", SHOW_QUERY::Predicate::LESS_THAN)
+		(L"<=", SHOW_QUERY::Predicate::LESS_THAN_EQ)
+		(L">", SHOW_QUERY::Predicate::GREATER_THAN)
+		(L">=", SHOW_QUERY::Predicate::GREATER_THAN_EQ);
 
 	showCommandSorting %= (
 		showCommandSortingColumn % (qi::lit(L",") | qi::lit(L"then"))
@@ -113,7 +134,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Editing tasks
 	editCommand = (
 		qi::uint_ >> qi::lit(L"set") >> editCommandRule
-	)[qi::_val = phoenix::bind(&QueryParser::constructEditQuery,
+	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
 	editCommand.name("editCommand");
 
@@ -130,12 +151,12 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> qi::lexeme[*ParserCharTraits::char_])
+		editCommandFieldsUnary >> qi::lit('=') >> utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (
-		qi::lit(L"priority") >> editCommandFieldPriorities
+		qi::lit(L"priority") >> qi::lit('=') >> editCommandFieldPriorities
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
 	editCommandRulePriorities.name("editCommandRulePriorities");
 
@@ -158,12 +179,39 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Deleting tasks
 	deleteCommand = (
 		qi::uint_
-	)[qi::_val = phoenix::bind(&QueryParser::constructDeleteQuery, qi::_1)];
+	)[qi::_val = phoenix::bind(&constructDeleteQuery, qi::_1)];
 	deleteCommand.name("deleteCommand");
 	#pragma endregion
 
+	#pragma region Undoing tasks
+	undoCommand = (
+		qi::eps
+	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
+	#pragma endregion
+
+	utilityValue %= (
+		(qi::int_) |
+		(qi::bool_) |
+		utilityLexeme |
+		utilityTime
+	);
+
+	utilityTime = (
+		+ParserCharTraits::char_
+	)[qi::_val = phoenix::bind(&constructDateTime, qi::_1)];
+
+	utilityLexeme %= (
+		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
+	);
+
+	utilityLexemeContents %= (
+		qi::lit("\\'")[qi::_val = L'\''] |
+		qi::lit("\\\\")[qi::_val = L'\\'] |
+		(ParserCharTraits::char_ - qi::lit('\''))
+	);
+
 	qi::on_error<qi::fail>(start,
-		phoenix::bind(&QueryParser::onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
+		phoenix::bind(&onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
 }
 
 void QueryParser::onFailure(

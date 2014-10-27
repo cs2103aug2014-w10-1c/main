@@ -100,6 +100,7 @@
     <ClCompile Include="parse_tree\edit_query_tests.cpp" />
     <ClCompile Include="parse_tree\show_query_tests.cpp" />
     <ClCompile Include="parse_tree\task_field_tests.cpp" />
+    <ClCompile Include="parse_tree\undo_query_tests.cpp" />
     <ClCompile Include="query_parser_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

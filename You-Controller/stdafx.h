@@ -9,8 +9,10 @@
 
 #include <SDKDDKVer.h>
 
+#include <random>
 #include <string>
 #include <stdexcept>
+#include <unordered_map>
 
 #pragma warning(push)
 #pragma warning(disable: 4127 4100 4244)
