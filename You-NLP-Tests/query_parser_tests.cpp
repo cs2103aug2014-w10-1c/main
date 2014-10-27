@@ -143,7 +143,7 @@ public:
 		// Boundary case: nonzero filter, nonzero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
 			L"priority<high, priority>normal, deadline>='3 oct', "
-			L"deadline<='7 oct' order by description descending, priority");
+			L"deadline<='7 oct', complete=true order by description descending, priority");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{
@@ -175,6 +175,11 @@ public:
 					boost::posix_time::ptime(
 						boost::gregorian::date(2015, 10, 7),
 						boost::posix_time::hours(0))
+				},
+				{
+					TaskField::COMPLETE,
+					SHOW_QUERY::Predicate::EQ,
+					true
 				}
 			},
 			{
@@ -182,6 +187,12 @@ public:
 				{ TaskField::PRIORITY, SHOW_QUERY::Order::ASCENDING }
 			}
 		}), q);
+	}
+
+	TEST_METHOD(parsesShowQueryWithWrongType) {
+		Assert::ExpectException<ParserTypeException>([]() {
+			QueryParser::parse(L"/show description=false");
+		});
 	}
 
 	TEST_METHOD(parsesEditQuery) {
