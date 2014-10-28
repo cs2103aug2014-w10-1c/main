@@ -69,6 +69,7 @@ Response AddTask::execute(State& state) {
 	addTaskToState(newTask, state);
 	makeTransaction(newTask);
 	insertedID = newId;
+	state.commitMaxIDToDataStore(false);
 	return newTask;
 }
 

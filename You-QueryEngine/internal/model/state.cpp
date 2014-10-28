@@ -43,10 +43,6 @@ State::State() {
 	}
 }
 
-State::~State() {
-	commitMaxIDToDataStore(false);
-}
-
 State& State::get() {
 	static State instance;
 	return instance;

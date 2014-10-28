@@ -51,13 +51,15 @@ public:
 	/// Inquire a new and unique task id.
 	Task::ID inquireNewID();
 
+	/// Save max id to datastore.
+	/// \param [in] isFirstTime POST if true, PUT otherwise.
+	void commitMaxIDToDataStore(bool isFirstTime);
+
 private:
 	State();
 	State(const State&) = delete;
-	~State();
 	State& operator=(const State&) = delete;
 
-	void commitMaxIDToDataStore(bool isFirstTime);
 	Task::ID maxID;
 	TaskGraph innerGraph;
 	static const std::wstring MAX_ID_FIELD;
