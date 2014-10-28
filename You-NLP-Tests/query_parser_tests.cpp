@@ -266,6 +266,9 @@ public:
 		Assert::AreEqual(QUERY(DELETE_QUERY {
 			10
 		}), q);
+
+		Assert::ExpectException<ParseErrorException>(std::bind(
+			&QueryParser::parse, L"/delete10"));
 	}
 
 	TEST_METHOD(parsesUndoQuery) {
