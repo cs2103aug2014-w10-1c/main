@@ -96,7 +96,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"E",
 			TaskPriority::NORMAL,
-			ptime(date(2014, boost::gregorian::Oct, 22), hours(0))
+			ptime(date(2015, boost::gregorian::Oct, 22), hours(0))
 		}), q);
 	}
 
