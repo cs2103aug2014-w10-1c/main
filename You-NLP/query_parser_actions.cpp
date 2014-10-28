@@ -11,18 +11,16 @@ namespace spirit = boost::spirit;
 namespace qi = spirit::qi;
 namespace phoenix = boost::phoenix;
 
-ADD_QUERY QueryParser::constructAddQuery(ParserCharEncoding::char_type lexeme,
-	const ADD_QUERY& query) {
-	ADD_QUERY result(query);
-	result.description.insert(result.description.begin(), lexeme);
-
-	return result;
+ADD_QUERY QueryParser::constructAddQuery(
+	ParserCharEncoding::char_type lexeme,
+	ADD_QUERY query) {
+	query.description.insert(query.description.begin(), lexeme);
+	return query;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithPriority(const ADD_QUERY& query) {
-	ADD_QUERY result(query);
-	result.priority = TaskPriority::HIGH;
-	return result;
+ADD_QUERY QueryParser::constructAddQueryWithPriority(ADD_QUERY query) {
+	query.priority = TaskPriority::HIGH;
+	return query;
 }
 
 ADD_QUERY QueryParser::constructAddQueryWithDeadline(
