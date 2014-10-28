@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
 	ui.setupUi(this);
+	historyIndex = commandHistory.begin();
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
@@ -125,6 +126,22 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
+	if (!commandHistory.empty()) {
+		if (historyIndex == --commandHistory.end()) {
+			commandHistory.push_back(
+				commandTextBox->toPlainText().toStdWString());
+			historyIndex++;
+		} else {
+			std::advance(historyIndex, 2);
+			commandHistory.erase(historyIndex, commandHistory.end());
+			commandHistory.push_back(
+				commandTextBox->toPlainText().toStdWString());
+			historyIndex = --commandHistory.end();
+		}
+	} else {
+		commandHistory.push_back(commandTextBox->toPlainText().toStdWString());
+		historyIndex--;
+	}
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -274,6 +291,32 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event) {
 		if (keyEvent->key() == Qt::Key_Return) {
 			commandEnterPressed();
 			commandTextBox->setFocus();
+			return true;
+		} else if (keyEvent->key() == Qt::Key_Up) {
+			if (!commandHistory.empty()) {
+				if (historyIndex == commandHistory.end()) {
+					historyIndex--;
+				}
+				commandTextBox->setText(
+					QString::fromStdWString(*historyIndex));
+				commandTextBox->moveCursor(QTextCursor::End);
+				if (historyIndex != commandHistory.begin()) {
+					historyIndex--;
+				}
+			}
+			return true;
+		} else if (keyEvent->key() == Qt::Key_Down) {
+			if (!commandHistory.empty()) {
+				if (historyIndex == commandHistory.end()) {
+					historyIndex--;
+				}
+				commandTextBox->setText(
+					QString::fromStdWString(*historyIndex));
+				commandTextBox->moveCursor(QTextCursor::End);
+				if (historyIndex != --commandHistory.end()) {
+					historyIndex++;
+				}
+			}
 			return true;
 		} else {
 			return QMainWindow::eventFilter(object, event);

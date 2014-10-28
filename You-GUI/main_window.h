@@ -108,6 +108,9 @@ private:
 
 	CommandTextBox *commandTextBox;
 
+	std::list<std::wstring> commandHistory;
+	std::list<std::wstring>::iterator historyIndex;
+
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
 
