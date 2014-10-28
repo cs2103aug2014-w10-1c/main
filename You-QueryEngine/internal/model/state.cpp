@@ -24,6 +24,14 @@ void State::clear() {
 	}
 }
 
+void State::setActiveFilter(const Filter& filter) {
+	this->activeFilter = filter;
+}
+
+void State::setActiveComparator(const Comparator& comparator) {
+	this->activeComparator = comparator;
+}
+
 Task::ID State::inquireNewID() {
 	++maxID;
 	return maxID;

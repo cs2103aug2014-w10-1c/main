@@ -27,6 +27,20 @@ public:
 	/// Get the task graph.
 	inline TaskGraph& graph() const { return get().innerGraph;  }
 
+	/// Get the current active filter.
+	inline Filter& getActiveFilter() const { return get().activeFilter; }
+
+	/// Get the current active comparator.
+	inline Comparator& getActiveComparator() const {
+		return get().activeComparator; }
+
+	/// Update the active filter
+	void setActiveFilter(const Filter& filter);
+
+	/// Update the active comparator
+	void setActiveComparator(const Comparator& comparator);
+
+
 	/// Reset the state back to empty state. \n
 	/// Should be used only if necessary.
 	static void clear();
@@ -46,6 +60,8 @@ private:
 	Task::ID maxID;
 	TaskGraph innerGraph;
 	std::stack<std::unique_ptr<Query>> innerUndoStack;
+	Filter activeFilter = Filter::anyTask();
+	Comparator activeComparator = Comparator::notSorted();
 };
 
 }  // namespace Internal
