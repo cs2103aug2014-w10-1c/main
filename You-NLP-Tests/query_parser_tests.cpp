@@ -25,13 +25,15 @@ TEST_CLASS(QueryParserTests) {
 public:
 	TEST_METHOD(throwsExceptionOnEmptyString) {
 		Assert::ExpectException<ParserException>(
-			std::bind(&QueryParser::parse, L""));
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L""));
 	}
 
 	TEST_METHOD(throwsExceptionWhenParseFails) {
 		// "throw" is currently not defined, so this should work.
 		Assert::ExpectException<ParserException>(
-			std::bind(&QueryParser::parse, L"/throw"));
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L"/throw"));
 	}
 
 	TEST_METHOD(parsesStringAsTask) {
@@ -254,7 +256,8 @@ public:
 
 	TEST_METHOD(parsesEditQueryWithWrongType) {
 		Assert::ExpectException<ParserTypeException>(
-			std::bind(&QueryParser::parse,
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse),
 				L"/edit 10 set description='14 oct'"));
 	}
 
@@ -266,7 +269,8 @@ public:
 		}), q);
 
 		Assert::ExpectException<ParseErrorException>(std::bind(
-			&QueryParser::parse, L"/delete10"));
+			static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L"/delete10"));
 	}
 
 	TEST_METHOD(parsesUndoQuery) {
