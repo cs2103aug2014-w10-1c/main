@@ -13,10 +13,12 @@ namespace DataStore {
 typedef int64_t TaskId;
 
 /// Typedefs for serializing to xml
+/// @{
 typedef std::wstring Key;
 typedef std::wstring Value;
 typedef std::pair<Key, Value> KeyValuePair;
 typedef std::unordered_map<Key, Value> KeyValuePairs;
+/// }@
 
 }  // namespace DataStore
 }  // namespace You
