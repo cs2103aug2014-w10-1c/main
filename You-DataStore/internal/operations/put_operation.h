@@ -8,10 +8,17 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
+/// An \ref Operation class for put operation
+/// Edits the XML when \ref run is called
 class PutOperation : public SerializationOperation {
 public:
-	PutOperation(TaskId, const KeyValuePairs&);
-	bool run(pugi::xml_node& document) override;
+	/// Constructor
+	///
+	/// \param[in] branch the name of the branch to modify
+	/// \param[in] id the id attribute of the node to be edited
+	/// \param[in] kvp the KeyValuePairs to be written over the old one
+	PutOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
+	bool run(pugi::xml_document& document) override;
 	virtual ~PutOperation() = default;
 
 private:

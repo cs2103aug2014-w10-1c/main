@@ -8,7 +8,8 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-class SerializationOperation : public IOperation {
+/// Intermediate parent class of \ref Operation requiring serialization
+class SerializationOperation : public Operation {
 public:
 	/// Serialize task to an xml node
 	static void serialize(const KeyValuePairs&, pugi::xml_node&);

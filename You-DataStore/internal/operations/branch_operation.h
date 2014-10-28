@@ -10,7 +10,7 @@ namespace Internal {
 
 /// BranchOperation gets the XML node in the document with the name specified
 /// or create one if none exists
-class BranchOperation : public IOperation {
+class BranchOperation : public Operation {
 public:
 	/// Get the handler of the XML node with the specified name
 	/// in the specified XML document

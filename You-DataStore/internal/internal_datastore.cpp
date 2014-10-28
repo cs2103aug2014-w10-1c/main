@@ -7,11 +7,12 @@
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
 #include "internal_datastore.h"
-#include "constants.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
+
+const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -37,8 +38,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		pugi::xml_node tasksNode = BranchOperation::get(temp, TASKS_NODE);
-		executeTransaction(transaction, tasksNode);
+		executeTransaction(transaction, temp);
 		document.reset(temp);
 		committedTransaction.push(self);
 		saveData();
@@ -57,33 +57,35 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 	transactionStack.pop();
 }
 
-void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
+void DataStore::post(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::PostOperation>(rawId, sTask);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PostOperation>(branch, id, kvp);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
 }
 
-void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
+void DataStore::put(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::PutOperation>(rawId, sTask);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PutOperation>(branch, id, kvp);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
 }
 
-void DataStore::erase(TaskId rawId) {
+void DataStore::erase(std::wstring branch, std::wstring id) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::EraseOperation>(rawId);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::EraseOperation>(branch, id);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -113,7 +115,7 @@ void DataStore::loadData() {
 }
 
 void DataStore::executeTransaction(Transaction & transaction,
-	pugi::xml_node& xml) {
+	pugi::xml_document& xml) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {

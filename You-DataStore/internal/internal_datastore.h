@@ -13,7 +13,10 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreTest; }
+namespace UnitTests {
+class DataStoreTest;
+class DataStoreApiTest;
+}
 
 /// The internal components of DataStore
 namespace Internal {
@@ -21,8 +24,8 @@ namespace Internal {
 /// The most primitive class that does the changes to the actual xml file
 class DataStore {
 	/// Test classes
-	friend class You::DataStore::UnitTests::DataStoreTest;
-	friend class You::DataStore::UnitTests::DataStoreApiTest;
+	friend class UnitTests::DataStoreTest;
+	friend class UnitTests::DataStoreApiTest;
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
@@ -50,13 +53,13 @@ public:
 	/// @}
 
 	/// Pushes \ref PostOperation into the active \ref Transaction
-	void post(TaskId, const KeyValuePairs&);
+	void post(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 
 	/// Pushes \ref PutOperation into the active \ref Transaction
-	void put(TaskId, const KeyValuePairs&);
+	void put(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 
 	/// Pushes \ref EraseOperation into the active \ref Transaction
-	void erase(TaskId);
+	void erase(std::wstring branch, std::wstring id);
 
 	/// General all getter of a data from the direct child of
 	/// the root node of the XML document
@@ -80,9 +83,10 @@ private:
 	///
 	/// \param[in] opQueue operations queue to be executed
 	/// \param[in] xml xml document to be modified by the operations
-	void executeTransaction(Transaction& transaction, pugi::xml_node& xml);
+	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
 
 private:
+	static const std::wstring FILE_PATH;
 	pugi::xml_document document;
 
 	/// The current stack of active transactions.

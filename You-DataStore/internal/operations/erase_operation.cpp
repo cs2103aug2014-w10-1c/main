@@ -1,20 +1,21 @@
 #include "stdafx.h"
-#include <boost/lexical_cast.hpp>
+#include "branch_operation.h"
 #include "erase_operation.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
 
-EraseOperation::EraseOperation(TaskId id) {
-	taskId = id;
+EraseOperation::EraseOperation(std::wstring branch, std::wstring id) {
+	branchName = branch;
+	nodeId = id;
 }
 
-bool EraseOperation::run(pugi::xml_node& document) {
-	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
+bool EraseOperation::run(pugi::xml_document& document) {
+	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
 	pugi::xml_node toErase =
-		document.find_child_by_attribute(L"id", idString.c_str());
-	return document.remove_child(toErase);
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+	return xmlBranch.remove_child(toErase);
 }
 
 }  // namespace Internal

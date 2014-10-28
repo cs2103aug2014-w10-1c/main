@@ -39,18 +39,18 @@ public:
 	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(Internal::TASKS_NODE, L"10", task1);
 		Assert::AreEqual(1U, t->operationsQueue.size());
-		sut.put(10, task2);
+		sut.put(Internal::TASKS_NODE, L"10", task2);
 		Assert::AreEqual(2U, t->operationsQueue.size());
-		sut.erase(10);
+		sut.erase(Internal::TASKS_NODE, L"10");
 		Assert::AreEqual(3U, t->operationsQueue.size());
 	}
 
 	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(Internal::TASKS_NODE, L"10", task1);
 
 		// Note: To check if document is not changed after commit requires
 		// 2 first_child()s because the first one retrieves the tasks node
@@ -64,7 +64,7 @@ public:
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 
 		Transaction t2(sut.begin());
-		sut.erase(10);
+		sut.erase(Internal::TASKS_NODE, L"10");
 		// document must not change without commit
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 		t2.commit();
@@ -97,7 +97,7 @@ public:
 		// Create mock
 		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
-		sut.document.save_file(Internal::FILE_PATH.c_str());
+		sut.document.save_file(sut.FILE_PATH.c_str());
 		sut.document.reset();
 
 		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
@@ -122,18 +122,18 @@ public:
 	TEST_METHOD(pushOperationToTransactionWithoutDataStore) {
 		Internal::Transaction sut;
 
-		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1);
+		std::unique_ptr<Internal::Operation> post =
+			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
 		sut.push(std::move(post));
 		Assert::AreEqual(1U, sut.operationsQueue.size());
 
-		std::unique_ptr<Internal::IOperation> put =
-			std::make_unique<Internal::PutOperation>(0, task1);
+		std::unique_ptr<Internal::Operation> put =
+			std::make_unique<Internal::PutOperation>(Internal::TASKS_NODE, L"0", task1);
 		sut.push(std::move(put));
 		Assert::AreEqual(2U, sut.operationsQueue.size());
 
-		std::unique_ptr<Internal::IOperation> erase =
-			std::make_unique<Internal::EraseOperation>(0);
+		std::unique_ptr<Internal::Operation> erase =
+			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
 		sut.push(std::move(erase));
 		Assert::AreEqual(3U, sut.operationsQueue.size());
 
@@ -141,13 +141,13 @@ public:
 	}
 
 	TEST_METHOD(mergeOperationsQueueIsAppend) {
-		boost::ptr_deque<Internal::IOperation> q1;
-		boost::ptr_deque<Internal::IOperation> q2;
+		boost::ptr_deque<Internal::Operation> q1;
+		boost::ptr_deque<Internal::Operation> q2;
 
-		std::unique_ptr<Internal::IOperation> post =
-			std::make_unique<Internal::PostOperation>(0, task1);
-		std::unique_ptr<Internal::IOperation> erase =
-			std::make_unique<Internal::EraseOperation>(0);
+		std::unique_ptr<Internal::Operation> post =
+			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
+		std::unique_ptr<Internal::Operation> erase =
+			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
 		q1.push_back(post.release());
 		q2.push_back(erase.release());
 

@@ -1,28 +1,28 @@
 #include "stdafx.h"
-#include <boost/lexical_cast.hpp>
 #include "../../task_typedefs.h"
-#include "../internal_datastore.h"
+#include "branch_operation.h"
 #include "post_operation.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
 
-PostOperation::PostOperation(TaskId id, const KeyValuePairs& stask) {
-	taskId = id;
-	task = stask;
+PostOperation::PostOperation(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
+	branchName = branch;
+	nodeId = id;
+	task = kvp;
 }
 
-bool PostOperation::run(pugi::xml_node& document) {
-	// Consider changing parameter to std::wstring altogether
-	std::wstring idString = boost::lexical_cast<std::wstring>(taskId);
-	if (document.find_child_by_attribute(L"id", idString.c_str())) {
+bool PostOperation::run(pugi::xml_document& document) {
+	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
+	if (xmlBranch.find_child_by_attribute(L"id", nodeId.c_str())) {
 		return false;
 	}
-	pugi::xml_node newTask = document.append_child(L"task");
+	pugi::xml_node newTask = xmlBranch.append_child(L"task");
 
 	pugi::xml_attribute id = newTask.append_attribute(L"id");
-	id.set_value(idString.c_str());
+	id.set_value(nodeId.c_str());
 	serialize(task, newTask);
 	return true;
 }

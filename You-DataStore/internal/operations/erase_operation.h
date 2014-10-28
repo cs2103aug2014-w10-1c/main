@@ -8,10 +8,16 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-class EraseOperation : public IOperation {
+/// An \ref Operation class for erase operation
+/// Erases a node from the XML when \ref run is called
+class EraseOperation : public Operation {
 public:
-	explicit EraseOperation(TaskId);
-	bool run(pugi::xml_node& document) override;
+	/// Constructor
+	///
+	/// \param[in] branch the name of the branch to modify
+	/// \param[in] id the id attribute of the node to be erased
+	EraseOperation(std::wstring branch, std::wstring id);
+	bool run(pugi::xml_document& document) override;
 	virtual ~EraseOperation() = default;
 };
 

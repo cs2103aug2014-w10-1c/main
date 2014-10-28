@@ -5,7 +5,6 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::wstring FILE_PATH = std::wstring(L"data.xml");
 const std::wstring TASKS_NODE = std::wstring(L"tasks");
 const std::wstring RESOURCES_NODE = std::wstring(L"resources");
 
