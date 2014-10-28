@@ -40,7 +40,6 @@ public:
 	/// Update the active comparator
 	void setActiveComparator(const Comparator& comparator);
 
-
 	/// Reset the state back to empty state. \n
 	/// Should be used only if necessary.
 	static void clear();
@@ -55,10 +54,13 @@ public:
 private:
 	State();
 	State(const State&) = delete;
+	~State();
 	State& operator=(const State&) = delete;
 
+	void commitMaxIDToDataStore(bool isFirstTime);
 	Task::ID maxID;
 	TaskGraph innerGraph;
+	static const std::wstring MAX_ID_FIELD;
 	std::stack<std::unique_ptr<Query>> innerUndoStack;
 	Filter activeFilter = Filter::anyTask();
 	Comparator activeComparator = Comparator::notSorted();
