@@ -37,8 +37,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		pugi::xml_node tasksNode = BranchOperation::get(temp, TASKS_NODE);
-		executeTransaction(transaction, tasksNode);
+		executeTransaction(transaction, temp);
 		document.reset(temp);
 		committedTransaction.push(self);
 		saveData();
@@ -60,8 +59,9 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::PostOperation>(rawId, sTask);
+	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PostOperation>(TASKS_NODE, stringId, sTask);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -71,8 +71,9 @@ void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
 void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::PutOperation>(rawId, sTask);
+	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PutOperation>(TASKS_NODE, stringId, sTask);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -82,8 +83,9 @@ void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
 void DataStore::erase(TaskId rawId) {
 	assert(!transactionStack.empty());
 
-	std::unique_ptr<Internal::IOperation> operation =
-		std::make_unique<Internal::EraseOperation>(rawId);
+	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::EraseOperation>(TASKS_NODE, stringId);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
@@ -113,7 +115,7 @@ void DataStore::loadData() {
 }
 
 void DataStore::executeTransaction(Transaction & transaction,
-	pugi::xml_node& xml) {
+	pugi::xml_document& xml) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {

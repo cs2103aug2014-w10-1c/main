@@ -10,19 +10,22 @@ namespace DataStore {
 namespace Internal {
 
 /// A pure virtual class of operations to be put into transaction stack
-class IOperation {
+class Operation {
 public:
 	/// Executes the operation
 	///
 	/// \param[in] document The document to modify.
 	/// \return True if the operation succeeded.
-	virtual bool run(pugi::xml_node& document) = 0;
+	virtual bool run(pugi::xml_document& document) = 0;
 
-	virtual ~IOperation() = default;
+	virtual ~Operation() = default;
 
 protected:
-	/// The Task ID to modify
-	TaskId taskId;
+	/// The "id" attribute of the XML node to modify
+	std::wstring nodeId;
+
+	/// The name of the XML branch to modify
+	std::wstring branchName;
 };
 
 }  // namespace Internal
