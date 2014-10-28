@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "task_serializer.h"
 #include "../../../You-DataStore/datastore.h"
+#include "task_serializer.h"
 
 #include "task_graph_controller.h"
 
@@ -13,12 +13,12 @@ namespace {
 	using TGC = TaskGraphController;
 	using Vertex = TaskGraph::Vertex;
 	using VIterator = TaskGraph::VIterator;
+	using DataStore = You::DataStore::DataStore;
 }
 
 Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;
-	auto serialized =
-		You::DataStore::DataStore::get().getAllTasks();
+	auto serialized = DataStore::get().getAllTasks();
 	for (const auto& task : serialized) {
 		auto t = TaskSerializer::deserialize(task);
 		addTask(graph, t);

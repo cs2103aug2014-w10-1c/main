@@ -70,6 +70,7 @@ Response AddTask::execute(State& state) {
 	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
 	insertedID = newId;
+	state.commitMaxIDToDataStore(false);
 	return newTask;
 }
 
