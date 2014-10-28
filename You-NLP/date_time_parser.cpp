@@ -117,17 +117,17 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	relativeDate %= (
 		ParserCharTraits::no_case[(
 			qi::lit(L"next") |
-			qi::lit(L"coming")
-		)] >> relativeDateInDirection(1) |
+			qi::lit(L"coming"))] >>
+		relativeDateInDirection(1) |
 
 		ParserCharTraits::no_case[(
-			qi::lit(L"this")
-		)] >> relativeDateInDirection(0) |
+			qi::lit(L"this"))] >>
+		relativeDateInDirection(0) |
 
 		ParserCharTraits::no_case[(
 			qi::lit(L"last") |
-			qi::lit(L"previous")
-		)] >> relativeDateInDirection(-1)
+			qi::lit(L"previous"))] >>
+		relativeDateInDirection(-1)
 	);
 
 	relativeDateInDirection = ParserCharTraits::no_case[(
