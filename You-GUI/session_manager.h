@@ -7,6 +7,7 @@
 
 namespace You {
 namespace GUI {
+
 namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;

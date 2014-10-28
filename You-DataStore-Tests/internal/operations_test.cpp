@@ -1,3 +1,4 @@
+//@author A0114171W
 #include "stdafx.h"
 #include <CppUnitTest.h>
 
@@ -22,7 +23,7 @@ static pugi::xml_document mockDocument;
 TEST_CLASS(DataStoreOperationsTest) {
 public:
 	/// Create a mock xml_document containing a task with content
-	/// as specified in \ref task1
+	/// as specified in task1
 	TEST_METHOD_INITIALIZE(initializeMockDocument) {
 		mockDocument.reset();
 		pugi::xml_node node = mockDocument.
@@ -45,7 +46,9 @@ public:
 			append_child(pugi::xml_node_type::node_pcdata).
 			set_value(task1.at(DEPENDENCIES).c_str());
 	}
-
+	/// Unit tests for \ref Internal::SerializationOperation
+	/// @{
+	/// Generic serialization operation test
 	TEST_METHOD(serializeOperation) {
 		pugi::xml_node newNode = mockDocument.append_child(L"new");
 		Internal::SerializationOperation::serialize(task2, newNode);
@@ -61,6 +64,7 @@ public:
 			newNode.child(DEPENDENCIES.c_str()).child_value());
 	}
 
+	/// Generic deserialization operation test
 	TEST_METHOD(deserializeOperation) {
 		using SerializationOperation = Internal::SerializationOperation;
 		pugi::xml_node toDeserialize = mockDocument.first_child().first_child();
@@ -71,54 +75,66 @@ public:
 		Assert::AreEqual(task1.at(PRIORITY), task.at(PRIORITY));
 		Assert::AreEqual(task1.at(DEPENDENCIES), task.at(DEPENDENCIES));
 	}
+	/// }@
 
+	/// Unit test for post method for valid input
 	TEST_METHOD(postWithNewId) {
 		Internal::PostOperation post(Internal::TASKS_NODE, L"1", task2);
 		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
+	/// Unit test for post method for invalid input
 	TEST_METHOD(postWithUsedId) {
 		Internal::PostOperation post(Internal::TASKS_NODE, L"0", task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
+	/// Unit test for put method for valid input
 	TEST_METHOD(putWithExistingId) {
 		Internal::PutOperation put(Internal::TASKS_NODE, L"0", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
+	/// Unit test for put method for invalid input
 	TEST_METHOD(putNonExistentId) {
 		Internal::PutOperation put(Internal::TASKS_NODE, L"1", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
+	/// Unit test for erase method for valid input
 	TEST_METHOD(eraseExistingId) {
 		Internal::EraseOperation erase(Internal::TASKS_NODE, L"0");
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
+	/// Unit test for erase method for invalid input
 	TEST_METHOD(eraseNonExistentId) {
 		Internal::EraseOperation erase(Internal::TASKS_NODE, L"1");
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
+	/// Unit test for \ref BranchOperation
+	/// @{
+	/// Create a new branch if none exists
 	TEST_METHOD(createNewNodeWithBranchOperation) {
 		Internal::BranchOperation::get(mockDocument, L"tasks");
 		Assert::IsFalse(mockDocument.child(L"tasks").empty());
 	}
 
+	/// Get the branch if it already exists
 	TEST_METHOD(getExistingNodeWithBranchOperation) {
 		pugi::xml_node expected = mockDocument.append_child(L"resources");
 		pugi::xml_node actual =
 			Internal::BranchOperation::get(mockDocument, L"resources");
 		Assert::IsTrue(expected == actual);
 	}
+	/// }@
 };
 }  // namespace UnitTests
 }  // namespace DataStore

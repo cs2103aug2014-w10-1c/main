@@ -9,6 +9,7 @@ namespace GUI {
 
 class SyntaxHighlighter : public QSyntaxHighlighter {
 	Q_OBJECT
+
 public:
 	explicit SyntaxHighlighter(QTextDocument *parent = 0);
 
@@ -19,12 +20,24 @@ private:
 	struct HighlightingRule {
 		QRegExp pattern;
 		QTextCharFormat format;
+		QTextCharFormat secondaryFormat;
 	};
 
-	QVector<HighlightingRule> highlightingRules;
+	HighlightingRule makeRule(std::wstring input, QTextCharFormat format,
+		QTextCharFormat secondaryFormat);
+	void setColors();
+	void buildRules();
+	QVector<HighlightingRule> commandHighlightingRules;
+	QVector<HighlightingRule> paramHighlightingRules;
+	QVector<HighlightingRule> orderHighlightingRules;
+	QVector<HighlightingRule> orderPrefixHighlightingRule;
 
-	QTextCharFormat actionKeywordFormat;
+
+	QTextCharFormat commandNameFormat;
 	QTextCharFormat parameterNameFormat;
+	QTextCharFormat parameterPrefixFormat;
+	QTextCharFormat orderPrefixFormat;
+	QTextCharFormat orderNameFormat;
 };
 
 }  // namespace GUI

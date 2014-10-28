@@ -3,13 +3,14 @@
 #ifndef YOU_GUI_TASK_PANEL_MANAGER_H_
 #define YOU_GUI_TASK_PANEL_MANAGER_H_
 #include <QApplication>
-#include "base_manager.h"
 #include "You-Controller/controller.h"
 #include "You-Controller/controller_context.h"
 #include "You-Controller/result.h"
+#include "base_manager.h"
 
 namespace You {
 namespace GUI {
+
 namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
