@@ -61,12 +61,36 @@ SHOW_QUERY QueryParser::constructShowQuery(
 SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 	const TaskField& field,
 	const SHOW_QUERY::Predicate& predicate,
-	const LexemeType& value) {
-	return SHOW_QUERY::FIELD_FILTER {
+	const ValueType& value) {
+	SHOW_QUERY::FIELD_FILTER result {
 		field,
-		predicate,
-		std::wstring(begin(value), end(value))
+		predicate
 	};
+
+	try {
+		switch (field) {
+		case TaskField::DESCRIPTION: {
+			const LexemeType& description = boost::get<LexemeType>(value);
+			result.value = std::wstring(begin(description), end(description));
+			break;
+		}
+		case TaskField::DEADLINE:
+			result.value = boost::get<boost::posix_time::ptime>(value);
+			break;
+		case TaskField::PRIORITY:
+			result.value = boost::get<TaskPriority>(value);
+			break;
+		case TaskField::COMPLETE:
+			result.value = boost::get<bool>(value);
+			break;
+		default:
+			assert(false); abort();
+		}
+	} catch (boost::bad_get&) {
+		throw ParserTypeException();
+	}
+
+	return result;
 }
 
 SHOW_QUERY::FIELD_ORDER QueryParser::constructShowQuerySortColumn(
@@ -143,6 +167,19 @@ DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
 boost::posix_time::ptime QueryParser::constructDateTime(
 	const LexemeType& lexeme) {
 	return DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()));
+}
+
+QueryParser::ValueType QueryParser::constructValue(ValueType value) {
+	// Only process if it is a string. It can be a date, in that case.
+	if (const LexemeType* lexeme = boost::get<LexemeType>(&value)) {
+		boost::posix_time::ptime date;
+		if (DateTimeParser::parse(
+			std::wstring(begin(*lexeme), end(*lexeme)), date)) {
+			return date;
+		}
+	}
+
+	return value;
 }
 
 }  // namespace NLP
