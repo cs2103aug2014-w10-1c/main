@@ -233,18 +233,17 @@ private:
 
 	#pragma region Showing tasks
 	/// Show command rule.
-	boost::spirit::qi::rule<IteratorType, SHOW_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, SHOW_QUERY()>
 		showCommand;
 
 	/// Show command filtering rule.
 	boost::spirit::qi::rule<IteratorType,
-		std::vector<SHOW_QUERY::FIELD_FILTER>(), SkipperType>
+		std::vector<SHOW_QUERY::FIELD_FILTER>()>
 		showCommandFiltering;
 
 	/// Show command filtering rule for one filter
 	boost::spirit::qi::rule<IteratorType,
-		SHOW_QUERY::FIELD_FILTER(),
-		SkipperType> showCommandFilteringColumn;
+		SHOW_QUERY::FIELD_FILTER()> showCommandFilteringColumn;
 
 	/// The symbol mapping from task filter predicates to an actual predicate.
 	boost::spirit::qi::symbols<
@@ -253,13 +252,12 @@ private:
 
 	/// Show command sorting rule for multiple columns.
 	boost::spirit::qi::rule<IteratorType,
-		std::vector<SHOW_QUERY::FIELD_ORDER>(), SkipperType>
+		std::vector<SHOW_QUERY::FIELD_ORDER>()>
 		showCommandSorting;
 
 	/// Show command sorting rule for one column.
 	boost::spirit::qi::rule<IteratorType,
-		SHOW_QUERY::FIELD_ORDER(),
-		SkipperType> showCommandSortingColumn;
+		SHOW_QUERY::FIELD_ORDER()> showCommandSortingColumn;
 
 	/// The symbol mapping from task ordering to ascending/descending.
 	boost::spirit::qi::symbols<
@@ -274,23 +272,23 @@ private:
 
 	#pragma region Editing tasks
 	/// Edit command rule.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()>
 		editCommand;
 
 	/// Edit command nonterminal rule for the fields to set.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()>
 		editCommandRule;
 
 	/// Edit command nonterminal rule for unary fields to set.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()>
 		editCommandRuleUnary;
 
 	/// Edit command nonterminal rule for nullary fields to set.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()>
 		editCommandRuleNullary;
 
 	/// Edit command nonterminal rule for the priority to set.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()>
 		editCommandRulePriorities;
 
 	/// The symbol mapping from task properties to the actual field taking an
@@ -307,13 +305,13 @@ private:
 	#pragma endregion
 
 	#pragma region Deleting tasks
-	boost::spirit::qi::rule<IteratorType, DELETE_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, DELETE_QUERY()>
 		deleteCommand;
 	#pragma endregion
 
 	#pragma region Undoing tasks
 	/// Undo command rule.
-	boost::spirit::qi::rule<IteratorType, UNDO_QUERY(), SkipperType>
+	boost::spirit::qi::rule<IteratorType, UNDO_QUERY()>
 		undoCommand;
 	#pragma endregion
 

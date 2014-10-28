@@ -30,6 +30,8 @@ bool QueryParser::parse(const StringType& string, QUERY& result) {
 }
 
 QueryParser::QueryParser() : QueryParser::base_type(start) {
+	auto space = qi::omit[+ParserCharTraits::space];
+
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
@@ -37,18 +39,18 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start.name("start");
 
 	explicitCommand %= (
-		(qi::lit(L"add") >> addCommand) |
-		(qi::lit(L"show") >> showCommand) |
-		(qi::lit(L"edit") >> editCommand) |
-		(qi::lit(L"delete") >> deleteCommand) |
-		(qi::lit(L"undo") >> undoCommand)
+		(qi::lit(L"add") >> space >> addCommand) |
+		(qi::lit(L"show") >> space >> showCommand) |
+		(qi::lit(L"edit") >> space >> editCommand) |
+		(qi::lit(L"delete") >> space >> deleteCommand) |
+		(qi::lit(L"undo") >> space >> undoCommand)
 	);
 	explicitCommand.name("explicitCommand");
 
 	#pragma region Adding tasks
-	addCommand = (
-		ParserCharTraits::char_ >> addCommandDescription
-	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
+	addCommand %= (
+		addCommandDescription
+	);
 	addCommand.name("addCommand");
 
 	addCommandDescription = (
@@ -57,21 +59,20 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	addCommandDescription.name("addCommandDescription");
 
 	addCommandDescriptionTail %= (
-		(qi::omit[*ParserCharTraits::blank] >> addCommandPriority) |
+		addCommandPriority |
 		addCommandDescription
 	);
 	addCommandDescriptionTail.name("addCommandDescriptionTail");
 
-	addCommandPriority %= qi::skip(ParserCharTraits::blank)[(
-		(
-			qi::lit('!') >> addCommandDeadlineOptional)
-		[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
+	addCommandPriority %= (
+		(-space >> qi::lit('!') >> addCommandDeadlineOptional)
+			[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
 		addCommandDeadlineOptional
-	)];
+	);
 	addCommandPriority.name("addCommandPriority");
 
 	addCommandDeadline = (
-		(qi::lit("by") | qi::lit("before")) >>
+		space >> (qi::lit("by") | qi::lit("before")) >>
 		utilityTime
 	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
 	addCommandDeadline.name("addCommandDeadline");
