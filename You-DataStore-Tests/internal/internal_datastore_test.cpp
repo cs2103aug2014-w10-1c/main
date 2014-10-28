@@ -29,6 +29,8 @@ public:
 		DataStore::get().saveData();
 	}
 
+	/// Checks if DataStore::get() method adds a new transaction into
+	/// the active transaction stack
 	TEST_METHOD(beginTransactionAddsToTransactionStack) {
 		DataStore& sut = DataStore::get();
 		Assert::IsTrue(sut.transactionStack.empty());
@@ -36,6 +38,8 @@ public:
 		Assert::AreEqual(1U, sut.transactionStack.size());
 	}
 
+	/// Checks if post, put, and erase methods add \ref Internal::Operation
+	/// objects into the active transaction's operationsQueue
 	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
@@ -47,6 +51,7 @@ public:
 		Assert::AreEqual(3U, t->operationsQueue.size());
 	}
 
+	/// Checks if the document is only changed when a transaction is committed
 	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
@@ -72,6 +77,7 @@ public:
 		Assert::IsTrue(sut.document.first_child().first_child().empty());
 	}
 
+	/// Checks if rollback cleans up the transaction stack too
 	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
@@ -80,6 +86,8 @@ public:
 		Assert::AreEqual(0U, sut.transactionStack.size());
 	}
 
+	/// Unit test to check if getAll behaves correctly when getting from the
+	/// XML document tree
 	TEST_METHOD(getAllFromTree) {
 		DataStore& sut = DataStore::get();
 
@@ -91,6 +99,8 @@ public:
 		Assert::AreEqual(1U, result.size());
 	}
 
+	/// Unit test to check if getAll behaves correctly when getting from
+	/// file (scenario: during load)
 	TEST_METHOD(getAllFromFile) {
 		DataStore& sut = DataStore::get();
 
@@ -104,6 +114,7 @@ public:
 		Assert::AreEqual(1U, result.size());
 	}
 
+	/// Checks if saving and loading works
 	TEST_METHOD(saveAndLoadTheSameThing) {
 		DataStore& sut = DataStore::get();
 
@@ -119,6 +130,7 @@ public:
 		Assert::AreEqual(std::wstring(L"what"), value);
 	}
 
+	/// Unit test for \ref Internal::Transaction 's push operation
 	TEST_METHOD(pushOperationToTransactionWithoutDataStore) {
 		Internal::Transaction sut;
 
@@ -140,6 +152,7 @@ public:
 		sut.operationsQueue.clear();
 	}
 
+	/// Unit test for \ref Internal::Transaction 's mergeOperationsQueue method
 	TEST_METHOD(mergeOperationsQueueIsAppend) {
 		boost::ptr_deque<Internal::Operation> q1;
 		boost::ptr_deque<Internal::Operation> q2;
