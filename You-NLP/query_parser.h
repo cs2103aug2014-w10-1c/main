@@ -206,11 +206,11 @@ private:
 	start_type start;
 
 	/// Explicit command rule.
-	boost::spirit::qi::rule<IteratorType, QUERY(), SkipperType> explicitCommand;
+	boost::spirit::qi::rule<IteratorType, QUERY()> explicitCommand;
 
 	#pragma region Adding tasks
 	/// Add command rule.
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY(), SkipperType> addCommand;
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommand;
 
 	/// Add command description rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDescription;
@@ -316,6 +316,9 @@ private:
 	#pragma endregion
 
 	#pragma region Utility rules
+	/// A utility rule to handle whitespace.
+	boost::spirit::qi::rule<IteratorType> space;
+
 	/// A utility rule which converts numbers to ints, booleans to bools,
 	/// dates to posix_time::ptime, and strings verbatim.
 	boost::spirit::qi::rule<IteratorType, ValueType()> utilityValue;

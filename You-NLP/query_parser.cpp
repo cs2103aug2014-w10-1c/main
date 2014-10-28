@@ -30,7 +30,7 @@ bool QueryParser::parse(const StringType& string, QUERY& result) {
 }
 
 QueryParser::QueryParser() : QueryParser::base_type(start) {
-	auto space = qi::omit[+ParserCharTraits::space];
+	space = qi::omit[+ParserCharTraits::blank];
 
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
@@ -43,7 +43,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L"show") >> space >> showCommand) |
 		(qi::lit(L"edit") >> space >> editCommand) |
 		(qi::lit(L"delete") >> space >> deleteCommand) |
-		(qi::lit(L"undo") >> space >> undoCommand)
+		(qi::lit(L"undo") >> undoCommand)
 	);
 	explicitCommand.name("explicitCommand");
 
@@ -86,17 +86,18 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	#pragma region Showing tasks
 	showCommand = (
 		-showCommandFiltering >>
-		-((qi::lit(L"sorted by") | qi::lit(L"order by") | qi::lit(L"sort")) >>
+		-(-space >> (qi::lit(L"sorted by") | qi::lit(L"order by")) >> space >>
 		showCommandSorting)
 	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
 
-	showCommandFiltering %= (
-		showCommandFilteringColumn % (qi::lit(L",") | qi::lit(L"and"))
-	);
+	showCommandFiltering %=
+		showCommandFilteringColumn % (
+			(-space >> qi::lit(L",") >> -space) |
+			(space >> qi::lit(L"and") >> space));
 
 	showCommandFilteringColumn = (
 		showCommandFields >>
-		showCommandFilteringPredicate >>
+		-space >> showCommandFilteringPredicate >> -space >>
 		utilityValue
 	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
 		qi::_1,
@@ -112,11 +113,12 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L">=", SHOW_QUERY::Predicate::GREATER_THAN_EQ);
 
 	showCommandSorting %= (
-		showCommandSortingColumn % (qi::lit(L",") | qi::lit(L"then"))
-	);
+		showCommandSortingColumn % (
+			(-space >> qi::lit(L",") >> -space) |
+			(space >> qi::lit(L"then") >> space)));
 
 	showCommandSortingColumn = (
-		showCommandFields >> -showCommandSortingOrders
+		showCommandFields >> -(space >> showCommandSortingOrders)
 	)[qi::_val = phoenix::bind(&constructShowQuerySortColumn, qi::_1, qi::_2)];
 
 	showCommandSortingOrders.add
@@ -137,7 +139,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Editing tasks
 	editCommand = (
-		qi::uint_ >> qi::lit(L"set") >> editCommandRule
+		qi::uint_ >> space >> qi::lit(L"set") >> space >> editCommandRule
 	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
 	editCommand.name("editCommand");
@@ -155,12 +157,16 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandRuleNullary.name("editCommandRuleNullary");
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >> qi::lit('=') >> utilityValue)
+		editCommandFieldsUnary >>
+		-space >> qi::lit('=') >> -space >>
+		utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	editCommandRuleUnary.name("editCommandRuleUnary");
 
 	editCommandRulePriorities = (
-		qi::lit(L"priority") >> qi::lit('=') >> utilityTaskPriority
+		qi::lit(L"priority") >>
+		-space >> qi::lit('=') >> -space >>
+		utilityTaskPriority
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
 	editCommandRulePriorities.name("editCommandRulePriorities");
 
