@@ -16,6 +16,7 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7 = "Completion";
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -33,7 +34,8 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_3,
 		TASK_COLUMN_4,
 		TASK_COLUMN_5,
-		TASK_COLUMN_6
+		TASK_COLUMN_6,
+		TASK_COLUMN_7
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
@@ -166,6 +168,13 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		result.push_back(boost::lexical_cast<QString>(temp));
 	} else {
 		result.push_back("None");
+	}
+
+	// Insert done-ness
+	if (task.isCompleted()) {
+		result.push_back(boost::lexical_cast<QString>("Yes"));
+	} else {
+		result.push_back(boost::lexical_cast<QString>("No"));
 	}
 
 	return result;

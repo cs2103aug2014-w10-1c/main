@@ -115,6 +115,9 @@ private:
 
 	/// Header string from column 6
 	static const QString TASK_COLUMN_6;
+
+	/// Header string from column 6
+	static const QString TASK_COLUMN_7;
 	/// @}
 };
 
