@@ -3,11 +3,12 @@
 #ifndef YOU_GUI_BASE_MANAGER_H_
 #define YOU_GUI_BASE_MANAGER_H_
 #include "main_window.h"
+
 namespace You {
 namespace GUI {
 
 /// The class from which all components inherit.
-class MainWindow::BaseManager : public QObject{
+class MainWindow::BaseManager : public QObject {
 	Q_OBJECT
 public:
 	/// The constructor that assigns to the manager the parent GUI.

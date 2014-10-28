@@ -4,12 +4,14 @@
 #define YOU_GUI_MAIN_WINDOW_H_
 #include <memory>
 #include <QtWidgets/QMainWindow>
-#include "ui_yougui.h"
 #include "You-Controller/result.h"
+#include "ui_yougui.h"
 #include "syntax_highlighter.h"
+#include "command_text_box.h"
 
 namespace You {
 namespace GUI {
+
 namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
@@ -103,6 +105,11 @@ private:
 	/// The QT object that holds all items that are defined when building the
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
+
+	CommandTextBox *commandTextBox;
+
+	std::list<std::wstring> commandHistory;
+	std::list<std::wstring>::iterator historyIndex;
 
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;

@@ -32,79 +32,39 @@ TEST_MODULE_CLEANUP(ModuleCleanup) {
 TEST_CLASS(MainWindowTests) {
 public:
 	/// These are generic tests for component visibility/invisibility
-	TEST_METHOD(isMainWindowVisible) {
+	TEST_METHOD(visibilityTest) {
 		MainWindow w;
-		Assert::IsTrue(w.isVisible());
-	}
-
-	TEST_METHOD(isCentralWidgetVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.centralWidget->isVisible());
-	}
-
-	TEST_METHOD(isTaskPanelVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.taskTreePanel->isVisible());
-	}
-
-	TEST_METHOD(isCommandEnterButtonVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.commandEnterButton->isVisible());
-	}
-
-	TEST_METHOD(isCommandTextBoxVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.commandTextBox->isVisible());
-	}
-
-	TEST_METHOD(isStatusBarVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.statusBar->isVisible());
-	}
-
-	TEST_METHOD(isStatusIconVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.statusIcon->isVisible());
-	}
-
-	TEST_METHOD(isStatusMessageVisible) {
-		MainWindow w;
-		Assert::IsTrue(w.ui.statusMessage->isVisible());
-	}
-
-	TEST_METHOD(isMainToolBarHidden) {
-		MainWindow w;
-		Assert::IsFalse(w.ui.mainToolBar->isVisible());
-	}
-
-	TEST_METHOD(isMenuBarHidden) {
-		MainWindow w;
-		Assert::IsFalse(w.ui.menuBar->isVisible());
+		bool visibilityTest =
+			w.isVisible() &&
+			w.ui.centralWidget->isVisible() &&
+			w.ui.taskTreePanel->isVisible() &&
+			w.ui.commandEnterButton->isVisible() &&
+			w.commandTextBox->isVisible() &&
+			w.ui.statusBar->isVisible() &&
+			w.ui.statusIcon->isVisible() &&
+			w.ui.statusMessage->isVisible() &&
+			!w.ui.mainToolBar->isVisible() &&
+			!w.ui.menuBar->isVisible();
+		Assert::IsTrue(visibilityTest);
 	}
 
 	/// Basic task addition test
-	TEST_METHOD(addSingleTaskCount) {
+	TEST_METHOD(addSingleTask) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 99"));
 		w.commandEnterPressed();
-		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
-	}
 
-	/// Task addition content comparison
-	TEST_METHOD(addSingleTaskContent) {
-		MainWindow w;
-		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 2099"));
-		w.commandEnterPressed();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(1), QString("0"));
 		int column2 = QString::compare(item.text(2), QString("test"));
 		int column3 = QString::compare(
 			item.text(3),
-			QString("More than a month away (2099-Nov-01 00:00:00)"));
+			QString("Overdue (1999-Nov-01 00:00:00)"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
-		Assert::IsTrue((column1 == 0) && (column2 == 0) &&
+
+		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&
+			(column1 == 0) && (column2 == 0) &&
 			(column3 == 0) && (column4 == 0));
 	}
 
@@ -177,11 +137,11 @@ public:
 	TEST_METHOD(deleteSingleTaskCount) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/delete 1"));
+		w.commandTextBox->setPlainText(QString("/delete 1"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1);
 	}
@@ -190,14 +150,41 @@ public:
 	TEST_METHOD(deleteSingleTaskFind) {
 		MainWindow w;
 		w.clearTasks();
-		w.ui.commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w.commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
 		w.commandEnterPressed();
-		w.ui.commandTextBox->setPlainText(QString("/delete 1"));
+		w.commandTextBox->setPlainText(QString("/delete 1"));
 		w.commandEnterPressed();
 		Assert::IsTrue(w.ui.taskTreePanel->findItems(
 			QString("1"), Qt::MatchExactly, 1).size() == 0);
+	}
+
+	TEST_METHOD(editSingleTask) {
+		MainWindow w;
+		w.clearTasks();
+		w.commandTextBox->setPlainText(QString("/add test by Nov 99"));
+		w.commandEnterPressed();
+		w.commandTextBox->setPlainText(
+			QString("/edit 0 set description abc"));
+		w.commandEnterButtonClicked();
+		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
+		int column1 = QString::compare(item.text(1), QString("0"));
+		int column2 = QString::compare(item.text(2), QString("abc"));
+		int column3 = QString::compare(
+			item.text(3),
+			QString("Overdue (1999-Nov-01 00:00:00)"));
+		int column4 = QString::compare(item.text(4), QString("Normal"));
+
+		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&
+			(column1 == 0) && (column2 == 0) &&
+			(column3 == 0) && (column4 == 0));
+	}
+
+	TEST_METHOD(toggleTrayIcon) {
+		MainWindow w;
+		w.clearTasks();
+		Assert::IsTrue(true);
 	}
 };
 }  // namespace UnitTests

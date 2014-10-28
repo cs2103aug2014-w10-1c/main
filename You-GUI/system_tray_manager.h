@@ -4,7 +4,7 @@
 #define YOU_GUI_SYSTEM_TRAY_MANAGER_H_
 #include <QApplication>
 #include "base_manager.h"
-#include "../You-GUI/tray_hotkey_handler.h"
+#include "tray_hotkey_handler.h"
 
 namespace You {
 namespace GUI {
@@ -13,7 +13,7 @@ namespace UnitTests { class MainWindowTests; }
 /// The component that handles all interactions with the tray icon. It handles
 /// the window state of the application based on commands sent to the tray
 /// manager. It inherits from the BaseManager class.
-class MainWindow::SystemTrayManager : public MainWindow::BaseManager{
+class MainWindow::SystemTrayManager : public MainWindow::BaseManager {
 	Q_OBJECT
 	friend class MainWindow;
 	friend class UnitTests::MainWindowTests;

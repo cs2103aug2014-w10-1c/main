@@ -4,6 +4,7 @@
 #include <QList>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "query_manager.h"
+
 namespace You {
 namespace GUI {
 
