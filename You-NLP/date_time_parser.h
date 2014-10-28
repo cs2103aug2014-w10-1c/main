@@ -96,8 +96,15 @@ private:
 	///
 	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
 	/// \param[in] month The month specified
-	static Date constructRelativeDate(int direction,
+	static Date constructRelativeMonthDate(int direction,
 		boost::date_time::months_of_year month);
+
+	/// Constructs a relative date from a week day.
+	///
+	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
+	/// \param[in] month The day name specified
+	static Date constructRelativeWeekDayDate(int direction,
+		boost::date_time::weekdays day);
 
 private:
 	/// The start rule.
@@ -134,6 +141,11 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		boost::gregorian::months_of_year> monthNames;
+
+	/// List of day names
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		boost::date_time::weekdays> weekDays;
 
 	/// Parsing days
 	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;

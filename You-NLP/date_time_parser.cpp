@@ -63,6 +63,22 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		ParserCharTraits::no_case[monthNames]
 	);
 
+	weekDays.add
+		(L"mon", boost::gregorian::Monday)
+		(L"monday", boost::gregorian::Monday)
+		(L"tue", boost::gregorian::Tuesday)
+		(L"tuesday", boost::gregorian::Tuesday)
+		(L"wed", boost::gregorian::Wednesday)
+		(L"wednesday", boost::gregorian::Wednesday)
+		(L"thu", boost::gregorian::Thursday)
+		(L"thursday", boost::gregorian::Thursday)
+		(L"fri", boost::gregorian::Friday)
+		(L"friday", boost::gregorian::Friday)
+		(L"sat", boost::gregorian::Saturday)
+		(L"saturday", boost::gregorian::Saturday)
+		(L"sun", boost::gregorian::Sunday)
+		(L"sunday", boost::gregorian::Sunday);
+
 	day %= (
 		qi::int_
 	);
@@ -105,18 +121,26 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		)] >> relativeDateInDirection(1) |
 
 		ParserCharTraits::no_case[(
+			qi::lit(L"this")
+		)] >> relativeDateInDirection(0) |
+
+		ParserCharTraits::no_case[(
 			qi::lit(L"last") |
 			qi::lit(L"previous")
 		)] >> relativeDateInDirection(-1)
 	);
 
-	relativeDateInDirection = (
+	relativeDateInDirection = ParserCharTraits::no_case[(
 		(
 			monthNames
 			[qi::_val = phoenix::bind(&
-				constructRelativeDate, qi::_r1, qi::_1)]
+				constructRelativeMonthDate, qi::_r1, qi::_1)] |
+
+			weekDays
+			[qi::_val = phoenix::bind(&
+				constructRelativeWeekDayDate, qi::_r1, qi::_1)]
 		)
-	);
+	)];
 	#pragma endregion
 }
 
@@ -197,14 +221,14 @@ DateTimeParser::Date DateTimeParser::constructDayMonthDate(
 	return result;
 }
 
-DateTimeParser::Date DateTimeParser::constructRelativeDate(
+DateTimeParser::Date DateTimeParser::constructRelativeMonthDate(
 	int direction,
 	boost::date_time::months_of_year month) {
 	boost::posix_time::ptime now =
 		boost::posix_time::second_clock::local_time();
-
 	Date today = now.date();
-	assert(direction != 0);
+
+	assert(direction >= -1 && direction <= 1);
 	if (direction == 0) {
 		if (today.month() <= month) {
 			throw ParserException();
@@ -213,6 +237,33 @@ DateTimeParser::Date DateTimeParser::constructRelativeDate(
 		}
 	} else {
 		return Date(today.year() + direction, month, 1);
+	}
+}
+
+DateTimeParser::Date DateTimeParser::constructRelativeWeekDayDate(
+	int direction,
+	boost::date_time::weekdays day) {
+	boost::posix_time::ptime now =
+		boost::posix_time::second_clock::local_time();
+	Date today = now.date();
+
+	assert(direction >= -1 && direction <= 1);
+	if (direction == 0) {
+		if (today.day_of_week() <= day) {
+			throw ParserException();
+		} else {
+			return today + boost::gregorian::days(day - today.day_of_week());
+		}
+	} else if (direction == 1) {
+		return next_weekday(
+			next_weekday(today, boost::gregorian::greg_weekday(
+				boost::gregorian::Sunday)),
+			boost::gregorian::greg_weekday(day));
+	} else {
+		return previous_weekday(
+			previous_weekday(today, boost::gregorian::greg_weekday(
+				boost::gregorian::Sunday)),
+			boost::gregorian::greg_weekday(day));
 	}
 }
 

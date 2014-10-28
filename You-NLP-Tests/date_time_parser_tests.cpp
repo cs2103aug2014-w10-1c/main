@@ -124,6 +124,23 @@ public:
 		Assert::IsTrue(lastOctober < today);
 	}
 
+	TEST_METHOD(parsesRelativeDaysOfWeek) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date nextMonday = DateTimeParser::parse(L"next monday").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Monday),
+			static_cast<int>(nextMonday.day_of_week()));
+		Assert::IsTrue(nextMonday > today);
+		Assert::IsTrue((nextMonday - today).days() <= 13);
+
+		date lastMonday = DateTimeParser::parse(L"last monday").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Monday),
+			static_cast<int>(lastMonday.day_of_week()));
+		Assert::IsTrue(lastMonday < today);
+		Assert::IsTrue((today - lastMonday).days() <= 13);
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);
