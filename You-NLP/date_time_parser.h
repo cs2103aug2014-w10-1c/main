@@ -127,7 +127,7 @@ private:
 	DateRule relativeDate;
 	boost::spirit::qi::rule<
 		IteratorType,
-		Date(int),
+		Date(int),  // NOLINT(readability/function)
 		SkipperType> relativeDateInDirection;
 	/// @}
 
