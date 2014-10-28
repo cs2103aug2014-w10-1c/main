@@ -44,6 +44,11 @@ namespace UnitTests {
 	extern Task DUE_BEFORE_CHRISTMAS();
 	extern Task DUE_AFTER_CHRISTMAS();
 
+	/// Subtasks
+	extern Task ONE_SUBTASK();
+	extern Task TWO_SUBTASKS();
+	extern Task CIRCULAR_SUBTASKS();
+
 /// @}
 
 }  // namespace UnitTests

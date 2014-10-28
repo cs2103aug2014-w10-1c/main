@@ -1,9 +1,5 @@
 #include "stdafx.h"
 
-#include <boost/graph/graphviz.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/visitors.hpp>
 #include "task_serializer.h"
 #include "../../../You-DataStore/datastore.h"
 
@@ -44,11 +40,20 @@ bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
 }
 
 void TGC::addTask(TaskGraph& g, const Task& task) {
-	boost::add_vertex(task.getID(), g.graph);
-	g.taskTable.insert({ task.getID(), task });
+	assert(!isTaskExist(g, task.getID()));
 	auto neighbors = g.getAdjacentTasks(task);
-	if (neighbors.size() > 0) {
-		connectEdges(g, task);
+	bool noCycleInNeighbors =
+		std::all_of(begin(neighbors), end(neighbors),
+			std::bind(std::not_equal_to<Task::ID>(),
+				task.getID(), std::placeholders::_1));
+	if (noCycleInNeighbors) {
+		boost::add_vertex(task.getID(), g.graph);
+		g.taskTable.insert({ task.getID(), task });
+		if (neighbors.size() > 0) {
+			connectEdges(g, task);
+		}
+	} else {
+		throw Exception::CircularDependencyException();
 	}
 }
 
@@ -124,7 +129,6 @@ void TGC::rebuildGraph(TaskGraph& g) {
 	}
 }
 
-/// \endcond
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

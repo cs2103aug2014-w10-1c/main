@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-
 #include "common.h"
 #include "internal/controller.h"
 #include "exception.h"
@@ -22,7 +21,7 @@ namespace {
 /// \endcond
 
 /// Test the functionality of \ref TaskGraphController
-TEST_CLASS(TaskGraphControllerTests) {
+TEST_CLASS(DependencyGraphTest) {
 	TEST_METHOD(createTaskGraph) {
 		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
@@ -114,7 +113,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 		});
 	}
 
-	TaskGraphControllerTests& operator=(const TaskGraphControllerTests&) = delete;
+	DependencyGraphTest& operator=(const DependencyGraphTest&) = delete;
 };
 
 }  // namespace UnitTests
