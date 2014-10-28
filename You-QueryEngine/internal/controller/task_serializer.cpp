@@ -13,7 +13,6 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// \cond Imports
 namespace {
 	using boost::posix_time::ptime;
 	using boost::gregorian::date;
@@ -22,7 +21,6 @@ namespace {
 
 	using TS = TaskSerializer;
 }
-/// \endcond
 
 const TS::Key TS::KEY_ID = L"id";
 const TS::Key TS::KEY_DESCRIPTION = L"description";
@@ -55,21 +53,48 @@ TS::STask TS::serialize(const Task& task) {
 	};
 }
 
+namespace {
+
+const std::wstring getOrDefault(const TS::STask& stask,
+	const std::wstring& key,
+	const std::wstring& deflt) {
+	auto found = stask.find(key);
+	if (found == stask.end()) {
+		return deflt;
+	} else {
+		return found->second;
+	}
+}
+
+}  // namespace
+
 Task TS::deserialize(const STask& stask) {
 	Task::ID id =
 		deserializeID(stask.at(KEY_ID));
 	Task::Description description =
-		deserializeDescription(stask.at(KEY_DESCRIPTION));
+		deserializeDescription(
+			getOrDefault(stask, KEY_DESCRIPTION,
+				serializeDescription(Task::DEFAULT_DESCRIPTION)));
 	Task::Time deadline =
-		deserializeDeadline(stask.at(KEY_DEADLINE));
+		deserializeDeadline(
+			getOrDefault(stask, KEY_DEADLINE,
+				serializeDeadline(Task::DEFAULT_DEADLINE)));
 	Task::Priority priority =
-		deserializePriority(stask.at(KEY_PRIORITY));
+		deserializePriority(
+			getOrDefault(stask, KEY_PRIORITY,
+				serializePriority(Task::DEFAULT_PRIORITY)));
 	Task::Dependencies dependencies =
-		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
+		deserializeDependencies(
+			getOrDefault(stask, KEY_DEPENDENCIES,
+				serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
 	Task::ID parent =
-		deserializeParent(stask.at(KEY_PARENT));
+		deserializeParent(
+			getOrDefault(stask, KEY_PARENT,
+				serializeID(id)));
 	Task::Dependencies subtasks =
-		deserializeSubtasks(stask.at(KEY_SUBTASKS));
+		deserializeSubtasks(
+			getOrDefault(stask, KEY_SUBTASKS,
+				serializeSubtasks(Task::DEFAULT_SUBTASKS)));
 	return TaskBuilder::get()
 		.id(id)
 		.description(description)

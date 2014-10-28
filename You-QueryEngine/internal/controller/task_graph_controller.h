@@ -26,6 +26,7 @@ public:
 
 	/// Return true if the task exist in the graph.
 	/// \param [in] id The id to be checked.
+	/// \param [in] graph The graph to be checked.
 	static bool isTaskExist(TaskGraph& graph, const Task::ID id);
 
 	/// Add a task to the graph if it is not exist.
