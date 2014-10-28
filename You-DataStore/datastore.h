@@ -8,14 +8,11 @@
 
 namespace You {
 namespace DataStore {
-namespace UnitTests { class DataStoreApiTest; }
 
 /// The public methods of the data store.
 ///
 /// This is actually a facade for the \ref Internal::DataStore class.
 class DataStore {
-	friend class UnitTests::DataStoreApiTest;
-
 public:
 	/// Get the instance of DataStore
 	static DataStore& get();
@@ -24,7 +21,7 @@ public:
 	/// \return A reference to a new \ref Transaction
 	Transaction begin();
 
-	/// Modifying methods
+	/// Methods modifying tasks
 	/// @{
 	/// Push a post operation to operation queue
 	void post(TaskId, const KeyValuePairs&);
@@ -33,6 +30,15 @@ public:
 	/// Push an erase operation to operation queue
 	void erase(TaskId);
 	/// @}
+
+	/// Methods modifying application resources
+	/// @{
+	/// Push a post operation to operation queue
+	void post(std::wstring, const KeyValuePairs&);
+	/// Push a put operation to operation queue
+	void put(std::wstring, const KeyValuePairs&);
+	/// Push an erase operation to operation queue
+	void erase(std::wstring);
 
 	/// Get all tasks
 	/// \return a vector of KeyValuePairs

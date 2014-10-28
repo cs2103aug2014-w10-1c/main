@@ -39,18 +39,18 @@ public:
 	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(Internal::TASKS_NODE, L"10", task1);
 		Assert::AreEqual(1U, t->operationsQueue.size());
-		sut.put(10, task2);
+		sut.put(Internal::TASKS_NODE, L"10", task2);
 		Assert::AreEqual(2U, t->operationsQueue.size());
-		sut.erase(10);
+		sut.erase(Internal::TASKS_NODE, L"10");
 		Assert::AreEqual(3U, t->operationsQueue.size());
 	}
 
 	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(10, task1);
+		sut.post(Internal::TASKS_NODE, L"10", task1);
 
 		// Note: To check if document is not changed after commit requires
 		// 2 first_child()s because the first one retrieves the tasks node
@@ -64,7 +64,7 @@ public:
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 
 		Transaction t2(sut.begin());
-		sut.erase(10);
+		sut.erase(Internal::TASKS_NODE, L"10");
 		// document must not change without commit
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 		t2.commit();
@@ -97,7 +97,7 @@ public:
 		// Create mock
 		sut.document.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
-		sut.document.save_file(Internal::FILE_PATH.c_str());
+		sut.document.save_file(sut.FILE_PATH.c_str());
 		sut.document.reset();
 
 		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");

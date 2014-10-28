@@ -7,11 +7,12 @@
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
 #include "internal_datastore.h"
-#include "constants.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
+
+const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -56,36 +57,35 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 	transactionStack.pop();
 }
 
-void DataStore::post(TaskId rawId, const KeyValuePairs& sTask) {
+void DataStore::post(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
-	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::PostOperation>(TASKS_NODE, stringId, sTask);
+		std::make_unique<Internal::PostOperation>(branch, id, kvp);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
 }
 
-void DataStore::put(TaskId rawId, const KeyValuePairs& sTask) {
+void DataStore::put(std::wstring branch, std::wstring id,
+const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
-	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::PutOperation>(TASKS_NODE, stringId, sTask);
+		std::make_unique<Internal::PutOperation>(branch, id, kvp);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
 	}
 }
 
-void DataStore::erase(TaskId rawId) {
+void DataStore::erase(std::wstring branch, std::wstring id) {
 	assert(!transactionStack.empty());
 
-	std::wstring stringId = boost::lexical_cast<std::wstring>(rawId);
 	std::unique_ptr<Internal::Operation> operation =
-		std::make_unique<Internal::EraseOperation>(TASKS_NODE, stringId);
+		std::make_unique<Internal::EraseOperation>(branch, id);
 
 	if (auto transaction = transactionStack.top().lock()) {
 		transaction->push(std::move(operation));
