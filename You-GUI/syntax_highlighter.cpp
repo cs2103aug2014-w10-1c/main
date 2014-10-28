@@ -41,22 +41,22 @@ void SyntaxHighlighter::setColors() {
 
 void SyntaxHighlighter::buildRules() {
 	std::wstringstream wss;
-	for each(const std::wstring &cmd in COMMANDS) {
+	for (const auto& cmd : COMMANDS) {
 		wss << L"^" << cmd << L"\\b";
 		commandHighlightingRules.append(makeRule(wss.str(),
 			commandNameFormat, commandNameFormat));
 		wss.str(L"");
 	}
 
-	for each(const std::wstring &param in PARAMS) {
+	for (const auto& param : PARAMS) {
 		wss << L"\\s" << PARAM_PREFIX << L"\\s+" << param << L"\\b";
 		paramHighlightingRules.append(makeRule(wss.str(),
 			parameterNameFormat, parameterPrefixFormat));
 		wss.str(L"");
 	}
 
-	for each(const std::wstring &param in PARAMS) {
-		for each(const std::wstring &order in ORDERS) {
+	for (const auto& param : PARAMS) {
+		for (const auto& order : ORDERS) {
 			wss << L"\\s+" << param << L"\\s+" << order << L"\\b";
 			orderHighlightingRules.append(makeRule(wss.str(),
 				orderNameFormat, parameterNameFormat));
@@ -71,7 +71,7 @@ void SyntaxHighlighter::buildRules() {
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
 	// Highlight the basic commands
-	for each(const HighlightingRule &rule in commandHighlightingRules) {
+	for (const auto& rule : commandHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
 		while (index >= 0) {
@@ -82,7 +82,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 	}
 
 	// Highlight parameters and the 'set' prefix such as 'set description'
-	for each(const HighlightingRule &rule in paramHighlightingRules) {
+	for (const auto& rule : paramHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
 		while (index >= 0) {
@@ -104,7 +104,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 	}
 
 	// Highlights parameter 'ascending' or 'descending'
-	for each(const HighlightingRule &rule in orderHighlightingRules) {
+	for (const auto& rule : orderHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int offset = 0;
 		int index = expression.indexIn(text);

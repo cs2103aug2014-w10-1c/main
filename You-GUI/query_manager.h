@@ -12,7 +12,7 @@
 namespace You {
 namespace GUI {
 
-	namespace UnitTests { class MainWindowTests; }
+namespace UnitTests { class MainWindowTests; }
 
 using Task = You::Controller::Task;
 using Result = You::Controller::Result;
