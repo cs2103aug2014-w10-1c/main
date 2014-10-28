@@ -18,9 +18,9 @@ using You::NLP::DateTimeParser;
 TEST_CLASS(DateTimeParserTests) {
 public:
 	TEST_METHOD(rejectsEmptyString) {
-		Assert::ExpectException<ParserException>([]() {
-			DateTimeParser::parse(L"");
-		}, L"Throws exception on empty string");
+		Assert::ExpectException<ParserException>(
+			std::bind(&DateTimeParser::parse, L""),
+			L"Throws exception on empty string");
 	}
 
 	TEST_METHOD(parsesYear) {

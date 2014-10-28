@@ -24,16 +24,14 @@ using You::NLP::QUERY;
 TEST_CLASS(QueryParserTests) {
 public:
 	TEST_METHOD(throwsExceptionOnEmptyString) {
-		Assert::ExpectException<ParserException>([]() {
-			QueryParser::parse(L"");
-		}, L"Throws exception on empty string");
+		Assert::ExpectException<ParserException>(
+			std::bind(&QueryParser::parse, L""));
 	}
 
 	TEST_METHOD(throwsExceptionWhenParseFails) {
-		Assert::ExpectException<ParserException>([]() {
-				// "throw" is currently not defined, so this should work.
-				QueryParser::parse(L"/throw");
-			}, L"Throws exception on syntax error");
+		// "throw" is currently not defined, so this should work.
+		Assert::ExpectException<ParserException>(
+			std::bind(&QueryParser::parse, L"/throw"));
 	}
 
 	TEST_METHOD(parsesStringAsTask) {
@@ -255,9 +253,9 @@ public:
 	}
 
 	TEST_METHOD(parsesEditQueryWithWrongType) {
-		Assert::ExpectException<ParserTypeException>([]() {
-			QueryParser::parse(L"/edit 10 set description='14 oct'");
-		});
+		Assert::ExpectException<ParserTypeException>(
+			std::bind(&QueryParser::parse,
+				L"/edit 10 set description='14 oct'"));
 	}
 
 	TEST_METHOD(parsesDeleteQuery) {
