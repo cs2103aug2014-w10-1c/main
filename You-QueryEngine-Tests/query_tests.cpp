@@ -361,6 +361,118 @@ TEST_CLASS(QueryEngineTests) {
 		Internal::State::clear();
 	}
 
+	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
+		Internal::State::clear();
+		#pragma region Add One Task
+		Task::ID firstID;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(
+				L"Hello World",
+				Task::DEFAULT_DEADLINE,
+				Task::DEFAULT_PRIORITY,
+				Task::DEFAULT_DEPENDENCIES);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			firstID = boost::get<Task>(response).getID();
+		}
+		#pragma endregion
+
+		#pragma region Add another Task
+		Task::ID secondID;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(
+				L"Hello Marie",
+				Task::DEFAULT_DEADLINE,
+				Task::DEFAULT_PRIORITY,
+				Task::DEFAULT_DEPENDENCIES);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			secondID = boost::get<Task>(response).getID();
+		}
+		#pragma endregion
+
+		#pragma region Make the first one depends on second one.
+		{  // NOLINT(whitespace/braces)
+			Task::Dependencies deps = { secondID };
+			auto query = QueryEngine::UpdateTask(
+				firstID,
+				boost::none,
+				boost::none,
+				boost::none,
+				deps,
+				boost::none,
+				boost::none,
+				boost::none);
+			QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		#pragma region Add another Task
+		Task::ID thirdID;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(
+				L"Hello Wilson",
+				Task::DEFAULT_DEADLINE,
+				Task::DEFAULT_PRIORITY,
+				Task::DEFAULT_DEPENDENCIES);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			thirdID = boost::get<Task>(response).getID();
+		}
+		#pragma endregion
+
+		#pragma region Make the second one depends on third one.
+		{  // NOLINT(whitespace/braces)
+			Task::Dependencies deps = { thirdID };
+			auto query = QueryEngine::UpdateTask(
+				secondID,
+				boost::none,
+				boost::none,
+				boost::none,
+				deps,
+				boost::none,
+				boost::none,
+				boost::none);
+			QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		#pragma region Mark the first one as completed.
+		{  // NOLINT(whitespace/braces)
+			Task::Dependencies deps = { secondID };
+			auto query = QueryEngine::UpdateTask(
+				firstID,
+				boost::none,
+				boost::none,
+				boost::none,
+				boost::none,
+				true,
+				boost::none,
+				boost::none);
+			QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		#pragma region Second and Third should be completed too
+		auto secondOne = Internal::State::get().graph()
+			.getTask(secondID);
+
+		auto thirdOne = Internal::State::get().graph()
+			.getTask(thirdID);
+
+		Assert::IsTrue(secondOne.isCompleted());
+		Assert::IsTrue(thirdOne.isCompleted());
+
+		secondOne = Internal::State::get().sgraph()
+			.getTask(secondID);
+
+		thirdOne = Internal::State::get().sgraph()
+			.getTask(thirdID);
+
+		Assert::IsTrue(secondOne.isCompleted());
+		Assert::IsTrue(thirdOne.isCompleted());
+		#pragma endregion
+
+		Internal::State::clear();
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

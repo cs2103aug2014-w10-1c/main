@@ -82,11 +82,50 @@ void UpdateTask::makeTransaction(const Task& updated) const {
 	t.commit();
 }
 
+void UpdateTask::recMarkChildren(const State& state,
+	Task::ID id) const {
+	auto task = state.graph().getTask(id);
+	if (!task.getDependencies().empty()) {
+		for (const auto& id : task.getDependencies()) {
+			recMarkChildren(state, id);
+		}
+	}
+	if (!task.getSubtasks().empty()) {
+		for (const auto& id : task.getSubtasks()) {
+			recMarkChildren(state, id);
+		}
+	}
+	task.setCompleted(completed.get());
+	Controller::Graph::updateTask(state.graph(), task);
+	Controller::Graph::updateTask(state.sgraph(), task);
+	makeTransaction(task);
+}
+
+void UpdateTask::markAllChildren(const State& state) const {
+	assert(completed);
+	recMarkChildren(state, id);
+}
+
+void UpdateTask::addAsSubtask(const State& state) const {
+	auto parentTask = state.graph().getTask(parent);
+	auto newSubtasks = parentTask.getSubtasks();
+	newSubtasks.insert(id);
+	parentTask.setSubtasks(newSubtasks);
+	Controller::Graph::updateTask(state.graph(), parentTask);
+}
+
 Response UpdateTask::execute(State& state) {
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
+	if (completed && (previous.isCompleted() != completed.get())) {
+		markAllChildren(state);
+	}
+	if (parent && previous.getParent() != parent.get()) {
+		addAsSubtask(state);
+	}
 	updateDependencyGraph(state, updated);
 	updateSubtaskGraph(state, updated);
+	makeTransaction(updated);
 	return updated;
 }
 
