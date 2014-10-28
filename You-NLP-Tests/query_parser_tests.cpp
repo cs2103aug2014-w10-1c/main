@@ -85,6 +85,21 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesIrregularSpacingAddTask) {
+		QUERY q;
+		Assert::ExpectException<ParseErrorException>(
+			boost::phoenix::bind(&QueryParser::parse,
+				L"/adds Hello World by 20 oct"));
+
+		q = QueryParser::parse(L"/add E by 22 oct");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"E",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Oct, 22), hours(0))
+		}), q);
+	}
+
 	TEST_METHOD(parsesShowQuery) {
 		// Boundary case: one filter, zero sort.
 		QUERY q = QueryParser::parse(L"/show description='\\\\\\'meh'");
