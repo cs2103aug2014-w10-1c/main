@@ -19,7 +19,8 @@ TEST_CLASS(DateTimeParserTests) {
 public:
 	TEST_METHOD(rejectsEmptyString) {
 		Assert::ExpectException<ParserException>(
-			std::bind(&DateTimeParser::parse, L""),
+			std::bind(static_cast<ptime (*)(const std::wstring&)>(
+				&DateTimeParser::parse), L""),
 			L"Throws exception on empty string");
 	}
 
