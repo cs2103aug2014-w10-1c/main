@@ -46,9 +46,9 @@ MainWindow::MainWindow(QWidget *parent)
 	commandTextBox->setWordWrapMode(QTextOption::NoWrap);
 	commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	commandTextBox->setFixedHeight(20);
 	commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
-
+	commandTextBox->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Ignored);
 	syntaxHighlighter.reset(
 		new SyntaxHighlighter(commandTextBox->document()));
 
