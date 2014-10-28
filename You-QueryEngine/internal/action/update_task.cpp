@@ -73,6 +73,7 @@ Response UpdateTask::execute(State& state) {
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
 	modifyState(state, updated);
+	makeTransaction(updated);
 	return updated;
 }
 
