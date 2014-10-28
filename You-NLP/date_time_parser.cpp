@@ -94,7 +94,28 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		dateYearMonth |
 		dateMonthYear |
 		dateDayMonth |
-		dateYear
+		dateYear |
+		relativeDate
+	);
+
+	relativeDate %= (
+		ParserCharTraits::no_case[(
+			qi::lit(L"next") |
+			qi::lit(L"coming")
+		)] >> relativeDateInDirection(1) |
+
+		ParserCharTraits::no_case[(
+			qi::lit(L"last") |
+			qi::lit(L"previous")
+		)] >> relativeDateInDirection(-1)
+	);
+
+	relativeDateInDirection = (
+		(
+			monthNames
+			[qi::_val = phoenix::bind(&
+				constructRelativeDate, qi::_r1, qi::_1)]
+		)
 	);
 	#pragma endregion
 }
@@ -174,6 +195,25 @@ DateTimeParser::Date DateTimeParser::constructDayMonthDate(
 	}
 
 	return result;
+}
+
+DateTimeParser::Date DateTimeParser::constructRelativeDate(
+	int direction,
+	boost::date_time::months_of_year month) {
+	boost::posix_time::ptime now =
+		boost::posix_time::second_clock::local_time();
+
+	Date today = now.date();
+	assert(direction != 0);
+	if (direction == 0) {
+		if (today.month() <= month) {
+			throw ParserException();
+		} else {
+			return Date(today.year(), month, 1);
+		}
+	} else {
+		return Date(today.year() + direction, month, 1);
+	}
 }
 
 }  // namespace NLP

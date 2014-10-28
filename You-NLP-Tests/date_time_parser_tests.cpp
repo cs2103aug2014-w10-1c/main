@@ -100,12 +100,28 @@ public:
 				actualTomorrow.month()).str()).date();
 		Assert::AreEqual(actualTomorrow, tomorrow);
 
-		date nextYear = d + boost::gregorian::years(1) - boost::gregorian::days(1);
+		date nextYear = d + boost::gregorian::years(1) -
+			boost::gregorian::days(1);
 		date yesterday = DateTimeParser::parse((
 			boost::wformat(L"%1% %2%") %
 			nextYear.day() %
 			nextYear.month()).str()).date();
 		Assert::AreEqual(nextYear, yesterday);
+	}
+
+	TEST_METHOD(parsesRelativeMonths) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date nextOctober = DateTimeParser::parse(L"next oct").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Oct),
+			static_cast<int>(nextOctober.month()));
+		Assert::IsTrue(nextOctober > today);
+
+		date lastOctober = DateTimeParser::parse(L"last oct").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Oct),
+			static_cast<int>(lastOctober.month()));
+		Assert::IsTrue(lastOctober < today);
 	}
 
 private:

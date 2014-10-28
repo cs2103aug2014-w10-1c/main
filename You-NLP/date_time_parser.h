@@ -92,6 +92,13 @@ private:
 	/// be the following year.
 	static Date constructDayMonthDate(Day, Month);
 
+	/// Constructs a relative date from a month.
+	///
+	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
+	/// \param[in] month The month specified
+	static Date constructRelativeDate(int direction,
+		boost::date_time::months_of_year month);
+
 private:
 	/// The start rule.
 	start_type start;
@@ -100,13 +107,22 @@ private:
 	DateRule date;
 
 	/// Rules to parse the various kinds of dates.
-	/// {
+	/// @{
 	DateRule dateYearMonthDay;
 	DateRule dateYearMonth;
 	DateRule dateYear;
 	DateRule dateMonthYear;
 	DateRule dateDayMonth;
-	/// }
+	/// @}
+
+	/// Rules to parse relative dates
+	/// @{
+	DateRule relativeDate;
+	boost::spirit::qi::rule<
+		IteratorType,
+		Date(int),
+		SkipperType> relativeDateInDirection;
+	/// @}
 
 	/// Parsing years.
 	boost::spirit::qi::rule<IteratorType, Year(), SkipperType> year;
