@@ -1,3 +1,4 @@
+//@author A0114171W
 #include "stdafx.h"
 #include <CppUnitTest.h>
 
@@ -27,6 +28,7 @@ public:
 		Internal::DataStore::get().saveData();
 	}
 
+	/// Checks if rollback cleans up the transaction stack
 	TEST_METHOD(rollbackDeleteTransactionFromStack) {
 		Transaction sut(DataStore::get().begin());
 		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
@@ -35,6 +37,9 @@ public:
 		Assert::AreEqual(0U, Internal::DataStore::get().transactionStack.size());
 	}
 
+	/// Checks if post, put, erase for both tasks and resources pushes
+	/// \ref Internal::Operation objects to the \ref Internal::Transaction 's
+	/// operationsQueue
 	TEST_METHOD(dataStoreOperationPushedToOperationsQueue) {
 		Transaction sut(DataStore::get().begin());
 
@@ -52,6 +57,7 @@ public:
 		Assert::AreEqual(6U, sut->operationsQueue.size());
 	}
 
+	/// Checks if committing changes the data
 	TEST_METHOD(commitTransactionModifyData) {
 		Transaction sut(DataStore::get().begin());
 		// Operations to task
@@ -71,6 +77,7 @@ public:
 		Assert::AreEqual(resourceSizeBefore + 1, resourceSizeAfter);
 	}
 
+	/// Checks if nested transaction executes operations in the correct order
 	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
 		Transaction sut(DataStore::get().begin());
 		DataStore::get().post(0, task1);
