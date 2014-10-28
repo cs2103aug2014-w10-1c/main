@@ -9,13 +9,11 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// \cond Shorten names
 namespace {
 	using TGC = TaskGraphController;
 	using Vertex = TaskGraph::Vertex;
 	using VIterator = TaskGraph::VIterator;
 }
-/// \endcond
 
 Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;

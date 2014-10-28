@@ -46,6 +46,7 @@ protected:
 	/// The reverse of updating is returning the original value.
 	std::unique_ptr<Query> getReverse() override;
 
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:

@@ -20,10 +20,13 @@ namespace Action {
 class GetTask : public Query {
 public:
 	/// Construct from filter, do not sort.
+	/// \param [in] filter The filter used.
 	explicit GetTask(const Filter& filter)
 	: filter(filter) {}
 
 	/// Construct from filter and sort.
+	/// \param [in] filter The filter used.
+	/// \param [in] comparator The comparator used.
 	explicit GetTask(const Filter& filter, const Comparator& comparator)
 	: filter(filter), comparator(comparator), sortAfterFilter(true) {}
 
@@ -31,6 +34,7 @@ public:
 	virtual ~GetTask() = default;
 
 protected:
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:

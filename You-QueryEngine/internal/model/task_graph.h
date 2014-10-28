@@ -38,7 +38,7 @@ public:
 	/// Retrieve a single task from the graph
 	/// May throw Exception::TaskNotFoundException
 	/// \param [in] id The id of the task to be retrieved.
-	/// \return The task with id \ref id
+	/// \return The task with specified ID
 	Task getTask(const Task::ID id) const;
 
 	/// Represent the graph as list of tasks.

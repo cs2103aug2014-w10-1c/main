@@ -30,6 +30,7 @@ protected:
 	/// The reverse of deletion is adding.
 	std::unique_ptr<Query> getReverse() override;
 
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:

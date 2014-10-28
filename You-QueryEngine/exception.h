@@ -1,4 +1,4 @@
-/// \file You-QueryEngine/internal/exception.h
+/// \file You-QueryEngine/exception.h
 /// Defines some exception classes.
 /// \author A0112054Y
 
