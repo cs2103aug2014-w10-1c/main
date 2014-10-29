@@ -278,6 +278,7 @@ QueryExecutorBuilderVisitor::build(const UNDO_QUERY& query) const {
 		Result processResponse(
 			const You::QueryEngine::Response& response) override {
 			return UNDO_RESULT {
+				boost::get<TaskList>(response)
 			};
 		}
 	};
