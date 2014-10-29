@@ -9,6 +9,8 @@ namespace You {
 namespace GUI {
 
 CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
+	setFocusPolicy(Qt::StrongFocus);
+	historyIndex = commandHistory.begin();
 	setCompleter();
 }
 
@@ -93,6 +95,58 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 		case Qt::Key_Backtab:
 			e->ignore();
 			return;
+		default:
+			break;
+		}
+	} else {
+		switch (e->key()) {
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+			if (!commandHistory.empty()) {
+				if (historyIndex == --commandHistory.end()) {
+					commandHistory.push_back(
+						this->toPlainText().toStdWString());
+					historyIndex++;
+				}
+				else {
+					std::advance(historyIndex, 2);
+					commandHistory.erase(historyIndex, commandHistory.end());
+					commandHistory.push_back(
+						this->toPlainText().toStdWString());
+					historyIndex = --commandHistory.end();
+				}
+			}
+			else {
+				commandHistory.push_back(this->toPlainText().toStdWString());
+				historyIndex--;
+			}
+			emit(enterKey());
+			this->setFocus();
+			return;
+		case Qt::Key_Up:
+			if (!commandHistory.empty()) {
+				if (historyIndex == commandHistory.end()) {
+					historyIndex--;
+				}
+				this->setText(
+					QString::fromStdWString(*historyIndex));
+				this->moveCursor(QTextCursor::End);
+				if (historyIndex != commandHistory.begin()) {
+					historyIndex--;
+				}
+			}
+		case Qt::Key_Down:
+			if (!commandHistory.empty()) {
+				if (historyIndex == commandHistory.end()) {
+					historyIndex--;
+				}
+				this->setText(
+					QString::fromStdWString(*historyIndex));
+				this->moveCursor(QTextCursor::End);
+				if (historyIndex != --commandHistory.end()) {
+					historyIndex++;
+				}
+			}
 		default:
 			break;
 		}

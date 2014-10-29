@@ -83,6 +83,8 @@ public:
 	/// Gets the current list of tasks.
 	const TaskList& getTaskList() const;
 
+signals:
+	void taskPanelContextMenu(const QPoint &pos);
 protected:
 	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
 	/// task panel proportions on resize.

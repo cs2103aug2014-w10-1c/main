@@ -17,6 +17,8 @@ public:
 	void setCompleter();
 	QCompleter *completer;
 
+signals:
+	void enterKey();
 protected:
 	void keyPressEvent(QKeyEvent *e);
 	void focusInEvent(QFocusEvent *e);
@@ -25,6 +27,8 @@ protected:
 	void insertCompletion(const QString &completion);
 
 private:
+	std::list<std::wstring> commandHistory;
+	std::list<std::wstring>::iterator historyIndex;
 	QString textUnderCursor() const;
 };
 }  // namespace GUI

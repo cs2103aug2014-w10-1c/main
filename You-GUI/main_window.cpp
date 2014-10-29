@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
 	ui.setupUi(this);
-	historyIndex = commandHistory.begin();
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
@@ -36,12 +35,13 @@ MainWindow::MainWindow(QWidget *parent)
 	stm->setup();
 	qm->setup();
 	tpm->setup();
+	
+
 	initializeAllTimerNotifications();
 	commandTextBox = new CommandTextBox(ui.splitter);
 	ui.horizontalLayout->insertWidget(0, commandTextBox);
-
-	commandTextBox->setVisible(true);
-	commandTextBox->installEventFilter(this);
+	//commandTextBox->setVisible(true);
+	ui.taskTreePanel->viewport()->installEventFilter(this);
 	commandTextBox->setTabChangesFocus(true);
 	commandTextBox->setWordWrapMode(QTextOption::NoWrap);
 	commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -51,7 +51,8 @@ MainWindow::MainWindow(QWidget *parent)
 		QSizePolicy::Expanding, QSizePolicy::Ignored);
 	syntaxHighlighter.reset(
 		new SyntaxHighlighter(commandTextBox->document()));
-
+	connect(commandTextBox, SIGNAL(enterKey()), this, SLOT(commandEnterPressed()));
+	//connect(this, SIGNAL(taskPanelContextMenu(const QPoint &pos)), &*tpm, SLOT(contextMenu(const QPoint &pos)));
 	populateTaskPanel();
 }
 
@@ -126,22 +127,7 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
-	if (!commandHistory.empty()) {
-		if (historyIndex == --commandHistory.end()) {
-			commandHistory.push_back(
-				commandTextBox->toPlainText().toStdWString());
-			historyIndex++;
-		} else {
-			std::advance(historyIndex, 2);
-			commandHistory.erase(historyIndex, commandHistory.end());
-			commandHistory.push_back(
-				commandTextBox->toPlainText().toStdWString());
-			historyIndex = --commandHistory.end();
-		}
-	} else {
-		commandHistory.push_back(commandTextBox->toPlainText().toStdWString());
-		historyIndex--;
-	}
+	
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -286,42 +272,18 @@ MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-	if (object == commandTextBox && event->type() == QEvent::KeyPress) {
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_Return) {
-			commandEnterPressed();
-			commandTextBox->setFocus();
-			return true;
-		} else if (keyEvent->key() == Qt::Key_Up) {
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				commandTextBox->setText(
-					QString::fromStdWString(*historyIndex));
-				commandTextBox->moveCursor(QTextCursor::End);
-				if (historyIndex != commandHistory.begin()) {
-					historyIndex--;
-				}
-			}
-			return true;
-		} else if (keyEvent->key() == Qt::Key_Down) {
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				commandTextBox->setText(
-					QString::fromStdWString(*historyIndex));
-				commandTextBox->moveCursor(QTextCursor::End);
-				if (historyIndex != --commandHistory.end()) {
-					historyIndex++;
-				}
-			}
-			return true;
-		} else {
-			return QMainWindow::eventFilter(object, event);
+	if (object == ui.taskTreePanel->viewport() && event->type() == QEvent::ContextMenu) {
+		qDebug() << event->type();
+		QMouseEvent *keyEvent = static_cast<QMouseEvent *>(event);
+		if (keyEvent->button() == Qt::RightButton) {
+			emit(taskPanelContextMenu(keyEvent->globalPos()));
 		}
-	} else {
+		return true;
+	}
+	else if (event->type() == QEvent::ContextMenu) {
+		qDebug() << "lol...";
+	}
+	else {
 		return QMainWindow::eventFilter(object, event);
 	}
 }
