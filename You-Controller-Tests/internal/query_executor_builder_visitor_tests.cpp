@@ -390,7 +390,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		QueryExecutorBuilderVisitor visitor(taskList);
 
 		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.complete = true;
+		query2.complete = boost::none;
 		You::NLP::QUERY query(query2);
 		std::unique_ptr<QueryExecutor> executor(
 			boost::apply_visitor(visitor, query));
