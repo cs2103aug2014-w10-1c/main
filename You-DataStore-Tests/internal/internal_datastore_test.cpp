@@ -17,7 +17,7 @@ namespace UnitTests {
 
 using DataStore = You::DataStore::Internal::DataStore;
 
-/// Unit Test Class for DataStore class
+/// Unit Test Class for \ref Internal::DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
 	TEST_METHOD_INITIALIZE(clearDataStoreState) {
