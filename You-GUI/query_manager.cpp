@@ -45,8 +45,9 @@ void MainWindow::QueryManager::query(
 		void operator()(You::Controller::DELETE_RESULT deleteResult) {
 			parentGUI->deleteTask(deleteResult.task);
 		}
-		void operator()(const You::Controller::UNDO_RESULT& showResult) {
-			assert(false);
+		void operator()(const You::Controller::UNDO_RESULT& undoResult) {
+			parentGUI->clearTasks();
+			parentGUI->addTasks(undoResult.tasks);
 		}
 
 	private:
