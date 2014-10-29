@@ -8,6 +8,7 @@ namespace Controller {
 
 /// Defines the result of an Undo query.
 struct UNDO_RESULT {
+	TaskList tasks;
 };
 
 }  // namespace Controller
