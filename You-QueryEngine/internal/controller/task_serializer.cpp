@@ -31,7 +31,7 @@ const TS::Key TS::KEY_PARENT = L"parent";
 const TS::Key TS::KEY_SUBTASKS = L"subtasks";
 
 const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
-const TS::Value TS::VALUE_PRIORITY_HIGH = L"HIGH";
+const TS::Value TS::VALUE_PRIORITY_HIGH = L"high";
 const TS::Value TS::VALUE_DELIMITER = L";";
 
 TS::STask TS::serialize(const Task& task) {
