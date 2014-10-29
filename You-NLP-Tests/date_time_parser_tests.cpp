@@ -155,6 +155,16 @@ public:
 		Assert::AreEqual(yesterday, DateTimeParser::parse(L"yesterday").date());
 	}
 
+	TEST_METHOD(parsesRelativeToN) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date next = today + boost::gregorian::days(3);
+
+		Assert::AreEqual(next, DateTimeParser::parse(L"3 days").date());
+
+		next = today + boost::gregorian::days(14);
+		Assert::AreEqual(next, DateTimeParser::parse(L"2 weeks").date());
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);

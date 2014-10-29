@@ -140,6 +140,7 @@ private:
 	boost::spirit::qi::rule<
 		IteratorType,
 		Date(int)> relativeDateInDirection;  // NOLINT(readability/function)
+	DateRule relativeDateInDays;
 	/// @}
 
 	/// Parsing years.

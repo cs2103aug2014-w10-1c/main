@@ -119,12 +119,12 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	dateDayMonth.name("dateDayMonth");
 
 	date %= (
+		relativeDate |
 		dateYearMonthDay |
 		dateYearMonth |
 		dateMonthYear |
 		dateDayMonth |
-		dateYear |
-		relativeDate
+		dateYear
 	);
 	date.name("date");
 
@@ -143,14 +143,9 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			qi::lit(L"previous"))] >> space >>
 		relativeDateInDirection(-1) |
 
-		ParserCharTraits::no_case[qi::lit(L"tomorrow")][
-			qi::_val = phoenix::bind(&constructRelativeDate, 1)
-		] |
-
-		ParserCharTraits::no_case[qi::lit(L"yesterday")][
-			qi::_val = phoenix::bind(&constructRelativeDate, -1)
-		]
+		relativeDateInDays
 	);
+	relativeDate.name("relativeDate");
 
 	relativeDateInDirection = ParserCharTraits::no_case[(
 		(
@@ -163,6 +158,27 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 				constructRelativeWeekDayDate, qi::_r1, qi::_1)]
 		)
 	)];
+	relativeDateInDirection.name("relativeDateInDirection");
+
+	relativeDateInDays = (
+		ParserCharTraits::no_case[qi::lit(L"tomorrow")][
+			qi::_val = phoenix::bind(&constructRelativeDate, 1)
+		] |
+
+		ParserCharTraits::no_case[qi::lit(L"yesterday")][
+			qi::_val = phoenix::bind(&constructRelativeDate, -1)
+		] |
+
+		((qi::int_ >> space >> ParserCharTraits::no_case[qi::lit("days")])[
+			qi::_val = phoenix::bind(&constructRelativeDate, qi::_1)
+		]) |
+
+		((qi::int_ >> space >> ParserCharTraits::no_case[qi::lit("weeks")])[
+			qi::_val = phoenix::bind(&constructRelativeDate,
+				qi::_1 * 7)
+		])
+	);
+	relativeDateInDays.name("relativeDateInDays");
 	#pragma endregion
 }
 
