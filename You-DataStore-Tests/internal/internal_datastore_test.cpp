@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include <CppUnitTest.h>
 
+#include <cstdio>
+#include <fstream>
 #include "../mocks.h"
 #include "internal/operations/erase_operation.h"
 #include "internal/operations/post_operation.h"
@@ -22,12 +24,12 @@ TEST_CLASS(DataStoreTest) {
 public:
 	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		DataStore::get().document.reset();
-		DataStore::get().saveData();
+		std::remove("data.xml");
 	}
 
 	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
 		DataStore::get().document.reset();
-		DataStore::get().saveData();
+		std::remove("data.xml");
 	}
 
 	/// Checks if DataStore::get() method adds a new transaction into
