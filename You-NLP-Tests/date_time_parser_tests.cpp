@@ -148,6 +148,13 @@ public:
 		Assert::AreEqual(tomorrow, DateTimeParser::parse(L"tomorrow").date());
 	}
 
+	TEST_METHOD(parsesYesterday) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date yesterday = today - boost::gregorian::days(1);
+
+		Assert::AreEqual(yesterday, DateTimeParser::parse(L"yesterday").date());
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);

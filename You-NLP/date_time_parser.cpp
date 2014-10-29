@@ -131,6 +131,10 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 
 		qi::lit(L"tomorrow")[
 			qi::_val = phoenix::bind(&constructRelativeDate, 1)
+		] |
+
+		qi::lit(L"yesterday")[
+			qi::_val = phoenix::bind(&constructRelativeDate, -1)
 		]
 	);
 
