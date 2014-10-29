@@ -30,8 +30,6 @@ bool QueryParser::parse(const StringType& string, QUERY& result) {
 }
 
 QueryParser::QueryParser() : QueryParser::base_type(start) {
-	space = qi::omit[+ParserCharTraits::blank];
-
 	start %= (
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
@@ -193,6 +191,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::eps
 	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
 	#pragma endregion
+
+	space = qi::omit[+ParserCharTraits::blank];
 
 	utilityValue = (
 		(qi::int_) |

@@ -84,9 +84,11 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	);
 	#pragma endregion
 
+	space = qi::omit[+ParserCharTraits::blank];
+
 	#pragma region Supported Date Formats
 	dateYearMonthDay = (
-		year >> '-' >> month >> '-' >> day
+		year >> (space | '-') >> month >> (space | '-') >> day
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
 
 	dateYearMonth = (
@@ -98,11 +100,11 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
 
 	dateMonthYear = (
-		month >> year
+		month >> space  >> year
 	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
 
 	dateDayMonth = (
-		day >> month
+		day >> space >> month
 	)[qi::_val = phoenix::bind(&constructDayMonthDate, qi::_1, qi::_2)];
 
 	date %= (
@@ -117,23 +119,23 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	relativeDate %= (
 		ParserCharTraits::no_case[(
 			qi::lit(L"next") |
-			qi::lit(L"coming"))] >>
+			qi::lit(L"coming"))] >> space >>
 		relativeDateInDirection(1) |
 
 		ParserCharTraits::no_case[(
-			qi::lit(L"this"))] >>
+			qi::lit(L"this"))] >> space >>
 		relativeDateInDirection(0) |
 
 		ParserCharTraits::no_case[(
 			qi::lit(L"last") |
-			qi::lit(L"previous"))] >>
+			qi::lit(L"previous"))] >> space >>
 		relativeDateInDirection(-1) |
 
-		qi::lit(L"tomorrow")[
+		ParserCharTraits::no_case[qi::lit(L"tomorrow")][
 			qi::_val = phoenix::bind(&constructRelativeDate, 1)
 		] |
 
-		qi::lit(L"yesterday")[
+		ParserCharTraits::no_case[qi::lit(L"yesterday")][
 			qi::_val = phoenix::bind(&constructRelativeDate, -1)
 		]
 	);

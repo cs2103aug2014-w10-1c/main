@@ -56,8 +56,7 @@ private:
 
 	typedef boost::spirit::qi::rule<
 		IteratorType,
-		Date(),
-		SkipperType> DateRule;
+		Date()> DateRule;
 
 private:
 	DateTimeParser();
@@ -140,15 +139,14 @@ private:
 	DateRule relativeDate;
 	boost::spirit::qi::rule<
 		IteratorType,
-		Date(int),  // NOLINT(readability/function)
-		SkipperType> relativeDateInDirection;
+		Date(int)> relativeDateInDirection;  // NOLINT(readability/function)
 	/// @}
 
 	/// Parsing years.
-	boost::spirit::qi::rule<IteratorType, Year(), SkipperType> year;
+	boost::spirit::qi::rule<IteratorType, Year()> year;
 
 	/// Parsing months.
-	boost::spirit::qi::rule<IteratorType, Month(), SkipperType> month;
+	boost::spirit::qi::rule<IteratorType, Month()> month;
 
 	/// List of months.
 	boost::spirit::qi::symbols<
@@ -161,7 +159,10 @@ private:
 		boost::date_time::weekdays> weekDays;
 
 	/// Parsing days
-	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;
+	boost::spirit::qi::rule<IteratorType, Day()> day;
+
+	/// A utility rule to handle whitespace.
+	boost::spirit::qi::rule<IteratorType> space;
 };
 
 }  // namespace NLP
