@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="date_time_parser.cpp" />
+    <ClCompile Include="date_time_parser_actions.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
     <ClCompile Include="parse_tree\add_query.cpp" />
     <ClCompile Include="parse_tree\delete_query.cpp" />
