@@ -141,6 +141,13 @@ public:
 		Assert::IsTrue((today - lastMonday).days() <= 13);
 	}
 
+	TEST_METHOD(parsesTomorrow) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date tomorrow = today + boost::gregorian::days(1);
+
+		Assert::AreEqual(tomorrow, DateTimeParser::parse(L"tomorrow").date());
+	}
+
 private:
 	boost::gregorian::greg_year parseTwoDigitYear(DateTimeParser::Year year) {
 		return DateTimeParser::parseTwoDigitYear(year);

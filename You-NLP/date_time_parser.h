@@ -90,12 +90,16 @@ private:
 	/// Constructs a date from the given day and month. This is the next day and
 	/// month that will occur. If the month is before the current month, it will
 	/// be the following year.
+	///
+	/// \return The date specified.
 	static Date constructDayMonthDate(Day, Month);
 
 	/// Constructs a relative date from a month.
 	///
 	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
 	/// \param[in] month The month specified
+	///
+	/// \return The date specified.
 	static Date constructRelativeMonthDate(int direction,
 		boost::date_time::months_of_year month);
 
@@ -103,8 +107,17 @@ private:
 	///
 	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
 	/// \param[in] month The day name specified
+	///
+	/// \return The date specified, relative to today.
 	static Date constructRelativeWeekDayDate(int direction,
 		boost::date_time::weekdays day);
+
+	/// Constructs a relative date from today.
+	///
+	/// \param[in] daysFromToday The date to construct from today.
+	///
+	/// \return The date specified, relative to today.
+	static Date constructRelativeDate(int daysFromToday);
 
 private:
 	/// The start rule.

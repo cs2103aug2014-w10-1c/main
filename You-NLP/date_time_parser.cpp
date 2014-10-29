@@ -127,7 +127,11 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		ParserCharTraits::no_case[(
 			qi::lit(L"last") |
 			qi::lit(L"previous"))] >>
-		relativeDateInDirection(-1)
+		relativeDateInDirection(-1) |
+
+		qi::lit(L"tomorrow")[
+			qi::_val = phoenix::bind(&constructRelativeDate, 1)
+		]
 	);
 
 	relativeDateInDirection = ParserCharTraits::no_case[(
@@ -265,6 +269,11 @@ DateTimeParser::Date DateTimeParser::constructRelativeWeekDayDate(
 				boost::gregorian::Sunday)),
 			boost::gregorian::greg_weekday(day));
 	}
+}
+
+DateTimeParser::Date DateTimeParser::constructRelativeDate(int daysFromToday) {
+	return boost::posix_time::second_clock::local_time().date() +
+		boost::gregorian::days(daysFromToday);
 }
 
 }  // namespace NLP
