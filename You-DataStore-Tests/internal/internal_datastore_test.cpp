@@ -22,6 +22,11 @@ using DataStore = You::DataStore::Internal::DataStore;
 /// Unit Test Class for \ref Internal::DataStore class
 TEST_CLASS(DataStoreTest) {
 public:
+	void createDummyDataXml() {
+		std::ofstream ofs("data.xml");
+		ofs << "Lel I'm not even an xml";
+	}
+
 	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		DataStore::get().document.reset();
 		std::remove("data.xml");
@@ -184,6 +189,17 @@ public:
 
 	TEST_METHOD(wipeData) {
 		DataStore::get().wipeData();
+	}
+
+	TEST_METHOD(firstLoadDoesNotThrowException) {
+		std::remove("data.xml");
+		Internal::DataStore::get().loadData();
+	}
+
+	TEST_METHOD(xmlParseErrorThrowsException) {
+		createDummyDataXml();
+		auto fun = [] { Internal::DataStore::get().loadData(); };
+		Assert::ExpectException<char*>(fun);
 	}
 };
 }  // namespace UnitTests
