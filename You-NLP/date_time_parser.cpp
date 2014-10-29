@@ -38,11 +38,13 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			boost::posix_time::hours(0))
 		]
 	) >> qi::eoi;
+	start.name("start");
 
 	#pragma region Primitive date component parsers
 	year = (
 		+ParserCharTraits::digit
 	)[qi::_val = phoenix::bind(&DateTimeParser::parseFuzzyYear, qi::_1)];
+	year.name("year");
 
 	monthNames.add
 		(L"jan", boost::gregorian::Jan)
@@ -57,11 +59,13 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		(L"oct", boost::gregorian::Oct)
 		(L"nov", boost::gregorian::Nov)
 		(L"dec", boost::gregorian::Dec);
+	monthNames.name("monthNames");
 
 	month %= (
 		qi::int_ |
 		ParserCharTraits::no_case[monthNames]
 	);
+	month.name("month");
 
 	weekDays.add
 		(L"mon", boost::gregorian::Monday)
@@ -78,10 +82,12 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		(L"saturday", boost::gregorian::Saturday)
 		(L"sun", boost::gregorian::Sunday)
 		(L"sunday", boost::gregorian::Sunday);
+	weekDays.name("weekDays");
 
 	day %= (
 		qi::int_
 	);
+	day.name("name");
 	#pragma endregion
 
 	space = qi::omit[+ParserCharTraits::blank];
@@ -90,22 +96,27 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	dateYearMonthDay = (
 		year >> (space | '-') >> month >> (space | '-') >> day
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
+	dateYearMonthDay.name("dateYearMonthDay");
 
 	dateYearMonth = (
 		year >> '-' >> month
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, 1)];
+	dateYearMonth.name("dateYearMonth");
 
 	dateYear = (
 		year
 	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
+	dateYear.name("dateYear");
 
 	dateMonthYear = (
 		month >> space  >> year
 	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
+	dateMonthYear.name("dateMonthYear");
 
 	dateDayMonth = (
 		day >> space >> month
 	)[qi::_val = phoenix::bind(&constructDayMonthDate, qi::_1, qi::_2)];
+	dateDayMonth.name("dateDayMonth");
 
 	date %= (
 		dateYearMonthDay |
@@ -115,6 +126,7 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		dateYear |
 		relativeDate
 	);
+	date.name("date");
 
 	relativeDate %= (
 		ParserCharTraits::no_case[(
