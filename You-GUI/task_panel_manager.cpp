@@ -59,6 +59,7 @@ void MainWindow::TaskPanelManager::setup() {
 	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
 	taskTreePanel->setColumnHidden(5, true);
+	taskTreePanel->setColumnHidden(6, true);
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -80,6 +81,11 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
+	if (task.isCompleted()) {
+		QFont font = items.at(0)->font(2);
+		font.setStrikeOut(true);
+		items.at(0)->setFont(2, font);
+	}
 	updateRowNumbers();
 }
 
