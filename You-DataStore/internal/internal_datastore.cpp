@@ -113,7 +113,14 @@ bool DataStore::saveData() {
 void DataStore::loadData() {
 	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
-		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
+		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH.c_str());
+		bool loadSuccessful = loadStatus;
+		bool isFirstLoad =
+			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
+		if (!loadSuccessful && !isFirstLoad) {
+			// TODO(digawp): Throw an exception
+			throw "Something";
+		}
 	}
 }
 
