@@ -25,22 +25,28 @@ public:
 	}
 
 	TEST_METHOD(throwsContextRequiredExceptionWhenDefaultIsUsed) {
-		Assert::ExpectException<ContextRequiredException>([]() {
-			Controller::Context::DEFAULT.at(0);
-		}, L"Default context throws exception when used.");
+		Assert::ExpectException<ContextRequiredException>(
+			std::bind(
+				&Controller::Context::at,
+				Controller::Context::DEFAULT,
+				0),
+			L"Default context throws exception when used.");
 
-		Assert::ExpectException<ContextRequiredException>([]() {
-			Controller::Context::DEFAULT[0];
-		}, L"Default context throws exception when used.");
+		Assert::ExpectException<ContextRequiredException>(
+			std::bind(
+				&Controller::Context::operator[],
+				Controller::Context::DEFAULT,
+				0),
+			L"Default context throws exception when used.");
 	}
 
 	TEST_METHOD(atThrowsOutOfRangeWhenUsedWithInvalidIndex) {
 		TaskList list;
 		Controller::Context controllerContext(list);
 
-		Assert::ExpectException<std::out_of_range>([&]() {
-			controllerContext.at(0);
-		}, L"at throws exception when used with invalid index.");
+		Assert::ExpectException<std::out_of_range>(
+			std::bind(&Controller::Context::at, controllerContext, 0),
+			L"at throws exception when used with invalid index.");
 	}
 
 	TEST_METHOD(atAndArrayAccessReturnsCorrectItem) {

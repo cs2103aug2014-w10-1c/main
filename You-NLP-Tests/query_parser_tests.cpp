@@ -24,16 +24,16 @@ using You::NLP::QUERY;
 TEST_CLASS(QueryParserTests) {
 public:
 	TEST_METHOD(throwsExceptionOnEmptyString) {
-		Assert::ExpectException<ParserException>([]() {
-			QueryParser::parse(L"");
-		}, L"Throws exception on empty string");
+		Assert::ExpectException<ParserException>(
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L""));
 	}
 
 	TEST_METHOD(throwsExceptionWhenParseFails) {
-		Assert::ExpectException<ParserException>([]() {
-				// "throw" is currently not defined, so this should work.
-				QueryParser::parse(L"/throw");
-			}, L"Throws exception on syntax error");
+		// "throw" is currently not defined, so this should work.
+		Assert::ExpectException<ParserException>(
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L"/throw"));
 	}
 
 	TEST_METHOD(parsesStringAsTask) {
@@ -82,6 +82,21 @@ public:
 			L"win lottery",
 			TaskPriority::HIGH,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesIrregularSpacingAddTask) {
+		QUERY q;
+		Assert::ExpectException<ParseErrorException>(
+			boost::phoenix::bind(&QueryParser::parse,
+				L"/adds Hello World by 20 oct"));
+
+		q = QueryParser::parse(L"/add E by 22 oct");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"E",
+			TaskPriority::NORMAL,
+			ptime(date(2015, boost::gregorian::Oct, 22), hours(0))
 		}), q);
 	}
 
@@ -240,9 +255,10 @@ public:
 	}
 
 	TEST_METHOD(parsesEditQueryWithWrongType) {
-		Assert::ExpectException<ParserTypeException>([]() {
-			QueryParser::parse(L"/edit 10 set description='14 oct'");
-		});
+		Assert::ExpectException<ParserTypeException>(
+			std::bind(static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse),
+				L"/edit 10 set description='14 oct'"));
 	}
 
 	TEST_METHOD(parsesDeleteQuery) {
@@ -251,6 +267,10 @@ public:
 		Assert::AreEqual(QUERY(DELETE_QUERY {
 			10
 		}), q);
+
+		Assert::ExpectException<ParseErrorException>(std::bind(
+			static_cast<QUERY (*)(const std::wstring&)>(
+				&QueryParser::parse), L"/delete10"));
 	}
 
 	TEST_METHOD(parsesUndoQuery) {
