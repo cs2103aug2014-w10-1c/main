@@ -225,7 +225,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.deadline,
 					priority,
 					boost::none,
-					boost::none)));
+					query.complete)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
