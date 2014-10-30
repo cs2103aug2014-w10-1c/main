@@ -155,6 +155,8 @@ private slots:
 
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
+
+	Task::ID getSelectedTaskID();
 };
 
 

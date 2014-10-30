@@ -110,6 +110,8 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
+	Task::ID curr = getSelectedTaskID();
+	qDebug() << curr;
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -149,6 +151,17 @@ void MainWindow::sendQuery() {
 		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 		assert(false);
+	}
+
+	/// Selects the item if it was originally selected and still exists
+	QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+		boost::lexical_cast<QString>(curr), 0);
+	if (items.size() != 0) {
+		if (items.size() == 1) {
+			ui.taskTreePanel->setCurrentItem(items.at(0));
+		} else {
+			assert(false);
+		}
 	}
 
 	ui.statusIcon->setPixmap(pixmap);
@@ -207,6 +220,20 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
+	}
+}
+
+Task::ID MainWindow::getSelectedTaskID() {
+	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
+	QString contents = "";
+	if (selection.size() == 0) {
+		return -1;
+	}
+	else {
+		QTreeWidgetItem item = *selection.at(0);
+		Task::ID index =
+			boost::lexical_cast<Task::ID>(item.text(0).toLongLong());
+		return index;
 	}
 }
 
