@@ -130,29 +130,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	std::wstringstream wss;
-	if (task.getDeadline() == Task::NEVER) {
-		wss << L"Never";
-	} else if (isPastDue(task.getDeadline())) {
-		wss << L"Overdue (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 0)) {
-		wss << L"Today (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 1)) {
-		wss << L"Tomorrow (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 2)) {
-		wss << L"In two days (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 7)) {
-		wss << L"Within one week (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 14)) {
-		wss << L"Within two weeks (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 21)) {
-		wss << L"Within three weeks (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 28)) {
-		wss << L"Within one month (" << task.getDeadline() << L")";
-	} else {
-		wss << L"More than a month away (" << task.getDeadline() << L")";
-	}
-	result.push_back(boost::lexical_cast<QString>(wss.str()));
+	result.push_back(getReadableDeadline(task));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -249,6 +227,39 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 
 	itemContextMenu->popup(
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
+}
+
+QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
+	std::wstringstream wss;
+	boost::gregorian::date_facet *facet
+		= new boost::gregorian::date_facet("%d-%b-%Y");
+	wss.imbue(std::locale(wss.getloc(), facet));
+	if (task.getDeadline() == Task::NEVER) {
+		wss << L"Never";
+	} else if (isPastDue(task.getDeadline())) {
+		wss << L"Overdue (" << task.getDeadline().date() << L")";
+	} else if (isDueAfter(task.getDeadline(), 0)) {
+		wss << L"Today (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 1)) {
+		wss << L"Tomorrow (" << task.getDeadline().date() << L")";
+	} else if (isDueAfter(task.getDeadline(), 2)) {
+		wss << L"In two days (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 7)) {
+		Date dl = Date(task.getDeadline().date());
+		wss << L"This coming " << dl.day_of_week()
+			<< L" (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 14)) {
+		Date dl = Date(task.getDeadline().date());
+		wss << L"Next " << dl.day_of_week()
+			<< L" (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 21)) {
+		wss << L"Within three weeks (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 28)) {
+		wss << L"Within one month (" << task.getDeadline().date() << L")";
+	} else {
+		wss << L"More than a month away (" << task.getDeadline() << L")";
+	}
+	return boost::lexical_cast<QString>(wss.str());
 }
 
 }  // namespace GUI

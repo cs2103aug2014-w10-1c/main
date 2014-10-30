@@ -52,6 +52,8 @@ public:
 
 	static bool isDueWithinExactly(Task::Time deadline, int days);
 
+	static QString getReadableDeadline(Task task);
+
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget
