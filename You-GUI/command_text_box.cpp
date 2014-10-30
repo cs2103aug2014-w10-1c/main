@@ -26,6 +26,7 @@ void CommandTextBox::setup() {
 	setFocus(Qt::FocusReason::ActiveWindowFocusReason);
 	setSizePolicy(
 		QSizePolicy::Expanding, QSizePolicy::Ignored);
+	setVisible(true);
 }
 
 void CommandTextBox::setCompleter() {

@@ -60,7 +60,7 @@ public:
 		int column2 = QString::compare(item.text(2), QString("test"));
 		int column3 = QString::compare(
 			item.text(3),
-			QString("Overdue (1999-Nov-01 00:00:00)"));
+			QString("Overdue (1999-Nov-01)"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
 
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&
@@ -173,7 +173,7 @@ public:
 		int column2 = QString::compare(item.text(2), QString("abc"));
 		int column3 = QString::compare(
 			item.text(3),
-			QString("Overdue (1999-Nov-01 00:00:00)"));
+			QString("Overdue (1999-Nov-01)"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
 
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&
