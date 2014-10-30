@@ -12,6 +12,8 @@ CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
 	setFocusPolicy(Qt::StrongFocus);
 	historyIndex = commandHistory.begin();
 	setCompleter();
+	syntaxHighlighter.reset(
+		new SyntaxHighlighter(document()));
 }
 
 CommandTextBox::~CommandTextBox() {}

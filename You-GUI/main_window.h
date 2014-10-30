@@ -6,7 +6,6 @@
 #include <QtWidgets/QMainWindow>
 #include "You-Controller/result.h"
 #include "ui_yougui.h"
-#include "syntax_highlighter.h"
 #include "command_text_box.h"
 
 namespace You {
@@ -33,8 +32,6 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
-
-	std::unique_ptr<SyntaxHighlighter> syntaxHighlighter;
 
 	/// The class from which all components inherit.
 	class BaseManager;
@@ -123,14 +120,6 @@ private:
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 
-	std::map<int32_t, QTimer*> timerMap;
-
-	/// Initializes timers for all tasks
-	void initializeAllTimerNotifications();
-
-	/// Initializes single timer
-	void initializeSingleTimerNotification(Task task);
-
 private:
 	static const QString READY_MESSAGE;
 	static const QString EMPTY_TASK_DESCRIPTION_MESSAGE;
@@ -166,9 +155,6 @@ private slots:
 
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
-
-	/// Gives the user notifications of a task
-	void notify(Task::ID id);
 };
 
 

@@ -36,11 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
 	stm->setup();
 	qm->setup();
 	tpm->setup();
-	initializeAllTimerNotifications();
 	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
 	commandTextBox->setup();
-	syntaxHighlighter.reset(
-		new SyntaxHighlighter(commandTextBox->document()));
 	connect(&*commandTextBox, SIGNAL(enterKey()),
 		this, SLOT(commandEnterPressed()));
 	populateTaskPanel();
@@ -86,7 +83,6 @@ const TaskList& MainWindow::getTaskList() const {
 }
 
 void MainWindow::addTask(const Task& task) {
-	initializeSingleTimerNotification(task);
 	taskList->push_back(task);
 	tpm->addTask(task);
 }
@@ -104,13 +100,10 @@ void MainWindow::deleteTask(Task::ID taskID) {
 
 	assert(i != taskList->end());
 	taskList->erase(i);
-	timerMap.erase(taskID);
 	tpm->deleteTask(taskID);
 }
 
 void MainWindow::editTask(const Task& task) {
-	timerMap.erase(task.getID());
-	initializeSingleTimerNotification(task);
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 	emit(taskSelected());
@@ -140,23 +133,19 @@ void MainWindow::sendQuery() {
 	} catch (You::Controller::ContextRequiredException& e) {
 		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::Controller::CircularDependencyException& e) {
+	} catch (You::Controller::CircularDependencyException& e) {
 		ui.statusMessage->setText(CIRCULAR_DEPENDENCY_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::Controller::NotUndoAbleException& e) {
+	} catch (You::Controller::NotUndoAbleException& e) {
 		ui.statusMessage->setText(NOT_UNDOABLE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (You::Controller::ParserTypeException& e) {
+	} catch (You::Controller::ParserTypeException& e) {
 		ui.statusMessage->setText(PARSER_TYPE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ParserException& e) {
 		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	}
-	catch (...) {
+	} catch (...) {
 		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 		assert(false);
@@ -218,34 +207,6 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
-	}
-}
-
-void MainWindow::initializeAllTimerNotifications() {
-	for (int i = 0; i < taskList->size(); i++) {
-		initializeSingleTimerNotification(taskList->at(i));
-	}
-}
-
-void MainWindow::initializeSingleTimerNotification(Task task) {
-	Task::Time deadline = task.getDeadline();
-	if (deadline != Task::DEFAULT_DEADLINE) {
-		Task::Time now = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration difference = deadline - now;
-		QTimer* timer = new QTimer(this);
-		connect(timer, SIGNAL(timeout()), this,
-			SLOT(notify(notify(task.getID(), task.getDeadline()))));
-		timerMap[task.getID()] = timer;
-	}
-}
-
-void MainWindow::notify(Task::ID id) {
-	for (auto it = taskList->begin(); it != taskList->end(); it++) {
-		Task task = *it;
-		if (task.getID() == id) {
-			stm->trayIcon.showMessage("lol", "lol");
-			break;
-		}
 	}
 }
 
