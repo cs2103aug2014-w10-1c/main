@@ -198,6 +198,13 @@ bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	return deadline < now;
 }
 
+bool MainWindow::TaskPanelManager::isDueWithinExactly(
+	Task::Time deadline, int days) {
+	Task::Time now = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration day(days * 24, 0, 0, 0);
+	return deadline < (now + day) && deadline > now;
+}
+
 bool MainWindow::TaskPanelManager::isDueAfter(
 		Task::Time deadline, int daysLeft) {
 	Date by = Date(deadline.date());

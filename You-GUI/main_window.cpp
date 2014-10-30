@@ -41,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(&*commandTextBox, SIGNAL(enterKey()),
 		this, SLOT(commandEnterPressed()));
 	populateTaskPanel();
+	statusBar()->insertPermanentWidget(
+		0, ui.statusTasks, 0);
+	updateTaskInfoBar();
 }
 
 MainWindow::~MainWindow() {
@@ -166,6 +169,7 @@ void MainWindow::sendQuery() {
 
 	ui.statusIcon->setPixmap(pixmap);
 	commandTextBox->setPlainText(QString());
+	updateTaskInfoBar();
 }
 
 void MainWindow::commandEnterPressed() {
@@ -228,8 +232,7 @@ Task::ID MainWindow::getSelectedTaskID() {
 	QString contents = "";
 	if (selection.size() == 0) {
 		return -1;
-	}
-	else {
+	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		Task::ID index =
 			boost::lexical_cast<Task::ID>(item.text(0).toLongLong());
@@ -257,6 +260,22 @@ void MainWindow::contextEditTask(int id) {
 	commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
 	commandTextBox->setFocus();
 	commandTextBox->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::updateTaskInfoBar() {
+	int dueSoon = 0;
+	int overdue = 0;
+	for (int i = 0; i < taskList->size(); i++) {
+		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
+			dueSoon++;
+		}
+		if (tpm->isPastDue(taskList->at(i).getDeadline())) {
+			overdue++;
+		}
+	}
+	std::wostringstream ss;
+	ss << L"Overdue tasks: " << overdue << L". Tasks due soon: " << dueSoon;
+	ui.statusTasks->setText(QString::fromStdWString(ss.str()));
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
