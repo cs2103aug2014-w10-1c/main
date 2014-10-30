@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 		stm(new MainWindow::SystemTrayManager(this)),
 		tpm(new MainWindow::TaskPanelManager(this)),
 		qm(new MainWindow::QueryManager(this)),
+		commandTextBox(new CommandTextBox(this)),
 		taskList(new TaskList) {
 	#pragma warning(push)
 	#pragma warning(disable: 4127)
@@ -35,24 +36,13 @@ MainWindow::MainWindow(QWidget *parent)
 	stm->setup();
 	qm->setup();
 	tpm->setup();
-	
-
 	initializeAllTimerNotifications();
-	commandTextBox = new CommandTextBox(ui.splitter);
-	ui.horizontalLayout->insertWidget(0, commandTextBox);
-	//commandTextBox->setVisible(true);
-	ui.taskTreePanel->viewport()->installEventFilter(this);
-	commandTextBox->setTabChangesFocus(true);
-	commandTextBox->setWordWrapMode(QTextOption::NoWrap);
-	commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
-	commandTextBox->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Ignored);
+	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
+	commandTextBox->setup();
 	syntaxHighlighter.reset(
 		new SyntaxHighlighter(commandTextBox->document()));
-	connect(commandTextBox, SIGNAL(enterKey()), this, SLOT(commandEnterPressed()));
-	//connect(this, SIGNAL(taskPanelContextMenu(const QPoint &pos)), &*tpm, SLOT(contextMenu(const QPoint &pos)));
+	connect(&*commandTextBox, SIGNAL(enterKey()),
+		this, SLOT(commandEnterPressed()));
 	populateTaskPanel();
 }
 
@@ -127,7 +117,6 @@ void MainWindow::editTask(const Task& task) {
 }
 
 void MainWindow::sendQuery() {
-	
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -145,19 +134,34 @@ void MainWindow::sendQuery() {
 	} catch (You::Controller::ParseErrorException& e) {
 		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (You::Controller::ParserException& e) {
-		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
-		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextRequiredException& e) {
 		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (...) {
-		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
+	}
+	catch (You::Controller::CircularDependencyException& e) {
+		ui.statusMessage->setText(CIRCULAR_DEPENDENCY_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	}
+	catch (You::Controller::NotUndoAbleException& e) {
+		ui.statusMessage->setText(NOT_UNDOABLE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (You::Controller::ParserTypeException& e) {
+		ui.statusMessage->setText(PARSER_TYPE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParserException& e) {
+		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	}
+	catch (...) {
+		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+		assert(false);
+	}
+
 	ui.statusIcon->setPixmap(pixmap);
 	commandTextBox->setPlainText(QString());
 }

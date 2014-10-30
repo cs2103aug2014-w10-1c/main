@@ -16,6 +16,16 @@ CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
 
 CommandTextBox::~CommandTextBox() {}
 
+void CommandTextBox::setup() {
+	setTabChangesFocus(true);
+	setWordWrapMode(QTextOption::NoWrap);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+	setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Ignored);
+}
+
 void CommandTextBox::setCompleter() {
 	QStringList wordList;
 	std::wstringstream wss;
@@ -86,7 +96,7 @@ void CommandTextBox::focusInEvent(QFocusEvent *e) {
 
 void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 	if (completer && completer->popup()->isVisible()) {
-		// The following keys are forwarded by the completer to the widget
+		// If popup is shown then the following keys will break the popup
 		switch (e->key()) {
 		case Qt::Key_Enter:
 		case Qt::Key_Return:
@@ -99,62 +109,76 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 			break;
 		}
 	} else {
-		switch (e->key()) {
-		case Qt::Key_Enter:
-		case Qt::Key_Return:
-			if (!commandHistory.empty()) {
-				if (historyIndex == --commandHistory.end()) {
-					commandHistory.push_back(
-						this->toPlainText().toStdWString());
-					historyIndex++;
-				}
-				else {
-					std::advance(historyIndex, 2);
-					commandHistory.erase(historyIndex, commandHistory.end());
-					commandHistory.push_back(
-						this->toPlainText().toStdWString());
-					historyIndex = --commandHistory.end();
-				}
+		// Handles up, down and enter key behavior
+		defaultKeyHandling(e);
+	}
+	completerKeyHandling(e);
+}
+
+void CommandTextBox::defaultKeyHandling(QKeyEvent *e) {
+	switch (e->key()) {
+	case Qt::Key_Enter:
+	case Qt::Key_Return:
+		if (!commandHistory.empty()) {
+			if (historyIndex == --commandHistory.end()) {
+				commandHistory.push_back(
+					this->toPlainText().toStdWString());
+				historyIndex++;
+			} else {
+				std::advance(historyIndex, 2);
+				commandHistory.erase(historyIndex, commandHistory.end());
+				commandHistory.push_back(
+					this->toPlainText().toStdWString());
+				historyIndex = --commandHistory.end();
 			}
-			else {
-				commandHistory.push_back(this->toPlainText().toStdWString());
+		} else {
+			commandHistory.push_back(this->toPlainText().toStdWString());
+			historyIndex--;
+		}
+		emit(enterKey());
+		this->setFocus();
+		return;
+	case Qt::Key_Up:
+		if (!commandHistory.empty()) {
+			if (historyIndex == commandHistory.end()) {
 				historyIndex--;
 			}
-			emit(enterKey());
-			this->setFocus();
-			return;
-		case Qt::Key_Up:
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				this->setText(
-					QString::fromStdWString(*historyIndex));
-				this->moveCursor(QTextCursor::End);
-				if (historyIndex != commandHistory.begin()) {
-					historyIndex--;
-				}
+			this->setText(
+				QString::fromStdWString(*historyIndex));
+			this->moveCursor(QTextCursor::End);
+			if (historyIndex != commandHistory.begin()) {
+				historyIndex--;
 			}
-		case Qt::Key_Down:
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				this->setText(
-					QString::fromStdWString(*historyIndex));
-				this->moveCursor(QTextCursor::End);
-				if (historyIndex != --commandHistory.end()) {
-					historyIndex++;
-				}
-			}
-		default:
-			break;
 		}
+		return;
+	case Qt::Key_Down:
+		if (!commandHistory.empty()) {
+			if (historyIndex == commandHistory.end()) {
+				historyIndex--;
+			}
+			this->setText(
+				QString::fromStdWString(*historyIndex));
+			this->moveCursor(QTextCursor::End);
+			if (historyIndex != --commandHistory.end()) {
+				historyIndex++;
+			}
+		}
+		return;
+	default:
+		return;
+	}
+}
+
+void CommandTextBox::completerKeyHandling(QKeyEvent *e) {
+	switch (e->key()) {
+	case Qt::Key_Enter:
+	case Qt::Key_Return:
+		return;
 	}
 	QTextEdit::keyPressEvent(e);
 	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-=");
 	QString completionPrefix = textUnderCursor();
-	if ((e->text().isEmpty() || completionPrefix.length() < 1
+	if ((e->text().isEmpty() || completionPrefix.length() < 2
 		|| eow.contains(e->text().right(1)))) {
 		completer->popup()->hide();
 		return;
@@ -170,5 +194,10 @@ void CommandTextBox::keyPressEvent(QKeyEvent *e) {
 		+ completer->popup()->verticalScrollBar()->sizeHint().width());
 	completer->complete(cr);
 }
+
+void CommandTextBox::wheelEvent(QWheelEvent *e) {
+	e->ignore();
+}
+
 }  // namespace GUI
 }  // namespace You

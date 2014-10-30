@@ -85,6 +85,7 @@ public:
 
 signals:
 	void taskPanelContextMenu(const QPoint &pos);
+
 protected:
 	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
 	/// task panel proportions on resize.
@@ -108,7 +109,7 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
-	CommandTextBox *commandTextBox;
+	const std::unique_ptr<CommandTextBox> commandTextBox;
 
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
@@ -140,6 +141,9 @@ private:
 	static const QString RESOURCE_GREEN;
 	static const QString CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE;
 	static const QString CONTEXT_REQUIRED_MESSAGE;
+	static const QString CIRCULAR_DEPENDENCY_MESSAGE;
+	static const QString NOT_UNDOABLE_MESSAGE;
+	static const QString PARSER_TYPE_MESSAGE;
 	static const QString UNKNOWN_EXCEPTION_MESSAGE;
 
 private slots:
