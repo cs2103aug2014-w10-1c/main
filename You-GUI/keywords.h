@@ -10,8 +10,9 @@ const std::wstring COMMAND_ADD = L"/add";
 const std::wstring COMMAND_DELETE = L"/delete";
 const std::wstring COMMAND_EDIT = L"/edit";
 const std::wstring COMMAND_SHOW = L"/show";
-const std::array<std::wstring, 4> COMMANDS = { COMMAND_SHOW, COMMAND_ADD,
-COMMAND_DELETE, COMMAND_EDIT };
+const std::wstring COMMAND_UNDO = L"/undo";
+const std::array<std::wstring, 5> COMMANDS = { COMMAND_SHOW, COMMAND_ADD,
+COMMAND_DELETE, COMMAND_EDIT, COMMAND_UNDO };
 
 const std::wstring PARAM_PREFIX = L"set";
 

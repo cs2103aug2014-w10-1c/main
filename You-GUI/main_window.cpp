@@ -271,22 +271,6 @@ MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-	if (object == ui.taskTreePanel->viewport() && event->type() == QEvent::ContextMenu) {
-		qDebug() << event->type();
-		QMouseEvent *keyEvent = static_cast<QMouseEvent *>(event);
-		if (keyEvent->button() == Qt::RightButton) {
-			emit(taskPanelContextMenu(keyEvent->globalPos()));
-		}
-		return true;
-	}
-	else if (event->type() == QEvent::ContextMenu) {
-		qDebug() << "lol...";
-	}
-	else {
-		return QMainWindow::eventFilter(object, event);
-	}
-}
 
 }  // namespace GUI
 }  // namespace You

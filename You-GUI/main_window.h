@@ -110,9 +110,6 @@ private:
 
 	CommandTextBox *commandTextBox;
 
-	std::list<std::wstring> commandHistory;
-	std::list<std::wstring>::iterator historyIndex;
-
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
 
@@ -121,8 +118,6 @@ private:
 
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
-
-	bool eventFilter(QObject *object, QEvent *event);
 
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
