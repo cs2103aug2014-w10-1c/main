@@ -46,6 +46,21 @@ void AddTask::ensureDependencyIsValid() const {
 	}
 }
 
+void AddTask::ensureSubtasksIsValid() const {
+	for (const auto& id : subtasks) {
+		try {
+			auto task = State::get().sgraph().getTask(id);
+			if (task.getParent() != task.getID()) {
+				throw Exception::TaskAlreadyHasParentException();
+			}
+		} catch (const Exception::TaskNotFoundException& e) {
+			throw e;
+		} catch (const Exception::TaskAlreadyHasParentException& e) {
+			throw e;
+		}
+	}
+}
+
 void AddTask::addTaskToGraphs(const Task& task,
 	State& state) const {
 	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %

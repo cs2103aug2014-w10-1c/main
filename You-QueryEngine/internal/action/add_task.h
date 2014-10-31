@@ -41,6 +41,7 @@ private:
 	void addTaskToGraphs(const Task& task, State& state) const;
 	void makeTransaction(const Task& newTask) const;
 	void ensureDependencyIsValid() const;
+	void ensureSubtasksIsValid() const;
 
 	/// Execute add task.
 	Response execute(State& tasks) override;
@@ -50,6 +51,7 @@ private:
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.
+	const Task::Subtasks subtasks; ///< Subtasks.
 };
 
 }  // namespace Action

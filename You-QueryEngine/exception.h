@@ -36,6 +36,11 @@ class CircularDependencyException : public BaseException {
 class NotUndoAbleException : public BaseException {
 };
 
+/// An exception thrown when trying to attach a task that
+/// already has a parent to another task.
+class TaskAlreadyHasParentException : public BaseException {
+};
+
 }  // namespace Exception
 }  // namespace QueryEngine
 }  // namespace You
