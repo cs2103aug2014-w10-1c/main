@@ -59,7 +59,7 @@ public:
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
 			std::wstring(L"2002;1;10;1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
-			std::wstring(L"HIGH"));
+			std::wstring(L"high"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
 			std::wstring(L"1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PARENT],

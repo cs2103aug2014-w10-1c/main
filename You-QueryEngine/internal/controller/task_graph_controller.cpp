@@ -12,6 +12,7 @@ namespace Internal {
 namespace {
 	using TGC = TaskGraphController;
 	using Vertex = TaskGraph::Vertex;
+	using Graph = TaskGraph::Graph;
 	using VIterator = TaskGraph::VIterator;
 	using DataStore = You::DataStore::DataStore;
 }
@@ -67,25 +68,29 @@ void TGC::connectEdge(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
 }
 
 void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
-	VIterator begin;
-	VIterator end;
-	VIterator next;
-	bool removed = false;
-	boost::tie(begin, end) = boost::vertices(g.graph);
-	for (next = begin; !removed && next != end; begin = next) {
-		const Task::ID idInVertex = g.graph[*next];
-		if (idInVertex == id) {
-			removed = true;
-			boost::remove_vertex(*begin, g.graph);
+	auto task = g.getTask(id);
+	auto children = g.getAdjacentTasks(task);
+
+	// Connect all children to each parent and remove this task
+	// from their neighbor.
+	for (auto& t : g.asTaskList()) {
+		auto parentChildren = g.getAdjacentTasks(t);
+		if (parentChildren.find(task.getID()) != parentChildren.end()) {
+			parentChildren.erase(task.getID());
+			for (const auto& cid : children) {
+				parentChildren.insert(cid);
+			}
 		}
-		++next;
+		if (g.type == TaskGraph::GraphType::DEPENDENCY) {
+			t.setDependencies(parentChildren);
+		} else {
+			t.setSubtasks(parentChildren);
+		}
+		g.taskTable[t.getID()] = t;
 	}
-	if (!removed) {
-		throw Exception::TaskNotFoundException();
-	} else {
-		g.taskTable.erase(id);
-		rebuildGraph(g);
-	}
+
+	g.taskTable.erase(id);
+	rebuildGraph(g);
 }
 
 void TGC::updateTask(TaskGraph& g, const Task& task) {
