@@ -113,6 +113,33 @@ TEST_CLASS(DependencyGraphTest) {
 		});
 	}
 
+	// Create a dependency chain t -> t2 -> t3
+	// When t2 is deleted, it should now be t -> t3
+	TEST_METHOD(deleteExistingTaskFromGraphWithDependency) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"test");
+		Task t2 = Controller::Builder::get().id(21L).description(L"test2").
+			dependencies({t.getID()});
+		Task t3 = Controller::Builder::get().id(22L).description(L"test3").
+			dependencies({t2.getID()});
+		Controller::Graph::addTask(g, t);
+		Controller::Graph::addTask(g, t2);
+		Controller::Graph::addTask(g, t3);
+
+		Assert::IsFalse(t3.isDependOn(t.getID()));
+		Controller::Graph::deleteTask(g, t2.getID());
+		t3 = g.getTask(t3.getID());
+		Assert::IsTrue(t3.isDependOn(t.getID()));
+	}
+
+	TEST_METHOD(subtasksAndDependenciesAreSeparateConcern) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"Circular")
+										   .subtasks({ 20L });
+		Controller::Graph::addTask(g, t);
+		Assert::AreEqual(g.getTask(t.getID()), t);
+	}
+
 	DependencyGraphTest& operator=(const DependencyGraphTest&) = delete;
 };
 
