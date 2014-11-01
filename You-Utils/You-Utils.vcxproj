@@ -81,6 +81,7 @@
     <ClInclude Include="log\log_sink.h" />
     <ClInclude Include="option.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="string.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log\log.cpp" />
@@ -90,6 +91,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

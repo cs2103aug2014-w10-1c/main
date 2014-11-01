@@ -104,10 +104,6 @@ TEST_CLASS(LogTests) {
 		Assert::AreEqual(2U, tester->getCallCount());
 	}
 
-	TEST_METHOD(stdStreamManipulators) {
-		Log::debug << std::endl;
-	}
-
 	TEST_METHOD(correctLogLevels) {
 		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::DEBUG));
 		Log::debug << L"";

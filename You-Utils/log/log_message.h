@@ -8,6 +8,8 @@
 #include <functional>
 #include <type_traits>
 
+#include "../string.h"
+
 namespace You {
 namespace Utils {
 
@@ -126,11 +128,6 @@ public:
 		return *this;
 	}
 
-	/// Compatibility with ostream manipulators. This is a no-op.
-	LogMessage& operator<<(LogMessage& (*)(LogMessage&)) {
-		return *this;
-	}
-
 private:
 	/// Constructs a new log message buffer, with the given category.
 	///
@@ -182,7 +179,7 @@ private:
 	///                   must have a lifetime longer than this.
 	void write(const char* const string, value) {
 		components.emplace_back([string] {
-			return LogMessage::toWString(string, strlen(string));
+			return toWString(string, strlen(string));
 		});
 	}
 
@@ -200,15 +197,9 @@ private:
 	///                  must have a lifetime longer than this.
 	void write(const std::string& string, value) {
 		components.emplace_back([&string] {
-			return LogMessage::toWString(string.c_str(), string.length());
+			return toWString(string.c_str(), string.length());
 		});
 	}
-
-	/// Helper to convert char strings to wchar_t strings.
-	///
-	/// \param[in] string The string to convert.
-	/// \param[in] count The number of characters to convert.
-	static std::wstring toWString(const char* string, size_t count);
 
 private:
 	/// The logger to write to.
@@ -223,45 +214,5 @@ private:
 
 }  // namespace Utils
 }  // namespace You
-
-#pragma region std::ostream compatibility
-
-namespace std {
-
-/// Technically I'm not allowed to do this by the C++ Standard. But this is
-/// needed for boost::spirit to work with our logger.
-inline You::Utils::LogMessage& endl(You::Utils::LogMessage& message) {
-	return message;
-}
-}  // namespace std
-
-#include <boost/fusion/support/is_sequence.hpp>
-namespace boost {
-namespace fusion {
-
-template<typename Sequence>
-inline std::wostream&
-	out(std::wostream& os, Sequence& seq) {
-	detail::print_sequence(os, seq);
-	return os;
-}
-
-namespace operators {
-
-template <typename Sequence>
-inline typename
-	boost::enable_if<
-		boost::fusion::traits::is_sequence<Sequence>,
-		std::wostream&
-	>::type
-	operator<<(std::wostream& os, Sequence const& seq) {
-	return fusion::out(os, seq);
-}
-
-}  // namespace operators
-}  // namespace fusion
-}  // namespace boost
-
-#pragma endregion
 
 #endif  // YOU_UTILS_LOG_LOG_MESSAGE_H_
