@@ -106,13 +106,16 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 Filter Filter::isChildOf(Task::ID id) {
 	return Filter([id] (const Task& task) {
-		return task.getParent() != task.getID()
-			&& task.getParent() == id;
+		if (task.getParent() == task.getID()) {
+			return false;
+		} else {
+			return task.getParent() == id;
+		}
 	});
 }
 
 Filter Filter::isParentOf(Task::ID id) {
-	auto theTask = Internal::State::get().graph().getTask(id);
+	auto theTask = Internal::State::get().sgraph().getTask(id);
 	return Filter([id, theTask] (const Task& task) {
 		return theTask.getParent() == task.getID();
 	});
@@ -125,7 +128,7 @@ Filter Filter::isDependOn(Task::ID id) {
 }
 
 Filter Filter::isDependedBy(Task::ID id) {
-	auto theTask = Internal::State::get().graph().getTask(id);
+	auto theTask = Internal::State::get().sgraph().getTask(id);
 	return Filter([id, theTask] (const Task& task) {
 		return theTask.isDependOn(task.getID());
 	});
@@ -141,9 +144,10 @@ Filter Filter::isRelatedTo(Task::ID id) {
  }
 
 Filter Filter::isDescendantOf(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
 	return Filter([=] (const Task& task) {
 		bool cond = (isChildOf(id))(task);
-		for (auto child : task.getSubtasks()) {
+		for (auto child : theTask.getSubtasks()) {
 			cond = cond || (isDescendantOf(child))(task);
 		}
 		return cond;
