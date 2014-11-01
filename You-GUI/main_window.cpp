@@ -85,6 +85,30 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
+	taskList->push_back(task);
+	if (task.getID() == task.getParent()) {
+		/// Is top level task
+		tpm->addTask(task);
+	} else {
+		/// Add as subtask
+		Task parent = *std::find_if(taskList->begin(), taskList->end(),
+			[=](Task& task) {
+			return task.getID() == task.getParent();
+		});
+		tpm->addSubtask(parent, task);
+
+		/// Now add subtasks of this subtask recursively
+		for each (Task::ID subtask in task.getSubtasks()) {
+			TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+				[=](Task& task) {
+				return task.getID() == subtask;
+			});
+			addTaskWithSubtasks(*i, tl);
+		}
+	}
+}
+
 void MainWindow::addTask(const Task& task) {
 	taskList->push_back(task);
 	tpm->addTask(task);
@@ -92,7 +116,7 @@ void MainWindow::addTask(const Task& task) {
 
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
-		std::bind(&MainWindow::addTask, this, std::placeholders::_1));
+		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -209,6 +233,17 @@ void MainWindow::clearTasks() {
 }
 
 void MainWindow::taskSelected() {
+	/// Un-highlight all tasks
+	QTreeWidgetItemIterator it(ui.taskTreePanel);
+	while (*it) {
+		QFont font = (*it)->font(2);
+		font.setItalic(false);
+		(*it)->setTextColor(2, Qt::black);
+		(*it)->setFont(2, font);
+		++it;
+	}
+
+	/// Find selected item and fill task box
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
 	if (selection.size() == 0) {
@@ -224,6 +259,23 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
+
+		Task::ID id = getSelectedTaskID();
+		TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+			[=](Task& task) {
+			return task.getID() == id;
+		});
+		Task task = *i;
+
+		/// Handle dependency highlighting
+		for each (Task::ID dependency in task.getDependencies()) {
+			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+				boost::lexical_cast<QString>(dependency), 0);
+				QFont font = items.at(0)->font(2);
+				font.setItalic(true);
+				items.at(0)->setTextColor(2, Qt::darkBlue);
+				items.at(0)->setFont(2, font);
+		}
 	}
 }
 
@@ -269,7 +321,8 @@ void MainWindow::updateTaskInfoBar() {
 		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
 			dueSoon++;
 		}
-		if (tpm->isPastDue(taskList->at(i).getDeadline())) {
+		if (tpm->isPastDue(taskList->at(i).getDeadline())
+			&& !taskList->at(i).isCompleted()) {
 			overdue++;
 		}
 	}
@@ -281,7 +334,6 @@ void MainWindow::updateTaskInfoBar() {
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
-
 
 }  // namespace GUI
 }  // namespace You

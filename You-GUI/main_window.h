@@ -62,7 +62,10 @@ public:
 	/// from the BaseManager class.
 	class QueryManager;
 
-	/// Calls TaskPanelManager and requests addition of a single task.
+	/// Calls TaskPanelManager and requests addition of a single task,
+	/// with its subtasks
+	void addTaskWithSubtasks(const Task& task, const TaskList& tl);
+
 	void addTask(const Task& task);
 
 	/// Calls TaskPanelManager and requests addition of a list of tasks.

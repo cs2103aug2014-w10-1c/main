@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include <QPair>
+#include <QBrush>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include "task_panel_manager.h"
@@ -75,16 +76,33 @@ void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	updateRowNumbers();
 }
 
+void MainWindow::TaskPanelManager::addSubtask(const Task& parentTask,
+	const Task& childTask) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(childTask));
+	QList<QTreeWidgetItem*> items = findItems(parentTask.getID());
+	items.at(0)->addChild(item.release());
+	updateRowNumbers();
+}
+
 void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QList<QTreeWidgetItem*> items = findItems(task.getID());
 	assert(items.length() == 1);
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
+	
 	if (task.isCompleted()) {
-		QFont font = items.at(0)->font(2);
-		font.setStrikeOut(true);
-		items.at(0)->setFont(2, font);
+		for (int i = 0; i < items.at(0)->columnCount(); i++) {
+			QFont font = (items.at(0)->font(i));
+			font.setStrikeOut(true);
+			items.at(0)->setFont(i, font);
+		}
+	} else {
+		for (int i = 0; i < items.at(0)->columnCount(); i++) {
+			QFont font = (items.at(0)->font(i));
+			font.setStrikeOut(false);
+			items.at(0)->setFont(i, font);
+		}
 	}
 	updateRowNumbers();
 }
@@ -113,7 +131,7 @@ std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 	You::Controller::Task::ID taskID) const {
 	return parentGUI->ui.taskTreePanel->findItems(
-		boost::lexical_cast<QString>(taskID), 0);
+		boost::lexical_cast<QString>(taskID), Qt::MatchRecursive, 0);
 }
 
 QStringList MainWindow::TaskPanelManager::taskToStrVec(
