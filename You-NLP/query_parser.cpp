@@ -34,7 +34,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L'/') > explicitCommand) |
 		addCommand
 	) >> qi::eoi;
-	start.name("start");
+	BOOST_SPIRIT_DEBUG_NODE(start);
 
 	explicitCommand %= (
 		(qi::lit(L"add") >> space >> addCommand) |
@@ -43,42 +43,42 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(qi::lit(L"delete") >> space >> deleteCommand) |
 		(qi::lit(L"undo") >> undoCommand)
 	);
-	explicitCommand.name("explicitCommand");
+	BOOST_SPIRIT_DEBUG_NODE(explicitCommand);
 
 	#pragma region Adding tasks
 	addCommand %= (
 		addCommandDescription
 	);
-	addCommand.name("addCommand");
+	BOOST_SPIRIT_DEBUG_NODE(addCommand);
 
 	addCommandDescription = (
 		ParserCharTraits::char_ >> addCommandDescriptionTail
 	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
-	addCommandDescription.name("addCommandDescription");
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDescription);
 
 	addCommandDescriptionTail %= (
 		addCommandPriority |
 		addCommandDescription
 	);
-	addCommandDescriptionTail.name("addCommandDescriptionTail");
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionTail);
 
 	addCommandPriority %= (
 		(-space >> qi::lit('!') >> addCommandDeadlineOptional)
 			[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
 		addCommandDeadlineOptional
 	);
-	addCommandPriority.name("addCommandPriority");
+	BOOST_SPIRIT_DEBUG_NODE(addCommandPriority);
 
 	addCommandDeadline = (
 		space >> (qi::lit("by") | qi::lit("before")) >>
 		utilityTime
 	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
-	addCommandDeadline.name("addCommandDeadline");
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadline);
 
 	addCommandDeadlineOptional = (
 		addCommandDeadline || qi::eoi
 	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
-
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadlineOptional);
 	#pragma endregion
 
 	#pragma region Showing tasks
@@ -87,11 +87,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		-(-space >> (qi::lit(L"sorted by") | qi::lit(L"order by")) >> space >>
 		showCommandSorting)
 	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(showCommand);
 
 	showCommandFiltering %=
 		showCommandFilteringColumn % (
 			(-space >> qi::lit(L",") >> -space) |
 			(space >> qi::lit(L"and") >> space));
+	BOOST_SPIRIT_DEBUG_NODE(showCommandFiltering);
 
 	showCommandFilteringColumn = (
 		showCommandFields >>
@@ -101,6 +103,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::_1,
 		qi::_2,
 		qi::_3)];
+	BOOST_SPIRIT_DEBUG_NODE(showCommandFiltering);
 
 	showCommandFilteringPredicate.add
 		(L"=", SHOW_QUERY::Predicate::EQ)
@@ -109,22 +112,25 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"<=", SHOW_QUERY::Predicate::LESS_THAN_EQ)
 		(L">", SHOW_QUERY::Predicate::GREATER_THAN)
 		(L">=", SHOW_QUERY::Predicate::GREATER_THAN_EQ);
+	BOOST_SPIRIT_DEBUG_NODE(showCommandFilteringPredicate);
 
 	showCommandSorting %= (
 		showCommandSortingColumn % (
 			(-space >> qi::lit(L",") >> -space) |
 			(space >> qi::lit(L"then") >> space)));
+	BOOST_SPIRIT_DEBUG_NODE(showCommandSorting);
 
 	showCommandSortingColumn = (
 		showCommandFields >> -(space >> showCommandSortingOrders)
 	)[qi::_val = phoenix::bind(&constructShowQuerySortColumn, qi::_1, qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(showCommandSortingColumn);
 
 	showCommandSortingOrders.add
 		(L"asc", SHOW_QUERY::Order::ASCENDING)
 		(L"ascending", SHOW_QUERY::Order::ASCENDING)
 		(L"desc", SHOW_QUERY::Order::DESCENDING)
 		(L"descending", SHOW_QUERY::Order::DESCENDING);
-	showCommandSortingOrders.name("showCommandSortingOrders");
+	BOOST_SPIRIT_DEBUG_NODE(showCommandSortingOrders);
 
 	showCommandFields.add
 		(L"description", TaskField::DESCRIPTION)
@@ -132,7 +138,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
-	showCommandFields.name("showCommandFields");
+	BOOST_SPIRIT_DEBUG_NODE(showCommandFields);
 	#pragma endregion
 
 	#pragma region Editing tasks
@@ -140,56 +146,57 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::uint_ >> space >> qi::lit(L"set") >> space >> editCommandRule
 	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
-	editCommand.name("editCommand");
+	BOOST_SPIRIT_DEBUG_NODE(editCommand);
 
 	editCommandRule %= (
 		editCommandRuleNullary |
 		editCommandRuleUnary |
 		editCommandRulePriorities
 	);
-	editCommandRule.name("editCommandRule");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandRule);
 
 	editCommandRuleNullary = (
 		editCommandFieldsNullary
 	)[qi::_val = phoenix::bind(&constructEditQueryNullary, qi::_1)];
-	editCommandRuleNullary.name("editCommandRuleNullary");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandRuleNullary);
 
 	editCommandRuleUnary = (
 		editCommandFieldsUnary >>
 		-space >> qi::lit('=') >> -space >>
 		utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
-	editCommandRuleUnary.name("editCommandRuleUnary");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandRuleUnary);
 
 	editCommandRulePriorities = (
 		qi::lit(L"priority") >>
 		-space >> qi::lit('=') >> -space >>
 		utilityTaskPriority
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
-	editCommandRulePriorities.name("editCommandRulePriorities");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandRulePriorities);
 
 	editCommandFieldsUnary.add
 		(L"description", TaskField::DESCRIPTION)
 		(L"deadline", TaskField::DEADLINE);
-	editCommandFieldsUnary.name("editCommandFieldsUnary");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandFieldsUnary);
 
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
-	editCommandFieldsNullary.name("editCommandFieldsNullary");
+	BOOST_SPIRIT_DEBUG_NODE(editCommandFieldsNullary);
 	#pragma endregion
 
 	#pragma region Deleting tasks
 	deleteCommand = (
 		qi::uint_
 	)[qi::_val = phoenix::bind(&constructDeleteQuery, qi::_1)];
-	deleteCommand.name("deleteCommand");
+	BOOST_SPIRIT_DEBUG_NODE(deleteCommand);
 	#pragma endregion
 
 	#pragma region Undoing tasks
 	undoCommand = (
 		qi::eps
 	)[qi::_val = phoenix::construct<UNDO_QUERY>()];
+	BOOST_SPIRIT_DEBUG_NODE(undoCommand);
 	#pragma endregion
 
 	space = qi::omit[+ParserCharTraits::blank];
@@ -200,25 +207,29 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		utilityTaskPriority |
 		utilityLexeme
 	)[qi::_val = phoenix::bind(&constructValue, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(utilityValue);
 
 	utilityTaskPriority.add
 		(L"normal", TaskPriority::NORMAL)
 		(L"high", TaskPriority::HIGH);
-	utilityTaskPriority.name("utilityTaskPriority");
+	BOOST_SPIRIT_DEBUG_NODE(utilityTaskPriority);
 
 	utilityTime = (
 		+ParserCharTraits::char_
 	)[qi::_val = phoenix::bind(&constructDateTime, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(utilityTime);
 
 	utilityLexeme %= (
 		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
 	);
+	BOOST_SPIRIT_DEBUG_NODE(utilityLexeme);
 
 	utilityLexemeContents %= (
 		qi::lit("\\'")[qi::_val = L'\''] |
 		qi::lit("\\\\")[qi::_val = L'\\'] |
 		(ParserCharTraits::char_ - qi::lit('\''))
 	);
+	BOOST_SPIRIT_DEBUG_NODE(utilityLexemeContents);
 
 	qi::on_error<qi::fail>(start,
 		phoenix::bind(&onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
