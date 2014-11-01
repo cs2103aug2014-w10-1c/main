@@ -101,7 +101,6 @@ void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
 
 	/// Check if parent exists
 	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
-	
 	if (task.getID() == task.getParent() || !parentExists) {
 		/// Is top level task
 		ui.taskTreePanel->addTopLevelItem(
