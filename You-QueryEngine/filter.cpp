@@ -18,7 +18,7 @@ namespace {
 
 #pragma region Common Filters
 Filter Filter::anyTask() {
-	return Filter([] (const Task&) {
+	return Filter([] (const Task& task) {
 		return true;
 	});
 }
@@ -106,7 +106,8 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 Filter Filter::isChildOf(Task::ID id) {
 	return Filter([id] (const Task& task) {
-		return task.getParent() == id;
+		return task.getParent() != task.getID()
+			&& task.getParent() == id;
 	});
 }
 
@@ -138,6 +139,16 @@ Filter Filter::isRelatedTo(Task::ID id) {
 			|| Filter::isDependedBy(id))(task);
 	});
  }
+
+Filter Filter::isDescendantOf(Task::ID id) {
+	return Filter([=] (const Task& task) {
+		bool cond = (isChildOf(id))(task);
+		for (auto child : task.getSubtasks()) {
+			cond = cond || (isDescendantOf(child))(task);
+		}
+		return cond;
+	});
+}
 
 #pragma endregion
 
