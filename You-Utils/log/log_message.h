@@ -126,6 +126,11 @@ public:
 		return *this;
 	}
 
+	/// Compatibility with ostream manipulators. This is a no-op.
+	LogMessage& operator<<(LogMessage& (*)(LogMessage&)) {
+		return *this;
+	}
+
 private:
 	/// Constructs a new log message buffer, with the given category.
 	///
@@ -197,11 +202,6 @@ private:
 		components.emplace_back([&string] {
 			return LogMessage::toWString(string.c_str(), string.length());
 		});
-	}
-
-	/// Compatibility with ostream manipulators. This is a no-op.
-	LogMessage& operator<<(LogMessage& (*)(LogMessage&)) {
-		return *this;
 	}
 
 	/// Helper to convert char strings to wchar_t strings.
