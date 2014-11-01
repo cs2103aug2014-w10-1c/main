@@ -125,7 +125,6 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	);
 	BOOST_SPIRIT_DEBUG_NODE(date);
 	#pragma endregion
-}
 
 	relativeDate %= (
 		ParserCharTraits::no_case[(
