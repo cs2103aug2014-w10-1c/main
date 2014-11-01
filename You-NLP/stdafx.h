@@ -12,6 +12,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "parser_logger.h"  // included out-of-order for boost::spirit logging.
+
 #pragma warning(disable: 4503 4714)  // Boost is too awesome.
 #pragma warning(push)
 #include <boost/algorithm/string.hpp>

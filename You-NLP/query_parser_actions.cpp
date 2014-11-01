@@ -68,8 +68,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 	try {
 		switch (field) {
 		case TaskField::DESCRIPTION: {
-			const LexemeType& description = boost::get<LexemeType>(value);
-			result.value = std::wstring(begin(description), end(description));
+			result.value = boost::get<StringType>(value);
 			break;
 		}
 		case TaskField::DEADLINE:
@@ -131,9 +130,7 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 	try {
 		switch (field) {
 		case TaskField::DESCRIPTION: {
-			const LexemeType& newValueString = boost::get<LexemeType>(newValue);
-			result.description = StringType(newValueString.begin(),
-				newValueString.end());
+			result.description = boost::get<StringType>(newValue);
 			break;
 		}
 		case TaskField::DEADLINE:
@@ -163,13 +160,13 @@ DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
 }
 
 boost::posix_time::ptime QueryParser::constructDateTime(
-	const LexemeType& lexeme) {
+	const StringType& lexeme) {
 	return DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()));
 }
 
 QueryParser::ValueType QueryParser::constructValue(ValueType value) {
 	// Only process if it is a string. It can be a date, in that case.
-	if (const LexemeType* lexeme = boost::get<LexemeType>(&value)) {
+	if (const StringType* lexeme = boost::get<StringType>(&value)) {
 		boost::posix_time::ptime date;
 		if (DateTimeParser::parse(
 			std::wstring(begin(*lexeme), end(*lexeme)), date)) {

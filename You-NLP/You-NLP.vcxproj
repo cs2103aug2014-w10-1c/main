@@ -46,7 +46,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;BOOST_SPIRIT_DEBUG;BOOST_SPIRIT_DEBUG_OUT=You::NLP::ParserLogger::log;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
@@ -63,7 +63,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;BOOST_SPIRIT_USE_PHOENIX_V3;BOOST_SPIRIT_DEBUG;BOOST_SPIRIT_DEBUG_OUT=You::NLP::ParserLogger::log;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/Zm400 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
@@ -85,6 +85,7 @@
     <ClInclude Include="exceptions\parse_error_exception.h" />
     <ClInclude Include="nlp.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="parser_logger.h" />
     <ClInclude Include="parse_tree.h" />
     <ClInclude Include="parse_tree\add_query.h" />
     <ClInclude Include="parse_tree\delete_query.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="date_time_parser.cpp" />
     <ClCompile Include="date_time_parser_actions.cpp" />
     <ClCompile Include="exceptions\parse_error_exception.cpp" />
+    <ClCompile Include="parser_logger.cpp" />
     <ClCompile Include="parse_tree\add_query.cpp" />
     <ClCompile Include="parse_tree\delete_query.cpp" />
     <ClCompile Include="parse_tree\edit_query.cpp" />

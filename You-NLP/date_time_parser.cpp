@@ -35,13 +35,13 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			boost::posix_time::hours(0))
 		]
 	) >> qi::eoi;
-	start.name("start");
+	BOOST_SPIRIT_DEBUG_NODE(start);
 
 	#pragma region Primitive date component parsers
 	year = (
 		+ParserCharTraits::digit
 	)[qi::_val = phoenix::bind(&DateTimeParser::parseFuzzyYear, qi::_1)];
-	year.name("year");
+	BOOST_SPIRIT_DEBUG_NODE(year);
 
 	monthNames.add
 		(L"jan", boost::gregorian::Jan)
@@ -84,7 +84,7 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	day %= (
 		qi::int_
 	);
-	day.name("name");
+	BOOST_SPIRIT_DEBUG_NODE(day);
 	#pragma endregion
 
 	space = qi::omit[+ParserCharTraits::blank];
@@ -93,27 +93,27 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	dateYearMonthDay = (
 		year >> (space | '-') >> month >> (space | '-') >> day
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
-	dateYearMonthDay.name("dateYearMonthDay");
+	BOOST_SPIRIT_DEBUG_NODE(dateYearMonthDay);
 
 	dateYearMonth = (
 		year >> '-' >> month
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, 1)];
-	dateYearMonth.name("dateYearMonth");
+	BOOST_SPIRIT_DEBUG_NODE(dateYearMonth);
 
 	dateYear = (
 		year
 	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
-	dateYear.name("dateYear");
+	BOOST_SPIRIT_DEBUG_NODE(dateYear);
 
 	dateMonthYear = (
 		month >> space  >> year
 	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
-	dateMonthYear.name("dateMonthYear");
+	BOOST_SPIRIT_DEBUG_NODE(dateMonthYear);
 
 	dateDayMonth = (
 		day >> space >> month
 	)[qi::_val = phoenix::bind(&constructDayMonthDate, qi::_1, qi::_2)];
-	dateDayMonth.name("dateDayMonth");
+	BOOST_SPIRIT_DEBUG_NODE(dateDayMonth);
 
 	date %= (
 		relativeDate |
@@ -123,7 +123,8 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		dateDayMonth |
 		dateYear
 	);
-	date.name("date");
+	BOOST_SPIRIT_DEBUG_NODE(date);
+	#pragma endregion
 
 	relativeDate %= (
 		ParserCharTraits::no_case[(
