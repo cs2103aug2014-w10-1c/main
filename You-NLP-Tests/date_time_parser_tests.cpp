@@ -100,12 +100,69 @@ public:
 				actualTomorrow.month()).str()).date();
 		Assert::AreEqual(actualTomorrow, tomorrow);
 
-		date nextYear = d + boost::gregorian::years(1) - boost::gregorian::days(1);
+		date nextYear = d + boost::gregorian::years(1) -
+			boost::gregorian::days(1);
 		date yesterday = DateTimeParser::parse((
 			boost::wformat(L"%1% %2%") %
 			nextYear.day() %
 			nextYear.month()).str()).date();
 		Assert::AreEqual(nextYear, yesterday);
+	}
+
+	TEST_METHOD(parsesRelativeMonths) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date nextOctober = DateTimeParser::parse(L"next oct").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Oct),
+			static_cast<int>(nextOctober.month()));
+		Assert::IsTrue(nextOctober > today);
+
+		date lastOctober = DateTimeParser::parse(L"last oct").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Oct),
+			static_cast<int>(lastOctober.month()));
+		Assert::IsTrue(lastOctober < today);
+	}
+
+	TEST_METHOD(parsesRelativeDaysOfWeek) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date nextMonday = DateTimeParser::parse(L"next monday").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Monday),
+			static_cast<int>(nextMonday.day_of_week()));
+		Assert::IsTrue(nextMonday > today);
+		Assert::IsTrue((nextMonday - today).days() <= 13);
+
+		date lastMonday = DateTimeParser::parse(L"last monday").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Monday),
+			static_cast<int>(lastMonday.day_of_week()));
+		Assert::IsTrue(lastMonday < today);
+		Assert::IsTrue((today - lastMonday).days() <= 13);
+	}
+
+	TEST_METHOD(parsesTomorrow) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date tomorrow = today + boost::gregorian::days(1);
+
+		Assert::AreEqual(tomorrow, DateTimeParser::parse(L"tomorrow").date());
+	}
+
+	TEST_METHOD(parsesYesterday) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date yesterday = today - boost::gregorian::days(1);
+
+		Assert::AreEqual(yesterday, DateTimeParser::parse(L"yesterday").date());
+	}
+
+	TEST_METHOD(parsesRelativeToN) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		date next = today + boost::gregorian::days(3);
+
+		Assert::AreEqual(next, DateTimeParser::parse(L"3 days").date());
+
+		next = today + boost::gregorian::days(14);
+		Assert::AreEqual(next, DateTimeParser::parse(L"2 weeks").date());
 	}
 
 private:

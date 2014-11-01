@@ -56,8 +56,7 @@ private:
 
 	typedef boost::spirit::qi::rule<
 		IteratorType,
-		Date(),
-		SkipperType> DateRule;
+		Date()> DateRule;
 
 private:
 	DateTimeParser();
@@ -90,7 +89,34 @@ private:
 	/// Constructs a date from the given day and month. This is the next day and
 	/// month that will occur. If the month is before the current month, it will
 	/// be the following year.
+	///
+	/// \return The date specified.
 	static Date constructDayMonthDate(Day, Month);
+
+	/// Constructs a relative date from a month.
+	///
+	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
+	/// \param[in] month The month specified
+	///
+	/// \return The date specified.
+	static Date constructRelativeMonthDate(int direction,
+		boost::date_time::months_of_year month);
+
+	/// Constructs a relative date from a week day.
+	///
+	/// \param[in] direction -1 for 'last', 0 for 'this', 1 for 'next'
+	/// \param[in] month The day name specified
+	///
+	/// \return The date specified, relative to today.
+	static Date constructRelativeWeekDayDate(int direction,
+		boost::date_time::weekdays day);
+
+	/// Constructs a relative date from today.
+	///
+	/// \param[in] daysFromToday The date to construct from today.
+	///
+	/// \return The date specified, relative to today.
+	static Date constructRelativeDate(int daysFromToday);
 
 private:
 	/// The start rule.
@@ -100,27 +126,44 @@ private:
 	DateRule date;
 
 	/// Rules to parse the various kinds of dates.
-	/// {
+	/// @{
 	DateRule dateYearMonthDay;
 	DateRule dateYearMonth;
 	DateRule dateYear;
 	DateRule dateMonthYear;
 	DateRule dateDayMonth;
-	/// }
+	/// @}
+
+	/// Rules to parse relative dates
+	/// @{
+	DateRule relativeDate;
+	boost::spirit::qi::rule<
+		IteratorType,
+		Date(int)> relativeDateInDirection;  // NOLINT(readability/function)
+	DateRule relativeDateInDays;
+	/// @}
 
 	/// Parsing years.
-	boost::spirit::qi::rule<IteratorType, Year(), SkipperType> year;
+	boost::spirit::qi::rule<IteratorType, Year()> year;
 
 	/// Parsing months.
-	boost::spirit::qi::rule<IteratorType, Month(), SkipperType> month;
+	boost::spirit::qi::rule<IteratorType, Month()> month;
 
 	/// List of months.
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		boost::gregorian::months_of_year> monthNames;
 
+	/// List of day names
+	boost::spirit::qi::symbols<
+		ParserCharEncoding::char_type,
+		boost::date_time::weekdays> weekDays;
+
 	/// Parsing days
-	boost::spirit::qi::rule<IteratorType, Day(), SkipperType> day;
+	boost::spirit::qi::rule<IteratorType, Day()> day;
+
+	/// A utility rule to handle whitespace.
+	boost::spirit::qi::rule<IteratorType> space;
 };
 
 }  // namespace NLP

@@ -1,8 +1,5 @@
 //@author A0097630B
 #include "stdafx.h"
-#include <boost/lexical_cast.hpp>
-#include <windows.h>
-
 #include "exceptions/parser_exception.h"
 #include "date_time_parser.h"
 
@@ -38,11 +35,13 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			boost::posix_time::hours(0))
 		]
 	) >> qi::eoi;
+	start.name("start");
 
 	#pragma region Primitive date component parsers
 	year = (
 		+ParserCharTraits::digit
 	)[qi::_val = phoenix::bind(&DateTimeParser::parseFuzzyYear, qi::_1)];
+	year.name("year");
 
 	monthNames.add
 		(L"jan", boost::gregorian::Jan)
@@ -57,123 +56,127 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 		(L"oct", boost::gregorian::Oct)
 		(L"nov", boost::gregorian::Nov)
 		(L"dec", boost::gregorian::Dec);
+	monthNames.name("monthNames");
 
 	month %= (
 		qi::int_ |
 		ParserCharTraits::no_case[monthNames]
 	);
+	month.name("month");
+
+	weekDays.add
+		(L"mon", boost::gregorian::Monday)
+		(L"monday", boost::gregorian::Monday)
+		(L"tue", boost::gregorian::Tuesday)
+		(L"tuesday", boost::gregorian::Tuesday)
+		(L"wed", boost::gregorian::Wednesday)
+		(L"wednesday", boost::gregorian::Wednesday)
+		(L"thu", boost::gregorian::Thursday)
+		(L"thursday", boost::gregorian::Thursday)
+		(L"fri", boost::gregorian::Friday)
+		(L"friday", boost::gregorian::Friday)
+		(L"sat", boost::gregorian::Saturday)
+		(L"saturday", boost::gregorian::Saturday)
+		(L"sun", boost::gregorian::Sunday)
+		(L"sunday", boost::gregorian::Sunday);
+	weekDays.name("weekDays");
 
 	day %= (
 		qi::int_
 	);
+	day.name("name");
 	#pragma endregion
+
+	space = qi::omit[+ParserCharTraits::blank];
 
 	#pragma region Supported Date Formats
 	dateYearMonthDay = (
-		year >> '-' >> month >> '-' >> day
+		year >> (space | '-') >> month >> (space | '-') >> day
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, qi::_3)];
+	dateYearMonthDay.name("dateYearMonthDay");
 
 	dateYearMonth = (
 		year >> '-' >> month
 	)[qi::_val = phoenix::construct<Date>(qi::_1, qi::_2, 1)];
+	dateYearMonth.name("dateYearMonth");
 
 	dateYear = (
 		year
 	)[qi::_val = phoenix::construct<Date>(qi::_1, boost::gregorian::Jan, 1)];
+	dateYear.name("dateYear");
 
 	dateMonthYear = (
-		month >> year
+		month >> space  >> year
 	)[qi::_val = phoenix::construct<Date>(qi::_2, qi::_1, 1)];
+	dateMonthYear.name("dateMonthYear");
 
 	dateDayMonth = (
-		day >> month
+		day >> space >> month
 	)[qi::_val = phoenix::bind(&constructDayMonthDate, qi::_1, qi::_2)];
+	dateDayMonth.name("dateDayMonth");
 
 	date %= (
+		relativeDate |
 		dateYearMonthDay |
 		dateYearMonth |
 		dateMonthYear |
 		dateDayMonth |
 		dateYear
 	);
+	date.name("date");
+
+	relativeDate %= (
+		ParserCharTraits::no_case[(
+			qi::lit(L"next") |
+			qi::lit(L"coming"))] >> space >>
+		relativeDateInDirection(1) |
+
+		ParserCharTraits::no_case[(
+			qi::lit(L"this"))] >> space >>
+		relativeDateInDirection(0) |
+
+		ParserCharTraits::no_case[(
+			qi::lit(L"last") |
+			qi::lit(L"previous"))] >> space >>
+		relativeDateInDirection(-1) |
+
+		relativeDateInDays
+	);
+	relativeDate.name("relativeDate");
+
+	relativeDateInDirection = ParserCharTraits::no_case[(
+		(
+			monthNames
+			[qi::_val = phoenix::bind(&
+				constructRelativeMonthDate, qi::_r1, qi::_1)] |
+
+			weekDays
+			[qi::_val = phoenix::bind(&
+				constructRelativeWeekDayDate, qi::_r1, qi::_1)]
+		)
+	)];
+	relativeDateInDirection.name("relativeDateInDirection");
+
+	relativeDateInDays = (
+		ParserCharTraits::no_case[qi::lit(L"tomorrow")][
+			qi::_val = phoenix::bind(&constructRelativeDate, 1)
+		] |
+
+		ParserCharTraits::no_case[qi::lit(L"yesterday")][
+			qi::_val = phoenix::bind(&constructRelativeDate, -1)
+		] |
+
+		((qi::int_ >> space >> ParserCharTraits::no_case[qi::lit("days")])[
+			qi::_val = phoenix::bind(&constructRelativeDate, qi::_1)
+		]) |
+
+		((qi::int_ >> space >> ParserCharTraits::no_case[qi::lit("weeks")])[
+			qi::_val = phoenix::bind(&constructRelativeDate,
+				qi::_1 * 7)
+		])
+	);
+	relativeDateInDays.name("relativeDateInDays");
 	#pragma endregion
-}
-
-DateTimeParser::Year DateTimeParser::parseFuzzyYear(
-	const std::vector<ParserCharEncoding::char_type>& chars) {
-	Year value = boost::lexical_cast<Year>(
-		StringType(chars.begin(), chars.end()));
-	if (chars.size() == 2) {
-		return parseTwoDigitYear(value);
-	} else {
-		return value;
-	}
-}
-
-DateTimeParser::Year DateTimeParser::parseTwoDigitYear(Year year) {
-	assert(year >= 0);
-	assert(year <= 99);
-
-#ifdef _WIN32
-	auto getTwoDigitYearMax = []() throw() {
-		static const wchar_t* TWO_DIGIT_YEAR_MAX_KEY =
-			L"Control Panel\\International\\Calendars\\TwoDigitYearMax";
-
-		HKEY twoDigitYearMaxKey;
-		if (RegOpenKeyEx(
-				HKEY_CURRENT_USER,
-				TWO_DIGIT_YEAR_MAX_KEY,
-				0,
-				KEY_READ,
-				&twoDigitYearMaxKey) == ERROR_SUCCESS
-		) {
-			DWORD twoDigitYearMax = 0;
-			DWORD size = sizeof(twoDigitYearMax);
-
-			DWORD result = RegQueryValueEx(
-				twoDigitYearMaxKey,
-				L"1",
-				nullptr,
-				nullptr,
-				reinterpret_cast<BYTE*>(&twoDigitYearMax),
-				&size);
-
-			RegCloseKey(twoDigitYearMaxKey);
-			if (result == ERROR_SUCCESS) {
-				return twoDigitYearMax;
-			}
-		}
-
-		return static_cast<DWORD>(2030);
-	};  // NOLINT(readability/braces)
-
-	Year twoDigitYearMax = static_cast<Year>(getTwoDigitYearMax());
-
-	Year twoDigitCentury = twoDigitYearMax / 100;
-	Year twoDigitModulus = twoDigitYearMax % 100;
-
-	Year resultCentury = twoDigitCentury - ((year > twoDigitModulus) ? 1 : 0);
-	return resultCentury * 100 + year;
-#else
-	if (year >= 69) {
-		return 1900 + year;
-	} else {
-		return 2000 + year;
-	}
-#endif
-}
-
-DateTimeParser::Date DateTimeParser::constructDayMonthDate(
-	Day day, Month month) {
-	ptime now = boost::posix_time::second_clock::local_time();
-	Date today = now.date();
-
-	Date result = Date(today.year(), month, day);
-	if (result < today) {
-		result = Date(today.year() + 1, result.month(), result.day());
-	}
-
-	return result;
 }
 
 }  // namespace NLP
