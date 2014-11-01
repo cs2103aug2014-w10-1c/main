@@ -33,8 +33,9 @@ Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
 		.description(this->description)
 		.deadline(this->deadline)
+		.priority(this->priority)
 		.dependencies(this->dependencies)
-		.priority(this->priority);
+		.subtasks(this->subtasks);
 }
 
 void AddTask::ensureDependencyIsValid() const {
@@ -61,6 +62,16 @@ void AddTask::ensureSubtasksIsValid() const {
 	}
 }
 
+void AddTask::updateParentPointer() const {
+	for (const auto& id : subtasks) {
+		auto previous = State::get().sgraph().getTask(id);
+		Controller::Graph::updateTask(
+			State::get().sgraph(),
+			Controller::Builder::fromTask(previous)
+				.parent(this->insertedID));
+	}
+}
+
 void AddTask::addTaskToGraphs(const Task& task,
 	State& state) const {
 	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
@@ -81,10 +92,12 @@ void AddTask::makeTransaction(const Task& newTask) const {
 Response AddTask::execute(State& state) {
 	auto newId = state.inquireNewID();
 	auto newTask = buildTask(newId);
+	ensureSubtasksIsValid();
 	ensureDependencyIsValid();
 	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
 	insertedID = newId;
+	updateParentPointer();
 	state.commitMaxIDToDataStore(false);
 	return newTask;
 }

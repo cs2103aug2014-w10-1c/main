@@ -18,9 +18,10 @@ class AddTask : public Query {
 public:
 	/// Constructor
 	explicit AddTask(Task::Description description, Task::Time deadline,
-		Task::Priority priority, Task::Dependencies dependencies)
+		Task::Priority priority, Task::Dependencies dependencies,
+		Task::Subtasks subtasks)
 	: description(description), deadline(deadline), priority(priority),
-	  dependencies(dependencies) {}
+	  dependencies(dependencies), subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	AddTask& operator=(const AddTask&) = delete;
@@ -42,6 +43,7 @@ private:
 	void makeTransaction(const Task& newTask) const;
 	void ensureDependencyIsValid() const;
 	void ensureSubtasksIsValid() const;
+	void updateParentPointer() const;
 
 	/// Execute add task.
 	Response execute(State& tasks) override;

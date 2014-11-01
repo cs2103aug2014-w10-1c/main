@@ -27,7 +27,8 @@ const std::wstring DeleteTask::logCategory =
 std::unique_ptr<Query> DeleteTask::getReverse() {
 	return std::unique_ptr<Query>(new AddTask(
 		deletedTask.getDescription(), deletedTask.getDeadline(),
-		deletedTask.getPriority(), deletedTask.getDependencies()));
+		deletedTask.getPriority(), deletedTask.getDependencies(),
+		deletedTask.getSubtasks()));
 }
 
 void DeleteTask::makeTransaction() {

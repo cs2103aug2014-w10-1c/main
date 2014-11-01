@@ -75,9 +75,12 @@ public:
 public:
 	#pragma region Query Constructors
 	/// Construct add task query.
-	static std::unique_ptr<Query> AddTask(Task::Description description,
-		Task::Time deadline, Task::Priority priority,
-		Task::Dependencies dependencies);
+	static std::unique_ptr<Query> AddTask(
+		const Task::Description& description,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		const Task::Dependencies& dependencies,
+		const Task::Subtasks& subtasks);
 
 	/// Construct filter task without sort query
 	static std::unique_ptr<Query> GetTask(const Filter& filter);

@@ -23,11 +23,15 @@ Query::getReverse() {
 }
 
 std::unique_ptr<Query>
-QueryEngine::AddTask(Task::Description description, Task::Time deadline,
-	Task::Priority priority, Task::Dependencies dependencies) {
+QueryEngine::AddTask(
+	const Task::Description& description,
+	const Task::Time& deadline,
+	const Task::Priority& priority,
+	const Task::Dependencies& dependencies,
+	const Task::Subtasks& subtasks) {
 	using AddTask = Internal::Action::AddTask;
 	return std::unique_ptr<Query>(new AddTask(description, deadline,
-		priority, dependencies));
+		priority, dependencies, subtasks));
 }
 
 std::unique_ptr<Query>
