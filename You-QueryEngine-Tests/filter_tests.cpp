@@ -97,6 +97,34 @@ TEST_CLASS(FilterTests) {
 		Assert::IsFalse(beforeChristmas(DUE_AFTER_CHRISTMAS()));
 	}
 
+	TEST_METHOD(filterIsRelatedTo) {
+		auto& g = Internal::State::get().graph();
+
+		Controller::Graph::addTask(g, RELATED_TO_3());
+		Controller::Graph::addTask(g, RELATED_TO_2());
+		Controller::Graph::addTask(g, RELATED_TO_1());
+
+		Assert::AreEqual(
+			Internal::State::get().graph().getTaskCount(),
+			3);
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_1()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_1().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_3().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_3()));
+	}
+
 	TEST_METHOD(logicalAndTwoFilters) {
 		populateStateWithTasks(ID_ONE_TO_FIVE());
 		auto alwaysEmpty = F::anyTask() && (!F::anyTask());

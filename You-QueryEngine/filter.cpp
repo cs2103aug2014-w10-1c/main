@@ -104,13 +104,40 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 	});
 }
 
-Filter Filter::isRelatedTo(Task::ID id) {
-	auto theTask = Internal::State::get().graph().getTask(id);
-	return Filter([id, theTask] (const Task& task) {
-		return task.isDependOn(id) || task.getParent() == id
-			|| theTask.isDependOn(task.getID());
+Filter Filter::isChildOf(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.getParent() == id;
 	});
 }
+
+Filter Filter::isParentOf(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.getParent() == task.getID();
+	});
+}
+
+Filter Filter::isDependOn(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.isDependOn(id);
+	});
+}
+
+Filter Filter::isDependedBy(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.isDependOn(task.getID());
+	});
+}
+
+Filter Filter::isRelatedTo(Task::ID id) {
+	return Filter([=](const Task& task) {
+		return (Filter::isChildOf(id)
+			|| Filter::isParentOf(id)
+			|| Filter::isDependOn(id)
+			|| Filter::isDependedBy(id))(task);
+	});
+ }
 
 #pragma endregion
 

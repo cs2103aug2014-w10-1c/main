@@ -67,8 +67,20 @@ public:
 		std::int16_t seconds);
 	/// @}
 
-	/// Filter task that has relationship with a task
+	/// Filter task that has relationship with a task.
 	static Filter Filter::isRelatedTo(Task::ID id);
+
+	/// Filter task that match the parent of the task.
+	static Filter isParentOf(Task::ID id);
+
+	/// Filter the subtasks.
+	static Filter isChildOf(Task::ID id);
+
+	/// Filter the depedencies.
+	static Filter isDependedBy(Task::ID id);
+
+	/// Filter the depedendants.
+	static Filter isDependOn(Task::ID id);
 
 	/// Construct a filter from a filtering function.
 	/// \see FFilter

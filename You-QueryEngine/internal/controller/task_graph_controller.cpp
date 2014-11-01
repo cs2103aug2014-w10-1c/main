@@ -17,7 +17,7 @@ namespace {
 	using DataStore = You::DataStore::DataStore;
 }
 
-Task::ID TGC::loadFromFile(TaskGraph& graph) {
+Task::ID TaskGraphController::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;
 	auto serialized = DataStore::get().getAllTasks();
 	for (const auto& task : serialized) {
@@ -28,7 +28,8 @@ Task::ID TGC::loadFromFile(TaskGraph& graph) {
 	return maxID;
 }
 
-bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
+bool TaskGraphController::isTaskExist(TaskGraph& graph,
+	const Task::ID id) {
 	bool isExist = true;
 	try {
 		graph.getTask(id);
@@ -38,7 +39,7 @@ bool TGC::isTaskExist(TaskGraph& graph, const Task::ID id) {
 	return isExist;
 }
 
-void TGC::addTask(TaskGraph& g, const Task& task) {
+void TaskGraphController::addTask(TaskGraph& g, const Task& task) {
 	assert(!isTaskExist(g, task.getID()));
 	auto neighbors = g.getAdjacentTasks(task);
 	bool noCycleInNeighbors =
@@ -56,18 +57,19 @@ void TGC::addTask(TaskGraph& g, const Task& task) {
 	}
 }
 
-void TGC::connectEdges(TaskGraph& g, const Task& task) {
+void TaskGraphController::connectEdges(TaskGraph& g, const Task& task) {
 	auto neighbors = g.getAdjacentTasks(task);
 	for (const auto& cid : neighbors) {
 		 connectEdge(g, task.getID(), cid);
 	}
 }
 
-void TGC::connectEdge(TaskGraph& g, const Task::ID pid, const Task::ID cid) {
+void TaskGraphController::connectEdge(TaskGraph& g,
+	const Task::ID pid, const Task::ID cid) {
 	boost::add_edge(cid, pid, g.graph);
 }
 
-void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
+void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
 	auto task = g.getTask(id);
 	auto children = g.getAdjacentTasks(task);
 
@@ -93,7 +95,7 @@ void TGC::deleteTask(TaskGraph& g, const Task::ID id) {
 	rebuildGraph(g);
 }
 
-void TGC::updateTask(TaskGraph& g, const Task& task) {
+void TaskGraphController::updateTask(TaskGraph& g, const Task& task) {
 	auto found = g.taskTable.find(task.getID());
 	if (found != g.taskTable.end()) {
 		auto neighborBefore = g.getAdjacentTasks(task);
@@ -105,7 +107,8 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 			bool hasCycle = false;
 			CycleDetector detector(hasCycle);
 			rebuildGraph(g);
-			boost::depth_first_search(g.graph, boost::visitor(detector));
+			boost::depth_first_search(g.graph,
+				boost::visitor(detector));
 			if (hasCycle) {
 				found->second = backup;
 				rebuildGraph(g);
@@ -119,14 +122,15 @@ void TGC::updateTask(TaskGraph& g, const Task& task) {
 	}
 }
 
-void TGC::rebuildGraph(TaskGraph& g) {
+void TaskGraphController::rebuildGraph(TaskGraph& g) {
 	g.graph = TaskGraph::Graph();
 	for (const auto& idTaskPair : g.taskTable) {
 		Vertex v = boost::add_vertex(g.graph);
 		g.graph[v] = idTaskPair.first;
 	}
 	for (const auto& idTaskPair : g.taskTable) {
-		for (const auto& cid : g.getAdjacentTasks(idTaskPair.second)) {
+		for (const auto& cid : g.getAdjacentTasks(
+			idTaskPair.second)) {
 			boost::add_edge(cid, idTaskPair.first, g.graph);
 		}
 	}
