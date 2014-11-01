@@ -53,7 +53,7 @@ private:
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.
-	const Task::Subtasks subtasks; ///< Subtasks.
+	const Task::Subtasks subtasks;  ///< Subtasks.
 };
 
 }  // namespace Action
