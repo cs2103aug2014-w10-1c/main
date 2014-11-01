@@ -4,7 +4,6 @@
 #define YOU_NLP_PARSER_H_
 
 #include <boost/spirit/include/qi.hpp>
-#include "You-Utils/log.h"
 
 namespace You {
 namespace NLP {
@@ -26,21 +25,5 @@ typedef ParserCharTraits::space_type ParserSkipperType;
 
 }  // namespace NLP
 }  // namespace You
-
-namespace boost {
-namespace spirit {
-namespace qi {
-namespace detail {
-
-template<typename Char>
-inline void token_printer(You::Utils::Logger& m, Char c) {
-	// allow to customize the token printer routine
-	m << c;
-}
-
-}
-}
-}
-}
 
 #endif  // YOU_NLP_PARSER_H_

@@ -12,7 +12,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "You-Utils/log.h"  // included out-of-order for boost::spirit logging.
+#include "parser_logger.h"  // included out-of-order for boost::spirit logging.
 
 #pragma warning(disable: 4503 4714)  // Boost is too awesome.
 #pragma warning(push)
