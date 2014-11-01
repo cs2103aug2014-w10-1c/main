@@ -23,7 +23,7 @@ std::shared_ptr<LogSink> Log::sink;
 namespace {
 
 /// The format for debug messages.
-const boost::wformat DEBUG_FORMAT(L"[%1%] <%2%>%3% %4%");
+const boost::wformat DEBUG_FORMAT(L"[%1%] <%2%>%3% %4%\n");
 
 /// The format for categories.
 const boost::wformat CATEGORY_FORMAT(L"[%1%]");
