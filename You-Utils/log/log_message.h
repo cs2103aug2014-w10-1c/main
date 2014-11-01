@@ -159,4 +159,12 @@ private:
 }  // namespace Utils
 }  // namespace You
 
+namespace std {
+	/// Technically I'm not allowed to do this by the C++ Standard. But this is
+	/// needed for boost::spirit to work with our logger.
+	You::Utils::LogMessage& endl(You::Utils::LogMessage& message) {
+		return message;
+	}
+}  // namespace std
+
 #endif  // YOU_UTILS_LOG_LOG_MESSAGE_H_
