@@ -35,6 +35,9 @@ public:
 
 	/// Sort by priority, normal goes first.
 	static Comparator byPriority();
+
+	/// Sort nicely by relationship
+	static Comparator byRelationship(Task::ID id);
 	/// @}
 
 	/// Enum class for comparison result.

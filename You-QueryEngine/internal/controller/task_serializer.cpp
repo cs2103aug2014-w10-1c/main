@@ -27,6 +27,7 @@ const TS::Key TS::KEY_DESCRIPTION = L"description";
 const TS::Key TS::KEY_DEADLINE = L"deadline";
 const TS::Key TS::KEY_PRIORITY = L"priority";
 const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
+const TS::Key TS::KEY_COMPLETED = L"completed";
 const TS::Key TS::KEY_PARENT = L"parent";
 const TS::Key TS::KEY_SUBTASKS = L"subtasks";
 
@@ -40,14 +41,16 @@ TS::STask TS::serialize(const Task& task) {
 	Value value_deadline = serializeDeadline(task.getDeadline());
 	Value value_priority = serializePriority(task.getPriority());
 	Value value_dependencies = serializeDependencies(task.getDependencies());
-	Value value_subtasks = serializeSubtasks(task.getSubtasks());
+	Value value_completed = serializeCompleted(task.isCompleted());
 	Value value_parent = serializeParent(task.getParent());
+	Value value_subtasks = serializeSubtasks(task.getSubtasks());
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
 		{ KEY_DEADLINE, value_deadline },
 		{ KEY_PRIORITY, value_priority },
 		{ KEY_DEPENDENCIES, value_dependencies },
+		{ KEY_COMPLETED, value_completed },
 		{ KEY_PARENT, value_parent },
 		{ KEY_SUBTASKS, value_subtasks }
 	};
@@ -87,6 +90,10 @@ Task TS::deserialize(const STask& stask) {
 		deserializeDependencies(
 			getOrDefault(stask, KEY_DEPENDENCIES,
 				serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
+	bool completed =
+		deserializeCompleted(
+			getOrDefault(stask, KEY_COMPLETED,
+				serializeCompleted(true)));
 	Task::ID parent =
 		deserializeParent(
 			getOrDefault(stask, KEY_PARENT,
@@ -102,6 +109,7 @@ Task TS::deserialize(const STask& stask) {
 		.dependencies(dependencies)
 		.priority(priority)
 		.parent(parent)
+		.completed(completed)
 		.subtasks(subtasks);
 }
 
@@ -144,6 +152,13 @@ TS::Value TS::serializeParent(const Task::ID parent) {
 	return serializeID(parent);
 }
 
+TS::Value TS::serializeCompleted(const bool completed) {
+	if (completed) {
+		return L"true";
+	} else {
+		return L"false";
+	}
+}
 TS::Value TS::serializeSubtasks(const Task::Subtasks& subtasks) {
 	return serializeDependencies(subtasks);
 }
@@ -183,6 +198,10 @@ Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
 		deps.insert(boost::lexical_cast<Task::ID>(token));
 	}
 	return deps;
+}
+
+bool TS::deserializeCompleted(const Value& completed) {
+	return completed == L"true";
 }
 
 Task::ID TS::deserializeParent(const Value& parent) {

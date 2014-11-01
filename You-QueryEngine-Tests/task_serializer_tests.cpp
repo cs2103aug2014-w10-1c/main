@@ -41,7 +41,8 @@ public:
 			.priority(prio)
 			.dependencies(dep)
 			.parent(parent)
-			.subtasks(dep);
+			.subtasks(dep)
+			.completed(true);
 	}
 
 	TEST_METHOD(taskSerializerIsUtilityClass) {
@@ -62,6 +63,8 @@ public:
 			std::wstring(L"high"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
 			std::wstring(L"1;2;3;"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_COMPLETED],
+			std::wstring(L"true"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PARENT],
 			std::wstring(L"43"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_SUBTASKS],

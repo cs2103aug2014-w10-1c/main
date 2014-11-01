@@ -20,14 +20,14 @@ public:
 	explicit AddTask(Task::Description description, Task::Time deadline,
 		Task::Priority priority, Task::Dependencies dependencies,
 		Task::Subtasks subtasks)
-	: insertedID(UNKNOWN), description(description),
+	: insertedID(-1), description(description),
 	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(subtasks) {}
 
 	/// Constructor for already known id
-	explicit AddTask(Task::ID id, Task::Description description, Task::Time deadline,
-		Task::Priority priority, Task::Dependencies dependencies,
-		Task::Subtasks subtasks)
+	explicit AddTask(Task::ID id, Task::Description description,
+		Task::Time deadline, Task::Priority priority,
+		Task::Dependencies dependencies, Task::Subtasks subtasks)
 	: insertedID(id), description(description), deadline(deadline),
 	  priority(priority), dependencies(dependencies), subtasks(subtasks) {}
 
@@ -62,7 +62,6 @@ private:
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.
 	const Task::Subtasks subtasks;  ///< Subtasks.
-	const Task::ID UNKNOWN = -1;
 };
 
 }  // namespace Action
