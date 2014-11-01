@@ -137,6 +137,13 @@ private:
 	/// \param[in] log The logger this message will write to.
 	/// \param[in] category The category of the message we are creating.
 	explicit LogMessage(Logger& log, std::wstring category = std::wstring());
+
+	/// Helper to convert char strings to wchar_t strings.
+	///
+	/// \param[in] string The string to convert.
+	/// \param[in] count The number of characters to convert.
+	static std::wstring toWString(const char* string, size_t count);
+
 	LogMessage(const LogMessage&) = delete;
 	LogMessage& operator=(const LogMessage&) = delete;
 
