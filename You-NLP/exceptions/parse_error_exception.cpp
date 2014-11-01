@@ -9,7 +9,7 @@ namespace spirit = boost::spirit;
 
 ParseErrorException::ParseErrorException(
 	spirit::info message,
-	QueryParser::StringType token)
+	std::wstring token)
 : message(message),
   token(token) {
 }

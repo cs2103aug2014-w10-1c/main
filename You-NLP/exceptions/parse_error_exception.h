@@ -4,7 +4,7 @@
 #define YOU_NLP_EXCEPTIONS_PARSE_ERROR_EXCEPTION_H_
 
 #include "parser_exception.h"
-#include "../query_parser.h"
+#include <boost/spirit/include/support_info.hpp>
 
 namespace You {
 namespace NLP {
@@ -18,14 +18,14 @@ public:
 	/// \param[in] token The token being parsed.
 	ParseErrorException(
 		boost::spirit::info message,
-		QueryParser::StringType token);
+		std::wstring token);
 
 private:
 	/// The Spirit parse error.
 	boost::spirit::info message;
 
 	/// The token causing the error.
-	QueryParser::StringType token;
+	std::wstring token;
 };
 
 }  // namespace NLP
