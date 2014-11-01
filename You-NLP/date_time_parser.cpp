@@ -20,11 +20,10 @@ ptime DateTimeParser::parse(const StringType& string) {
 }
 
 bool DateTimeParser::parse(const StringType& string, ptime& result) {
-	return qi::phrase_parse(
+	return qi::parse(
 		begin(string),
 		end(string),
 		DateTimeParser(),
-		ParserSkipperType(),
 		result);
 }
 

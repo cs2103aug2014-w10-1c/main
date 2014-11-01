@@ -13,8 +13,7 @@ namespace UnitTests { class DateTimeParserTests; }
 /// The query parser that recognises our input syntax.
 class DateTimeParser : public boost::spirit::qi::grammar<
 	ParserIteratorType,
-	boost::posix_time::ptime(),
-	ParserSkipperType> {
+	boost::posix_time::ptime()> {
 public:
 	friend class UnitTests::DateTimeParserTests;
 
@@ -31,6 +30,8 @@ public:
 	typedef std::basic_string<ParserCharEncoding::char_type> StringType;
 
 public:
+	DateTimeParser();
+
 	/// Parses the given input string into a date.
 	///
 	/// \param[in] string The string to parse.
@@ -59,8 +60,6 @@ private:
 		Date()> DateRule;
 
 private:
-	DateTimeParser();
-
 	/// Parses a date into its boost::posix_time form.
 	static DateTime buildDateTime(Date);
 
