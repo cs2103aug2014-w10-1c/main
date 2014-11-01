@@ -78,7 +78,7 @@ class LogMessage {
 				check_callable_if_not_array<std::is_array<T>::value>::
 					value;
 		};
-		
+
 		template<>
 		struct check_callable_if_not_fundamental<true> {
 			static const bool value = false;

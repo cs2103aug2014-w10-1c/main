@@ -30,7 +30,7 @@ int ParserLogger::LoggerStreamBuf::sync() {
 	// Remove trailing newlines.
 	boost::trim_right(buffer);
 	Utils::Log::debug << buffer;
-	
+
 	return 0;
 }
 

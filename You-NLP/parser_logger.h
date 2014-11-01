@@ -56,10 +56,10 @@ inline void token_printer(You::NLP::ParserLogger& m, Char c) {
 	m << c;
 }
 
-}
-}
-}
-}
+}  // namespace detail
+}  // namespace qi
+}  // namespace spirit
+}  // namespace boost
 
 #include <boost/fusion/support/is_sequence.hpp>
 namespace boost {
