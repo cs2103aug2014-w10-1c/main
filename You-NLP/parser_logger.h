@@ -4,7 +4,6 @@
 #define YOU_NLP_PARSER_LOGGER_H_
 
 #include "You-Utils/log.h"
-#include "You-Utils/string.h"
 
 namespace You {
 namespace NLP {
@@ -28,9 +27,7 @@ public:
 	ParserLogger& operator<<(const std::string& string);
 
 	/// Compatibility with ostream manipulators. This is a no-op.
-	inline ParserLogger& operator<<(std::wostream& (*)(std::wostream&)) {
-		return *this;
-	}
+	ParserLogger& operator<<(std::wostream& (*manip)(std::wostream&));
 
 private:
 	class LoggerStreamBuf : public std::basic_stringbuf<wchar_t> {
