@@ -224,6 +224,8 @@ private:
 }  // namespace Utils
 }  // namespace You
 
+#pragma region std::ostream compatibility
+
 namespace std {
 
 /// Technically I'm not allowed to do this by the C++ Standard. But this is
@@ -232,5 +234,34 @@ inline You::Utils::LogMessage& endl(You::Utils::LogMessage& message) {
 	return message;
 }
 }  // namespace std
+
+#include <boost/fusion/support/is_sequence.hpp>
+namespace boost {
+namespace fusion {
+
+template<typename Sequence>
+inline std::wostream&
+	out(std::wostream& os, Sequence& seq) {
+	detail::print_sequence(os, seq);
+	return os;
+}
+
+namespace operators {
+
+template <typename Sequence>
+inline typename
+	boost::enable_if<
+		boost::fusion::traits::is_sequence<Sequence>,
+		std::wostream&
+	>::type
+	operator<<(std::wostream& os, Sequence const& seq) {
+	return fusion::out(os, seq);
+}
+
+}  // namespace operators
+}  // namespace fusion
+}  // namespace boost
+
+#pragma endregion
 
 #endif  // YOU_UTILS_LOG_LOG_MESSAGE_H_
