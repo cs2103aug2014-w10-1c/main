@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>447</height>
+    <height>528</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
         </size>
        </property>
        <property name="mouseTracking">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="contextMenuPolicy">
         <enum>Qt::CustomContextMenu</enum>
