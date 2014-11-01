@@ -101,7 +101,7 @@ TEST_CLASS(LogTests) {
 		Assert::AreEqual(1U, tester->getCallCount());
 
 		Log::debug << std::string("lol2");
-		Assert::AreEqual(1U, tester->getCallCount());
+		Assert::AreEqual(2U, tester->getCallCount());
 	}
 
 	TEST_METHOD(stdStreamManipulators) {
