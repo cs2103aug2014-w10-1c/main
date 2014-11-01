@@ -1,7 +1,6 @@
 #include "stdafx.h"
-#include "CppUnitTest.h"
+#include "tests_stdafx.h"
 #include "common.h"
-#include "exclusions.h"
 
 #include <type_traits>
 #include "../You-DataStore/datastore.h"

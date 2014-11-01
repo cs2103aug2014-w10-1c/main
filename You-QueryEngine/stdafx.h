@@ -17,6 +17,7 @@
 #include <sstream>
 #include <unordered_set>
 
+#include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -24,5 +25,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/variant/static_visitor.hpp>
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_

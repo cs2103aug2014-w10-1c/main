@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CppUnitTest.h"
+#include "tests_stdafx.h"
 
 #include "common.h"
 #include "internal/model.h"

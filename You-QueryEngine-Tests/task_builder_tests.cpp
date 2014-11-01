@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "CppUnitTest.h"
+#include "tests_stdafx.h"
+
 #include "internal/controller/task_builder.h"
 #include "exception.h"
 
