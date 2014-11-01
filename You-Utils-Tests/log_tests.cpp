@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "tests_stdafx.h"
 #include <boost/tuple/tuple.hpp>
 #include "log.h"
 

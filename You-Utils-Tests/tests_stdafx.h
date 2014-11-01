@@ -4,15 +4,10 @@
 //
 
 #pragma once
-#ifndef YOU_UTILS_TESTS_STDAFX_H_
-#define YOU_UTILS_TESTS_STDAFX_H_
+#ifndef YOU_UTILS_TESTS_TESTS_STDAFX_H_
+#define YOU_UTILS_TESTS_TESTS_STDAFX_H_
 
-#include <SDKDDKVer.h>
 #pragma warning(disable: 4505)
 #include <CppUnitTest.h>
 
-#include "You-Utils/stdafx.h"
-
-#include "exclusions.h"
-
-#endif  // YOU_UTILS_TESTS_STDAFX_H_
+#endif  // YOU_UTILS_TESTS_TESTS_STDAFX_H_

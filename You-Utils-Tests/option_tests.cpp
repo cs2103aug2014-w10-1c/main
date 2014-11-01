@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "tests_stdafx.h"
 #include "option.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
