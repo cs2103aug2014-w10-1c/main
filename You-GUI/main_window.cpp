@@ -209,6 +209,17 @@ void MainWindow::clearTasks() {
 }
 
 void MainWindow::taskSelected() {
+	/// Un-highlight all tasks
+	QTreeWidgetItemIterator it(ui.taskTreePanel);
+	while (*it) {
+		QFont font = (*it)->font(2);
+		font.setItalic(false);
+		(*it)->setTextColor(2, Qt::black);
+		(*it)->setFont(2, font);
+		++it;
+	}
+
+	/// Find selected item and fill task box
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
 	if (selection.size() == 0) {
@@ -224,6 +235,24 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
+
+		Task::ID id = getSelectedTaskID();
+		TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+			[=](Task& task) {
+			return task.getID() == id;
+		});
+		Task task = *i;
+		//std::find_if(taskList->begin(), taskList->end(), )
+		/// Handle dependency highlighting
+
+		for each (Task::ID dependency in task.getDependencies()) {
+			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+				boost::lexical_cast<QString>(dependency), 0);
+				QFont font = items.at(0)->font(2);
+				font.setItalic(true);
+				items.at(0)->setTextColor(2, Qt::darkBlue);
+				items.at(0)->setFont(2, font);
+		}
 	}
 }
 
@@ -281,7 +310,6 @@ void MainWindow::updateTaskInfoBar() {
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
-
 
 }  // namespace GUI
 }  // namespace You
