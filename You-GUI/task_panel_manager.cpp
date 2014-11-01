@@ -136,7 +136,8 @@ std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::makeTree(
 std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const Task& task) {
 	std::unique_ptr<QTreeWidgetItem> item = createItem(taskToStrVec(task));
-	item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+	item->setChildIndicatorPolicy(
+		QTreeWidgetItem::DontShowIndicatorWhenChildless);
 	return item;
 }
 

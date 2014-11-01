@@ -89,10 +89,6 @@ const TaskList& MainWindow::getTaskList() const {
 
 /// This function adds a task to the task panel, along with all of its subtasks
 void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
-	/// This is looped from the bind function, so it goes through every item
-	/// First, check if it is a top level item, or if its parent is not in the list
-	/// If yes to either answer, process
-	/// Otherwise, stop.
 	/// Build map for fast lookup
 	std::map<Task::ID, Task> taskMap;
 	for (Task t : tl) {
@@ -237,7 +233,7 @@ void MainWindow::taskSelected() {
 	QTreeWidgetItemIterator it(ui.taskTreePanel);
 	while (*it) {
 		QFont font = (*it)->font(2);
-		if (!(*it)->text(7).compare(QString("Yes"))) {
+		if ((*it)->text(7).compare(QString("No")) == 0) {
 			(*it)->setTextColor(2, Qt::black);
 		}
 		(*it)->setFont(2, font);
