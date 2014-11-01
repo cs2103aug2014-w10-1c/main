@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "../You-DataStore/datastore.h"
 #include "common.h"
 #include "mocks/task.h"
 #include "mocks/task_list.h"
@@ -26,6 +27,16 @@ namespace {
 
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		Internal::State::clear();
+		You::DataStore::DataStore::get().wipeData();
+	}
 
 	TEST_METHOD(implicitConversionFromFilterToLambda) {
 		Assert::IsTrue((F::anyTask())(FEED_THE_DOGGY()));
@@ -84,6 +95,34 @@ TEST_CLASS(FilterTests) {
 		Assert::IsTrue(beforeChristmas(DUE_BEFORE_CHRISTMAS()));
 		Assert::IsFalse(beforeChristmas(DUE_ON_CHRISTMAS()));
 		Assert::IsFalse(beforeChristmas(DUE_AFTER_CHRISTMAS()));
+	}
+
+	TEST_METHOD(filterIsRelatedTo) {
+		auto& g = Internal::State::get().graph();
+
+		Controller::Graph::addTask(g, RELATED_TO_3());
+		Controller::Graph::addTask(g, RELATED_TO_2());
+		Controller::Graph::addTask(g, RELATED_TO_1());
+
+		Assert::AreEqual(
+			Internal::State::get().graph().getTaskCount(),
+			3);
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_1()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_1().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_3().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_3()));
 	}
 
 	TEST_METHOD(logicalAndTwoFilters) {

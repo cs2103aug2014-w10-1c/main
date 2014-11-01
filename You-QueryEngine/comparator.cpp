@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "comparator.h"
+#include "filter.h"
+#include "internal/model.h"
 
 namespace You {
 namespace QueryEngine {
@@ -38,6 +40,22 @@ Comparator Comparator::byPriority() {
 	});
 }
 
+Comparator Comparator::byRelationship(Task::ID id) {
+	return byApplying<int>([id] (const Task& task) {
+		auto theTask = Internal::State::get().graph().getTask(id);
+		if (task.getID() == id) {
+			return 4;
+		} else if (Filter::isChildOf(id)(task)) {
+			return 3;
+		} else if (Filter::isDependedBy(id)(task)) {
+			return 2;
+		} else if (Filter::isDependOn(id)(task)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	});
+}
 Comparator::Comparator(const ComparatorFunc& func) {
 	comparators.push_back(func);
 }

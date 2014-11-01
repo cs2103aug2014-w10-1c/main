@@ -49,6 +49,12 @@ namespace UnitTests {
 	extern Task TWO_SUBTASKS();
 	extern Task CIRCULAR_SUBTASKS();
 
+
+	/// Related to
+	extern Task RELATED_TO_1();
+	extern Task RELATED_TO_2();
+	extern Task RELATED_TO_3();
+
 /// @}
 
 }  // namespace UnitTests

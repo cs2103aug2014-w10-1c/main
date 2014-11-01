@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "internal/model/state.h"
 #include "filter.h"
 
 namespace You {
@@ -102,6 +103,41 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 		return task.getDeadline() < due;
 	});
 }
+
+Filter Filter::isChildOf(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.getParent() == id;
+	});
+}
+
+Filter Filter::isParentOf(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.getParent() == task.getID();
+	});
+}
+
+Filter Filter::isDependOn(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.isDependOn(id);
+	});
+}
+
+Filter Filter::isDependedBy(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.isDependOn(task.getID());
+	});
+}
+
+Filter Filter::isRelatedTo(Task::ID id) {
+	return Filter([=](const Task& task) {
+		return (Filter::isChildOf(id)
+			|| Filter::isParentOf(id)
+			|| Filter::isDependOn(id)
+			|| Filter::isDependedBy(id))(task);
+	});
+ }
 
 #pragma endregion
 

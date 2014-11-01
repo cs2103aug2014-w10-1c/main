@@ -196,6 +196,27 @@ Task CIRCULAR_SUBTASKS() {
 		subtasks({ 21L });
 }
 
+Task RELATED_TO_1() {
+	return Controller::Builder::get().
+		id(1L).
+		description(L"Related to").
+		subtasks({ RELATED_TO_2().getID() });
+}
+
+Task RELATED_TO_2() {
+	return Controller::Builder::get().
+		id(2L).
+		description(L"Related to").
+		dependencies({ RELATED_TO_3().getID() }).
+		parent(1L);
+}
+
+Task RELATED_TO_3() {
+	return Controller::Builder::get().
+		id(3L).
+		description(L"Related to");
+}
+
 }  // namespace UnitTests
 }  // namespace QueryEngine
 }  // namespace You

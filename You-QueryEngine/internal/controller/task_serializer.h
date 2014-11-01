@@ -40,6 +40,7 @@ public:
 	static const Key KEY_DEADLINE;
 	static const Key KEY_PRIORITY;
 	static const Key KEY_DEPENDENCIES;
+	static const Key KEY_COMPLETED;
 	static const Key KEY_PARENT;
 	static const Key KEY_SUBTASKS;
 	/// @}
@@ -69,6 +70,8 @@ private:
 	static Value serializePriority(const Task::Priority& priority);
 	/// { 1,2,3 } to "1;2;3"
 	static Value serializeDependencies(const Task::Dependencies& dependencies);
+	/// Serialize completed
+	static Value serializeCompleted(const bool completed);
 	/// Same with ID
 	static Value serializeParent(const Task::ID parent);
 	/// Same with dependencies.
@@ -87,6 +90,8 @@ private:
 	static Task::Priority deserializePriority(const Value& priority);
 	/// "1;2;3" to { 1,2,3 }
 	static Task::Dependencies deserializeDependencies(const Value& dependencies);
+	/// Deserialize completed
+	static bool deserializeCompleted(const Value& completed);
 	/// Same with id.
 	static Task::ID deserializeParent(const Value& parent);
 	/// Same with dependencies.

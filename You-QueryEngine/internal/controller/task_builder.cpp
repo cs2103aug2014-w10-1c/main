@@ -52,6 +52,11 @@ TaskBuilder& TaskBuilder::priority(Task::Priority priority) {
 	return *this;
 }
 
+TaskBuilder& TaskBuilder::completed(bool completed) {
+	instance.setCompleted(completed);
+	return *this;
+}
+
 TaskBuilder& TaskBuilder::parent(const Task::ID parent) {
 	instance.setParent(parent);
 	return *this;

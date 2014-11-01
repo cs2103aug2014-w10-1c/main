@@ -94,15 +94,20 @@ void AddTask::makeTransaction(const Task& newTask) const {
 }
 
 Response AddTask::execute(State& state) {
-	auto newId = state.inquireNewID();
-	auto newTask = buildTask(newId);
+	bool isFirstTime = false;
+	if (insertedID == -1) {
+		insertedID = state.inquireNewID();
+	} else if (insertedID == 0) {
+		isFirstTime = true;
+	}
+	auto newTask = buildTask(insertedID);
 	ensureSubtasksIsValid();
 	ensureDependencyIsValid();
 	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
-	insertedID = newId;
 	updateParentPointer();
-	state.commitMaxIDToDataStore(false);
+
+	state.commitMaxIDToDataStore();
 	return newTask;
 }
 

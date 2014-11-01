@@ -20,7 +20,7 @@ namespace {
 }
 /// \endcond
 
-/// Test the functionality of \ref TaskGraphController
+/// Test the functionality of Dependency graph
 TEST_CLASS(DependencyGraphTest) {
 	TEST_METHOD(createTaskGraph) {
 		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);

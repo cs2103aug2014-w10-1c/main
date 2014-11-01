@@ -42,6 +42,8 @@ public:
 	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
 	/// Initialize task priority.
 	TaskBuilder& priority(Task::Priority priority);
+	/// Initialize task completed.
+	TaskBuilder& completed(bool completed);
 	/// Initialize task's parent.
 	/// Parent id assumed exist.
 	TaskBuilder& parent(const Task::ID id);
