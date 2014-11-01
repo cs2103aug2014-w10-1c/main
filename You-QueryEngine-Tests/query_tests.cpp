@@ -43,8 +43,8 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD_CLEANUP(cleanupAfterTest) {
-		Internal::State::clear();
 		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
 	}
 
 	TEST_METHOD(queryEngineIsUtilityClass) {

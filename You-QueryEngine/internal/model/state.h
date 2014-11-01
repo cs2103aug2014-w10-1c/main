@@ -54,9 +54,12 @@ public:
 	/// Inquire a new and unique task id.
 	Task::ID inquireNewID();
 
+	/// Get max id from datastore.
+	/// Return -1 if not found.
+	std::int64_t getMaxIDFromDataStore();
+
 	/// Save max id to datastore.
-	/// \param [in] isFirstTime POST if true, PUT otherwise.
-	void commitMaxIDToDataStore(bool isFirstTime);
+	void commitMaxIDToDataStore();
 
 private:
 	State();
@@ -66,8 +69,9 @@ private:
 	Task::ID maxID;
 	TaskGraph innerGraph;
 	TaskGraph innerSubtaskGraph;
-	static const std::wstring MAX_ID_FIELD;
 	std::stack<std::unique_ptr<Query>> innerUndoStack;
+
+	static const std::wstring MAX_ID_FIELD;
 	Filter activeFilter = Filter::anyTask();
 	Comparator activeComparator = Comparator::notSorted();
 };

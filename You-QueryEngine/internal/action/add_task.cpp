@@ -94,8 +94,11 @@ void AddTask::makeTransaction(const Task& newTask) const {
 }
 
 Response AddTask::execute(State& state) {
+	bool isFirstTime = false;
 	if (insertedID == -1) {
 		insertedID = state.inquireNewID();
+	} else if (insertedID == 0) {
+		isFirstTime = true;
 	}
 	auto newTask = buildTask(insertedID);
 	ensureSubtasksIsValid();
@@ -104,7 +107,7 @@ Response AddTask::execute(State& state) {
 	makeTransaction(newTask);
 	updateParentPointer();
 
-	state.commitMaxIDToDataStore(false);
+	state.commitMaxIDToDataStore();
 	return newTask;
 }
 
