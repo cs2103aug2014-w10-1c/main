@@ -39,7 +39,6 @@ public:
 			w.ui.centralWidget->isVisible() &&
 			w.ui.taskTreePanel->isVisible() &&
 			w.ui.commandEnterButton->isVisible() &&
-			w.commandTextBox->isVisible() &&
 			w.ui.statusBar->isVisible() &&
 			w.ui.statusIcon->isVisible() &&
 			w.ui.statusMessage->isVisible() &&

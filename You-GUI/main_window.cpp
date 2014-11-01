@@ -85,6 +85,30 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
+	taskList->push_back(task);
+	if (task.getID() == task.getParent()) {
+		/// Is top level task
+		tpm->addTask(task);
+	} else {
+		/// Add as subtask
+		Task parent = *std::find_if(taskList->begin(), taskList->end(),
+			[=](Task& task) {
+			return task.getID() == task.getParent();
+		});
+		tpm->addSubtask(parent, task);
+
+		/// Now add subtasks of this subtask recursively
+		for each (Task::ID subtask in task.getSubtasks()) {
+			TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+				[=](Task& task) {
+				return task.getID() == subtask;
+			});
+			addTaskWithSubtasks(*i, tl);
+		}
+	}
+}
+
 void MainWindow::addTask(const Task& task) {
 	taskList->push_back(task);
 	tpm->addTask(task);
@@ -92,7 +116,7 @@ void MainWindow::addTask(const Task& task) {
 
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
-		std::bind(&MainWindow::addTask, this, std::placeholders::_1));
+		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
