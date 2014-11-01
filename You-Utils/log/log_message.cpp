@@ -39,7 +39,7 @@ std::wstring LogMessage::toWString(const char* string, size_t count) {
 	size_t resultCount = result.size();
 	mbstowcs_s(&resultCount, &result.front(), resultCount, string, _TRUNCATE);
 
-	result.erase(result.begin() + resultCount, result.end());
+	result.erase(result.begin() + resultCount + 1, result.end());
 	return result;
 }
 
