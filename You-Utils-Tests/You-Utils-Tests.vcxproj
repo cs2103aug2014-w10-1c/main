@@ -66,9 +66,9 @@
       <AdditionalDependencies>..\You-Utils\$(Configuration)\stdafx.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /-Y
-copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /-Y
-copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /-Y</Command>
+      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /Y
+copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /Y
+copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,9 +91,9 @@ copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /-Y</Command>
       <AdditionalDependencies>..\You-Utils\$(Configuration)\stdafx.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /-Y
-copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /-Y
-copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /-Y</Command>
+      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /Y
+copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /Y
+copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

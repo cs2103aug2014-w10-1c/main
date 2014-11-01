@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "../tests_stdafx.h"
 #include "query_parser.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;

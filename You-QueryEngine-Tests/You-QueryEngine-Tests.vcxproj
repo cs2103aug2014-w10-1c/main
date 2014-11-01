@@ -94,9 +94,7 @@ copy ..\You-QueryEngine\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
       <AdditionalDependencies>..\You-QueryEngine\$(Configuration)\stdafx.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>copy ..\You-Utils\$(Configuration)\You-QueryEngine.* $(Configuration)\You-QueryEngine-Tests.* /Y
-copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /Y
-copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
+      <Command>copy ..\You-QueryEngine\$(Configuration)\You-QueryEngine.* $(Configuration)\You-QueryEngine-Tests.* /Y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
