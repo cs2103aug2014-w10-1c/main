@@ -69,6 +69,10 @@ void AddTask::updateParentPointer() const {
 			State::get().sgraph(),
 			Controller::Builder::fromTask(previous)
 				.parent(this->insertedID));
+		Controller::Graph::updateTask(
+			State::get().graph(),
+			Controller::Builder::fromTask(previous)
+				.parent(this->insertedID));
 	}
 }
 
