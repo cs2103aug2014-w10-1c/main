@@ -21,11 +21,10 @@ QUERY QueryParser::parse(const StringType& string) {
 }
 
 bool QueryParser::parse(const StringType& string, QUERY& result) {
-	return qi::phrase_parse(
+	return qi::parse(
 		begin(string),
 		end(string),
 		QueryParser(),
-		ParserSkipperType(),
 		result);
 }
 

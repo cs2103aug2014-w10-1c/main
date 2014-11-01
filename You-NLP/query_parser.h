@@ -7,6 +7,7 @@
 
 #include "parse_tree.h"
 #include "parser.h"
+#include "date_time_parser.h"
 
 namespace You {
 namespace NLP {
@@ -14,8 +15,7 @@ namespace NLP {
 /// The query parser that recognises our input syntax.
 class QueryParser : public boost::spirit::qi::grammar<
 	ParserIteratorType,
-	QUERY(),
-	ParserSkipperType> {
+	QUERY()> {
 public:
 	/// The type of the iterator used in this grammar.
 	typedef ParserIteratorType IteratorType;
@@ -81,7 +81,7 @@ private:
 	/// Process the nonterminal indicating a deadline, converting it to an
 	/// appropriate \ref ADD_QUERY type.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] deadline The deadline from the parser.
@@ -92,7 +92,7 @@ private:
 	/// Process the end-of-input nonterminal, potentially including a deadline.
 	/// This captures the deadline, if one is present.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] query The nonterminal from the parser.
@@ -327,11 +327,10 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskPriority> utilityTaskPriority;
-
+	
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.
-	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
-		utilityTime;
+	DateTimeParser utilityTime;
 
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax
