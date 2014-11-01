@@ -24,7 +24,13 @@ ParserLogger& ParserLogger::operator<<(
 }
 
 int ParserLogger::LoggerStreamBuf::sync() {
-	Utils::Log::debug << str();
+	std::wstring buffer(str());
+	str(std::wstring());
+
+	// Remove trailing newlines.
+	boost::trim_right(buffer);
+	Utils::Log::debug << buffer;
+	
 	return 0;
 }
 
