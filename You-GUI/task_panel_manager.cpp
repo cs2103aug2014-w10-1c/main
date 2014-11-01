@@ -75,6 +75,14 @@ void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	updateRowNumbers();
 }
 
+void MainWindow::TaskPanelManager::addSubtask(const Task& parentTask,
+	const Task& childTask) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(childTask));
+	QList<QTreeWidgetItem*> items = findItems(parentTask.getID());
+	items.at(0)->addChild(item.release());
+	updateRowNumbers();
+}
+
 void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QList<QTreeWidgetItem*> items = findItems(task.getID());
 	assert(items.length() == 1);
@@ -113,7 +121,7 @@ std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 	You::Controller::Task::ID taskID) const {
 	return parentGUI->ui.taskTreePanel->findItems(
-		boost::lexical_cast<QString>(taskID), 0);
+		boost::lexical_cast<QString>(taskID), Qt::MatchRecursive, 0);
 }
 
 QStringList MainWindow::TaskPanelManager::taskToStrVec(
