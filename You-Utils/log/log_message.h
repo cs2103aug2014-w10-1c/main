@@ -25,8 +25,8 @@ class LogMessage {
 	template<typename TWithCVOrRef>
 	struct is_callable {
 	private:
-		template<bool array>
-		struct check_callable_if_not_array {
+		template<typename T>
+		struct check_callable {
 		private:
 			typedef char(&yes)[1];
 			typedef char(&no)[2];
@@ -49,6 +49,22 @@ class LogMessage {
 			static const bool value = sizeof(test<Derived>(0)) == sizeof(yes);
 		};
 
+		template<bool pointer>
+		struct check_callable_if_not_pointer {
+			static const bool value = check_callable<T>::value;
+		};
+
+		template<>
+		struct check_callable_if_not_pointer<true> {
+			static const bool value = false;
+		};
+
+		template<bool array>
+		struct check_callable_if_not_array {
+			static const bool value = check_callable_if_not_pointer<
+				std::is_pointer<T>::value>::value;
+		};
+
 		template<>
 		struct check_callable_if_not_array<true> {
 			static const bool value = false;
@@ -66,13 +82,25 @@ class LogMessage {
 			static const bool value = false;
 		};
 
+		template<bool function>
+		struct check_callable_if_not_function {
+			static const bool value =
+				check_callable_if_not_fundamental<
+					std::is_fundamental<T>::value>::value;
+		};
+
+		template<>
+		struct check_callable_if_not_function<true> {
+			static const bool value = true;
+		};
+
 		typename typedef std::remove_cv<TWithCVOrRef>::type TWithRef;
 		typename typedef std::remove_reference<TWithRef>::type T;
 
 	public:
 		static const bool value =
-			check_callable_if_not_fundamental<
-				std::is_fundamental<T>::value>::value;
+			check_callable_if_not_function<
+				std::is_function<T>::value>::value;
 	};
 
 	template<bool callable>
