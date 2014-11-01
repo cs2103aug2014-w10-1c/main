@@ -112,7 +112,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"<=", SHOW_QUERY::Predicate::LESS_THAN_EQ)
 		(L">", SHOW_QUERY::Predicate::GREATER_THAN)
 		(L">=", SHOW_QUERY::Predicate::GREATER_THAN_EQ);
-	BOOST_SPIRIT_DEBUG_NODE(showCommandFilteringPredicate);
 
 	showCommandSorting %= (
 		showCommandSortingColumn % (
@@ -130,7 +129,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"ascending", SHOW_QUERY::Order::ASCENDING)
 		(L"desc", SHOW_QUERY::Order::DESCENDING)
 		(L"descending", SHOW_QUERY::Order::DESCENDING);
-	BOOST_SPIRIT_DEBUG_NODE(showCommandSortingOrders);
 
 	showCommandFields.add
 		(L"description", TaskField::DESCRIPTION)
@@ -138,7 +136,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
-	BOOST_SPIRIT_DEBUG_NODE(showCommandFields);
 	#pragma endregion
 
 	#pragma region Editing tasks
@@ -177,12 +174,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandFieldsUnary.add
 		(L"description", TaskField::DESCRIPTION)
 		(L"deadline", TaskField::DEADLINE);
-	BOOST_SPIRIT_DEBUG_NODE(editCommandFieldsUnary);
 
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
-	BOOST_SPIRIT_DEBUG_NODE(editCommandFieldsNullary);
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -207,21 +202,19 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		utilityTaskPriority |
 		utilityLexeme
 	)[qi::_val = phoenix::bind(&constructValue, qi::_1)];
-	BOOST_SPIRIT_DEBUG_NODE(utilityValue);
 
 	utilityTaskPriority.add
 		(L"normal", TaskPriority::NORMAL)
 		(L"high", TaskPriority::HIGH);
-	BOOST_SPIRIT_DEBUG_NODE(utilityTaskPriority);
 
 	utilityTime = (
-		+ParserCharTraits::char_
+		qi::as_wstring[+ParserCharTraits::char_]
 	)[qi::_val = phoenix::bind(&constructDateTime, qi::_1)];
 	BOOST_SPIRIT_DEBUG_NODE(utilityTime);
 
-	utilityLexeme %= (
+	utilityLexeme %= qi::as_wstring[(
 		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
-	);
+	)];
 	BOOST_SPIRIT_DEBUG_NODE(utilityLexeme);
 
 	utilityLexemeContents %= (

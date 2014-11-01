@@ -34,7 +34,7 @@ public:
 		int,
 		bool,
 		TaskPriority,
-		LexemeType,
+		StringType,
 		boost::posix_time::ptime> ValueType;
 
 public:
@@ -193,7 +193,7 @@ private:
 	///
 	/// \param[in] lexeme The lexeme to construct the time from.
 	/// \return The synthesised value for the \ref utilityTime rule.
-	static boost::posix_time::ptime constructDateTime(const LexemeType& lexeme);
+	static boost::posix_time::ptime constructDateTime(const StringType& lexeme);
 
 	/// Constructs a value from the given lexemes.
 	///
@@ -336,7 +336,7 @@ private:
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax
 	/// analysis for this part of the input.
-	boost::spirit::qi::rule<IteratorType, LexemeType()> utilityLexeme;
+	boost::spirit::qi::rule<IteratorType, StringType()> utilityLexeme;
 
 	/// A utility rule which processes all characters within the quotes of
 	/// the verbatim string.
