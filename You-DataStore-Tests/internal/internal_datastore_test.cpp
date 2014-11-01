@@ -179,6 +179,10 @@ public:
 		result = sut.mergedOperationsQueue.back().run(mockDocument);
 		Assert::IsTrue(result);
 	}
+
+	TEST_METHOD(wipeData) {
+		DataStore::get().wipeData();
+	}
 };
 }  // namespace UnitTests
 }  // namespace DataStore
