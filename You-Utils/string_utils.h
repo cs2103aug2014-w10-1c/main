@@ -1,7 +1,7 @@
 //@author A0097630B
 #pragma once
-#ifndef YOU_UTILS_STRING_H_
-#define YOU_UTILS_STRING_H_
+#ifndef YOU_UTILS_STRING_UTILS_H_
+#define YOU_UTILS_STRING_UTILS_H_
 
 #include <iosfwd>
 #include <string>
@@ -21,4 +21,4 @@ std::wstring toWString(const char* string, size_t count);
 /// Overload to convert narrow to wide strings.
 std::wostream& operator<<(std::wostream& stream, const std::string& string);
 
-#endif  // YOU_UTILS_STRING_H_
+#endif  // YOU_UTILS_STRING_UTILS_H_

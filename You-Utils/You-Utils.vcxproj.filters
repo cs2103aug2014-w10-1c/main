@@ -51,7 +51,7 @@
     <ClInclude Include="log\log_severity.h">
       <Filter>Header Files\log</Filter>
     </ClInclude>
-    <ClInclude Include="string.h">
+    <ClInclude Include="string_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,7 +68,7 @@
     <ClCompile Include="log\log.cpp">
       <Filter>Source Files\log</Filter>
     </ClCompile>
-    <ClCompile Include="string.cpp">
+    <ClCompile Include="string_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
