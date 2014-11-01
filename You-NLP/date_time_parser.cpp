@@ -1,6 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "exceptions/parser_exception.h"
+#include "exceptions/parse_error_exception.h"
 #include "date_time_parser.h"
 
 namespace You {
@@ -177,6 +177,18 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	);
 	relativeDateInDays.name("relativeDateInDays");
 	#pragma endregion
+
+	qi::on_error<qi::fail>(start,
+		phoenix::bind(&onFailure, qi::_1, qi::_2, qi::_3, qi::_4));
+}
+
+void DateTimeParser::onFailure(
+	ParserIteratorType /*begin*/,
+	ParserIteratorType end,
+	ParserIteratorType errorPos,
+	const boost::spirit::info& message) {
+	StringType lexeme(errorPos, end);
+	throw ParseErrorException(message, lexeme);
 }
 
 }  // namespace NLP

@@ -117,6 +117,16 @@ private:
 	/// \return The date specified, relative to today.
 	static Date constructRelativeDate(int daysFromToday);
 
+	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	///
+	/// \exception ParseErrorException The exception representing the parse
+	///                                error.
+	static void onFailure(
+		ParserIteratorType begin,
+		ParserIteratorType end,
+		ParserIteratorType errorPos,
+		const boost::spirit::info& message);
+
 private:
 	/// The start rule.
 	start_type start;
