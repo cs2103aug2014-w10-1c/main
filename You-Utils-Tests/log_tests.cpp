@@ -93,6 +93,21 @@ TEST_CLASS(LogTests) {
 		Assert::AreEqual(1U, tester->getCallCount());
 	}
 
+	TEST_METHOD(asciiLogging) {
+		std::shared_ptr<LogTesterSink> tester(
+			std::make_shared<LogTesterSink>(LogSeverity::DEBUG, L"", L"lol2"));
+		Log::setSink(tester);
+		Log::debug << "lol2";
+		Assert::AreEqual(1U, tester->getCallCount());
+
+		Log::debug << std::string("lol2");
+		Assert::AreEqual(1U, tester->getCallCount());
+	}
+
+	TEST_METHOD(stdStreamManipulators) {
+		Log::debug << std::endl;
+	}
+
 	TEST_METHOD(correctLogLevels) {
 		Log::setSink(std::make_shared<LogTesterSink>(LogSeverity::DEBUG));
 		Log::debug << L"";
