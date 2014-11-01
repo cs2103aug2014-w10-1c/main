@@ -226,7 +226,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.deadline,
 					priority,
 					boost::none,
-					boost::none,
+					query.complete,
 					boost::none,
 					boost::none)));
 	} catch (std::out_of_range& e) {
@@ -281,6 +281,7 @@ QueryExecutorBuilderVisitor::build(const UNDO_QUERY& query) const {
 		Result processResponse(
 			const You::QueryEngine::Response& response) override {
 			return UNDO_RESULT {
+				boost::get<TaskList>(response)
 			};
 		}
 	};

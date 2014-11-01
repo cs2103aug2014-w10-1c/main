@@ -285,6 +285,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		getsCorrectTypeForEditQueries2();
 		getsCorrectTypeForEditQueries3();
 		getsCorrectTypeForEditQueries4();
+		getsCorrectTypeForEditQueries5();
 	}
 
 	void getsCorrectTypeForEditQueries1() {
@@ -306,6 +307,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
+			result.task.isCompleted());
 	}
 
 	void getsCorrectTypeForEditQueries2() {
@@ -329,6 +332,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getPriority());
 		Assert::AreEqual(taskList.front().getDeadline(),
 			result.task.getDeadline());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
+			result.task.isCompleted());
 	}
 
 	void getsCorrectTypeForEditQueries3() {
@@ -352,6 +357,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
+			result.task.isCompleted());
 	}
 
 	void getsCorrectTypeForEditQueries4() {
@@ -374,6 +381,33 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getPriority());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
 			result.task.getDeadline());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
+			result.task.isCompleted());
+	}
+
+	void getsCorrectTypeForEditQueries5() {
+		Mocks::TaskList taskList;
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
+		query2.complete = boost::none;
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task.getID());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
+			result.task.getDescription());
+		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
+			Mocks::Queries::EDIT_QUERY.priority.get()),
+			result.task.getPriority());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
+			result.task.getDeadline());
+		Assert::AreEqual(taskList.front().isCompleted(),
+			result.task.isCompleted());
 	}
 
 	TEST_METHOD(editQueriesOutOfBoundsThrowsContextOutOfRange) {

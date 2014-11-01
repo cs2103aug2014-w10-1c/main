@@ -166,7 +166,7 @@ public:
 		w.commandTextBox->setPlainText(QString("/add test by Nov 99"));
 		w.commandEnterPressed();
 		w.commandTextBox->setPlainText(
-			QString("/edit 0 set description abc"));
+			QString("/edit 0 set description = 'abc'"));
 		w.commandEnterButtonClicked();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(1), QString("0"));
