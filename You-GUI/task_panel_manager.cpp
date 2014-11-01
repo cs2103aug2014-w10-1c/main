@@ -11,8 +11,8 @@ namespace You {
 namespace GUI {
 
 using Date = boost::gregorian::date;
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Hidden ID Column";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
@@ -50,7 +50,7 @@ void MainWindow::TaskPanelManager::setup() {
 	QHeaderView* header = taskTreePanel->header();
 	header->setStretchLastSection(true);
 
-	for (int i = 1; i < columnHeaders.size(); ++i) {
+	for (int i = 0; i < columnHeaders.size(); ++i) {
 		if (i == 2) {
 			continue;
 		}
@@ -58,7 +58,7 @@ void MainWindow::TaskPanelManager::setup() {
 	}
 
 	taskTreePanel->header()->setMinimumSectionSize(75);
-	taskTreePanel->setColumnHidden(0, true);
+	taskTreePanel->setColumnHidden(1, true);
 	taskTreePanel->setColumnHidden(5, true);
 	taskTreePanel->setColumnHidden(6, true);
 }
@@ -90,18 +90,20 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
-	
 	if (task.isCompleted()) {
 		for (int i = 0; i < items.at(0)->columnCount(); i++) {
 			QFont font = (items.at(0)->font(i));
+			QBrush brush(Qt::gray);
 			font.setStrikeOut(true);
 			items.at(0)->setFont(i, font);
+			items.at(0)->setForeground(i, brush);
 		}
 	} else {
 		for (int i = 0; i < items.at(0)->columnCount(); i++) {
 			QFont font = (items.at(0)->font(i));
 			font.setStrikeOut(false);
 			items.at(0)->setFont(i, font);
+			items.at(0)->setForeground(i, Qt::black);
 		}
 	}
 	updateRowNumbers();
@@ -118,9 +120,24 @@ void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 	delete task;
 }
 
+/// Takes a single task, a map of all tasks, and produces a QTreeWidgetItem
+/// with all its subtasks, recursively.
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::makeTree(
+	const Task& task, const std::map<Task::ID, Task> taskMap) {
+	parentGUI->taskList->push_back(task);
+	std::unique_ptr<QTreeWidgetItem> root = createItem(task);
+	for (Task::ID id : task.getSubtasks()) {
+		Task subtask = taskMap.find(id)->second;
+		root->addChild(makeTree(subtask, taskMap).release());
+	}
+	return root;
+}
+
 std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 	const Task& task) {
-	return createItem(taskToStrVec(task));
+	std::unique_ptr<QTreeWidgetItem> item = createItem(taskToStrVec(task));
+	item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+	return item;
 }
 
 std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
@@ -131,18 +148,17 @@ std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
 QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 	You::Controller::Task::ID taskID) const {
 	return parentGUI->ui.taskTreePanel->findItems(
-		boost::lexical_cast<QString>(taskID), Qt::MatchRecursive, 0);
+		boost::lexical_cast<QString>(taskID), Qt::MatchRecursive, 1);
 }
 
 QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	const You::Controller::Task& task) {
 	QStringList result;
+	// Insert dummy count
+	result.push_back("0");
 
 	// Insert id
 	result.push_back(boost::lexical_cast<QString>(task.getID()));
-
-	// Insert dummy count
-	result.push_back("0");
 
 	// Insert description
 	result.push_back(QString::fromStdWString(task.getDescription()));
@@ -185,7 +201,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 void MainWindow::TaskPanelManager::updateRowNumbers() {
 	int rowNum = 0;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
-		(*it)->setData(1, Qt::DisplayRole, rowNum++);
+		(*it)->setData(0, Qt::DisplayRole, rowNum++);
 	}
 }
 

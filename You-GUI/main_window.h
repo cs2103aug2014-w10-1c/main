@@ -86,6 +86,7 @@ public:
 signals:
 	void taskPanelContextMenu(const QPoint &pos);
 
+	void updateRowNumbers();
 protected:
 	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
 	/// task panel proportions on resize.

@@ -39,7 +39,19 @@
        <property name="sizeAdjustPolicy">
         <enum>QAbstractScrollArea::AdjustIgnored</enum>
        </property>
+       <property name="indentation">
+        <number>20</number>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>true</bool>
+       </property>
        <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="allColumnsShowFocus">
+        <bool>true</bool>
+       </property>
+       <property name="expandsOnDoubleClick">
         <bool>true</bool>
        </property>
        <property name="columnCount">

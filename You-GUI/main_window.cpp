@@ -3,6 +3,7 @@
 #include <functional>
 #include <QApplication>
 #include <QList>
+#include <set>
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
@@ -40,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 	commandTextBox->setup();
 	connect(&*commandTextBox, SIGNAL(enterKey()),
 		this, SLOT(commandEnterPressed()));
+	connect(this, SIGNAL(updateRowNumbers()), &*tpm, SLOT(updateRowNumbers()));
 	populateTaskPanel();
 	statusBar()->insertPermanentWidget(
 		0, ui.statusTasks, 0);
@@ -85,27 +87,25 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
+/// This function adds a task to the task panel, along with all of its subtasks
 void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
-	taskList->push_back(task);
-	if (task.getID() == task.getParent()) {
-		/// Is top level task
-		tpm->addTask(task);
-	} else {
-		/// Add as subtask
-		Task parent = *std::find_if(taskList->begin(), taskList->end(),
-			[=](Task& task) {
-			return task.getID() == task.getParent();
-		});
-		tpm->addSubtask(parent, task);
+	/// This is looped from the bind function, so it goes through every item
+	/// First, check if it is a top level item, or if its parent is not in the list
+	/// If yes to either answer, process
+	/// Otherwise, stop.
+	/// Build map for fast lookup
+	std::map<Task::ID, Task> taskMap;
+	for (Task t : tl) {
+		taskMap.insert(std::pair<Task::ID, Task>(t.getID(), t));
+	}
 
-		/// Now add subtasks of this subtask recursively
-		for each (Task::ID subtask in task.getSubtasks()) {
-			TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
-				[=](Task& task) {
-				return task.getID() == subtask;
-			});
-			addTaskWithSubtasks(*i, tl);
-		}
+	/// Check if parent exists
+	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
+	
+	if (task.getID() == task.getParent() || !parentExists) {
+		/// Is top level task
+		ui.taskTreePanel->addTopLevelItem(
+			tpm->makeTree(task, taskMap).release());
 	}
 }
 
@@ -117,6 +117,7 @@ void MainWindow::addTask(const Task& task) {
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
+	emit(updateRowNumbers());
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -237,8 +238,9 @@ void MainWindow::taskSelected() {
 	QTreeWidgetItemIterator it(ui.taskTreePanel);
 	while (*it) {
 		QFont font = (*it)->font(2);
-		font.setItalic(false);
-		(*it)->setTextColor(2, Qt::black);
+		if (!(*it)->text(7).compare(QString("Yes"))) {
+			(*it)->setTextColor(2, Qt::black);
+		}
 		(*it)->setFont(2, font);
 		++it;
 	}
@@ -250,7 +252,7 @@ void MainWindow::taskSelected() {
 		ui.taskDescriptor->setText(contents);
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
-		QString index = item.text(1);
+		QString index = item.text(0);
 		QString description = item.text(2);
 		QString deadline = item.text(3);
 		QString priority = item.text(4);
@@ -287,7 +289,7 @@ Task::ID MainWindow::getSelectedTaskID() {
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		Task::ID index =
-			boost::lexical_cast<Task::ID>(item.text(0).toLongLong());
+			boost::lexical_cast<Task::ID>(item.text(1).toLongLong());
 		return index;
 	}
 }
