@@ -67,6 +67,9 @@ public:
 		std::int16_t seconds);
 	/// @}
 
+	/// Filter task that has relationship with a task
+	static Filter Filter::isRelatedTo(Task::ID id);
+
 	/// Construct a filter from a filtering function.
 	/// \see FFilter
 	explicit Filter(const FFilter& ffilter)

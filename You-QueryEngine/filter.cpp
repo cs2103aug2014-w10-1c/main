@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "internal/model/state.h"
 #include "filter.h"
 
 namespace You {
@@ -100,6 +101,14 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 			time_duration(hour, minute, seconds));
 	return Filter([due] (const Task& task) {
 		return task.getDeadline() < due;
+	});
+}
+
+Filter Filter::isRelatedTo(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return task.isDependOn(id) || task.getParent() == id
+			|| theTask.isDependOn(task.getID());
 	});
 }
 
