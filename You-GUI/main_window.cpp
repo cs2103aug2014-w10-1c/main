@@ -242,9 +242,8 @@ void MainWindow::taskSelected() {
 			return task.getID() == id;
 		});
 		Task task = *i;
-		//std::find_if(taskList->begin(), taskList->end(), )
-		/// Handle dependency highlighting
 
+		/// Handle dependency highlighting
 		for each (Task::ID dependency in task.getDependencies()) {
 			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
 				boost::lexical_cast<QString>(dependency), 0);
