@@ -103,6 +103,11 @@ std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 	return allData;
 }
 
+void DataStore::wipeData() {
+	document.reset();
+	std::remove(FILE_PATH.c_str());
+}
+
 bool DataStore::saveData() {
 	bool status = document.save_file(FILE_PATH.c_str());
 	return status;

@@ -49,6 +49,9 @@ public:
 	/// \return a vector of KeyValuePairs
 	std::vector<KeyValuePairs> getAllResources();
 
+	/// Wipe the datastore
+	void wipeData();
+
 private:
 	/// Default constructor. Use \ref get to get the singleton instance.
 	DataStore() = default;

@@ -70,6 +70,9 @@ public:
 	/// with the specified nodeName
 	std::vector<KeyValuePairs> getAll(std::wstring nodeName);
 
+	/// Wipe the datastore
+	void wipeData();
+
 private:
 	DataStore() = default;
 
