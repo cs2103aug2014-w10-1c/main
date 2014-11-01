@@ -16,12 +16,20 @@ namespace Action {
 /// Action for adding a new task
 class AddTask : public Query {
 public:
-	/// Constructor
+	/// Constructor that use datastore to inquire new id
 	explicit AddTask(Task::Description description, Task::Time deadline,
 		Task::Priority priority, Task::Dependencies dependencies,
 		Task::Subtasks subtasks)
-	: description(description), deadline(deadline), priority(priority),
-	  dependencies(dependencies), subtasks(subtasks) {}
+	: insertedID(UNKNOWN), description(description),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(subtasks) {}
+
+	/// Constructor for already known id
+	explicit AddTask(Task::ID id, Task::Description description, Task::Time deadline,
+		Task::Priority priority, Task::Dependencies dependencies,
+		Task::Subtasks subtasks)
+	: insertedID(id), description(description), deadline(deadline),
+	  priority(priority), dependencies(dependencies), subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	AddTask& operator=(const AddTask&) = delete;
@@ -54,6 +62,7 @@ private:
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.
 	const Task::Subtasks subtasks;  ///< Subtasks.
+	const Task::ID UNKNOWN = -1;
 };
 
 }  // namespace Action
