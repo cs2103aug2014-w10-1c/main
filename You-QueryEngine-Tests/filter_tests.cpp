@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "../You-DataStore/datastore.h"
 #include "common.h"
 #include "mocks/task.h"
 #include "mocks/task_list.h"
@@ -26,6 +27,16 @@ namespace {
 
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		Internal::State::clear();
+		You::DataStore::DataStore::get().wipeData();
+	}
 
 	TEST_METHOD(implicitConversionFromFilterToLambda) {
 		Assert::IsTrue((F::anyTask())(FEED_THE_DOGGY()));

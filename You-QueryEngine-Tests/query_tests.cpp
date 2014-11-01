@@ -4,6 +4,7 @@
 #include "exclusions.h"
 
 #include <type_traits>
+#include "../You-DataStore/datastore.h"
 #include "mocks/task_list.h"
 #include "exception.h"
 #include "internal/controller/task_builder.h"
@@ -35,6 +36,16 @@ TEST_CLASS(QueryEngineTests) {
 	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::HIGH;
 	const Task::Dependencies dep = Task::Dependencies();
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		Internal::State::clear();
+		You::DataStore::DataStore::get().wipeData();
+	}
 
 	TEST_METHOD(queryEngineIsUtilityClass) {
 		static_assert(
@@ -85,7 +96,6 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(executeAddQuery) {
-		Internal::State::clear();
 		for (int i = 1; i <= 5; i++) {
 			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
@@ -93,21 +103,17 @@ TEST_CLASS(QueryEngineTests) {
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(addTaskWithInvalidDependency) {
-		Internal::State::clear();
 		auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 }, {});
 		Assert::ExpectException<Exception::TaskNotFoundException>([&query] {
 			QueryEngine::executeQuery(std::move(query));
 		});
 		Assert::AreEqual(0, Internal::State::get().graph().getTaskCount());
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(addTaskWithValidDependency) {
-		Internal::State::clear();
 		Task::ID insertedID;
 		#pragma region Add a task
 		{  // NOLINT(whitespace/braces)
@@ -125,11 +131,9 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(addTaskWithValidSubtasks) {
-		Internal::State::clear();
 		Task::ID insertedID;
 		#pragma region Add a task
 		{  // NOLINT(whitespace/braces)
@@ -147,11 +151,9 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(addTaskWithInvalidSubtasks) {
-		Internal::State::clear();
 		Task::ID insertedID;
 		#pragma region Add a task
 		{  // NOLINT(whitespace/braces)
@@ -178,12 +180,9 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(executeEditQuery) {
-		Internal::State::clear();
-
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -213,13 +212,9 @@ TEST_CLASS(QueryEngineTests) {
 				.getDescription(), desc2);
 		}
 		#pragma endregion
-
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(executeMarkTaskQuery) {
-		Internal::State::clear();
-
 		#pragma region Add one Task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -267,12 +262,9 @@ TEST_CLASS(QueryEngineTests) {
 				.getTask(task.getID()).isCompleted());
 		}
 		#pragma endregion
-
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(executeDeleteQuery) {
-		Internal::State::clear();
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -291,11 +283,9 @@ TEST_CLASS(QueryEngineTests) {
 				.asTaskList().size(), std::size_t(0));
 		}
 		#pragma endregion
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(undoAddQuery) {
-		Internal::State::clear();
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -319,12 +309,9 @@ TEST_CLASS(QueryEngineTests) {
 			std::size_t(0));
 		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
 			0);
-
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(undoDeleteQuery) {
-		Internal::State::clear();
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -355,11 +342,9 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 
 		Assert::AreEqual(Internal::State::get().graph().getTaskCount(), 1);
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(undoUpdateQuery) {
-		Internal::State::clear();
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
@@ -401,21 +386,16 @@ TEST_CLASS(QueryEngineTests) {
 			std::size_t(1));
 		Assert::AreEqual(Internal::State::get().graph().getTask(task.getID())
 			.getDescription(), task.getDescription());
-
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(undoWithEmptyStackShouldThrowException) {
-		Internal::State::clear();
 		Assert::ExpectException<Exception::NotUndoAbleException>([] {
 			auto query = QueryEngine::Undo();
 			auto response = QueryEngine::executeQuery(std::move(query));
 		});
-		Internal::State::clear();
 	}
 
 	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
-		Internal::State::clear();
 		#pragma region Add One Task
 		Task::ID firstID;
 		{  // NOLINT(whitespace/braces)
@@ -525,8 +505,6 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsTrue(secondOne.isCompleted());
 		Assert::IsTrue(thirdOne.isCompleted());
 		#pragma endregion
-
-		Internal::State::clear();
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
