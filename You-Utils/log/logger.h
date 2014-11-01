@@ -44,9 +44,9 @@ public:
 	/// \param[in] message The message to construct. This can be implicitly
 	///                    convertible to a string.
 	template<typename TMessage>
-	LogMessage operator<<(const TMessage& message) {
+	LogMessage operator<<(TMessage&& message) {
 		LogMessage result(*this);
-		result << message;
+		result << std::forward<TMessage>(message);
 
 		return result;
 	}
