@@ -19,19 +19,25 @@ namespace Action {
 /// Action for getting tasks by applying a filter and optionally a sorter.
 class GetTask : public Query {
 public:
-	/// Constructor
-	explicit GetTask(const Filter& filter) : filter(filter) {}
-	explicit GetTask(const Filter& filter, const Comparator& comparator) :
-		filter(filter), comparator(comparator), sortAfterFilter(true) {}
+	/// Construct from filter, do not sort.
+	/// \param [in] filter The filter used.
+	explicit GetTask(const Filter& filter)
+	: filter(filter) {}
+
+	/// Construct from filter and sort.
+	/// \param [in] filter The filter used.
+	/// \param [in] comparator The comparator used.
+	explicit GetTask(const Filter& filter, const Comparator& comparator)
+	: filter(filter), comparator(comparator), sortAfterFilter(true) {}
 
 	/// Destructor
 	virtual ~GetTask() = default;
 
 protected:
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:
-	/// Execute add task.
 	Response execute(State& tasks) override;
 	GetTask& operator=(const GetTask&) = delete;
 	Filter filter;

@@ -75,9 +75,12 @@ public:
 public:
 	#pragma region Query Constructors
 	/// Construct add task query.
-	static std::unique_ptr<Query> AddTask(Task::Description description,
-		Task::Time deadline, Task::Priority priority,
-		Task::Dependencies dependencies);
+	static std::unique_ptr<Query> AddTask(
+		const Task::Description& description,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		const Task::Dependencies& dependencies,
+		const Task::Subtasks& subtasks);
 
 	/// Construct filter task without sort query
 	static std::unique_ptr<Query> GetTask(const Filter& filter);
@@ -95,7 +98,9 @@ public:
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,
-		You::Utils::Option<bool> completed);
+		You::Utils::Option<bool> completed,
+		You::Utils::Option<Task::ID> parent,
+		You::Utils::Option<Task::Subtasks> subtasks);
 
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
@@ -110,6 +115,12 @@ public:
 private:
 	QueryEngine() = delete;
 };  // class QueryEngine
+
+/// String representation of a task, for testing and logging.
+///
+/// \param[in] task The task object, assumed all fields are valid
+/// \return A string representation of the task
+std::wstring ToString(const Task& task);
 
 }  // namespace QueryEngine
 }  // namespace You

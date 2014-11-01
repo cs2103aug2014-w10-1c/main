@@ -17,9 +17,11 @@ namespace {
 
 const std::wstring State::MAX_ID_FIELD = L"max-id";
 
-State::State() {
-	innerGraph = TaskGraph();
+State::State()
+: innerGraph(TaskGraph(TaskGraph::GraphType::DEPENDENCY)),
+  innerSubtaskGraph(TaskGraph(TaskGraph::GraphType::SUBTASK)) {
 	maxID = TaskGraphController::loadFromFile(innerGraph);
+	TaskGraphController::loadFromFile(innerSubtaskGraph);
 	auto resources = DataStore::get().getAllResources();
 	bool resourceFound = false;
 	// Search resource list for max id.
@@ -49,7 +51,8 @@ State& State::get() {
 }
 
 void State::clear() {
-	get().innerGraph = TaskGraph();
+	get().innerGraph = TaskGraph(TaskGraph::GraphType::DEPENDENCY);
+	get().innerSubtaskGraph = TaskGraph(TaskGraph::GraphType::SUBTASK);
 	while (!get().undoStack().empty()) {
 		get().undoStack().pop();
 	}

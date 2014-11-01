@@ -26,6 +26,7 @@ public:
 
 	/// Return true if the task exist in the graph.
 	/// \param [in] id The id to be checked.
+	/// \param [in] graph The graph to be checked.
 	static bool isTaskExist(TaskGraph& graph, const Task::ID id);
 
 	/// Add a task to the graph if it is not exist.
@@ -42,7 +43,7 @@ public:
 	static void deleteTask(TaskGraph& graph, const Task::ID id);
 
 	/// Update a task from the graph
-	/// Rebuilds the graph if there is a dependency change.
+	/// Rebuilds the graph if there is a connection change.
 	/// May throw \ref Exception::TaskNotFoundException if trying
 	/// to update non existent task.
 	/// May throw CircularDependencyException if it
@@ -65,19 +66,17 @@ private:
 	};
 
 private:
-	/// Make task of id parent depends on all task in children.
-	/// Insert (parent, dependency) edges to the graph.
+	/// Insert and connect all of the children edges to the graph.
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] parent The parent task.
-	static void addAllDependencies(TaskGraph& graph, const Task& parent);
+	static void connectEdges(TaskGraph& graph, const Task& parent);
 
-	/// Make task of id parent depends or sub on child.
 	/// Connect an edge from the child to the parent.
 	/// No-op if already connected.
 	/// \param [out] graph The graph to be modified.
 	/// \param [in] parent The id of the parent vertex.
 	/// \param [in] child The id of the child vertex.
-	static void addDependency(TaskGraph& graph, const Task::ID parent,
+	static void connectEdge(TaskGraph& graph, const Task::ID parent,
 		const Task::ID child);
 };
 

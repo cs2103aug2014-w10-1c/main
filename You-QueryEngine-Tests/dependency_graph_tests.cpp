@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-
 #include "common.h"
 #include "internal/controller.h"
 #include "exception.h"
@@ -22,14 +21,14 @@ namespace {
 /// \endcond
 
 /// Test the functionality of \ref TaskGraphController
-TEST_CLASS(TaskGraphControllerTests) {
+TEST_CLASS(DependencyGraphTest) {
 	TEST_METHOD(createTaskGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
 	}
 
 	TEST_METHOD(addTaskToGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Controller::Graph::addTask(graph, Controller::Builder::get()
 			.id(10L).description(L"Hello World"));
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
@@ -41,7 +40,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 
 	TEST_METHOD(deleteExistingTaskFromGraph) {
 		using Exception::TaskNotFoundException;
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task task = Controller::Builder::get().id(10L).description(L"Hello Warld");
 		Controller::Graph::addTask(graph, task);
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
@@ -50,16 +49,16 @@ TEST_CLASS(TaskGraphControllerTests) {
 	}
 
 	TEST_METHOD(deleteNonExistingTaskFromGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			Controller::Graph::deleteTask(graph, 10L);
 		});
 	}
 
 	TEST_METHOD(getExistingTaskFromGraph) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task task = Controller::Builder::get()
 			.id(10L).description(L"Hello Warld");
 		Controller::Graph::addTask(graph, task);
@@ -70,14 +69,14 @@ TEST_CLASS(TaskGraphControllerTests) {
 	TEST_METHOD(getNonExistingTaskFromGraph) {
 		using Exception::TaskNotFoundException;
 		Assert::ExpectException<TaskNotFoundException>([] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			graph.getTask(10L);
 		});
 	}
 
 	TEST_METHOD(updateExistingTaskInGraph) {
 		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Controller::Graph::addTask(graph, t);
 		Task u = Controller::Builder::get().id(10L).description(L"Hello Marnie");
 		Controller::Graph::updateTask(graph, u);
@@ -86,7 +85,7 @@ TEST_CLASS(TaskGraphControllerTests) {
 	}
 
 	TEST_METHOD(updateExistingTaskInGraphThatCausesCycle) {
-		TaskGraph graph;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 		Task firstTask = Controller::Builder::get()
 			.id(10L).description(L"Hello World");
 		Controller::Graph::addTask(graph, firstTask);
@@ -109,12 +108,39 @@ TEST_CLASS(TaskGraphControllerTests) {
 		using Exception::TaskNotFoundException;
 		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
 		Assert::ExpectException<TaskNotFoundException>([t] {
-			TaskGraph graph;
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
 			Controller::Graph::updateTask(graph, t);
 		});
 	}
 
-	TaskGraphControllerTests& operator=(const TaskGraphControllerTests&) = delete;
+	// Create a dependency chain t -> t2 -> t3
+	// When t2 is deleted, it should now be t -> t3
+	TEST_METHOD(deleteExistingTaskFromGraphWithDependency) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"test");
+		Task t2 = Controller::Builder::get().id(21L).description(L"test2").
+			dependencies({t.getID()});
+		Task t3 = Controller::Builder::get().id(22L).description(L"test3").
+			dependencies({t2.getID()});
+		Controller::Graph::addTask(g, t);
+		Controller::Graph::addTask(g, t2);
+		Controller::Graph::addTask(g, t3);
+
+		Assert::IsFalse(t3.isDependOn(t.getID()));
+		Controller::Graph::deleteTask(g, t2.getID());
+		t3 = g.getTask(t3.getID());
+		Assert::IsTrue(t3.isDependOn(t.getID()));
+	}
+
+	TEST_METHOD(subtasksAndDependenciesAreSeparateConcern) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"Circular")
+										   .subtasks({ 20L });
+		Controller::Graph::addTask(g, t);
+		Assert::AreEqual(g.getTask(t.getID()), t);
+	}
+
+	DependencyGraphTest& operator=(const DependencyGraphTest&) = delete;
 };
 
 }  // namespace UnitTests

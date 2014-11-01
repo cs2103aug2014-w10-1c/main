@@ -27,7 +27,8 @@ const std::wstring DeleteTask::logCategory =
 std::unique_ptr<Query> DeleteTask::getReverse() {
 	return std::unique_ptr<Query>(new AddTask(
 		deletedTask.getDescription(), deletedTask.getDeadline(),
-		deletedTask.getPriority(), deletedTask.getDependencies()));
+		deletedTask.getPriority(), deletedTask.getDependencies(),
+		deletedTask.getSubtasks()));
 }
 
 void DeleteTask::makeTransaction() {
@@ -41,6 +42,7 @@ void DeleteTask::makeTransaction() {
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
 	Controller::Graph::deleteTask(state.graph(), this->id);
+	Controller::Graph::deleteTask(state.sgraph(), this->id);
 	makeTransaction();
 	return this->id;
 }

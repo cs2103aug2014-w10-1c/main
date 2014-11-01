@@ -22,35 +22,59 @@ public:
 	/// Type of the predicate function using in Filter
 	typedef std::function<bool(const Task&)> FFilter;
 
+	/// \name Commonly used filters
+	/// @{
 	/// Filter any task.
 	static Filter anyTask();
+
 	/// Filter tasks that id is in a list.
 	static Filter idIsIn(std::vector<Task::ID> taskIDs);
+
 	/// Filter completed tasks.
 	static Filter completed();
+
 	/// Filter tasks that depends on the task.
 	static Filter dependsOn(const Task::ID id);
+
 	/// Filter tasks with high priority.
 	static Filter highPriority();
+
 	/// Filter tasks with normal priority.
 	static Filter normalPriority();
+
 	/// Filter tasks that is overdue this year.
 	static Filter overdue();
+
 	/// Filter tasks that due this year.
 	static Filter dueThisYear();
+
 	/// Filter tasks with high priority.
 	static Filter dueThisMonth();
+
 	/// Filter tasks that due this month.
 	static Filter dueToday();
+
 	/// Filter tasks that due this month.
 	static Filter dueThisWeek();
+
 	/// Filter tasks that does not have deadline set (i.e never)
 	static Filter dueNever();
+
 	/// Filter tasks that due before a date
 	/// Date is assumed valid
 	static Filter dueBefore(std::int16_t year, std::int16_t month,
 		std::int16_t day, std::int16_t hour, std::int16_t minute,
 		std::int16_t seconds);
+	/// @}
+
+	/// Construct a filter from a filtering function.
+	/// \see FFilter
+	explicit Filter(const FFilter& ffilter)
+	: ffilter(ffilter) {}
+
+	/// Copy construct a filter.
+	Filter(const Filter& filter)
+	: ffilter(filter.ffilter) {}
 
 	/// Compose using AND operation with another filter
 	/// \param[in] filter Filter object to combine with.
@@ -73,15 +97,9 @@ public:
 	/// Implicitly cast a filter to its predicate function.
 	operator FFilter() const;
 
+	/// Functor for filter to task.
 	/// Filter can be applied directly
 	bool operator()(const Task&) const;
-
-	/// Copy construct a filter.
-	Filter(const Filter& filter) : ffilter(filter.ffilter) {}
-
-	/// Construct a filter from a filtering function.
-	/// \see FFilter
-	explicit Filter(const FFilter& ffilter) : ffilter(ffilter) {}
 
 private:
 	static FFilter AND(const FFilter& f, const FFilter& g);

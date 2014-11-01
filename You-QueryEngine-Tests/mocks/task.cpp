@@ -1,5 +1,5 @@
-#include "task.h"
 #include "stdafx.h"
+#include "task.h"
 
 #include "../You-QueryEngine/internal/controller.h"
 #include "../You-QueryEngine/internal/model.h"
@@ -173,6 +173,27 @@ Task DUE_AFTER_CHRISTMAS() {
 		description(L"After Christmas").
 		deadline(ptime(date(2014, 12, 26),
 					   time_duration(0, 0, 0)));
+}
+
+Task ONE_SUBTASK() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"One Subtask").
+		subtasks({ 20L });
+}
+
+Task TWO_SUBTASKS() {
+	return Controller::Builder::get().
+		id(22L).
+		description(L"Two Subtasks").
+		subtasks({ 20L, 21L });
+}
+
+Task CIRCULAR_SUBTASKS() {
+	return Controller::Builder::get().
+		id(21L).
+		description(L"Circular Subtasks").
+		subtasks({ 21L });
 }
 
 }  // namespace UnitTests

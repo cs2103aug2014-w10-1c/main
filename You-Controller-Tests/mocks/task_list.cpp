@@ -21,7 +21,8 @@ Task TaskList::createTask() {
 		boost::posix_time::second_clock::local_time() +
 			boost::posix_time::hours(size()),
 			static_cast<QueryEngine::Task::Priority>(distribution(generator)),
-		QueryEngine::Task::Dependencies());
+		QueryEngine::Task::Dependencies(),
+		QueryEngine::Task::Subtasks());
 
 	QueryEngine::Response r = QueryEngine::executeQuery(std::move(q));
 	return boost::get<Task>(r);

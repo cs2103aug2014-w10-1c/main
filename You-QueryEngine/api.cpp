@@ -23,11 +23,15 @@ Query::getReverse() {
 }
 
 std::unique_ptr<Query>
-QueryEngine::AddTask(Task::Description description, Task::Time deadline,
-	Task::Priority priority, Task::Dependencies dependencies) {
+QueryEngine::AddTask(
+	const Task::Description& description,
+	const Task::Time& deadline,
+	const Task::Priority& priority,
+	const Task::Dependencies& dependencies,
+	const Task::Subtasks& subtasks) {
 	using AddTask = Internal::Action::AddTask;
 	return std::unique_ptr<Query>(new AddTask(description, deadline,
-		priority, dependencies));
+		priority, dependencies, subtasks));
 }
 
 std::unique_ptr<Query>
@@ -55,10 +59,12 @@ QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<Task::Time> deadline,
 	You::Utils::Option<Task::Priority> priority,
 	You::Utils::Option<Task::Dependencies> dependencies,
-	You::Utils::Option<bool> completed) {
+	You::Utils::Option<bool> completed,
+	You::Utils::Option<Task::ID> parent,
+	You::Utils::Option<Task::Subtasks> subtasks) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, description,
-		deadline, priority, dependencies, completed));
+		deadline, priority, dependencies, completed, parent, subtasks));
 }
 
 std::unique_ptr<Query>
@@ -77,6 +83,20 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	} catch (const Exception::NotUndoAbleException&) {
 	}
 	return response;
+}
+
+std::wstring ToString(const Task& task) {
+	using Serializer = Internal::TaskSerializer;
+	auto serialized = Serializer::serialize(task);
+	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%]";
+	return (boost::wformat(TASK_FORMAT)
+		% serialized.at(Serializer::KEY_ID)
+		% serialized.at(Serializer::KEY_DESCRIPTION)
+		% serialized.at(Serializer::KEY_PRIORITY)
+		% serialized.at(Serializer::KEY_DEADLINE)
+		% serialized.at(Serializer::KEY_DEPENDENCIES)
+		% serialized.at(Serializer::KEY_PARENT)
+		% serialized.at(Serializer::KEY_SUBTASKS)).str();
 }
 
 }  // namespace QueryEngine

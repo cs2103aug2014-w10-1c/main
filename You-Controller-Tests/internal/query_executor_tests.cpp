@@ -48,7 +48,8 @@ TEST_CLASS(QueryExecutorTests) {
 				L"yay",
 				QueryEngine::Task::DEFAULT_DEADLINE,
 				QueryEngine::Task::DEFAULT_PRIORITY,
-				QueryEngine::Task::Dependencies()));
+				QueryEngine::Task::Dependencies(),
+				QueryEngine::Task::Subtasks()));
 
 		DummyQueryExecutor executor(std::move(query));
 		ADD_RESULT result = boost::get<ADD_RESULT>(executor.execute());

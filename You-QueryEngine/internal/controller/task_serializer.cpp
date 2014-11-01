@@ -6,13 +6,13 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "task_builder.h"
 #include "task_serializer.h"
 
 namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-/// \cond Imports
 namespace {
 	using boost::posix_time::ptime;
 	using boost::gregorian::date;
@@ -21,16 +21,17 @@ namespace {
 
 	using TS = TaskSerializer;
 }
-/// \endcond
 
 const TS::Key TS::KEY_ID = L"id";
 const TS::Key TS::KEY_DESCRIPTION = L"description";
 const TS::Key TS::KEY_DEADLINE = L"deadline";
 const TS::Key TS::KEY_PRIORITY = L"priority";
 const TS::Key TS::KEY_DEPENDENCIES = L"dependencies";
+const TS::Key TS::KEY_PARENT = L"parent";
+const TS::Key TS::KEY_SUBTASKS = L"subtasks";
 
 const TS::Value TS::VALUE_PRIORITY_NORMAL = L"normal";
-const TS::Value TS::VALUE_PRIORITY_HIGH = L"HIGH";
+const TS::Value TS::VALUE_PRIORITY_HIGH = L"high";
 const TS::Value TS::VALUE_DELIMITER = L";";
 
 TS::STask TS::serialize(const Task& task) {
@@ -39,27 +40,69 @@ TS::STask TS::serialize(const Task& task) {
 	Value value_deadline = serializeDeadline(task.getDeadline());
 	Value value_priority = serializePriority(task.getPriority());
 	Value value_dependencies = serializeDependencies(task.getDependencies());
+	Value value_subtasks = serializeSubtasks(task.getSubtasks());
+	Value value_parent = serializeParent(task.getParent());
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
 		{ KEY_DEADLINE, value_deadline },
 		{ KEY_PRIORITY, value_priority },
 		{ KEY_DEPENDENCIES, value_dependencies },
+		{ KEY_PARENT, value_parent },
+		{ KEY_SUBTASKS, value_subtasks }
 	};
 }
+
+namespace {
+
+const std::wstring getOrDefault(const TS::STask& stask,
+	const std::wstring& key,
+	const std::wstring& deflt) {
+	auto found = stask.find(key);
+	if (found == stask.end()) {
+		return deflt;
+	} else {
+		return found->second;
+	}
+}
+
+}  // namespace
 
 Task TS::deserialize(const STask& stask) {
 	Task::ID id =
 		deserializeID(stask.at(KEY_ID));
 	Task::Description description =
-		deserializeDescription(stask.at(KEY_DESCRIPTION));
+		deserializeDescription(
+			getOrDefault(stask, KEY_DESCRIPTION,
+				serializeDescription(Task::DEFAULT_DESCRIPTION)));
 	Task::Time deadline =
-		deserializeDeadline(stask.at(KEY_DEADLINE));
+		deserializeDeadline(
+			getOrDefault(stask, KEY_DEADLINE,
+				serializeDeadline(Task::DEFAULT_DEADLINE)));
 	Task::Priority priority =
-		deserializePriority(stask.at(KEY_PRIORITY));
+		deserializePriority(
+			getOrDefault(stask, KEY_PRIORITY,
+				serializePriority(Task::DEFAULT_PRIORITY)));
 	Task::Dependencies dependencies =
-		deserializeDependencies(stask.at(KEY_DEPENDENCIES));
-	return Task(id, description, deadline, dependencies, priority);
+		deserializeDependencies(
+			getOrDefault(stask, KEY_DEPENDENCIES,
+				serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
+	Task::ID parent =
+		deserializeParent(
+			getOrDefault(stask, KEY_PARENT,
+				serializeID(id)));
+	Task::Dependencies subtasks =
+		deserializeSubtasks(
+			getOrDefault(stask, KEY_SUBTASKS,
+				serializeSubtasks(Task::DEFAULT_SUBTASKS)));
+	return TaskBuilder::get()
+		.id(id)
+		.description(description)
+		.deadline(deadline)
+		.dependencies(dependencies)
+		.priority(priority)
+		.parent(parent)
+		.subtasks(subtasks);
 }
 
 TS::Value TS::serializeID(const Task::ID id) {
@@ -97,6 +140,14 @@ TS::Value TS::serializeDependencies(const Task::Dependencies& dependencies) {
 	return ws.str();
 }
 
+TS::Value TS::serializeParent(const Task::ID parent) {
+	return serializeID(parent);
+}
+
+TS::Value TS::serializeSubtasks(const Task::Subtasks& subtasks) {
+	return serializeDependencies(subtasks);
+}
+
 Task::ID TS::deserializeID(const Value& id) {
 	return boost::lexical_cast<Task::ID>(id);
 }
@@ -132,6 +183,14 @@ Task::Dependencies TS::deserializeDependencies(const Value& dependencies) {
 		deps.insert(boost::lexical_cast<Task::ID>(token));
 	}
 	return deps;
+}
+
+Task::ID TS::deserializeParent(const Value& parent) {
+	return deserializeID(parent);
+}
+
+Task::Subtasks TS::deserializeSubtasks(const Value& subtasks) {
+	return deserializeDependencies(subtasks);
 }
 
 std::vector<std::wstring> TS::tokenize(const std::wstring& input) {

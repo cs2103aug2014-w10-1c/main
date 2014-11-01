@@ -16,11 +16,16 @@ namespace Internal {
 
 class Model {
 public:
+	/// The task model.
 	typedef Task Task;
+	/// The TaskGraph model.
 	typedef TaskGraph TaskGraph;
+	/// The State of the query engine.
 	typedef State State;
 private:
 	Model() = delete;
+	Model(const Model&) = delete;
+	Model& operator=(const Model&) = delete;
 };
 
 }  // namespace Internal

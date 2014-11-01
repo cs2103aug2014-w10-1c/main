@@ -50,7 +50,8 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 				query.priority == TaskPriority::HIGH ?
 					Task::Priority::HIGH : Task::Priority::NORMAL,
-				Task::Dependencies()
+				Task::Dependencies(),
+				Task::Subtasks()
 			)
 		)
 	);
@@ -225,7 +226,9 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.deadline,
 					priority,
 					boost::none,
-					query.complete)));
+					query.complete,
+					boost::none,
+					boost::none)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}

@@ -33,8 +33,9 @@ Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
 		.description(this->description)
 		.deadline(this->deadline)
+		.priority(this->priority)
 		.dependencies(this->dependencies)
-		.priority(this->priority);
+		.subtasks(this->subtasks);
 }
 
 void AddTask::ensureDependencyIsValid() const {
@@ -46,11 +47,41 @@ void AddTask::ensureDependencyIsValid() const {
 	}
 }
 
-void AddTask::addTaskToState(const Task& task,
+void AddTask::ensureSubtasksIsValid() const {
+	for (const auto& id : subtasks) {
+		try {
+			auto task = State::get().sgraph().getTask(id);
+			if (task.getParent() != task.getID()) {
+				throw Exception::TaskAlreadyHasParentException();
+			}
+		} catch (const Exception::TaskNotFoundException& e) {
+			throw e;
+		} catch (const Exception::TaskAlreadyHasParentException& e) {
+			throw e;
+		}
+	}
+}
+
+void AddTask::updateParentPointer() const {
+	for (const auto& id : subtasks) {
+		auto previous = State::get().sgraph().getTask(id);
+		Controller::Graph::updateTask(
+			State::get().sgraph(),
+			Controller::Builder::fromTask(previous)
+				.parent(this->insertedID));
+		Controller::Graph::updateTask(
+			State::get().graph(),
+			Controller::Builder::fromTask(previous)
+				.parent(this->insertedID));
+	}
+}
+
+void AddTask::addTaskToGraphs(const Task& task,
 	State& state) const {
 	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
 		logCategory % task.getDescription()).str();
 	Controller::Graph::addTask(state.graph(), task);
+	Controller::Graph::addTask(state.sgraph(), task);
 }
 
 void AddTask::makeTransaction(const Task& newTask) const {
@@ -65,10 +96,12 @@ void AddTask::makeTransaction(const Task& newTask) const {
 Response AddTask::execute(State& state) {
 	auto newId = state.inquireNewID();
 	auto newTask = buildTask(newId);
+	ensureSubtasksIsValid();
 	ensureDependencyIsValid();
-	addTaskToState(newTask, state);
+	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
 	insertedID = newId;
+	updateParentPointer();
 	state.commitMaxIDToDataStore(false);
 	return newTask;
 }

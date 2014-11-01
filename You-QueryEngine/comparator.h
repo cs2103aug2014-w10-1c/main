@@ -18,31 +18,25 @@ namespace UnitTests { class ComparatorTests; }
 /// Needed by Controller to construct GetTask query.
 class Comparator {
 	friend class You::QueryEngine::UnitTests::ComparatorTests;
-/// \name Commonly used comparators
-/// @{
 public:
+	/// \name Commonly used comparators
+	/// @{
+	/// Do not sort.
 	static Comparator notSorted();
+
+	/// Sort lexicographically by description.
 	static Comparator byDescription();
+
+	/// Sort by deadline.
 	static Comparator byDeadline();
+
+	/// Sort by the number of dependencies.
 	static Comparator byDependenciesCount();
+
+	/// Sort by priority, normal goes first.
 	static Comparator byPriority();
+	/// @}
 
-private:
-	template <class T>
-	static Comparator byApplying(std::function<T(const Task&)> func) {
-		return Comparator([func] (const Task& lhs, const Task& rhs) {
-			if (func(lhs) < func(rhs)) {
-				return ComparisonResult::LT;
-			} else if (func(lhs) > func(rhs)) {
-				return ComparisonResult::GT;
-			} else {
-				return ComparisonResult::EQ;
-			}
-		});
-	}
-/// @}
-
-public:
 	/// Enum class for comparison result.
 	enum class ComparisonResult { LT, GT, EQ };
 
@@ -69,6 +63,22 @@ public:
 	/// Combine with a second comparator
 	/// to be tested with it in case it is equal.
 	Comparator& operator&&(const Comparator& rhs);
+
+private:
+	/// Helper function to create a comparator by applying a function
+	/// beforehand.
+	template <class T>
+	static Comparator byApplying(std::function<T(const Task&)> func) {
+		return Comparator([func] (const Task& lhs, const Task& rhs) {
+			if (func(lhs) < func(rhs)) {
+				return ComparisonResult::LT;
+			} else if (func(lhs) > func(rhs)) {
+				return ComparisonResult::GT;
+			} else {
+				return ComparisonResult::EQ;
+			}
+		});
+	}
 
 private:
 	ComparatorFunc negate(const ComparatorFunc& comp);

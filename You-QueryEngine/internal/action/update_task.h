@@ -13,23 +13,28 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for updating task (e.g marking it as done)
+/// Update a task task.
+/// (e.g changing its description or marking it as done)
 class UpdateTask : public Query {
 public:
-	/// Construct EditTask query
+	/// Constructor for UpdateTask query
 	explicit UpdateTask(
 		Task::ID id,
 		You::Utils::Option<Task::Description> description,
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,
-		You::Utils::Option<bool> completed) :
-		id(id),
-		description(description),
-		deadline(deadline),
-		priority(priority),
-		dependencies(dependencies),
-		completed(completed) {}
+		You::Utils::Option<bool> completed,
+		You::Utils::Option<Task::ID> parent,
+		You::Utils::Option<Task::Subtasks> subtasks)
+	: id(id),
+	  description(description),
+	  deadline(deadline),
+	  priority(priority),
+	  dependencies(dependencies),
+	  completed(completed),
+	  parent(parent),
+	  subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
@@ -41,13 +46,18 @@ protected:
 	/// The reverse of updating is returning the original value.
 	std::unique_ptr<Query> getReverse() override;
 
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:
 	Task buildUpdatedTask(const State& state) const;
-	void modifyState(State& state, const Task& updated) const;
+	void updateDependencyGraph(State& state, const Task& updated) const;
+	void updateSubtaskGraph(State& state, const Task& updated) const;
 	void makeTransaction(const Task& updated) const;
-	/// Execute add task.
+	void markAllChildren(const State& state) const;
+	void addAsSubtask(const State& state) const;
+	void recMarkChildren(const State& state, Task::ID id) const;
+
 	Response execute(State& tasks) override;
 
 	const Task::ID id;
@@ -55,7 +65,10 @@ private:
 	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
 	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
 	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.
-	const You::Utils::Option<bool> completed = false;  ///< Completed.
+	const You::Utils::Option<bool> completed;  ///< Completed.
+	const You::Utils::Option<Task::ID> parent;  ///< Parent.
+	const You::Utils::Option<Task::Subtasks> subtasks;  ///< Parent.
+
 	/// The previous state of the task.
 	Task previous;
 };

@@ -23,6 +23,14 @@ std::vector<Task> TaskGraph::asTaskList() const {
 	return result;
 }
 
+Task::Dependencies TaskGraph::getAdjacentTasks(const Task& task) const {
+	if (type == TaskGraph::GraphType::DEPENDENCY) {
+		return task.getDependencies();
+	} else {
+		return task.getSubtasks();
+	}
+}
+
 }  // namespace Internal
 }  // namespace QueryEngine
 }  // namespace You

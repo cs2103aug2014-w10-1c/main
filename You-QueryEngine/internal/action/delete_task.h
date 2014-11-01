@@ -17,7 +17,8 @@ namespace Action {
 class DeleteTask : public Query {
 public:
 	/// Constructor
-	explicit DeleteTask(Task::ID id) : id(id) { }
+	explicit DeleteTask(Task::ID id)
+	: id(id) {}
 
 	/// Disable assignment operator
 	DeleteTask& operator=(const DeleteTask&) = delete;
@@ -29,6 +30,7 @@ protected:
 	/// The reverse of deletion is adding.
 	std::unique_ptr<Query> getReverse() override;
 
+	/// The header of the log string
 	static const std::wstring logCategory;
 
 private:

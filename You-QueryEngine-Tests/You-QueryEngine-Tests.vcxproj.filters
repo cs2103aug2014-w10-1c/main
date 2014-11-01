@@ -38,16 +38,10 @@
     <ClCompile Include="task_serializer_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="task_model_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="query_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="filter_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="task_graph_controller_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="comparator_tests.cpp">
@@ -57,6 +51,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mocks\task_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="task_builder_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependency_graph_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subtask_graph_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

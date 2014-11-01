@@ -40,16 +40,22 @@ TEST_CLASS(TaskBuilderTests) {
 		const Task::Time dead = Task::NEVER;
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Priority prio = Task::Priority::HIGH;
+		const Task::Subtasks sub = { 1, 2, 3 };
 		Task task = TaskBuilder::get()
 			.description(desc)
+			.deadline(Task::NEVER)
 			.deadline(dead)
 			.priority(prio)
-			.dependencies(dep);
+			.dependencies({ 0 })
+			.dependencies(dep)
+			.parent(43L)
+			.subtasks(sub);
 		Assert::AreEqual(task.getDescription(), desc);
 		// The valid one should be the last chain
 		Assert::AreEqual(task.getDeadline(), dead);
-		Assert::IsTrue(task.isDependOn(1));
-		Assert::IsFalse(task.isDependOn(0));
+		Assert::IsTrue(task.getDependencies() == dep);
+		Assert::IsTrue(task.getParent() == static_cast<Task::ID>(43L));
+		Assert::IsTrue(task.getSubtasks() == sub);
 	}
 
 	/// Should throw an exception when trying to create
@@ -66,10 +72,13 @@ TEST_CLASS(TaskBuilderTests) {
 			dependencies(Task::DEFAULT_DEPENDENCIES); };
 		auto mustFail4 = [] { (Task) TB::get().
 			priority(Task::DEFAULT_PRIORITY); };
+		auto mustFail5 = [] { (Task) TB::get().
+			subtasks(Task::DEFAULT_SUBTASKS); };
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail1);
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail2);
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail3);
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail4);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail5);
 	}
 
 	TEST_METHOD(convertTaskToString) {

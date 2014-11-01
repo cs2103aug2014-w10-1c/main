@@ -1,4 +1,4 @@
-/// \file You-QueryEngine/internal/exception.h
+/// \file You-QueryEngine/exception.h
 /// Defines some exception classes.
 /// \author A0112054Y
 
@@ -34,6 +34,11 @@ class CircularDependencyException : public BaseException {
 /// An exception thrown when trying to undo an undoable
 /// query (e.g GetTask)
 class NotUndoAbleException : public BaseException {
+};
+
+/// An exception thrown when trying to attach a task that
+/// already has a parent to another task.
+class TaskAlreadyHasParentException : public BaseException {
 };
 
 }  // namespace Exception
