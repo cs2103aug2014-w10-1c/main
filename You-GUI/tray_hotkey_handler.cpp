@@ -1,5 +1,6 @@
 //@author A0094446X
 #include "stdafx.h"
+#include <windows.h>
 #include "tray_hotkey_handler.h"
 
 namespace You {

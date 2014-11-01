@@ -3,7 +3,6 @@
 #ifndef YOU_GUI_TRAY_HOTKEY_HANDLER_H_
 #define YOU_GUI_TRAY_HOTKEY_HANDLER_H_
 #include <QThread>
-#include "windows.h"
 
 namespace You {
 namespace GUI {
