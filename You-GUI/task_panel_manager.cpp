@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QList>
 #include <QPair>
+#include <QBrush>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include "task_panel_manager.h"
@@ -89,10 +90,19 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
+	
 	if (task.isCompleted()) {
-		QFont font = items.at(0)->font(2);
-		font.setStrikeOut(true);
-		items.at(0)->setFont(2, font);
+		for (int i = 0; i < items.at(0)->columnCount(); i++) {
+			QFont font = (items.at(0)->font(i));
+			font.setStrikeOut(true);
+			items.at(0)->setFont(i, font);
+		}
+	} else {
+		for (int i = 0; i < items.at(0)->columnCount(); i++) {
+			QFont font = (items.at(0)->font(i));
+			font.setStrikeOut(false);
+			items.at(0)->setFont(i, font);
+		}
 	}
 	updateRowNumbers();
 }

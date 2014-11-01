@@ -321,7 +321,8 @@ void MainWindow::updateTaskInfoBar() {
 		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
 			dueSoon++;
 		}
-		if (tpm->isPastDue(taskList->at(i).getDeadline())) {
+		if (tpm->isPastDue(taskList->at(i).getDeadline())
+			&& !taskList->at(i).isCompleted()) {
 			overdue++;
 		}
 	}
