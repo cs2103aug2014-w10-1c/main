@@ -70,6 +70,9 @@ public:
 	/// with the specified nodeName
 	std::vector<KeyValuePairs> getAll(std::wstring nodeName);
 
+	/// Wipe the datastore
+	void wipeData();
+
 private:
 	DataStore() = default;
 
@@ -87,7 +90,7 @@ private:
 	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
 
 private:
-	static const std::wstring FILE_PATH;
+	static const std::string FILE_PATH;
 	pugi::xml_document document;
 
 	/// The current stack of active transactions.

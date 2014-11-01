@@ -51,5 +51,9 @@ std::vector<KeyValuePairs> DataStore::getAllResources() {
 	return Internal::DataStore::get().getAll(Internal::RESOURCES_NODE);
 }
 
+void DataStore::wipeData() {
+	Internal::DataStore::get().wipeData();
+}
+
 }  // namespace DataStore
 }  // namespace You

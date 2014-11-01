@@ -13,7 +13,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::wstring DataStore::FILE_PATH = std::wstring(L"data.xml");
+const std::string DataStore::FILE_PATH = std::string("data.xml");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -101,6 +101,11 @@ std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 		allData.push_back(SerializationOperation::deserialize(*i));
 	}
 	return allData;
+}
+
+void DataStore::wipeData() {
+	document.reset();
+	std::remove(FILE_PATH.c_str());
 }
 
 bool DataStore::saveData() {
