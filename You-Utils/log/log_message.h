@@ -72,10 +72,29 @@ public:
 
 	/// Writes the given message.
 	///
-	/// \param[in] thing The message to append. The message is not copied and
-	///                  must have a lifetime longer than this.
+	/// \param[in] string The message to append. The message is not copied and
+	///                   must have a lifetime longer than this.
 	LogMessage& operator<<(const wchar_t* const string) {
 		components.emplace_back([string] { return std::wstring(string); });
+		return *this;
+	}
+
+	/// Writes the given message.
+	///
+	/// \param[in] string The message to append. The message is not copied and
+	///                   must have a lifetime longer than this.
+	LogMessage& operator<<(const char* const string) {
+		components.emplace_back([string] {
+			std::wstring result;
+			result.resize(strlen(string));
+
+			size_t resultCount = result.size();
+			mbstowcs_s(&resultCount, &result.front(), resultCount, string,
+				_TRUNCATE);
+
+			result.erase(result.begin() + resultCount, result.end());
+			return result;
+		});
 		return *this;
 	}
 
@@ -85,6 +104,30 @@ public:
 	///                  must have a lifetime longer than this.
 	LogMessage& operator<<(const std::wstring& string) {
 		components.emplace_back([&string] { return string; });
+		return *this;
+	}
+
+	/// Writes the given message.
+	///
+	/// \param[in] thing The message to append. The message is not copied and
+	///                  must have a lifetime longer than this.
+	LogMessage& operator<<(const std::string& string) {
+		components.emplace_back([&string] {
+			std::wstring result;
+			result.resize(string.length());
+
+			size_t resultCount = result.size();
+			mbstowcs_s(&resultCount, &result.front(), resultCount,
+				string.c_str(), _TRUNCATE);
+
+			result.erase(result.begin() + resultCount, result.end());
+			return result;
+		});
+		return *this;
+	}
+
+	/// Compatibility with ostream manipulators. This is a no-op.
+	LogMessage& operator<<(LogMessage& (*)(LogMessage&)) {
 		return *this;
 	}
 
