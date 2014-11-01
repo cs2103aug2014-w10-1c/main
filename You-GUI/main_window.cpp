@@ -22,13 +22,13 @@ MainWindow::MainWindow(QWidget *parent)
 		stm(new MainWindow::SystemTrayManager(this)),
 		tpm(new MainWindow::TaskPanelManager(this)),
 		qm(new MainWindow::QueryManager(this)),
+		commandTextBox(new CommandTextBox(this)),
 		taskList(new TaskList) {
 	#pragma warning(push)
 	#pragma warning(disable: 4127)
 	Q_INIT_RESOURCE(yougui);
 	#pragma warning(pop)
 	ui.setupUi(this);
-	historyIndex = commandHistory.begin();
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
@@ -36,23 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
 	stm->setup();
 	qm->setup();
 	tpm->setup();
-	initializeAllTimerNotifications();
-	commandTextBox = new CommandTextBox(ui.splitter);
-	ui.horizontalLayout->insertWidget(0, commandTextBox);
-
-	commandTextBox->setVisible(true);
-	commandTextBox->installEventFilter(this);
-	commandTextBox->setTabChangesFocus(true);
-	commandTextBox->setWordWrapMode(QTextOption::NoWrap);
-	commandTextBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	commandTextBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	commandTextBox->setFocus(Qt::FocusReason::ActiveWindowFocusReason);
-	commandTextBox->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Ignored);
-	syntaxHighlighter.reset(
-		new SyntaxHighlighter(commandTextBox->document()));
-
+	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
+	commandTextBox->setup();
+	connect(&*commandTextBox, SIGNAL(enterKey()),
+		this, SLOT(commandEnterPressed()));
 	populateTaskPanel();
+	statusBar()->insertPermanentWidget(
+		0, ui.statusTasks, 0);
+	updateTaskInfoBar();
 }
 
 MainWindow::~MainWindow() {
@@ -95,7 +86,6 @@ const TaskList& MainWindow::getTaskList() const {
 }
 
 void MainWindow::addTask(const Task& task) {
-	initializeSingleTimerNotification(task);
 	taskList->push_back(task);
 	tpm->addTask(task);
 }
@@ -113,35 +103,18 @@ void MainWindow::deleteTask(Task::ID taskID) {
 
 	assert(i != taskList->end());
 	taskList->erase(i);
-	timerMap.erase(taskID);
 	tpm->deleteTask(taskID);
 }
 
 void MainWindow::editTask(const Task& task) {
-	timerMap.erase(task.getID());
-	initializeSingleTimerNotification(task);
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 	emit(taskSelected());
 }
 
 void MainWindow::sendQuery() {
-	if (!commandHistory.empty()) {
-		if (historyIndex == --commandHistory.end()) {
-			commandHistory.push_back(
-				commandTextBox->toPlainText().toStdWString());
-			historyIndex++;
-		} else {
-			std::advance(historyIndex, 2);
-			commandHistory.erase(historyIndex, commandHistory.end());
-			commandHistory.push_back(
-				commandTextBox->toPlainText().toStdWString());
-			historyIndex = --commandHistory.end();
-		}
-	} else {
-		commandHistory.push_back(commandTextBox->toPlainText().toStdWString());
-		historyIndex--;
-	}
+	Task::ID curr = getSelectedTaskID();
+	qDebug() << curr;
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -159,21 +132,44 @@ void MainWindow::sendQuery() {
 	} catch (You::Controller::ParseErrorException& e) {
 		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (You::Controller::ParserException& e) {
-		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
-		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextRequiredException& e) {
 		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::CircularDependencyException& e) {
+		ui.statusMessage->setText(CIRCULAR_DEPENDENCY_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::NotUndoAbleException& e) {
+		ui.statusMessage->setText(NOT_UNDOABLE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParserTypeException& e) {
+		ui.statusMessage->setText(PARSER_TYPE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParserException& e) {
+		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
 	} catch (...) {
 		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
+		assert(false);
 	}
+
+	/// Selects the item if it was originally selected and still exists
+	QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+		boost::lexical_cast<QString>(curr), 0);
+	if (items.size() != 0) {
+		if (items.size() == 1) {
+			ui.taskTreePanel->setCurrentItem(items.at(0));
+		} else {
+			assert(false);
+		}
+	}
+
 	ui.statusIcon->setPixmap(pixmap);
 	commandTextBox->setPlainText(QString());
+	updateTaskInfoBar();
 }
 
 void MainWindow::commandEnterPressed() {
@@ -231,31 +227,16 @@ void MainWindow::taskSelected() {
 	}
 }
 
-void MainWindow::initializeAllTimerNotifications() {
-	for (int i = 0; i < taskList->size(); i++) {
-		initializeSingleTimerNotification(taskList->at(i));
-	}
-}
-
-void MainWindow::initializeSingleTimerNotification(Task task) {
-	Task::Time deadline = task.getDeadline();
-	if (deadline != Task::DEFAULT_DEADLINE) {
-		Task::Time now = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration difference = deadline - now;
-		QTimer* timer = new QTimer(this);
-		connect(timer, SIGNAL(timeout()), this,
-			SLOT(notify(notify(task.getID(), task.getDeadline()))));
-		timerMap[task.getID()] = timer;
-	}
-}
-
-void MainWindow::notify(Task::ID id) {
-	for (auto it = taskList->begin(); it != taskList->end(); it++) {
-		Task task = *it;
-		if (task.getID() == id) {
-			stm->trayIcon.showMessage("lol", "lol");
-			break;
-		}
+Task::ID MainWindow::getSelectedTaskID() {
+	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
+	QString contents = "";
+	if (selection.size() == 0) {
+		return -1;
+	} else {
+		QTreeWidgetItem item = *selection.at(0);
+		Task::ID index =
+			boost::lexical_cast<Task::ID>(item.text(0).toLongLong());
+		return index;
 	}
 }
 
@@ -281,50 +262,26 @@ void MainWindow::contextEditTask(int id) {
 	commandTextBox->moveCursor(QTextCursor::End);
 }
 
+void MainWindow::updateTaskInfoBar() {
+	int dueSoon = 0;
+	int overdue = 0;
+	for (int i = 0; i < taskList->size(); i++) {
+		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
+			dueSoon++;
+		}
+		if (tpm->isPastDue(taskList->at(i).getDeadline())) {
+			overdue++;
+		}
+	}
+	std::wostringstream ss;
+	ss << L"Overdue tasks: " << overdue << L". Tasks due soon: " << dueSoon;
+	ui.statusTasks->setText(QString::fromStdWString(ss.str()));
+}
+
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-	if (object == commandTextBox && event->type() == QEvent::KeyPress) {
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_Return) {
-			commandEnterPressed();
-			commandTextBox->setFocus();
-			return true;
-		} else if (keyEvent->key() == Qt::Key_Up) {
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				commandTextBox->setText(
-					QString::fromStdWString(*historyIndex));
-				commandTextBox->moveCursor(QTextCursor::End);
-				if (historyIndex != commandHistory.begin()) {
-					historyIndex--;
-				}
-			}
-			return true;
-		} else if (keyEvent->key() == Qt::Key_Down) {
-			if (!commandHistory.empty()) {
-				if (historyIndex == commandHistory.end()) {
-					historyIndex--;
-				}
-				commandTextBox->setText(
-					QString::fromStdWString(*historyIndex));
-				commandTextBox->moveCursor(QTextCursor::End);
-				if (historyIndex != --commandHistory.end()) {
-					historyIndex++;
-				}
-			}
-			return true;
-		} else {
-			return QMainWindow::eventFilter(object, event);
-		}
-	} else {
-		return QMainWindow::eventFilter(object, event);
-	}
-}
 
 }  // namespace GUI
 }  // namespace You

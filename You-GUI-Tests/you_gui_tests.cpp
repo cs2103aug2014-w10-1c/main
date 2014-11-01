@@ -60,7 +60,7 @@ public:
 		int column2 = QString::compare(item.text(2), QString("test"));
 		int column3 = QString::compare(
 			item.text(3),
-			QString("Overdue (1999-Nov-01 00:00:00)"));
+			QString("Overdue (1999-Nov-01)"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
 
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&
@@ -166,14 +166,14 @@ public:
 		w.commandTextBox->setPlainText(QString("/add test by Nov 99"));
 		w.commandEnterPressed();
 		w.commandTextBox->setPlainText(
-			QString("/edit 0 set description abc"));
+			QString("/edit 0 set description = 'abc'"));
 		w.commandEnterButtonClicked();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(1), QString("0"));
 		int column2 = QString::compare(item.text(2), QString("abc"));
 		int column3 = QString::compare(
 			item.text(3),
-			QString("Overdue (1999-Nov-01 00:00:00)"));
+			QString("Overdue (1999-Nov-01)"));
 		int column4 = QString::compare(item.text(4), QString("Normal"));
 
 		Assert::IsTrue(w.ui.taskTreePanel->topLevelItemCount() == 1 &&

@@ -16,6 +16,7 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7 = "Completion";
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -33,7 +34,8 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_3,
 		TASK_COLUMN_4,
 		TASK_COLUMN_5,
-		TASK_COLUMN_6
+		TASK_COLUMN_6,
+		TASK_COLUMN_7
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
@@ -57,6 +59,7 @@ void MainWindow::TaskPanelManager::setup() {
 	taskTreePanel->header()->setMinimumSectionSize(75);
 	taskTreePanel->setColumnHidden(0, true);
 	taskTreePanel->setColumnHidden(5, true);
+	taskTreePanel->setColumnHidden(6, true);
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -78,6 +81,11 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
+	if (task.isCompleted()) {
+		QFont font = items.at(0)->font(2);
+		font.setStrikeOut(true);
+		items.at(0)->setFont(2, font);
+	}
 	updateRowNumbers();
 }
 
@@ -122,29 +130,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	std::wstringstream wss;
-	if (task.getDeadline() == Task::NEVER) {
-		wss << L"Never";
-	} else if (isPastDue(task.getDeadline())) {
-		wss << L"Overdue (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 0)) {
-		wss << L"Today (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 1)) {
-		wss << L"Tomorrow (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 2)) {
-		wss << L"In two days (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 7)) {
-		wss << L"Within one week (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 14)) {
-		wss << L"Within two weeks (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 21)) {
-		wss << L"Within three weeks (" << task.getDeadline() << L")";
-	} else if (isDueWithin(task.getDeadline(), 28)) {
-		wss << L"Within one month (" << task.getDeadline() << L")";
-	} else {
-		wss << L"More than a month away (" << task.getDeadline() << L")";
-	}
-	result.push_back(boost::lexical_cast<QString>(wss.str()));
+	result.push_back(getReadableDeadline(task));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -168,6 +154,13 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 		result.push_back("None");
 	}
 
+	// Insert done-ness
+	if (task.isCompleted()) {
+		result.push_back(boost::lexical_cast<QString>("Yes"));
+	} else {
+		result.push_back(boost::lexical_cast<QString>("No"));
+	}
+
 	return result;
 }
 
@@ -181,6 +174,13 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	Task::Time now = boost::posix_time::second_clock::local_time();
 	return deadline < now;
+}
+
+bool MainWindow::TaskPanelManager::isDueWithinExactly(
+	Task::Time deadline, int days) {
+	Task::Time now = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration day(days * 24, 0, 0, 0);
+	return deadline < (now + day) && deadline > now;
 }
 
 bool MainWindow::TaskPanelManager::isDueAfter(
@@ -227,6 +227,39 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 
 	itemContextMenu->popup(
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
+}
+
+QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
+	std::wstringstream wss;
+	boost::gregorian::date_facet *facet
+		= new boost::gregorian::date_facet("%d-%b-%Y");
+	wss.imbue(std::locale(wss.getloc(), facet));
+	if (task.getDeadline() == Task::NEVER) {
+		wss << L"Never";
+	} else if (isPastDue(task.getDeadline())) {
+		wss << L"Overdue (" << task.getDeadline().date() << L")";
+	} else if (isDueAfter(task.getDeadline(), 0)) {
+		wss << L"Today (" << task.getDeadline() << L")";
+	} else if (isDueAfter(task.getDeadline(), 1)) {
+		wss << L"Tomorrow (" << task.getDeadline().date() << L")";
+	} else if (isDueAfter(task.getDeadline(), 2)) {
+		wss << L"In two days (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 7)) {
+		Date dl = Date(task.getDeadline().date());
+		wss << L"This coming " << dl.day_of_week()
+			<< L" (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 14)) {
+		Date dl = Date(task.getDeadline().date());
+		wss << L"Next " << dl.day_of_week()
+			<< L" (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 21)) {
+		wss << L"Within three weeks (" << task.getDeadline().date() << L")";
+	} else if (isDueWithin(task.getDeadline(), 28)) {
+		wss << L"Within one month (" << task.getDeadline().date() << L")";
+	} else {
+		wss << L"More than a month away (" << task.getDeadline() << L")";
+	}
+	return boost::lexical_cast<QString>(wss.str());
 }
 
 }  // namespace GUI

@@ -50,6 +50,10 @@ public:
 	/// Time function to check if a deadline is due within daysLeft days
 	static bool isDueWithin(Task::Time deadline, int daysLeft);
 
+	static bool isDueWithinExactly(Task::Time deadline, int days);
+
+	static QString getReadableDeadline(Task task);
+
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget
@@ -115,6 +119,9 @@ private:
 
 	/// Header string from column 6
 	static const QString TASK_COLUMN_6;
+
+	/// Header string from column 7
+	static const QString TASK_COLUMN_7;
 	/// @}
 };
 

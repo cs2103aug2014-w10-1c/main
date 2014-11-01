@@ -141,6 +141,19 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="statusTasks">
+      <property name="text">
+       <string>Panic Bar</string>
+      </property>
+      <property name="margin">
+       <number>4</number>
+      </property>
+      <property name="indent">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">

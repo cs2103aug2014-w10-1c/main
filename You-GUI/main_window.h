@@ -6,7 +6,6 @@
 #include <QtWidgets/QMainWindow>
 #include "You-Controller/result.h"
 #include "ui_yougui.h"
-#include "syntax_highlighter.h"
 #include "command_text_box.h"
 
 namespace You {
@@ -33,8 +32,6 @@ public:
 	/// Populates the task panel with data. This is not vital to the execution
 	/// of the program; it merely serves example data.
 	void populateTaskPanel();
-
-	std::unique_ptr<SyntaxHighlighter> syntaxHighlighter;
 
 	/// The class from which all components inherit.
 	class BaseManager;
@@ -83,6 +80,9 @@ public:
 	/// Gets the current list of tasks.
 	const TaskList& getTaskList() const;
 
+signals:
+	void taskPanelContextMenu(const QPoint &pos);
+
 protected:
 	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
 	/// task panel proportions on resize.
@@ -106,10 +106,7 @@ private:
 	/// UI in Designer. All UI objects must be referenced through this class.
 	Ui::MainWindowClass ui;
 
-	CommandTextBox *commandTextBox;
-
-	std::list<std::wstring> commandHistory;
-	std::list<std::wstring>::iterator historyIndex;
+	const std::unique_ptr<CommandTextBox> commandTextBox;
 
 	/// TaskList containing tasks to be placed in the task panel
 	std::unique_ptr<TaskList> taskList;
@@ -120,18 +117,8 @@ private:
 	/// Reimplementation of closeEvent to save state of GUI.
 	void closeEvent(QCloseEvent *event);
 
-	bool eventFilter(QObject *object, QEvent *event);
-
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
-
-	std::map<int32_t, QTimer*> timerMap;
-
-	/// Initializes timers for all tasks
-	void initializeAllTimerNotifications();
-
-	/// Initializes single timer
-	void initializeSingleTimerNotification(Task task);
 
 private:
 	static const QString READY_MESSAGE;
@@ -143,6 +130,9 @@ private:
 	static const QString RESOURCE_GREEN;
 	static const QString CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE;
 	static const QString CONTEXT_REQUIRED_MESSAGE;
+	static const QString CIRCULAR_DEPENDENCY_MESSAGE;
+	static const QString NOT_UNDOABLE_MESSAGE;
+	static const QString PARSER_TYPE_MESSAGE;
 	static const QString UNKNOWN_EXCEPTION_MESSAGE;
 
 private slots:
@@ -165,9 +155,8 @@ private slots:
 
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
-
-	/// Gives the user notifications of a task
-	void notify(Task::ID id);
+	void updateTaskInfoBar();
+	Task::ID getSelectedTaskID();
 };
 
 

@@ -30,6 +30,15 @@ const QString MainWindow::CONTEXT_REQUIRED_MESSAGE =
 const QString MainWindow::UNKNOWN_EXCEPTION_MESSAGE =
 "Error: An unknown exception was thrown.";
 
+const QString MainWindow::CIRCULAR_DEPENDENCY_MESSAGE =
+"Error: A circular dependency was detected.";
+
+const QString MainWindow::NOT_UNDOABLE_MESSAGE =
+"Error: The previous operation could not be undone.";
+
+const QString MainWindow::PARSER_TYPE_MESSAGE =
+"Error: A parser type exception was thrown..";
+
 const QString MainWindow::RESOURCE_RED =
 ":/Status_red.png";
 
