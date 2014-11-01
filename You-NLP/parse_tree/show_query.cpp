@@ -36,10 +36,7 @@ std::wstring getPredicateFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 	std::transform(begin(q.predicates), end(q.predicates),
 		std::back_inserter(predicateStrings),
 		[](const You::NLP::SHOW_QUERY::FIELD_FILTER& filter) {
-		return (boost::wformat(FILTER_FIELD_FORMAT) %
-			filter.field %
-			filter.predicate %
-			filter.value).str();
+		return boost::lexical_cast<std::wstring>(filter);
 	});
 
 	if (predicateStrings.empty()) {
@@ -57,10 +54,7 @@ std::wstring getSortFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 	std::transform(begin(q.order), end(q.order),
 		std::back_inserter(orderStrings),
 		[](const You::NLP::SHOW_QUERY::FIELD_ORDER& order) {
-			return (boost::wformat(SORT_FIELD_FORMAT) %
-				order.field %
-				(order.order == You::NLP::SHOW_QUERY::Order::ASCENDING ?
-					ASCENDING_ORDER_MESSAGE : DESCENDING_ORDER_MESSAGE)).str();
+			return boost::lexical_cast<std::wstring>(order);
 		});
 
 	if (orderStrings.empty()) {
@@ -101,6 +95,19 @@ std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p) {
 	}
 
 	return s << string;
+}
+
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::FIELD_FILTER& f) {
+	return s << (boost::wformat(FILTER_FIELD_FORMAT) %
+		f.field %
+		f.predicate %
+		f.value).str();
+}
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::FIELD_ORDER& o) {
+	return s << (boost::wformat(SORT_FIELD_FORMAT) %
+		o.field %
+		(o.order == You::NLP::SHOW_QUERY::Order::ASCENDING ?
+			ASCENDING_ORDER_MESSAGE : DESCENDING_ORDER_MESSAGE)).str();
 }
 
 std::wostream& operator<<(std::wostream& s, const SHOW_QUERY& q) {

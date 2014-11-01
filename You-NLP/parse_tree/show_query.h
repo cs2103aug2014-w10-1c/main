@@ -99,6 +99,20 @@ struct SHOW_QUERY {
 /// \return The stream object passed to the formatter.
 std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p);
 
+/// Defines an output formatter for SHOW_QUERY filters.
+///
+/// \param[in,out] s The stream to write to.
+/// \param[in] f The field filter to display
+/// \return The stream object passed to the formatter.
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::FIELD_FILTER& f);
+
+/// Defines an output formatter for SHOW_QUERY sorting orders.
+///
+/// \param[in,out] s The stream to write to.
+/// \param[in] o The field order to display
+/// \return The stream object passed to the formatter.
+std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::FIELD_ORDER& o);
+
 /// Defines an output formatter for SHOW_QUERY queries.
 ///
 /// \param[in,out] s The stream to write to.
