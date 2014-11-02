@@ -85,6 +85,27 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesStringWithSubtasksAsTask) {
+		QUERY q = QueryParser::parse(L"Walk the dog by 20 oct : Eat breakfast "
+			L"; Take out the dog; Open the door; Buy a new collar by 12 oct");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"Walk the dog",
+			TaskPriority::NORMAL,
+			ptime(date(2015, boost::gregorian::Oct, 20)),
+			{
+				{ L"Eat breakfast" },
+				{ L"Take out the dog" },
+				{ L"Open the door" },
+				{
+					L"Buy a new collar",
+					TaskPriority::NORMAL,
+					ptime(date(2015, boost::gregorian::Oct, 12))
+				}
+			}
+		}), q);
+	}
+
 	TEST_METHOD(parsesIrregularSpacingAddTask) {
 		QUERY q;
 		Assert::ExpectException<ParseErrorException>(

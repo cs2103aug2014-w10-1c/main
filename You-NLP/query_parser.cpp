@@ -32,11 +32,11 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start %= (
 		(qi::lit('/') > explicitCommand) |
 		addCommand
-	) >> qi::eoi;
+	) > qi::eoi;
 	BOOST_SPIRIT_DEBUG_NODE(start);
 
 	explicitCommand %= (
-		(qi::lit("add") >> space >> addCommand) |
+		(qi::lit("add") > space > addCommand) |
 		(qi::lit("show") >> space >> showCommand) |
 		(qi::lit("edit") >> space >> editCommand) |
 		(qi::lit("delete") >> space >> deleteCommand) |
@@ -45,13 +45,14 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(explicitCommand);
 
 	#pragma region Adding tasks
-	addCommand %= (
-		addCommandDescription
-	);
+	addCommand = (
+		addCommandDescription >
+		-(*space >> qi::lit(':') > *space > addCommandSubtasks)
+	)[qi::_val = phoenix::bind(&constructAddQueryWithSubtasks, qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(addCommand);
 
 	addCommandDescription = (
-		ParserCharTraits::char_ >> addCommandDescriptionTail
+		ParserCharTraits::char_ > addCommandDescriptionTail
 	)[qi::_val = phoenix::bind(&constructAddQuery, qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDescription);
 
@@ -70,14 +71,19 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	addCommandDeadline = (
 		space >> (qi::lit("by") | qi::lit("before")) >> space >>
-		utilityTime
+		utilityTime >> *space
 	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadline);
 
 	addCommandDeadlineOptional = (
-		addCommandDeadline || qi::eoi
+		addCommandDeadline || (*space >> &(qi::char_(":;") | qi::eoi))
 	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadlineOptional);
+
+	addCommandSubtasks %= (
+		addCommandDescription % (*space >> qi::lit(';') >> *space)
+	);
+	BOOST_SPIRIT_DEBUG_NODE(addCommandSubtasks);
 	#pragma endregion
 
 	#pragma region Showing tasks
