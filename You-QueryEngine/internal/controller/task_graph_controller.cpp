@@ -69,6 +69,19 @@ void TaskGraphController::connectEdge(TaskGraph& g,
 	boost::add_edge(cid, pid, g.graph);
 }
 
+
+void TaskGraphController::deleteTaskTree(TaskGraph& g, const Task::ID id) {
+	auto task = g.getTask(id);
+	auto children = g.getAdjacentTasks(task);
+
+	for (auto& cid : children) {
+		deleteTaskTree(g, cid);
+	}
+
+	g.taskTable.erase(id);
+	rebuildGraph(g);
+}
+
 void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
 	auto task = g.getTask(id);
 	auto children = g.getAdjacentTasks(task);

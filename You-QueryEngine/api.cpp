@@ -9,6 +9,8 @@
 #include "internal/action/delete_task.h"
 #include "internal/action/update_task.h"
 #include "internal/action/undo.h"
+#include "internal/action/batch_add_subtasks.h"
+#include "internal/action/batch_delete_subtasks.h"
 #include "internal/model.h"
 #include "api.h"
 
@@ -20,6 +22,28 @@ const std::wstring Query::logCategory = L"[QE]";
 std::unique_ptr<Query>
 Query::getReverse() {
 	throw Exception::NotUndoAbleException();
+}
+
+std::unique_ptr<Query>
+QueryEngine::BatchAddSubTasks(
+	const Task::Description& description,
+	const Task::Time& deadline,
+	const Task::Priority& priority,
+	const Task::Dependencies& dependencies,
+	std::vector<std::unique_ptr<Query>>&& subtasks) {
+	using BatchAddSubTasks = Internal::Action::BatchAddSubTasks;
+	return std::unique_ptr<Query>(new BatchAddSubTasks(
+		description,
+		deadline,
+		priority,
+		dependencies,
+		std::move(subtasks)));
+}
+
+std::unique_ptr<Query>
+QueryEngine::BatchDeleteSubTasks(Task::ID id) {
+	using BatchDeleteSubtasks = Internal::Action::BatchDeleteSubTasks;
+	return std::unique_ptr<Query>(new BatchDeleteSubtasks(id));
 }
 
 std::unique_ptr<Query>
@@ -75,8 +99,8 @@ QueryEngine::Undo() {
 
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	Response response;
-	response = query->execute(Internal::State::get());
 	std::unique_ptr<Query> reverse;
+	response = query->execute(Internal::State::get());
 	try {
 		reverse = query->getReverse();
 		Internal::State::get().undoStack().emplace(std::move(reverse));

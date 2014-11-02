@@ -15,6 +15,7 @@ namespace Action {
 
 /// Action for deleting an existing task
 class DeleteTask : public Query {
+	friend class BatchDeleteSubTasks;
 public:
 	/// Constructor
 	explicit DeleteTask(Task::ID id)

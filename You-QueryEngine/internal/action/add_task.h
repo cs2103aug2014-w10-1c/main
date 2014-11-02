@@ -15,6 +15,8 @@ namespace Action {
 
 /// Action for adding a new task
 class AddTask : public Query {
+	friend class BatchAddSubTasks;
+	friend class BatchDeleteSubTasks;
 public:
 	/// Constructor that use datastore to inquire new id
 	explicit AddTask(Task::Description description, Task::Time deadline,

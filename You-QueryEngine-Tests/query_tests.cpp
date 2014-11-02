@@ -58,6 +58,19 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsNotNull(&query);
 	}
 
+	TEST_METHOD(constructBatchAddTaskQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		auto query = QueryEngine::BatchAddSubTasks(
+			desc, dead, prio, dep, std::move(childQueries));
+		Assert::IsNotNull(&query);
+	}
+
 	TEST_METHOD(constructGetTaskQuery) {
 		std::vector<Task::ID> emptyVec;
 		auto query = QueryEngine::GetTask(Filter::idIsIn(emptyVec));
@@ -103,6 +116,49 @@ TEST_CLASS(QueryEngineTests) {
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
+	}
+
+	TEST_METHOD(executeBatchAddQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+		auto query = QueryEngine::BatchAddSubTasks(
+			desc, dead, prio, dep, std::move(childQueries));
+		Task parent = boost::get<Task>(
+			QueryEngine::executeQuery(std::move(query)));
+
+		// TODO(evansb) define ToString
+		Assert::AreEqual(parent.getSubtasks().size(),
+			static_cast<std::size_t>(3));
+	}
+
+	TEST_METHOD(executeBatchDeleteQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+
+		Task parent;
+		{  // NOLINT
+			auto query = QueryEngine::BatchAddSubTasks(
+				desc, dead, prio, dep, std::move(childQueries));
+			parent = boost::get<Task>(
+				QueryEngine::executeQuery(std::move(query)));
+		}
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			2);
+
+		{  // NOLINT
+			auto query = QueryEngine::BatchDeleteSubTasks(parent.getID());
+			QueryEngine::executeQuery(std::move(query));
+		}
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			0);
 	}
 
 	TEST_METHOD(addTaskWithInvalidDependency) {
