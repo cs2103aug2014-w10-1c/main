@@ -34,7 +34,8 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
-namespace Internal { namespace Action { class Undo; class BatchAddSubTasks; } class State; }
+namespace Internal { namespace Action { class Undo;
+	class BatchAddSubTasks; } class State; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
