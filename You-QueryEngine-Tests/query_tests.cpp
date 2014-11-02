@@ -128,8 +128,12 @@ TEST_CLASS(QueryEngineTests) {
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
 		auto query = QueryEngine::BatchAddSubTasks(
 			desc, dead, prio, dep, std::move(childQueries));
-		std::vector<Task> inserted = boost::get<std::vector<Task>>(
-			QueryEngine::executeQuery(std::move(query)));
+
+		QueryEngine::executeQuery(std::move(query));
+
+		auto inserted = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
 
 		// TODO(evansb) define ToString
 		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(4));
@@ -361,15 +365,10 @@ TEST_CLASS(QueryEngineTests) {
 			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
 		auto query = QueryEngine::BatchAddDependencies(
 			desc, dead, prio, std::move(childQueries), {});
-		auto list = boost::get<std::vector<Task>>(
+		auto inserted = boost::get<Task>(
 			QueryEngine::executeQuery(std::move(query)));
 
-		// TODO(evansb) define ToString
-		std::size_t numberOfEdges = 0;
-		for (const auto& task : list) {
-			numberOfEdges += task.getDependencies().size();
-		}
-		Assert::AreEqual(numberOfEdges, static_cast<std::size_t>(3));
+		Assert::IsTrue(inserted.isDependOn(3));
 	}
 
 	TEST_METHOD(undoAddQuery) {

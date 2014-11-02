@@ -2,11 +2,8 @@
 #include "stdafx.h"
 
 #include "../../../You-Utils/log.h"
-#include "../../../You-DataStore/datastore.h"
-#include "../../../You-DataStore/transaction.h"
 
 #include "../controller.h"
-#include "get_task.h"
 #include "add_task.h"
 #include "batch_add_dependencies.h"
 
@@ -17,8 +14,6 @@ namespace Action {
 
 /// \cond Imports
 namespace {
-	using Transaction = You::DataStore::Transaction;
-	using DataStore = You::DataStore::DataStore;
 	using Log = You::Utils::Log;
 }
 /// \endcond
@@ -29,11 +24,10 @@ const std::wstring BatchAddDependencies::logCategory =
 Response BatchAddDependencies::execute(State& state) {
 	auto qBegin = dependencies.begin();
 	auto qEnd = dependencies.end();
-	std::vector<Task::ID> inserted;
 	Task::ID lastInserted =
 		boost::get<Task>((*qBegin)->execute(state)).getID();
 	++qBegin;
-	inserted.push_back(lastInserted);
+
 	for (qBegin; qBegin != qEnd; ++qBegin) {
 		Response r = (*qBegin)->execute(state);
 		auto task = boost::get<Task>(r);
@@ -43,7 +37,6 @@ Response BatchAddDependencies::execute(State& state) {
 		Controller::Graph::updateTask(state.get().sgraph(),
 			task);
 		lastInserted = task.getID();
-		inserted.push_back(lastInserted);
 	}
 
 	auto addParentquery = (insertedID == -1)
@@ -53,15 +46,7 @@ Response BatchAddDependencies::execute(State& state) {
 		deadline, priority, { lastInserted }, subtasks));
 
 	Response r = addParentquery->execute(state);
-	lastInserted = boost::get<Task>(r).getID();
-	inserted.push_back(lastInserted);
-
-	std::unique_ptr<Query> refresh = std::unique_ptr<Query>(new GetTask(
-		state.getActiveFilter() || Filter::idIsIn(inserted),
-		state.getActiveComparator()));
-
-	auto list = boost::get<std::vector<Task>>(refresh->execute(state));
-	return list;
+	return boost::get<Task>(r);
 }
 
 }  // namespace Action
