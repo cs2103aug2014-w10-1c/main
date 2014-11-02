@@ -206,11 +206,6 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"normal", TaskPriority::NORMAL)
 		(L"high", TaskPriority::HIGH);
 
-	utilityTime = (
-		qi::as_wstring[+ParserCharTraits::char_]
-	)[qi::_val = phoenix::bind(&constructDateTime, qi::_1)];
-	BOOST_SPIRIT_DEBUG_NODE(utilityTime);
-
 	utilityLexeme %= qi::as_wstring[(
 		qi::lit('\'') > *utilityLexemeContents > qi::lit('\'')
 	)];
