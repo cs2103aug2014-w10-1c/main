@@ -34,7 +34,7 @@ public:
 			TaskPriority::NORMAL,
 			DEADLINE,
 			{ ADD_QUERY { DESCRIPTION } },
-			{ ADD_QUERY { DESCRIPTION + L"3" } }
+			std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })
 		};
 
 		Assert::AreEqual(DUMMY, local);
@@ -78,7 +78,7 @@ const ADD_QUERY AddQueryTests::DUMMY {
 	TaskPriority::NORMAL,
 	DEADLINE,
 	{ ADD_QUERY { DESCRIPTION } },
-	{ ADD_QUERY { DESCRIPTION + L"3" } }
+	std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })
 };
 
 }  // namespace UnitTests

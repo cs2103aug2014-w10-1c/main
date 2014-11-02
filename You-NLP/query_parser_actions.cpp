@@ -12,6 +12,21 @@ namespace qi = spirit::qi;
 namespace phoenix = boost::phoenix;
 
 ADD_QUERY QueryParser::constructAddQuery(
+	ADD_QUERY query,
+	boost::optional<ADD_QUERY> dependent,
+	boost::optional<std::vector<ADD_QUERY>> subtasks) {
+	if (static_cast<bool>(subtasks)) {
+		query.subtasks = std::move(subtasks.get());
+	}
+	if (static_cast<bool>(dependent)) {
+		query.dependent = std::make_shared<ADD_QUERY>(
+			std::move(dependent.get()));
+	}
+
+	return query;
+}
+
+ADD_QUERY QueryParser::constructAddQueryFromDescription(
 	ParserCharEncoding::char_type lexeme,
 	ADD_QUERY query) {
 	query.description.insert(query.description.begin(), lexeme);
@@ -40,15 +55,6 @@ ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
 		return ADD_QUERY {
 		};
 	}
-}
-
-ADD_QUERY QueryParser::constructAddQueryWithSubtasks(
-	ADD_QUERY query, boost::optional<std::vector<ADD_QUERY>> subtasks) {
-	if (static_cast<bool>(subtasks)) {
-		query.subtasks = std::move(subtasks.get());
-	}
-
-	return query;
 }
 
 SHOW_QUERY QueryParser::constructShowQuery(
