@@ -40,8 +40,7 @@ public:
 
 	/// Deletes a task.
 	void deleteTask(Task::ID taskID);
-	std::unique_ptr<QTreeWidgetItem> makeTree(
-		const Task& task, const std::map<Task::ID, Task> taskMap);
+	std::unique_ptr<QTreeWidgetItem> addTaskTree(const Task& task);
 	void addSubtask(const Task& parentTask, const Task& childTask);
 	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);

@@ -46,7 +46,7 @@ bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
 }
 
-std::vector<Task> Task::getSubtasksObject() {
+std::vector<Task> Task::getSubtasksObject() const {
 	std::vector<Task> result;
 	for (const auto& id : subtasks) {
 		result.push_back(Internal::State::get().graph().getTask(id));
@@ -54,7 +54,7 @@ std::vector<Task> Task::getSubtasksObject() {
 	return result;
 }
 
-std::vector<Task> Task::getDependenciesObject() {
+std::vector<Task> Task::getDependenciesObject() const {
 	std::vector<Task> result;
 	for (const auto& id : dependencies) {
 		result.push_back(Internal::State::get().graph().getTask(id));
