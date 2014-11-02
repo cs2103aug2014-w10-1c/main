@@ -109,12 +109,11 @@ SHOW_QUERY::FIELD_ORDER QueryParser::constructShowQuerySortColumn(
 }
 
 EDIT_QUERY QueryParser::constructEditQuery(
-	const size_t offset,
-	const EDIT_QUERY& query) {
-	EDIT_QUERY result(query);
-	result.taskID = offset;
+	size_t offset,
+	EDIT_QUERY query) {
+	query.taskID = offset;
 
-	return result;
+	return query;
 }
 
 EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
@@ -133,17 +132,18 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 
 EDIT_QUERY QueryParser::constructEditQueryUnary(
 	TaskField field,
-	const ValueType& newValue) {
+	ValueType newValue) {
 	EDIT_QUERY result;
 
 	try {
 		switch (field) {
 		case TaskField::DESCRIPTION: {
-			result.description = boost::get<StringType>(newValue);
+			result.description = std::move(boost::get<StringType>(newValue));
 			break;
 		}
 		case TaskField::DEADLINE:
-			result.deadline = boost::get<boost::posix_time::ptime>(newValue);
+			result.deadline = std::move(
+				boost::get<boost::posix_time::ptime>(newValue));
 			break;
 		default:
 			assert(false);
@@ -158,6 +158,15 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	EDIT_QUERY result;
 	result.priority = priority;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryAttachment(
+	bool attach,
+	StringType file) {
+	EDIT_QUERY result;
+	result.attachments.push_back({ attach, file });
 
 	return result;
 }

@@ -24,7 +24,7 @@ bool QueryParser::parse(const StringType& string, QUERY& result) {
 	return qi::parse(
 		begin(string),
 		end(string),
-		QueryParser(),
+		QueryParser() > qi::eoi,
 		result);
 }
 
@@ -32,13 +32,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	start %= (
 		(qi::lit('/') > explicitCommand) |
 		addCommand
-	) > qi::eoi;
+	);
 	BOOST_SPIRIT_DEBUG_NODE(start);
 
 	explicitCommand %= (
 		(qi::lit("add") > space > addCommand) |
 		(qi::lit("show") >> space >> showCommand) |
-		(qi::lit("edit") >> space >> editCommand) |
+		(qi::lit("edit") > space > editCommand) |
 		(qi::lit("delete") >> space >> deleteCommand) |
 		(qi::lit("undo") >> undoCommand)
 	);
@@ -145,7 +145,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Editing tasks
 	editCommand = (
-		qi::uint_ >> space >> qi::lit("set") >> space >> editCommandRule
+		qi::uint_ > space > (
+			(qi::lit("set") > space > editCommandRule) |
+			(qi::lit("attach") > space > editAttachmentCommandRule(true)) |
+			(qi::lit("detach") > space > editAttachmentCommandRule(false)))
 	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(editCommand);
@@ -163,15 +166,15 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(editCommandRuleNullary);
 
 	editCommandRuleUnary = (
-		editCommandFieldsUnary >>
-		-space >> qi::lit('=') >> -space >>
+		editCommandFieldsUnary >
+		*space > qi::lit('=') > *space >
 		utilityValue)
 	[qi::_val = phoenix::bind(&constructEditQueryUnary, qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(editCommandRuleUnary);
 
 	editCommandRulePriorities = (
-		qi::lit("priority") >>
-		-space >> qi::lit('=') >> -space >>
+		qi::lit("priority") >
+		*space > qi::lit('=') > *space >
 		utilityTaskPriority
 	)[qi::_val = phoenix::bind(&constructEditQueryPriority, qi::_1)];
 	BOOST_SPIRIT_DEBUG_NODE(editCommandRulePriorities);
@@ -183,6 +186,11 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
+
+	editAttachmentCommandRule = (
+		utilityLexeme
+	)[qi::_val = phoenix::bind(&constructEditQueryAttachment, qi::_r1, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(editAttachmentCommandRule);
 	#pragma endregion
 
 	#pragma region Deleting tasks
