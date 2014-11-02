@@ -37,10 +37,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	explicitCommand %= (
 		(qi::lit("add") > space > addCommand) |
-		(qi::lit("show") > space > showCommand) |
+		(qi::lit("show") > *space > showCommand) |
 		(qi::lit("edit") > space > editCommand) |
-		(qi::lit("delete") >> space >> deleteCommand) |
-		(qi::lit("undo") >> undoCommand)
+		(qi::lit("delete") > space > deleteCommand) |
+		(qi::lit("undo") > *space > undoCommand)
 	);
 	BOOST_SPIRIT_DEBUG_NODE(explicitCommand);
 
