@@ -17,14 +17,14 @@ public:
 		stream << DUMMY;
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks)") % DESCRIPTION % DEADLINE).str(),
+				L"1 subtasks, 1 dependencies)") % DESCRIPTION % DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks)") % DESCRIPTION % DEADLINE).str(),
+				L"1 subtasks, 1 dependencies)") % DESCRIPTION % DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
@@ -33,7 +33,8 @@ public:
 			DESCRIPTION,
 			TaskPriority::NORMAL,
 			DEADLINE,
-			{ ADD_QUERY { DESCRIPTION } }
+			{ ADD_QUERY { DESCRIPTION } },
+			{ ADD_QUERY { DESCRIPTION + L"3" } }
 		};
 
 		Assert::AreEqual(DUMMY, local);
@@ -76,7 +77,8 @@ const ADD_QUERY AddQueryTests::DUMMY {
 	DESCRIPTION,
 	TaskPriority::NORMAL,
 	DEADLINE,
-	{ ADD_QUERY { DESCRIPTION } }
+	{ ADD_QUERY { DESCRIPTION } },
+	{ ADD_QUERY { DESCRIPTION + L"3" } }
 };
 
 }  // namespace UnitTests

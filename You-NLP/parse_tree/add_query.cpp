@@ -10,7 +10,7 @@ namespace {
 
 /// The format for displaying an ADD_QUERY
 const boost::wformat STRING_FORMAT(L"%1% (deadline %2%, %3% priority, %4% "
-	L"subtasks)");
+	L"subtasks, %5% dependencies)");
 
 }  // namespace
 
@@ -25,6 +25,8 @@ std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 		q.priority == TaskPriority::HIGH ? L"high" : L"normal"
 	) % (
 		q.subtasks.size()
+	) % (
+		q.dependencies.size()
 	));
 }
 
@@ -33,7 +35,12 @@ bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {
 		priority == rhs.priority &&
 		deadline == rhs.deadline &&
 		subtasks.size() == rhs.subtasks.size() &&
-		std::equal(begin(subtasks), end(subtasks), begin(rhs.subtasks));
+		std::equal(begin(subtasks), end(subtasks), begin(rhs.subtasks)) &&
+		dependencies.size() == rhs.dependencies.size() &&
+		std::equal(
+			begin(dependencies),
+			end(dependencies),
+			begin(rhs.dependencies));
 }
 
 std::wstring ToString(const ADD_QUERY& q) {
