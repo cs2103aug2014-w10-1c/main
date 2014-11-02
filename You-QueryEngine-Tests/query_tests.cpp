@@ -128,13 +128,24 @@ TEST_CLASS(QueryEngineTests) {
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
 		auto query = QueryEngine::BatchAddSubTasks(
 			desc, dead, prio, dep, std::move(childQueries));
-		Task parent = boost::get<Task>(
+		std::vector<Task> inserted = boost::get<std::vector<Task>>(
 			QueryEngine::executeQuery(std::move(query)));
 
 		// TODO(evansb) define ToString
-		Assert::AreEqual(parent.getSubtasks().size(),
-			static_cast<std::size_t>(3));
+		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(4));
+		std::int8_t numberOfParent = 0;
+		std::int8_t numberOfChildren = 0;
+		for (const auto& task : inserted) {
+			if (task.getParent() != task.getID()) {
+				numberOfChildren++;
+			} else if (!task.getSubtasks().empty()) {
+				numberOfParent++;
+			}
+		}
+		Assert::AreEqual(numberOfParent, std::int8_t(1));
+		Assert::AreEqual(numberOfChildren, std::int8_t(3));
 	}
+
 
 	TEST_METHOD(executeBatchDeleteQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
@@ -145,15 +156,14 @@ TEST_CLASS(QueryEngineTests) {
 		{  // NOLINT
 			auto query = QueryEngine::BatchAddSubTasks(
 				desc, dead, prio, dep, std::move(childQueries));
-			parent = boost::get<Task>(
-				QueryEngine::executeQuery(std::move(query)));
+			QueryEngine::executeQuery(std::move(query));
 		}
 
 		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
 			2);
 
 		{  // NOLINT
-			auto query = QueryEngine::BatchDeleteSubTasks(parent.getID());
+			auto query = QueryEngine::BatchDeleteSubTasks(2);
 			QueryEngine::executeQuery(std::move(query));
 		}
 
@@ -351,12 +361,15 @@ TEST_CLASS(QueryEngineTests) {
 			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
 		auto query = QueryEngine::BatchAddDependencies(
 			desc, dead, prio, std::move(childQueries), {});
-		Task parent = boost::get<Task>(
+		auto list = boost::get<std::vector<Task>>(
 			QueryEngine::executeQuery(std::move(query)));
 
 		// TODO(evansb) define ToString
-		Assert::AreEqual(parent.getDependencies().size(),
-			static_cast<std::size_t>(1));
+		std::size_t numberOfEdges = 0;
+		for (const auto& task : list) {
+			numberOfEdges += task.getDependencies().size();
+		}
+		Assert::AreEqual(numberOfEdges, static_cast<std::size_t>(3));
 	}
 
 	TEST_METHOD(undoAddQuery) {

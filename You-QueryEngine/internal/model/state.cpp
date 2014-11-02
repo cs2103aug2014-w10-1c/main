@@ -51,6 +51,7 @@ void State::clear() {
 	while (!get().undoStack().empty()) {
 		get().undoStack().pop();
 	}
+	get().maxID = 0;
 }
 
 void State::setActiveFilter(const Filter& filter) {
