@@ -15,6 +15,20 @@ namespace NLP {
 
 /// Defines the synthesised value type of an edit query.
 struct EDIT_QUERY {
+	/// The action to do for the specified attachment.
+	struct ATTACHMENT_ACTION {
+		/// Equality comparator.
+		///
+		/// \param[in] rhs The other action object to compare with.
+		bool operator==(const ATTACHMENT_ACTION& rhs) const;
+
+		/// Whether to add the attachment.
+		bool add;
+
+		/// The path to the attachment.
+		std::wstring path;
+	};
+
 	/// Equality comparator.
 	///
 	/// \param[in] rhs The other query object to compare with.
@@ -34,7 +48,18 @@ struct EDIT_QUERY {
 
 	/// Whether the task is complete
 	You::Utils::Option<bool> complete;
+
+	/// The attachments to add and remove.
+	std::vector<ATTACHMENT_ACTION> attachments;
 };
+
+/// Defines an output formatter for EDIT_QUERY attachment queries.
+///
+/// \param[in,out] s The stream to write to.
+/// \param[in] a The action to display.
+/// \return The stream object passed to the formatter.
+std::wostream& operator<<(std::wostream& s,
+	const EDIT_QUERY::ATTACHMENT_ACTION& a);
 
 /// Defines an output formatter for EDIT_QUERY queries.
 ///
