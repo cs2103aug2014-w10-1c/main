@@ -15,7 +15,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #pragma warning(push)
-#pragma warning(disable: 4127 4100 4244)
+#pragma warning(disable: 4127 4100 4244 4555)
 #include <boost/variant.hpp>
 #pragma warning(pop)
 
