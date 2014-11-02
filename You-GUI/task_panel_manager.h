@@ -118,25 +118,25 @@ private:
 	/// String/numeric constants for the GUI
 	/// @{
 	/// Header string for column 1
-	static const QString TASK_COLUMN_1_TITLE;
+	static const QString TASK_COLUMN_0_TITLE;
 
 	/// Header string for column 2
-	static const QString TASK_COLUMN_2_TITLE;
+	static const QString TASK_COLUMN_1_TITLE;
 
 	/// Header string for column 3
-	static const QString TASK_COLUMN_3_TITLE;
+	static const QString TASK_COLUMN_2_TITLE;
 
 	/// Header string for column 4
-	static const QString TASK_COLUMN_4_TITLE;
+	static const QString TASK_COLUMN_3_TITLE;
 
 	/// Header string for column 5
-	static const QString TASK_COLUMN_5_TITLE;
+	static const QString TASK_COLUMN_4_TITLE;
 
 	/// Header string from column 6
-	static const QString TASK_COLUMN_6_TITLE;
+	static const QString TASK_COLUMN_5_TITLE;
 
 	/// Header string from column 7
-	static const QString TASK_COLUMN_7_TITLE;
+	static const QString TASK_COLUMN_6_TITLE;
 
 	/// Column reference to Index column
 	static const int COLUMN_INDEX;

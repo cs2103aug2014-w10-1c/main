@@ -12,13 +12,13 @@ namespace GUI {
 
 using Date = boost::gregorian::date;
 
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE = "Index";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Hidden ID Column";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Description";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Deadline";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Dependencies";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_0_TITLE = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE = "Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
@@ -39,13 +39,13 @@ MainWindow::TaskPanelManager::~TaskPanelManager() {
 
 void MainWindow::TaskPanelManager::setup() {
 	QStringList columnHeaders({
+		TASK_COLUMN_0_TITLE,
 		TASK_COLUMN_1_TITLE,
 		TASK_COLUMN_2_TITLE,
 		TASK_COLUMN_3_TITLE,
 		TASK_COLUMN_4_TITLE,
 		TASK_COLUMN_5_TITLE,
-		TASK_COLUMN_6_TITLE,
-		TASK_COLUMN_7_TITLE
+		TASK_COLUMN_6_TITLE
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
@@ -60,7 +60,7 @@ void MainWindow::TaskPanelManager::setup() {
 	header->setStretchLastSection(true);
 
 	for (int i = 0; i < columnHeaders.size(); ++i) {
-		if (i == 2) {
+		if (i == COLUMN_DESCRIPTION) {
 			continue;
 		}
 		header->resizeSection(i, header->defaultSectionSize());
