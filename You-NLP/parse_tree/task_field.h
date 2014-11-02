@@ -23,7 +23,10 @@ enum class TaskField {
 	DEADLINE = 1 << 2,
 
 	/// The task is now complete
-	COMPLETE = 1 << 3
+	COMPLETE = 1 << 3,
+
+	/// The attachments need to be updated
+	ATTACHMENTS = 1 << 4
 };
 
 /// Formats the given task priority to stream.

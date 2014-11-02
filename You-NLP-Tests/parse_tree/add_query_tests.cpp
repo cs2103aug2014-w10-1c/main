@@ -1,6 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "query_parser.h"
+#include "parse_tree.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -16,15 +16,15 @@ public:
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (deadline %2%, normal priority)") %
-				DESCRIPTION % DEADLINE).str(),
+			(boost::wformat(L"%1% (deadline %2%, normal priority, "
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (deadline %2%, normal priority)") %
-				DESCRIPTION % DEADLINE).str(),
+			(boost::wformat(L"%1% (deadline %2%, normal priority, "
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
@@ -32,7 +32,9 @@ public:
 		ADD_QUERY local {
 			DESCRIPTION,
 			TaskPriority::NORMAL,
-			DEADLINE
+			DEADLINE,
+			{ ADD_QUERY { DESCRIPTION } },
+			std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })
 		};
 
 		Assert::AreEqual(DUMMY, local);
@@ -74,7 +76,9 @@ const boost::posix_time::ptime AddQueryTests::DEADLINE(
 const ADD_QUERY AddQueryTests::DUMMY {
 	DESCRIPTION,
 	TaskPriority::NORMAL,
-	DEADLINE
+	DEADLINE,
+	{ ADD_QUERY { DESCRIPTION } },
+	std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })
 };
 
 }  // namespace UnitTests

@@ -7,6 +7,7 @@
 
 #include "parse_tree.h"
 #include "parser.h"
+#include "date_time_parser.h"
 
 namespace You {
 namespace NLP {
@@ -14,8 +15,7 @@ namespace NLP {
 /// The query parser that recognises our input syntax.
 class QueryParser : public boost::spirit::qi::grammar<
 	ParserIteratorType,
-	QUERY(),
-	ParserSkipperType> {
+	QUERY()> {
 public:
 	/// The type of the iterator used in this grammar.
 	typedef ParserIteratorType IteratorType;
@@ -56,6 +56,20 @@ public:
 
 private:
 	#pragma region Adding tasks
+	/// Process the main task, as well as its subtasks and dependents.
+	///
+	/// \see addCommandSubtasks
+	/// The production rule associated with this semantic action.
+	///
+	/// \param[in] query The main task
+	/// \param[in] subtasks The subtasks provided.
+	/// \param[in] dependent The dependent provided.
+	/// \return The synthesised value for the \ref addCommandSubtasks rule.
+	static ADD_QUERY constructAddQuery(
+		ADD_QUERY query,
+		boost::optional<ADD_QUERY> dependent,
+		boost::optional<std::vector<ADD_QUERY>> subtasks);
+
 	/// Process the terminal returned from the add query character parse rule,
 	/// stringing characters together to form the description.
 	///
@@ -63,7 +77,7 @@ private:
 	/// \param[in] query The \ref ADD_QUERY parse tree to the right of the
 	///                  current character.
 	/// \return The synthesised value for the \ref addCommand rule.
-	static ADD_QUERY constructAddQuery(
+	static ADD_QUERY constructAddQueryFromDescription(
 		ParserCharEncoding::char_type lexeme,
 		ADD_QUERY query);
 
@@ -81,24 +95,24 @@ private:
 	/// Process the nonterminal indicating a deadline, converting it to an
 	/// appropriate \ref ADD_QUERY type.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] deadline The deadline from the parser.
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
 	static ADD_QUERY constructAddQueryWithDeadline(
-		const boost::posix_time::ptime& deadline);
+		boost::posix_time::ptime deadline);
 
 	/// Process the end-of-input nonterminal, potentially including a deadline.
 	/// This captures the deadline, if one is present.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] query The nonterminal from the parser.
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
 	static ADD_QUERY constructAddQueryWithOptionalDeadline(
-		const boost::optional<ADD_QUERY>& query);
+		boost::optional<ADD_QUERY> query);
 	#pragma endregion
 
 	#pragma region Showing tasks
@@ -144,8 +158,8 @@ private:
 	///
 	/// \param[in] offset The task which the user is referencing.
 	static EDIT_QUERY constructEditQuery(
-		const size_t offset,
-		const EDIT_QUERY& query);
+		size_t offset,
+		EDIT_QUERY query);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -160,7 +174,7 @@ private:
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryUnary(
 		TaskField field,
-		const ValueType& newValue);
+		ValueType newValue);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -170,15 +184,15 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
-	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	/// Constructs an edit query from the given attachment command.
 	///
-	/// \exception ParseErrorException The exception representing the parse
-	///                                error.
-	static void onFailure(
-		ParserIteratorType begin,
-		ParserIteratorType end,
-		ParserIteratorType errorPos,
-		const boost::spirit::info& message);
+	/// \param[in] attach True to attach the file, false to detach.
+	/// \param[in] file
+	/// \return The synthesised value for the \ref editAttachmentCommandRule
+	///         rule.
+	static EDIT_QUERY constructEditQueryAttachment(
+		bool attach,
+		StringType file);
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -200,6 +214,16 @@ private:
 	/// \param[in] value The value from the parser.
 	/// \return The concrete synthesised value for the \ref utilityValue rule.
 	static ValueType constructValue(ValueType value);
+
+	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	///
+	/// \exception ParseErrorException The exception representing the parse
+	///                                error.
+	static void onFailure(
+		ParserIteratorType begin,
+		ParserIteratorType end,
+		ParserIteratorType errorPos,
+		const boost::spirit::info& message);
 
 private:
 	/// The start rule.
@@ -224,6 +248,10 @@ private:
 
 	/// Add command's deadline rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDeadline;
+
+	/// Add command's subtasks
+	boost::spirit::qi::rule<IteratorType, std::vector<ADD_QUERY>()>
+		addCommandSubtasks;
 
 	/// Add command's optional deadline rule. This acts as the terminal for the
 	/// add query parser.
@@ -302,6 +330,10 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
+
+	/// Edit command rule for attaching and detaching attachments.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>
+		editAttachmentCommandRule;
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -330,8 +362,7 @@ private:
 
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.
-	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
-		utilityTime;
+	DateTimeParser utilityTime;
 
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax

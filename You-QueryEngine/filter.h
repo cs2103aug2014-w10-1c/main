@@ -82,6 +82,9 @@ public:
 	/// Filter the depedendants.
 	static Filter isDependOn(Task::ID id);
 
+	/// Filter the descendants.
+	static Filter isDescendantOf(Task::ID id);
+
 	/// Construct a filter from a filtering function.
 	/// \see FFilter
 	explicit Filter(const FFilter& ffilter)

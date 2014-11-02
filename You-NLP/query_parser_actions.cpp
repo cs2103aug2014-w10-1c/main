@@ -12,6 +12,21 @@ namespace qi = spirit::qi;
 namespace phoenix = boost::phoenix;
 
 ADD_QUERY QueryParser::constructAddQuery(
+	ADD_QUERY query,
+	boost::optional<ADD_QUERY> dependent,
+	boost::optional<std::vector<ADD_QUERY>> subtasks) {
+	if (static_cast<bool>(subtasks)) {
+		query.subtasks = std::move(subtasks.get());
+	}
+	if (static_cast<bool>(dependent)) {
+		query.dependent = std::make_shared<ADD_QUERY>(
+			std::move(dependent.get()));
+	}
+
+	return query;
+}
+
+ADD_QUERY QueryParser::constructAddQueryFromDescription(
 	ParserCharEncoding::char_type lexeme,
 	ADD_QUERY query) {
 	query.description.insert(query.description.begin(), lexeme);
@@ -24,7 +39,7 @@ ADD_QUERY QueryParser::constructAddQueryWithPriority(ADD_QUERY query) {
 }
 
 ADD_QUERY QueryParser::constructAddQueryWithDeadline(
-	const boost::posix_time::ptime& deadline) {
+	boost::posix_time::ptime deadline) {
 	return ADD_QUERY {
 		std::wstring(),
 		TaskPriority::NORMAL,
@@ -33,7 +48,7 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadline(
 }
 
 ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
-	const boost::optional<ADD_QUERY>& query) {
+	boost::optional<ADD_QUERY> query) {
 	if (query) {
 		return query.get();
 	} else {
@@ -100,12 +115,11 @@ SHOW_QUERY::FIELD_ORDER QueryParser::constructShowQuerySortColumn(
 }
 
 EDIT_QUERY QueryParser::constructEditQuery(
-	const size_t offset,
-	const EDIT_QUERY& query) {
-	EDIT_QUERY result(query);
-	result.taskID = offset;
+	size_t offset,
+	EDIT_QUERY query) {
+	query.taskID = offset;
 
-	return result;
+	return query;
 }
 
 EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
@@ -124,17 +138,18 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 
 EDIT_QUERY QueryParser::constructEditQueryUnary(
 	TaskField field,
-	const ValueType& newValue) {
+	ValueType newValue) {
 	EDIT_QUERY result;
 
 	try {
 		switch (field) {
 		case TaskField::DESCRIPTION: {
-			result.description = boost::get<StringType>(newValue);
+			result.description = std::move(boost::get<StringType>(newValue));
 			break;
 		}
 		case TaskField::DEADLINE:
-			result.deadline = boost::get<boost::posix_time::ptime>(newValue);
+			result.deadline = std::move(
+				boost::get<boost::posix_time::ptime>(newValue));
 			break;
 		default:
 			assert(false);
@@ -149,6 +164,15 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	EDIT_QUERY result;
 	result.priority = priority;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryAttachment(
+	bool attach,
+	StringType file) {
+	EDIT_QUERY result;
+	result.attachments.push_back({ attach, file });
 
 	return result;
 }
