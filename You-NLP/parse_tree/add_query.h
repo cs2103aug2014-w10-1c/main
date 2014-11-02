@@ -27,6 +27,9 @@ struct ADD_QUERY {
 
 	/// The deadline of the task.
 	You::Utils::Option<boost::posix_time::ptime> deadline;
+
+	/// The subtasks of the task.
+	std::vector<ADD_QUERY> subtasks;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.

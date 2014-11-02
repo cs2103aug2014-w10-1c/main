@@ -7,6 +7,7 @@
 
 #include "parse_tree.h"
 #include "parser.h"
+#include "date_time_parser.h"
 
 namespace You {
 namespace NLP {
@@ -14,8 +15,7 @@ namespace NLP {
 /// The query parser that recognises our input syntax.
 class QueryParser : public boost::spirit::qi::grammar<
 	ParserIteratorType,
-	QUERY(),
-	ParserSkipperType> {
+	QUERY()> {
 public:
 	/// The type of the iterator used in this grammar.
 	typedef ParserIteratorType IteratorType;
@@ -81,24 +81,35 @@ private:
 	/// Process the nonterminal indicating a deadline, converting it to an
 	/// appropriate \ref ADD_QUERY type.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] deadline The deadline from the parser.
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
 	static ADD_QUERY constructAddQueryWithDeadline(
-		const boost::posix_time::ptime& deadline);
+		boost::posix_time::ptime deadline);
 
 	/// Process the end-of-input nonterminal, potentially including a deadline.
 	/// This captures the deadline, if one is present.
 	///
-	/// \see addQueryDeadline
+	/// \see addCommandDeadline
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] query The nonterminal from the parser.
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
 	static ADD_QUERY constructAddQueryWithOptionalDeadline(
-		const boost::optional<ADD_QUERY>& query);
+		boost::optional<ADD_QUERY> query);
+
+	/// Process the main task, as well as its subtasks.
+	///
+	/// \see addCommandSubtasks
+	/// The production rule associated with this semantic action.
+	///
+	/// \param[in] query The main task
+	/// \param[in] subtasks The subtasks provided.
+	/// \return The synthesised value for the \ref addCommandSubtasks rule.
+	static ADD_QUERY constructAddQueryWithSubtasks(
+		ADD_QUERY query, boost::optional<std::vector<ADD_QUERY>> subtasks);
 	#pragma endregion
 
 	#pragma region Showing tasks
@@ -225,6 +236,10 @@ private:
 	/// Add command's deadline rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDeadline;
 
+	/// Add command's subtasks
+	boost::spirit::qi::rule<IteratorType, std::vector<ADD_QUERY>()>
+		addCommandSubtasks;
+
 	/// Add command's optional deadline rule. This acts as the terminal for the
 	/// add query parser.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
@@ -330,8 +345,7 @@ private:
 
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.
-	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
-		utilityTime;
+	DateTimeParser utilityTime;
 
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax
