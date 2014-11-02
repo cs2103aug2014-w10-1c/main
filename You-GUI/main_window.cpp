@@ -74,6 +74,7 @@ void MainWindow::populateTaskPanel() {
 		tl = qm->getTasks();
 	}
 	addTasks(tl);
+	tpm->repaintTasks();
 }
 
 void MainWindow::setVisible(bool visible) {
@@ -99,8 +100,8 @@ void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
 	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
 	if (task.getID() == task.getParent() || !parentExists) {
 		/// Is top level task
-		ui.taskTreePanel->addTopLevelItem(
-			tpm->makeTree(task, taskMap).release());
+		QTreeWidgetItem *topLevelTask = tpm->makeTree(task, taskMap).release();
+		ui.taskTreePanel->addTopLevelItem(topLevelTask);
 	}
 }
 
@@ -113,6 +114,7 @@ void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
 	emit(updateRowNumbers());
+	tpm->repaintTasks();
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -124,17 +126,18 @@ void MainWindow::deleteTask(Task::ID taskID) {
 	assert(i != taskList->end());
 	taskList->erase(i);
 	tpm->deleteTask(taskID);
+	tpm->repaintTasks();
 }
 
 void MainWindow::editTask(const Task& task) {
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 	emit(taskSelected());
+	tpm->repaintTasks();
 }
 
 void MainWindow::sendQuery() {
 	Task::ID curr = getSelectedTaskID();
-	qDebug() << curr;
 	QString inputString = commandTextBox->toPlainText();
 	QPixmap pixmap;
 	pixmap.fill(Qt::transparent);
@@ -200,27 +203,6 @@ void MainWindow::commandEnterButtonClicked() {
 	sendQuery();
 }
 
-void MainWindow::applicationExitRequested() {
-	sm->taskIDs.clear();
-	for (int i = 0; i < taskList->size(); i++) {
-		sm->taskIDs.push_back(taskList->at(i).getID());
-	}
-	qApp->quit();
-}
-
-void MainWindow::resizeEvent(QResizeEvent* event) {
-	double oldWidth = event->oldSize().width();
-	double newWidth = event->size().width();
-	double ratio = newWidth / oldWidth;
-	for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
-		double currWidth = ui.taskTreePanel->header()->sectionSize(i);
-		double finalWidth = currWidth * ratio;
-		if (finalWidth >75)
-			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
-	}
-	QMainWindow::resizeEvent(event);
-}
-
 void MainWindow::clearTasks() {
 	taskList.reset(new TaskList);
 	ui.taskTreePanel->clear();
@@ -229,17 +211,6 @@ void MainWindow::clearTasks() {
 }
 
 void MainWindow::taskSelected() {
-	/// Un-highlight all tasks
-	QTreeWidgetItemIterator it(ui.taskTreePanel);
-	while (*it) {
-		QFont font = (*it)->font(2);
-		if ((*it)->text(7).compare(QString("No")) == 0) {
-			(*it)->setTextColor(2, Qt::black);
-		}
-		(*it)->setFont(2, font);
-		++it;
-	}
-
 	/// Find selected item and fill task box
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
@@ -247,33 +218,17 @@ void MainWindow::taskSelected() {
 		ui.taskDescriptor->setText(contents);
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
-		QString index = item.text(0);
-		QString description = item.text(2);
-		QString deadline = item.text(3);
-		QString priority = item.text(4);
-		QString dependencies = item.text(5);
+		QString index = tpm->getIndexAsText(item);
+		QString description = tpm->getDescriptionAsText(item);
+		QString deadline = tpm->getDeadlineAsText(item);
+		QString priority = tpm->getPriorityAsText(item);
+		QString dependencies = tpm->getDependenciesAsText(item);
 		contents = "Index: " + index + "\n" + "Description: " + description
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
-
-		Task::ID id = getSelectedTaskID();
-		TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
-			[=](Task& task) {
-			return task.getID() == id;
-		});
-		Task task = *i;
-
-		/// Handle dependency highlighting
-		for each (Task::ID dependency in task.getDependencies()) {
-			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
-				boost::lexical_cast<QString>(dependency), 0);
-				QFont font = items.at(0)->font(2);
-				font.setItalic(true);
-				items.at(0)->setTextColor(2, Qt::darkBlue);
-				items.at(0)->setFont(2, font);
-		}
 	}
+	tpm->repaintTasks();
 }
 
 Task::ID MainWindow::getSelectedTaskID() {
@@ -284,7 +239,8 @@ Task::ID MainWindow::getSelectedTaskID() {
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		Task::ID index =
-			boost::lexical_cast<Task::ID>(item.text(1).toLongLong());
+			boost::lexical_cast<Task::ID>(
+			tpm->getHiddenIDAsText(item).toLongLong());
 		return index;
 	}
 }
@@ -326,6 +282,27 @@ void MainWindow::updateTaskInfoBar() {
 	std::wostringstream ss;
 	ss << L"Overdue tasks: " << overdue << L". Tasks due soon: " << dueSoon;
 	ui.statusTasks->setText(QString::fromStdWString(ss.str()));
+}
+
+void MainWindow::applicationExitRequested() {
+	sm->taskIDs.clear();
+	for (int i = 0; i < taskList->size(); i++) {
+		sm->taskIDs.push_back(taskList->at(i).getID());
+	}
+	qApp->quit();
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event) {
+	double oldWidth = event->oldSize().width();
+	double newWidth = event->size().width();
+	double ratio = newWidth / oldWidth;
+	for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
+		double currWidth = ui.taskTreePanel->header()->sectionSize(i);
+		double finalWidth = currWidth * ratio;
+		if (finalWidth >75)
+			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
+	}
+	QMainWindow::resizeEvent(event);
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
