@@ -462,7 +462,7 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			boost::apply_visitor(visitor, query));
 		EDIT_RESULT result(
 			boost::get<EDIT_RESULT>(executor->execute()));
-		
+
 		// We edit the second element in our task list.
 		taskList.erase(begin(taskList), begin(taskList));
 		Assert::AreNotEqual(taskList.front().getID(),

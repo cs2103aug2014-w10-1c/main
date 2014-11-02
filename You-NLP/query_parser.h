@@ -190,7 +190,7 @@ private:
 	/// \param[in] subtask The task ID to set as a subtask.
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQuerySubtask(int subtask);
-	
+
 	/// Constructs an edit query setting the given task as depending on the
 	/// first task.
 	///
