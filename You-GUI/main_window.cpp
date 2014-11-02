@@ -3,6 +3,7 @@
 #include <functional>
 #include <QApplication>
 #include <QList>
+#include <set>
 #include "session_manager.h"
 #include "task_panel_manager.h"
 #include "system_tray_manager.h"
@@ -40,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 	commandTextBox->setup();
 	connect(&*commandTextBox, SIGNAL(enterKey()),
 		this, SLOT(commandEnterPressed()));
+	connect(this, SIGNAL(updateRowNumbers()), &*tpm, SLOT(updateRowNumbers()));
 	populateTaskPanel();
 	statusBar()->insertPermanentWidget(
 		0, ui.statusTasks, 0);
@@ -85,6 +87,23 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
+/// This function adds a task to the task panel, along with all of its subtasks
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
+	/// Build map for fast lookup
+	std::map<Task::ID, Task> taskMap;
+	for (Task t : tl) {
+		taskMap.insert(std::pair<Task::ID, Task>(t.getID(), t));
+	}
+
+	/// Check if parent exists
+	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
+	if (task.getID() == task.getParent() || !parentExists) {
+		/// Is top level task
+		ui.taskTreePanel->addTopLevelItem(
+			tpm->makeTree(task, taskMap).release());
+	}
+}
+
 void MainWindow::addTask(const Task& task) {
 	taskList->push_back(task);
 	tpm->addTask(task);
@@ -92,7 +111,8 @@ void MainWindow::addTask(const Task& task) {
 
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
-		std::bind(&MainWindow::addTask, this, std::placeholders::_1));
+		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
+	emit(updateRowNumbers());
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -209,13 +229,25 @@ void MainWindow::clearTasks() {
 }
 
 void MainWindow::taskSelected() {
+	/// Un-highlight all tasks
+	QTreeWidgetItemIterator it(ui.taskTreePanel);
+	while (*it) {
+		QFont font = (*it)->font(2);
+		if ((*it)->text(7).compare(QString("No")) == 0) {
+			(*it)->setTextColor(2, Qt::black);
+		}
+		(*it)->setFont(2, font);
+		++it;
+	}
+
+	/// Find selected item and fill task box
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
 	if (selection.size() == 0) {
 		ui.taskDescriptor->setText(contents);
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
-		QString index = item.text(1);
+		QString index = item.text(0);
 		QString description = item.text(2);
 		QString deadline = item.text(3);
 		QString priority = item.text(4);
@@ -224,6 +256,23 @@ void MainWindow::taskSelected() {
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
 			+ "\n" + "Dependencies: " + dependencies;
 		ui.taskDescriptor->setText(contents);
+
+		Task::ID id = getSelectedTaskID();
+		TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+			[=](Task& task) {
+			return task.getID() == id;
+		});
+		Task task = *i;
+
+		/// Handle dependency highlighting
+		for each (Task::ID dependency in task.getDependencies()) {
+			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+				boost::lexical_cast<QString>(dependency), 0);
+				QFont font = items.at(0)->font(2);
+				font.setItalic(true);
+				items.at(0)->setTextColor(2, Qt::darkBlue);
+				items.at(0)->setFont(2, font);
+		}
 	}
 }
 
@@ -235,7 +284,7 @@ Task::ID MainWindow::getSelectedTaskID() {
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		Task::ID index =
-			boost::lexical_cast<Task::ID>(item.text(0).toLongLong());
+			boost::lexical_cast<Task::ID>(item.text(1).toLongLong());
 		return index;
 	}
 }
@@ -269,7 +318,8 @@ void MainWindow::updateTaskInfoBar() {
 		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
 			dueSoon++;
 		}
-		if (tpm->isPastDue(taskList->at(i).getDeadline())) {
+		if (tpm->isPastDue(taskList->at(i).getDeadline())
+			&& !taskList->at(i).isCompleted()) {
 			overdue++;
 		}
 	}
@@ -281,7 +331,6 @@ void MainWindow::updateTaskInfoBar() {
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
 	: parentGUI(parentGUI) {
 }
-
 
 }  // namespace GUI
 }  // namespace You

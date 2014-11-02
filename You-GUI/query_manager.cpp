@@ -31,7 +31,6 @@ void MainWindow::QueryManager::query(
 		explicit ResultProcessorVisitor(MainWindow* const parentGUI)
 		: parentGUI(parentGUI) {
 		}
-
 		void operator()(You::Controller::ADD_RESULT addResult) {
 			parentGUI->addTask(addResult.task);
 		}

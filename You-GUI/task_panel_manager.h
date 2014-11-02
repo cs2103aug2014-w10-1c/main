@@ -40,7 +40,9 @@ public:
 
 	/// Deletes a task.
 	void deleteTask(Task::ID taskID);
-
+	std::unique_ptr<QTreeWidgetItem> makeTree(
+		const Task& task, const std::map<Task::ID, Task> taskMap);
+	void addSubtask(const Task& parentTask, const Task& childTask);
 	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);
 
@@ -75,14 +77,11 @@ private:
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
 	void addSubtask(QTreeWidgetItem* parent, const QStringList& rowStrings);
-
 	/// Deletes a task or subtask. Memory management is automagically dealt
 	/// with by QT's parent/child structure, so all child objects are
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
 
-	/// Updates row numbers
-	void updateRowNumbers();
 
 	QScopedPointer<QMenu> itemContextMenu;
 
@@ -98,6 +97,9 @@ private:
 
 private slots:
 	void contextMenu(const QPoint &pos);
+
+	/// Updates row numbers
+	void updateRowNumbers();
 
 private:
 	/// String/numeric constants for the GUI
