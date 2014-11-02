@@ -11,13 +11,21 @@ namespace You {
 namespace GUI {
 
 using Date = boost::gregorian::date;
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_1 = "Index";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_2 = "Hidden ID Column";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_3 = "Description";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_4 = "Deadline";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_5 = "Priority";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_6 = "Dependencies";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_7 = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Description";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
+
+const Task::ID MainWindow::TaskPanelManager::COLUMN_INDEX = 1;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 2;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 3;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_DEADLINE = 4;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
+const Task::ID MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -30,13 +38,13 @@ MainWindow::TaskPanelManager::~TaskPanelManager() {
 
 void MainWindow::TaskPanelManager::setup() {
 	QStringList columnHeaders({
-		TASK_COLUMN_1,
-		TASK_COLUMN_2,
-		TASK_COLUMN_3,
-		TASK_COLUMN_4,
-		TASK_COLUMN_5,
-		TASK_COLUMN_6,
-		TASK_COLUMN_7
+		TASK_COLUMN_1_TITLE,
+		TASK_COLUMN_2_TITLE,
+		TASK_COLUMN_3_TITLE,
+		TASK_COLUMN_4_TITLE,
+		TASK_COLUMN_5_TITLE,
+		TASK_COLUMN_6_TITLE,
+		TASK_COLUMN_7_TITLE
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),

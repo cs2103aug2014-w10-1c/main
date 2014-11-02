@@ -107,25 +107,33 @@ private:
 	/// String/numeric constants for the GUI
 	/// @{
 	/// Header string for column 1
-	static const QString TASK_COLUMN_1;
+	static const QString TASK_COLUMN_1_TITLE;
 
 	/// Header string for column 2
-	static const QString TASK_COLUMN_2;
+	static const QString TASK_COLUMN_2_TITLE;
 
 	/// Header string for column 3
-	static const QString TASK_COLUMN_3;
+	static const QString TASK_COLUMN_3_TITLE;
 
 	/// Header string for column 4
-	static const QString TASK_COLUMN_4;
+	static const QString TASK_COLUMN_4_TITLE;
 
 	/// Header string for column 5
-	static const QString TASK_COLUMN_5;
+	static const QString TASK_COLUMN_5_TITLE;
 
 	/// Header string from column 6
-	static const QString TASK_COLUMN_6;
+	static const QString TASK_COLUMN_6_TITLE;
 
 	/// Header string from column 7
-	static const QString TASK_COLUMN_7;
+	static const QString TASK_COLUMN_7_TITLE;
+
+	static const Task::ID COLUMN_INDEX = 1;
+	static const Task::ID COLUMN_HIDDEN_ID = 2;
+	static const Task::ID COLUMN_DESCRIPTION = 3;
+	static const Task::ID COLUMN_DEADLINE = 4;
+	static const Task::ID COLUMN_PRIORITY = 5;
+	static const Task::ID COLUMN_DEPENDENCIES = 6;
+	static const Task::ID COLUMN_COMPLETION = 7;
 	/// @}
 };
 
