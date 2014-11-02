@@ -13,11 +13,13 @@ namespace GUI {
 using Date = boost::gregorian::date;
 
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_0_TITLE = "Index";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE = "Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE =
+"Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Priority";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE =
+"Dependencies";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
@@ -215,7 +217,8 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		QTreeWidgetItem *item = *it;
 		/// If task is not done
 		if (getCompletionAsText(*item).compare(QString("No")) == 0) {
-			QList<QTreeWidgetItem*> selection = parentGUI->ui.taskTreePanel->selectedItems();
+			QList<QTreeWidgetItem*> selection =
+				parentGUI->ui.taskTreePanel->selectedItems();
 			if (selection.size() != 0) {
 				/// Get selected task
 				Task::ID id = parentGUI->getSelectedTaskID();

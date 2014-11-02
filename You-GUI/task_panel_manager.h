@@ -143,19 +143,19 @@ private:
 
 	/// Column reference to Hidden ID column
 	static const int COLUMN_HIDDEN_ID;
-	
+
 	/// Column reference to Description column
 	static const int COLUMN_DESCRIPTION;
-	
+
 	/// Column reference to Deadline column
 	static const int COLUMN_DEADLINE;
-	
+
 	/// Column reference to Priority column
 	static const int COLUMN_PRIORITY;
-	
+
 	/// Column reference to Dependencies column
 	static const int COLUMN_DEPENDENCIES;
-	
+
 	/// Column reference to Completion column
 	static const int COLUMN_COMPLETION;
 
@@ -163,15 +163,15 @@ public:
 	QString getIndexAsText(QTreeWidgetItem item);
 
 	QString getHiddenIDAsText(QTreeWidgetItem item);
-	
+
 	QString getDescriptionAsText(QTreeWidgetItem item);
-	
+
 	QString getDeadlineAsText(QTreeWidgetItem item);
-	
+
 	QString getPriorityAsText(QTreeWidgetItem item);
-	
+
 	QString getDependenciesAsText(QTreeWidgetItem item);
-	
+
 	QString getCompletionAsText(QTreeWidgetItem item);
 	/// @}
 };
