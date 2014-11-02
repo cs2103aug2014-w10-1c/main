@@ -58,7 +58,7 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsNotNull(&query);
 	}
 
-	TEST_METHOD(constructBatchAddTaskQuery) {
+	TEST_METHOD(constructBatchAddSubTaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
@@ -339,6 +339,24 @@ TEST_CLASS(QueryEngineTests) {
 				.asTaskList().size(), std::size_t(0));
 		}
 		#pragma endregion
+	}
+
+	TEST_METHOD(executeBatchAddDependenciesQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		auto query = QueryEngine::BatchAddDependencies(
+			desc, dead, prio, std::move(childQueries), {});
+		Task parent = boost::get<Task>(
+			QueryEngine::executeQuery(std::move(query)));
+
+		// TODO(evansb) define ToString
+		Assert::AreEqual(parent.getDependencies().size(),
+			static_cast<std::size_t>(1));
 	}
 
 	TEST_METHOD(undoAddQuery) {

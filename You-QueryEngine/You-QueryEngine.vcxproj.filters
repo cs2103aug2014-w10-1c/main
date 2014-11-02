@@ -99,6 +99,9 @@
     <ClInclude Include="internal\action\batch_delete_subtasks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="internal\action\batch_add_dependencies.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="internal\action\batch_delete_subtasks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\action\batch_add_dependencies.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

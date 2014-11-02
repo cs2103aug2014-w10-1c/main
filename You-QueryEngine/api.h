@@ -34,8 +34,11 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
-namespace Internal { namespace Action { class Undo;
-	class BatchAddSubTasks; } class State; }
+namespace Internal { class State;
+namespace Action { class Undo; class BatchAddSubTasks;
+	class BatchAddDependencies;
+}
+}
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
@@ -48,6 +51,7 @@ class Query {
 	friend class QueryEngine;
 	friend class Internal::Action::Undo;
 	friend class Internal::Action::BatchAddSubTasks;
+	friend class Internal::Action::BatchAddDependencies;
 
 protected:
 	/// Get the reverse of this query for undo.
@@ -83,8 +87,18 @@ public:
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>>&& subtasks
-	);
+		std::vector<std::unique_ptr<Query>>&& subtasks);
+
+	/// Construct a batch addition of task with its
+	/// dependencies.
+	/// \note The dependency vector will be executed
+	/// from left to right (last one is the parent).
+	static std::unique_ptr<Query> BatchAddDependencies(
+		const Task::Description& description,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		const Task::Subtasks& subtasks);
 
 	/// Construct a batch delete subtask query.
 	static std::unique_ptr<Query> BatchDeleteSubTasks(
