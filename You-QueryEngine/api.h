@@ -74,7 +74,21 @@ public:
 
 public:
 	#pragma region Query Constructors
-	/// Construct add task query.
+
+	/// Construct a batch addition of task with its
+	/// subtask.
+	static std::unique_ptr<Query> BatchAddSubTasks(
+		const Task::Description& description,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		const Task::Dependencies& dependencies,
+		std::vector<std::unique_ptr<Query>>& subtasks
+	);
+
+	/// Construct a batch delete subtask query.
+	static std::unique_ptr<Query> BatchDeleteSubTasks(
+		Task::ID id);
+
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
 		const Task::Time& deadline,
