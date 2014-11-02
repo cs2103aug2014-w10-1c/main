@@ -209,26 +209,44 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	};
 
 	try {
-		const Task& task = context.at(query.taskID);
+		Task::ID task = context.at(query.taskID).getID();
 		You::Utils::Option<Task::Priority> priority;
 		if (query.priority) {
-			if (query.priority.get() == TaskPriority::NORMAL) {
-				priority = Task::Priority::NORMAL;
-			} else {
-				priority = Task::Priority::HIGH;
-			}
+			priority = Controller::nlpToQueryEnginePriority(
+				query.priority.get());
 		}
+
+		You::Utils::Option<Task::Subtasks> subtasks;
+		if (query.childTask) {
+			Task::Subtasks subtasksList;
+			subtasksList.insert(context.at(query.childTask).getID());
+			subtasks = subtasksList;
+		}
+
+		You::Utils::Option<Task::Dependencies> dependencies;
+		if (query.dependingTask) {
+			assert(!query.description &&
+				!query.deadline &&
+				!priority &&
+				!query.complete &&
+				!subtasks && "Cannot change dependencies and other properties");
+			Task::Dependencies dependenciesList;
+			dependenciesList.insert(task);
+			dependencies = dependenciesList;
+			task = context.at(query.dependingTask).getID();
+		}
+
 		return std::unique_ptr<QueryExecutor>(
 			new EditTaskQueryExecutor(
 				QueryEngine::UpdateTask(
-					task.getID(),
+					task,
 					query.description,
 					query.deadline,
 					priority,
-					boost::none,
+					dependencies,
 					query.complete,
 					boost::none,
-					boost::none)));
+					subtasks)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
