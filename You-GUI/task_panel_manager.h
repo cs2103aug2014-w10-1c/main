@@ -56,6 +56,8 @@ public:
 
 	static QString getReadableDeadline(Task task);
 
+	void colorTask(QTreeWidgetItem *taskItem, QColor color);
+
 private:
 	/// Converts the properties of a task into a set of cells for display
 	/// in a QTreeWidget

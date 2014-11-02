@@ -206,6 +206,13 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 	}
 }
 
+void MainWindow::TaskPanelManager::colorTask(QTreeWidgetItem *taskItem, QColor color) {
+	for (int i = 0; i < taskItem->columnCount(); i++){
+		QFont font = taskItem->font(i);
+		taskItem->setTextColor(i, color);
+		taskItem->setFont(i, font);
+	}
+}
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	Task::Time now = boost::posix_time::second_clock::local_time();
 	return deadline < now;

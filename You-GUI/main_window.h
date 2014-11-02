@@ -124,7 +124,6 @@ private:
 
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
-
 private:
 	static const QString READY_MESSAGE;
 	static const QString EMPTY_TASK_DESCRIPTION_MESSAGE;

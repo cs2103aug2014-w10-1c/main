@@ -99,8 +99,8 @@ void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
 	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
 	if (task.getID() == task.getParent() || !parentExists) {
 		/// Is top level task
-		ui.taskTreePanel->addTopLevelItem(
-			tpm->makeTree(task, taskMap).release());
+		QTreeWidgetItem *topLevelTask = tpm->makeTree(task, taskMap).release();
+		ui.taskTreePanel->addTopLevelItem(topLevelTask);
 	}
 }
 
@@ -230,16 +230,16 @@ void MainWindow::clearTasks() {
 
 void MainWindow::taskSelected() {
 	/// Un-highlight all tasks
+	
 	QTreeWidgetItemIterator it(ui.taskTreePanel);
 	while (*it) {
-		QFont font = (*it)->font(2);
-		if ((*it)->text(7).compare(QString("No")) == 0) {
-			(*it)->setTextColor(2, Qt::black);
+		/// If task is not done
+		if (!(*it)->text(7).compare(QString("No")) == 0) {
+			QTreeWidgetItem *item = *it;
+			tpm->colorTask(item, Qt::black);
 		}
-		(*it)->setFont(2, font);
 		++it;
 	}
-
 	/// Find selected item and fill task box
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
@@ -265,13 +265,12 @@ void MainWindow::taskSelected() {
 		Task task = *i;
 
 		/// Handle dependency highlighting
+		
 		for each (Task::ID dependency in task.getDependencies()) {
 			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
 				boost::lexical_cast<QString>(dependency), 0);
-				QFont font = items.at(0)->font(2);
-				font.setItalic(true);
-				items.at(0)->setTextColor(2, Qt::darkBlue);
-				items.at(0)->setFont(2, font);
+			QTreeWidgetItem *item = items.at(0);
+			tpm->colorTask(item, Qt::blue);
 		}
 	}
 }
