@@ -36,7 +36,10 @@ bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {
 		deadline == rhs.deadline &&
 		subtasks.size() == rhs.subtasks.size() &&
 		std::equal(begin(subtasks), end(subtasks), begin(rhs.subtasks)) &&
-		dependent == rhs.dependent;
+		(
+			(!dependent && !rhs.dependent) || (
+				dependent && rhs.dependent &&
+					*dependent.get() == *rhs.dependent.get()));
 }
 
 std::wstring ToString(const ADD_QUERY& q) {
