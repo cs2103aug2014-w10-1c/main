@@ -1,5 +1,6 @@
 /// \author A0112054Y
 #include "stdafx.h"
+#include "internal/model.h"
 #include "task_model.h"
 
 namespace {
@@ -43,6 +44,22 @@ void Task::setParent(const Task::ID parent) {
 
 bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
+}
+
+std::vector<Task> Task::getSubtasksObject() {
+	std::vector<Task> result;
+	for (const auto& id : subtasks) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
+}
+
+std::vector<Task> Task::getDependenciesObject() {
+	std::vector<Task> result;
+	for (const auto& id : dependencies) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
 }
 
 const Task::ID Task::DEFAULT_ID = 0L;

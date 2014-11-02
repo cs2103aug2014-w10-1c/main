@@ -57,6 +57,12 @@ public:
 	Subtasks getSubtasks() const { return subtasks; }
 	/// @}
 
+	/// Get subtasks as Task object.
+	std::vector<Task> getSubtasksObject();
+
+	/// Get dependencies as Task object.
+	std::vector<Task> getDependenciesObject();
+
 	/// Check dependency
 	/// \returns true if id is in the dependency, false otherwise.
 	bool isDependOn(const Task::ID id) const;
