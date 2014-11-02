@@ -33,7 +33,7 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 			qi::_1,
 			boost::posix_time::hours(0))
 		]
-	) >> qi::eoi;
+	);
 	BOOST_SPIRIT_DEBUG_NODE(start);
 
 	#pragma region Primitive date component parsers
