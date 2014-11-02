@@ -17,14 +17,14 @@ public:
 		stream << DUMMY;
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks, 1 dependencies)") % DESCRIPTION % DEADLINE).str(),
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
 			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks, 1 dependencies)") % DESCRIPTION % DEADLINE).str(),
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
