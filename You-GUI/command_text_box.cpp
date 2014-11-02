@@ -180,7 +180,7 @@ void CommandTextBox::completerKeyHandling(QKeyEvent *e) {
 	QTextEdit::keyPressEvent(e);
 	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-=");
 	QString completionPrefix = textUnderCursor();
-	QString substring = (&completer->currentCompletion())->left(
+	QString substring = (completer->currentCompletion()).left(
 		(completer->currentCompletion().length() - 1));
 	if (e->text().isEmpty() || completionPrefix.length() < 2
 		|| eow.contains(e->text().right(1))

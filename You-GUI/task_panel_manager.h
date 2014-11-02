@@ -40,9 +40,17 @@ public:
 
 	/// Deletes a task.
 	void deleteTask(Task::ID taskID);
+
+
+	void repaintTasks();
+
+	/// Constructs a tree from a task and its subtasks
 	std::unique_ptr<QTreeWidgetItem> makeTree(
 		const Task& task, const std::map<Task::ID, Task> taskMap);
+
+	/// Appends a child task to an existing parent task
 	void addSubtask(const Task& parentTask, const Task& childTask);
+
 	/// Time function to check if a deadline is past due.
 	static bool isPastDue(Task::Time deadline);
 
@@ -52,11 +60,14 @@ public:
 	/// Time function to check if a deadline is due within daysLeft days
 	static bool isDueWithin(Task::Time deadline, int daysLeft);
 
+	/// Time function to check if a deadline is due within exactly daysLeft days
 	static bool isDueWithinExactly(Task::Time deadline, int days);
 
+	/// Returns human-readable form for a deadline
 	static QString getReadableDeadline(Task task);
 
-	void colorTask(QTreeWidgetItem *taskItem, QColor color);
+	/// Colors a task
+	void colorTask(QTreeWidgetItem *taskItem, QColor color, QFont font);
 
 private:
 	/// Converts the properties of a task into a set of cells for display
@@ -79,11 +90,11 @@ private:
 	/// Adds a subtask to the taskTreePanel. Requires the specification of a
 	/// parent task.
 	void addSubtask(QTreeWidgetItem* parent, const QStringList& rowStrings);
+
 	/// Deletes a task or subtask. Memory management is automagically dealt
 	/// with by QT's parent/child structure, so all child objects are
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
-
 
 	QScopedPointer<QMenu> itemContextMenu;
 
@@ -127,13 +138,41 @@ private:
 	/// Header string from column 7
 	static const QString TASK_COLUMN_7_TITLE;
 
-	static const Task::ID COLUMN_INDEX = 1;
-	static const Task::ID COLUMN_HIDDEN_ID = 2;
-	static const Task::ID COLUMN_DESCRIPTION = 3;
-	static const Task::ID COLUMN_DEADLINE = 4;
-	static const Task::ID COLUMN_PRIORITY = 5;
-	static const Task::ID COLUMN_DEPENDENCIES = 6;
-	static const Task::ID COLUMN_COMPLETION = 7;
+	/// Column reference to Index column
+	static const int COLUMN_INDEX;
+
+	/// Column reference to Hidden ID column
+	static const int COLUMN_HIDDEN_ID;
+	
+	/// Column reference to Description column
+	static const int COLUMN_DESCRIPTION;
+	
+	/// Column reference to Deadline column
+	static const int COLUMN_DEADLINE;
+	
+	/// Column reference to Priority column
+	static const int COLUMN_PRIORITY;
+	
+	/// Column reference to Dependencies column
+	static const int COLUMN_DEPENDENCIES;
+	
+	/// Column reference to Completion column
+	static const int COLUMN_COMPLETION;
+
+public:
+	QString getIndexAsText(QTreeWidgetItem item);
+
+	QString getHiddenIDAsText(QTreeWidgetItem item);
+	
+	QString getDescriptionAsText(QTreeWidgetItem item);
+	
+	QString getDeadlineAsText(QTreeWidgetItem item);
+	
+	QString getPriorityAsText(QTreeWidgetItem item);
+	
+	QString getDependenciesAsText(QTreeWidgetItem item);
+	
+	QString getCompletionAsText(QTreeWidgetItem item);
 	/// @}
 };
 

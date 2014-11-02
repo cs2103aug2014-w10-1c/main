@@ -11,6 +11,7 @@ namespace You {
 namespace GUI {
 
 using Date = boost::gregorian::date;
+
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE = "Index";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Description";
@@ -19,13 +20,13 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Dependencies";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
 
-const Task::ID MainWindow::TaskPanelManager::COLUMN_INDEX = 1;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 2;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 3;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_DEADLINE = 4;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
-const Task::ID MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
+const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
+const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
+const int MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 2;
+const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 3;
+const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 4;
+const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 5;
+const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 6;
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -66,9 +67,9 @@ void MainWindow::TaskPanelManager::setup() {
 	}
 
 	taskTreePanel->header()->setMinimumSectionSize(75);
-	taskTreePanel->setColumnHidden(1, true);
-	taskTreePanel->setColumnHidden(5, true);
-	taskTreePanel->setColumnHidden(6, true);
+	taskTreePanel->setColumnHidden(COLUMN_HIDDEN_ID, true);
+	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
+	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -207,6 +208,53 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	return result;
 }
 
+void MainWindow::TaskPanelManager::repaintTasks() {
+	QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel);
+	/// Iterate through all tasks
+	while (*it) {
+		QTreeWidgetItem *item = *it;
+		/// If task is not done
+		if (getCompletionAsText(*item).compare(QString("No")) == 0) {
+			QList<QTreeWidgetItem*> selection = parentGUI->ui.taskTreePanel->selectedItems();
+			if (selection.size() != 0) {
+				/// Get selected task
+				Task::ID id = parentGUI->getSelectedTaskID();
+				TaskList::iterator i = std::find_if(
+					parentGUI->taskList->begin(), parentGUI->taskList->end(),
+					[=](Task& task) {
+					return task.getID() == id;
+				});
+				Task task = *i;
+
+				/// Get ID of iterated task
+				Task::ID index = boost::lexical_cast<Task::ID>(
+					getHiddenIDAsText(*item).toLongLong());
+				QFont font = (item->font(0));
+				font.setStrikeOut(false);
+				/// If current task is a dependency of selected task
+				Task::Dependencies dependencies = task.getDependencies();
+				if (std::find(dependencies.begin(), dependencies.end(), index)
+					!= dependencies.end()) {
+					colorTask(item, Qt::blue, font);
+				} else {
+					colorTask(item, Qt::black, font);
+				}
+			} else {
+				/// No selection
+				QFont font = (item->font(0));
+				font.setStrikeOut(false);
+				colorTask(item, Qt::black, font);
+			}
+		} else {
+			/// Overrides all other formats if task is already done
+			QFont font = (item->font(0));
+			font.setStrikeOut(true);
+			colorTask(item, Qt::gray, font);
+		}
+		++it;
+	}
+}
+
 void MainWindow::TaskPanelManager::updateRowNumbers() {
 	int rowNum = 0;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
@@ -215,9 +263,8 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 }
 
 void MainWindow::TaskPanelManager::colorTask(
-	QTreeWidgetItem *taskItem, QColor color) {
+	QTreeWidgetItem *taskItem, QColor color, QFont font) {
 	for (int i = 0; i < taskItem->columnCount(); i++) {
-		QFont font = taskItem->font(i);
 		taskItem->setTextColor(i, color);
 		taskItem->setFont(i, font);
 	}
@@ -311,6 +358,41 @@ QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
 		wss << L"More than a month away (" << task.getDeadline() << L")";
 	}
 	return boost::lexical_cast<QString>(wss.str());
+}
+
+QString MainWindow::TaskPanelManager::getIndexAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_INDEX);
+}
+
+QString MainWindow::TaskPanelManager::getHiddenIDAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_HIDDEN_ID);
+}
+
+QString MainWindow::TaskPanelManager::getDescriptionAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DESCRIPTION);
+}
+
+QString MainWindow::TaskPanelManager::getDeadlineAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DEADLINE);
+}
+
+QString MainWindow::TaskPanelManager::getPriorityAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_PRIORITY);
+}
+
+QString MainWindow::TaskPanelManager::getDependenciesAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DEPENDENCIES);
+}
+
+QString MainWindow::TaskPanelManager::getCompletionAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_COMPLETION);
 }
 
 }  // namespace GUI
