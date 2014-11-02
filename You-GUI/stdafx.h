@@ -6,10 +6,14 @@
 #include <memory>
 #include <functional>
 
+#pragma warning(push)
 #include <QApplication>
 #include <QList>
+#pragma warning(disable: 4127)
+#include <QVector>
 #include <QWidget>
 #include <QtWidgets>
+#pragma warning(pop)
 
 #include <boost/date_time/gregorian/greg_month.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
