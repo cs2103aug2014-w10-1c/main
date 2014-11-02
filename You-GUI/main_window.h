@@ -29,8 +29,7 @@ public:
 	/// Destructor for the GUI.
 	~MainWindow();
 
-	/// Populates the task panel with data. This is not vital to the execution
-	/// of the program; it merely serves example data.
+	/// Populates the task panel with data.
 	void populateTaskPanel();
 
 	/// The class from which all components inherit.

@@ -77,14 +77,12 @@ void MainWindow::TaskPanelManager::setup() {
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
 	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
-	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
 	const QStringList& rowStrings) {
 	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
 	parent->addChild(item.release());
-	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::addSubtask(const Task& parentTask,
@@ -92,7 +90,6 @@ void MainWindow::TaskPanelManager::addSubtask(const Task& parentTask,
 	std::unique_ptr<QTreeWidgetItem> item(createItem(childTask));
 	QList<QTreeWidgetItem*> items = findItems(parentTask.getID());
 	items.at(0)->addChild(item.release());
-	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::editTask(const Task& task) {
@@ -117,14 +114,12 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 			items.at(0)->setForeground(i, Qt::black);
 		}
 	}
-	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
 	QList<QTreeWidgetItem*> items = findItems(taskID);
 	assert(items.length() == 1);
 	deleteTask(items.at(0));
-	updateRowNumbers();
 }
 
 void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
@@ -239,9 +234,11 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 				/// If current task is a dependency of selected task
 				Task::Dependencies dependencies = task.getDependencies();
 				if (std::find(dependencies.begin(), dependencies.end(), index)
+					/// Color it blue
 					!= dependencies.end()) {
 					colorTask(item, Qt::blue, font);
 				} else {
+					/// Otherwise color it black
 					colorTask(item, Qt::black, font);
 				}
 			} else {
