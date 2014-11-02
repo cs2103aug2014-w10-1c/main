@@ -342,7 +342,7 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskPriority> utilityTaskPriority;
-	
+
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.
 	DateTimeParser utilityTime;
