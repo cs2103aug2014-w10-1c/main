@@ -14,10 +14,16 @@ const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
 
 Response GetTask::execute(State& state) {
 	std::vector<Task> result;
+	std::vector<Task> descendants;
 	std::vector<Task> all = state.graph().asTaskList();
 	for (const auto& task : all) {
 		if (filter(task)) {
 			result.push_back(task);
+		}
+	}
+	for (const auto& task : result) {
+		if (Filter::isDescendantOf(task.getID())(task)) {
+			descendants.push_back(task);
 		}
 	}
 	if (sortAfterFilter) {
@@ -26,6 +32,7 @@ Response GetTask::execute(State& state) {
 	} else {
 		state.setActiveComparator(Comparator::notSorted());
 	}
+	result.insert(end(result), begin(descendants), end(descendants));
 	state.setActiveFilter(filter);
 	return result;
 }

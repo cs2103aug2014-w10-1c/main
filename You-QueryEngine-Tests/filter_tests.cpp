@@ -98,11 +98,16 @@ TEST_CLASS(FilterTests) {
 	}
 
 	TEST_METHOD(filterIsRelatedTo) {
-		auto& g = Internal::State::get().graph();
+		auto& g = Internal::State::get().sgraph();
+		auto& g2 = Internal::State::get().graph();
 
 		Controller::Graph::addTask(g, RELATED_TO_3());
 		Controller::Graph::addTask(g, RELATED_TO_2());
 		Controller::Graph::addTask(g, RELATED_TO_1());
+
+		Controller::Graph::addTask(g2, RELATED_TO_3());
+		Controller::Graph::addTask(g2, RELATED_TO_2());
+		Controller::Graph::addTask(g2, RELATED_TO_1());
 
 		Assert::AreEqual(
 			Internal::State::get().graph().getTaskCount(),
@@ -123,6 +128,25 @@ TEST_CLASS(FilterTests) {
 		Assert::IsTrue(
 			(F::isRelatedTo(RELATED_TO_2().getID()))
 			(RELATED_TO_3()));
+	}
+
+	TEST_METHOD(filterIsDescendant) {
+		auto& g = Internal::State::get().graph();
+
+		Controller::Graph::addTask(g, CHILD());
+		Controller::Graph::addTask(g, MOTHER());
+		Controller::Graph::addTask(g, GRANDMOTHER());
+
+		Assert::IsTrue(
+			(F::isChildOf(GRANDMOTHER().getID()))(MOTHER()));
+		Assert::IsTrue(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(MOTHER()));
+		Assert::IsTrue(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(CHILD()));
+		Assert::IsTrue(
+			(F::isDescendantOf(MOTHER().getID()))(CHILD()));
+		Assert::IsFalse(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(GRANDMOTHER()));
 	}
 
 	TEST_METHOD(logicalAndTwoFilters) {

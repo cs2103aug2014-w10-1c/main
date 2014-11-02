@@ -55,6 +55,11 @@ namespace UnitTests {
 	extern Task RELATED_TO_2();
 	extern Task RELATED_TO_3();
 
+	/// Descendant
+	extern Task GRANDMOTHER();
+	extern Task MOTHER();
+	extern Task CHILD();
+
 /// @}
 
 }  // namespace UnitTests

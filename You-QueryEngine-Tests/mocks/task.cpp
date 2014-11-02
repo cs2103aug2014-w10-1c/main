@@ -214,7 +214,29 @@ Task RELATED_TO_2() {
 Task RELATED_TO_3() {
 	return Controller::Builder::get().
 		id(3L).
-		description(L"Related to");
+		description(L"Related");
+}
+
+Task GRANDMOTHER() {
+	return Controller::Builder::get().
+		id(1L).
+		description(L"Grandmother").
+		subtasks({ 2L });
+}
+
+Task MOTHER() {
+	return Controller::Builder::get().
+		id(2L).
+		description(L"Mother").
+		subtasks({ 3L }).
+		parent(1L);
+}
+
+Task CHILD() {
+	return Controller::Builder::get().
+		id(3L).
+		description(L"Child").
+		parent(2L);
 }
 
 }  // namespace UnitTests
