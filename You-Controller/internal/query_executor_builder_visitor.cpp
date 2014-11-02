@@ -44,16 +44,26 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 	};
 
 	return std::unique_ptr<QueryExecutor>(
-		new AddTaskQueryExecutor(
-			QueryEngine::AddTask(
-				query.description,
-				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-				query.priority == TaskPriority::HIGH ?
-					Task::Priority::HIGH : Task::Priority::NORMAL,
-				Task::Dependencies(),
-				Task::Subtasks()
-			)
-		)
+		new AddTaskQueryExecutor(buildAddQuery(query)));
+}
+
+std::unique_ptr<QueryEngine::Query>
+QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
+	std::vector<std::unique_ptr<QueryEngine::Query>> subtaskQueries;
+	//subtaskQueries.reserve(query.subtasks.size());
+
+	std::transform(begin(query.subtasks), end(query.subtasks),
+		std::back_inserter(subtaskQueries), [](const ADD_QUERY& q) {
+		return QueryExecutorBuilderVisitor::buildAddQuery(q);
+	});
+
+	return QueryEngine::BatchAddSubTasks(
+		query.description,
+		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
+		query.priority == TaskPriority::HIGH ?
+		Task::Priority::HIGH : Task::Priority::NORMAL,
+		Task::Dependencies(),
+		std::move(subtaskQueries)
 	);
 }
 
