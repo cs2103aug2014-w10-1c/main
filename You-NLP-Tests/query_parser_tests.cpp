@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "tests_stdafx.h"
 #include "You-QueryEngine/task_model.h"
 
 #include "exception.h"

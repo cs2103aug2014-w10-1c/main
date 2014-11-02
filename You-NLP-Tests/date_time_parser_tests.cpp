@@ -1,5 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "tests_stdafx.h"
 #include "exception.h"
 #include "date_time_parser.h"
 

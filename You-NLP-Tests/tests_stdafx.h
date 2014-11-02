@@ -4,16 +4,12 @@
 //
 
 #pragma once
-#ifndef YOU_NLP_TESTS_STDAFX_H_
-#define YOU_NLP_TESTS_STDAFX_H_
+#ifndef YOU_NLP_TESTS_TESTS_STDAFX_H_
+#define YOU_NLP_TESTS_TESTS_STDAFX_H_
 
-#include <SDKDDKVer.h>
 #pragma warning(disable: 4505)
 #include <CppUnitTest.h>
 
-#include "../You-NLP/stdafx.h"
 #include "../You-Utils-Tests/test_helpers.h"
 
-#include "exclusions.h"
-
-#endif  // YOU_NLP_TESTS_STDAFX_H_
+#endif  // YOU_NLP_TESTS_TESTS_STDAFX_H_

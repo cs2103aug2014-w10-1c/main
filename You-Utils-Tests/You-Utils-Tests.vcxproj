@@ -63,7 +63,13 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\You-Utils\$(Configuration)\stdafx.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /Y
+copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /Y
+copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -82,20 +88,23 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\You-Utils\$(Configuration)\stdafx.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy ..\You-Utils\$(Configuration)\You-Utils.* $(Configuration)\You-Utils-Tests.* /Y
+copy ..\You-Utils\$(Configuration)\*.idb $(Configuration)\ /Y
+copy ..\You-Utils\$(Configuration)\*.pdb $(Configuration)\ /Y</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exclusions.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="tests_stdafx.h" />
     <ClInclude Include="test_helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="log_tests.cpp" />
     <ClCompile Include="option_tests.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="tests_stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,8 +1,9 @@
 #include "stdafx.h"
-#include "task.h"
+#include "../tests_stdafx.h"
 
 #include "../You-QueryEngine/internal/controller.h"
 #include "../You-QueryEngine/internal/model.h"
+#include "task.h"
 
 namespace You {
 namespace QueryEngine {

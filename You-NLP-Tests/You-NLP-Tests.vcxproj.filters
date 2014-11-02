@@ -18,17 +18,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="exclusions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exclusions.h">
+    <ClInclude Include="tests_stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="date_time_parser_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="parse_tree\undo_query_tests.cpp">
       <Filter>Source Files\parse_tree</Filter>
+    </ClCompile>
+    <ClCompile Include="tests_stdafx.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
