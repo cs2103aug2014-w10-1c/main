@@ -335,6 +335,28 @@ public:
 			boost::none,
 			TaskPriority::HIGH
 		}), q);
+
+		q = QueryParser::parse(L"/edit 10 attach 'lol'");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			{ { true, L"lol" } }
+		}), q);
+
+		q = QueryParser::parse(L"/edit 10 detach 'lol'");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			{ { false, L"lol" } }
+		}), q);
 	}
 
 	TEST_METHOD(parsesEditQueryWithWrongType) {

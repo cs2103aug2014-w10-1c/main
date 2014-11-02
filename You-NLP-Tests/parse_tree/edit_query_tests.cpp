@@ -1,6 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "query_parser.h"
+#include "parse_tree.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -46,6 +46,21 @@ public:
 				L"Priority => 1)"),
 				stream.str());
 		}
+
+		{  // NOLINT(whitespace/braces)
+			EDIT_QUERY local = DUMMY;
+			local.attachments = {
+				{ false, L"file:///remove" },
+				{ true, L"file:///add" }
+			};
+
+			std::wostringstream stream;
+			stream << local;
+			Assert::AreEqual(
+				std::wstring(L"Edit task #1 (Description => the lols, "
+				L"Attachments => remove file:///remove, add file:///add)"),
+				stream.str());
+		}
 	}
 
 	TEST_METHOD(convertsToString) {
@@ -88,6 +103,10 @@ public:
 
 		local2 = local;
 		local2.complete = true;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.attachments = { { true, L"file://lol" } };
 		Assert::AreNotEqual(local, local2);
 	}
 

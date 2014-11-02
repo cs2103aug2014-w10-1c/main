@@ -28,8 +28,8 @@ struct ToStringVisitor : public boost::static_visitor<std::wstring> {
 
 namespace boost {
 
-template<typename T1, typename T2, typename T3, typename T4, typename T5>
-std::wstring ToString(const variant<T1, T2, T3, T4, T5>& t) {
+template<typename... T1>
+std::wstring ToString(const variant<T1...>& t) {
 	You::NLP::UnitTests::ToStringVisitor visitor;
 	return apply_visitor(visitor, t);
 }

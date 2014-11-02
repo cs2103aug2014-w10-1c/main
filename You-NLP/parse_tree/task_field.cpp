@@ -17,6 +17,9 @@ const std::wstring DEADLINE_FIELD(L"Deadline");
 /// The completion field.
 const std::wstring COMPLETE_FIELD(L"Complete");
 
+/// The attachments field.
+const std::wstring ATTACHMENTS_FIELD(L"Attachments");
+
 }  // namespace
 
 namespace You {
@@ -50,6 +53,8 @@ std::wstring ToString(const TaskField& field) {
 		return DEADLINE_FIELD;
 	case TaskField::COMPLETE:
 		return COMPLETE_FIELD;
+	case TaskField::ATTACHMENTS:
+		return ATTACHMENTS_FIELD;
 	case TaskField::NONE:
 	default:
 		return std::wstring();

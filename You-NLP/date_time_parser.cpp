@@ -23,7 +23,7 @@ bool DateTimeParser::parse(const StringType& string, ptime& result) {
 	return qi::parse(
 		begin(string),
 		end(string),
-		DateTimeParser(),
+		DateTimeParser() > qi::eoi,
 		result);
 }
 

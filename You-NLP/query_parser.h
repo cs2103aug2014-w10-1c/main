@@ -158,8 +158,8 @@ private:
 	///
 	/// \param[in] offset The task which the user is referencing.
 	static EDIT_QUERY constructEditQuery(
-		const size_t offset,
-		const EDIT_QUERY& query);
+		size_t offset,
+		EDIT_QUERY query);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -174,7 +174,7 @@ private:
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryUnary(
 		TaskField field,
-		const ValueType& newValue);
+		ValueType newValue);
 
 	/// Constructs a edit query from the given parse tree values.
 	///
@@ -184,15 +184,15 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
-	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	/// Constructs an edit query from the given attachment command.
 	///
-	/// \exception ParseErrorException The exception representing the parse
-	///                                error.
-	static void onFailure(
-		ParserIteratorType begin,
-		ParserIteratorType end,
-		ParserIteratorType errorPos,
-		const boost::spirit::info& message);
+	/// \param[in] attach True to attach the file, false to detach.
+	/// \param[in] file
+	/// \return The synthesised value for the \ref editAttachmentCommandRule
+	///         rule.
+	static EDIT_QUERY constructEditQueryAttachment(
+		bool attach,
+		StringType file);
 	#pragma endregion
 
 	#pragma region Deleting tasks
@@ -214,6 +214,16 @@ private:
 	/// \param[in] value The value from the parser.
 	/// \return The concrete synthesised value for the \ref utilityValue rule.
 	static ValueType constructValue(ValueType value);
+
+	/// Handles failures in parsing. This raises a \ref ParseErrorException.
+	///
+	/// \exception ParseErrorException The exception representing the parse
+	///                                error.
+	static void onFailure(
+		ParserIteratorType begin,
+		ParserIteratorType end,
+		ParserIteratorType errorPos,
+		const boost::spirit::info& message);
 
 private:
 	/// The start rule.
@@ -320,6 +330,10 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
+
+	/// Edit command rule for attaching and detaching attachments.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>
+		editAttachmentCommandRule;
 	#pragma endregion
 
 	#pragma region Deleting tasks
