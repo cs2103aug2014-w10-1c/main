@@ -22,7 +22,7 @@ public:
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>> subtasks)
+		std::vector<std::unique_ptr<Query>>&& subtasks)
 	: insertedID(-1), description(description), deadline(deadline),
 	  priority(priority), dependencies(dependencies),
 	  subtasks(std::move(subtasks)) {}
@@ -34,7 +34,7 @@ public:
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>> subtasks)
+		std::vector<std::unique_ptr<Query>>&& subtasks)
 	: insertedID(id), description(description), deadline(deadline),
 		priority(priority), dependencies(dependencies),
 		subtasks(std::move(subtasks)) {}

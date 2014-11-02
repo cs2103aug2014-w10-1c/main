@@ -82,7 +82,7 @@ public:
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>> subtasks
+		std::vector<std::unique_ptr<Query>>&& subtasks
 	);
 
 	/// Construct a batch delete subtask query.

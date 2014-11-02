@@ -30,7 +30,7 @@ QueryEngine::BatchAddSubTasks(
 	const Task::Time& deadline,
 	const Task::Priority& priority,
 	const Task::Dependencies& dependencies,
-	std::vector<std::unique_ptr<Query>> subtasks) {
+	std::vector<std::unique_ptr<Query>>&& subtasks) {
 	using BatchAddSubTasks = Internal::Action::BatchAddSubTasks;
 	return std::unique_ptr<Query>(new BatchAddSubTasks(
 		description,
