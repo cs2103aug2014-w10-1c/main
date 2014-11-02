@@ -106,6 +106,68 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesStringWithDependenciesAsTask) {
+		QUERY q = QueryParser::parse(L"Buy her flower by 14 dec -> Ask her "
+			L"out by 15 dec -> Confess to her by 16 dec");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"Buy her flower",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 14)),
+			{},
+			std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
+				L"Ask her out",
+				TaskPriority::NORMAL,
+				ptime(date(2014, boost::gregorian::Dec, 15)),
+				{},
+				std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
+					L"Confess to her",
+					TaskPriority::NORMAL,
+					ptime(date(2014, boost::gregorian::Dec, 16))
+				})
+			})
+		}), q);
+	}
+
+	TEST_METHOD(parsesStringWithDependenciesAndSubtasksAsTask) {
+		QUERY q = QueryParser::parse(L"Walk the dog by 20 oct : Eat breakfast "
+			L"; Take out the dog; Buy her flower by 14 dec -> Ask her "
+			L"out by 15 dec -> Confess to her by 16 dec; Buy a new collar by "
+			L"12 oct");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"Walk the dog",
+			TaskPriority::NORMAL,
+			ptime(date(2015, boost::gregorian::Oct, 20)),
+			{
+				{ L"Eat breakfast" },
+				{ L"Take out the dog" },
+				{
+					L"Buy her flower",
+					TaskPriority::NORMAL,
+					ptime(date(2014, boost::gregorian::Dec, 14)),
+					{},
+					std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
+						L"Ask her out",
+						TaskPriority::NORMAL,
+						ptime(date(2014, boost::gregorian::Dec, 15)),
+						{},
+						std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
+							L"Confess to her",
+							TaskPriority::NORMAL,
+							ptime(date(2014, boost::gregorian::Dec, 16))
+						})
+					})
+				},
+				{
+					L"Buy a new collar",
+					TaskPriority::NORMAL,
+					ptime(date(2015, boost::gregorian::Oct, 12))
+				}
+			}
+		}), q);
+	}
+
 	TEST_METHOD(parsesIrregularSpacingAddTask) {
 		QUERY q;
 		Assert::ExpectException<ParseErrorException>(

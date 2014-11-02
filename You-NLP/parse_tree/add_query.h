@@ -30,6 +30,9 @@ struct ADD_QUERY {
 
 	/// The subtasks of the task.
 	std::vector<ADD_QUERY> subtasks;
+
+	/// The dependent of this task.
+	std::shared_ptr<ADD_QUERY> dependent;
 };
 
 /// Defines an output formatter for ADD_QUERY queries.

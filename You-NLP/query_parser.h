@@ -56,6 +56,20 @@ public:
 
 private:
 	#pragma region Adding tasks
+	/// Process the main task, as well as its subtasks and dependents.
+	///
+	/// \see addCommandSubtasks
+	/// The production rule associated with this semantic action.
+	///
+	/// \param[in] query The main task
+	/// \param[in] subtasks The subtasks provided.
+	/// \param[in] dependent The dependent provided.
+	/// \return The synthesised value for the \ref addCommandSubtasks rule.
+	static ADD_QUERY constructAddQuery(
+		ADD_QUERY query,
+		boost::optional<ADD_QUERY> dependent,
+		boost::optional<std::vector<ADD_QUERY>> subtasks);
+
 	/// Process the terminal returned from the add query character parse rule,
 	/// stringing characters together to form the description.
 	///
@@ -63,7 +77,7 @@ private:
 	/// \param[in] query The \ref ADD_QUERY parse tree to the right of the
 	///                  current character.
 	/// \return The synthesised value for the \ref addCommand rule.
-	static ADD_QUERY constructAddQuery(
+	static ADD_QUERY constructAddQueryFromDescription(
 		ParserCharEncoding::char_type lexeme,
 		ADD_QUERY query);
 
@@ -99,17 +113,6 @@ private:
 	/// \return The synthesised value for the \ref addCommandDeadline rule.
 	static ADD_QUERY constructAddQueryWithOptionalDeadline(
 		boost::optional<ADD_QUERY> query);
-
-	/// Process the main task, as well as its subtasks.
-	///
-	/// \see addCommandSubtasks
-	/// The production rule associated with this semantic action.
-	///
-	/// \param[in] query The main task
-	/// \param[in] subtasks The subtasks provided.
-	/// \return The synthesised value for the \ref addCommandSubtasks rule.
-	static ADD_QUERY constructAddQueryWithSubtasks(
-		ADD_QUERY query, boost::optional<std::vector<ADD_QUERY>> subtasks);
 	#pragma endregion
 
 	#pragma region Showing tasks
