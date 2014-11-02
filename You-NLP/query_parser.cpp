@@ -81,7 +81,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadlineOptional);
 
 	addCommandSubtasks %= (
-		addCommandDescription % (*space >> qi::lit(';') >> *space)
+		addCommand % (*space >> qi::lit(';') >> *space)
 	);
 	BOOST_SPIRIT_DEBUG_NODE(addCommandSubtasks);
 	#pragma endregion
