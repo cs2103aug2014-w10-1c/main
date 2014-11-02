@@ -15,7 +15,7 @@
 #include <unordered_map>
 
 #pragma warning(push)
-#pragma warning(disable: 4127 4100 4244)
+#pragma warning(disable: 4127 4100 4244 4555)
 #include <boost/variant.hpp>
 #pragma warning(pop)
 

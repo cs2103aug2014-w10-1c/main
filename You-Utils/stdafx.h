@@ -15,9 +15,13 @@
 #include <vector>
 #include <functional>
 
+#pragma warning(push)
+#pragma warning(disable: 4555)
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/variant/variant.hpp>
+#pragma warning(pop)
 
 #include <windows.h>
 #undef ERROR

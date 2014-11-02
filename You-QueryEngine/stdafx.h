@@ -17,6 +17,8 @@
 #include <sstream>
 #include <unordered_set>
 
+#pragma warning(push)
+#pragma warning(disable: 4510 4512 4555 4610)
 #include <boost/tokenizer.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -24,5 +26,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/variant.hpp>
+#pragma warning(pop)
 
 #endif  // YOU_QUERYENGINE_STDAFX_H_
