@@ -34,8 +34,7 @@ Response BatchAddSubTasks::execute(State& state) {
 	Task::Subtasks theSubtasks;
 
 	for (auto& q : subtasks) {
-		Response r =
-			dynamic_cast<AddTask*>(q.get())->execute(state);
+		Response r = q->execute(state);
 		theSubtasks.insert(boost::get<Task>(r).getID());
 	}
 
