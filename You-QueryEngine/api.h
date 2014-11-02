@@ -35,8 +35,10 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
 namespace Internal { class State;
-namespace Action { class Undo; class BatchAddSubTasks;
-	class BatchAddDependencies;
+namespace Action {
+class Undo;
+class BatchAddSubTasks;
+class BatchAddDependencies;
 }
 }
 
