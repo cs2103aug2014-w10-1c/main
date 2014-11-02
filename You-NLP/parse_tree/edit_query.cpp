@@ -63,6 +63,20 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			q.complete.get()).str());
 	}
 
+	if (q.childTask) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			TaskField::SUBTASKS %
+			q.childTask.get()).str());
+	}
+
+	if (q.dependingTask) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			TaskField::DEPENDENTS %
+			q.dependingTask.get()).str());
+	}
+
 	if (!q.attachments.empty()) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %
@@ -99,6 +113,8 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 		priority == rhs.priority &&
 		deadline == rhs.deadline &&
 		complete == rhs.complete &&
+		childTask == rhs.childTask &&
+		dependingTask == rhs.dependingTask &&
 		attachments.size() == rhs.attachments.size() &&
 		std::equal(
 			begin(attachments),

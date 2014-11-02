@@ -49,6 +49,12 @@ struct EDIT_QUERY {
 	/// Whether the task is complete
 	You::Utils::Option<bool> complete;
 
+	/// The task to set as a subtask of the \ref taskID
+	You::Utils::Option<int> childTask;
+
+	/// The task to set as a depending on \ref taskID
+	You::Utils::Option<int> dependingTask;
+
 	/// The attachments to add and remove.
 	std::vector<ATTACHMENT_ACTION> attachments;
 };

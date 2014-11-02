@@ -176,13 +176,27 @@ private:
 		TaskField field,
 		ValueType newValue);
 
-	/// Constructs a edit query from the given parse tree values.
+	/// Constructs an edit query from the given parse tree values.
 	///
 	/// \param[in] field The field which should be edited.
 	/// \param[in] priority The new value the user wants to change the field to.
 	/// \return The synthesised value for the \ref editCommand rule.
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
+
+	/// Constructs an edit query setting the given task as a subtask of the
+	/// first task.
+	///
+	/// \param[in] subtask The task ID to set as a subtask.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQuerySubtask(int subtask);
+	
+	/// Constructs an edit query setting the given task as depending on the
+	/// first task.
+	///
+	/// \param[in] subtask The task ID to set as a dependent.
+	/// \return The synthesised value for the \ref editCommand rule.
+	static EDIT_QUERY constructEditQueryDependent(int dependent);
 
 	/// Constructs an edit query from the given attachment command.
 	///
@@ -330,6 +344,13 @@ private:
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
+
+	/// Edit command nonterminal rule for setting the subtask of another task.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
+
+	/// Edit command nonterminal rule for setting the dependency of another
+	/// task.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
 
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>

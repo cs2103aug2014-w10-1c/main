@@ -17,6 +17,12 @@ const std::wstring DEADLINE_FIELD(L"Deadline");
 /// The completion field.
 const std::wstring COMPLETE_FIELD(L"Complete");
 
+/// The subtasks field.
+const std::wstring SUBTASKS_FIELD(L"Subtasks");
+
+/// The dependents of this task.
+const std::wstring DEPENDENTS_FIELDS(L"Depending");
+
 /// The attachments field.
 const std::wstring ATTACHMENTS_FIELD(L"Attachments");
 
@@ -53,6 +59,10 @@ std::wstring ToString(const TaskField& field) {
 		return DEADLINE_FIELD;
 	case TaskField::COMPLETE:
 		return COMPLETE_FIELD;
+	case TaskField::SUBTASKS:
+		return SUBTASKS_FIELD;
+	case TaskField::DEPENDENTS:
+		return DEPENDENTS_FIELDS;
 	case TaskField::ATTACHMENTS:
 		return ATTACHMENTS_FIELD;
 	case TaskField::NONE:

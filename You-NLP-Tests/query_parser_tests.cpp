@@ -335,11 +335,42 @@ public:
 			boost::none,
 			TaskPriority::HIGH
 		}), q);
+	}
 
-		q = QueryParser::parse(L"/edit 10 attach 'lol'");
+	TEST_METHOD(parsesEditSubtaskQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0:1");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			1
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditDependentQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0->1");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			boost::none,
+			1
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditAttachmentQuery) {
+		QUERY q = QueryParser::parse(L"/edit 10 attach 'lol'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -351,6 +382,8 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
