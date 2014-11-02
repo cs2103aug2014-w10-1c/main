@@ -65,8 +65,10 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 
 	if (!q.attachments.empty()) {
 		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			TaskField::ATTACHMENTS %
 			boost::algorithm::join(getAttachmentActionsAsString(q.attachments),
-				L", "));
+				L", ")).str());
 	}
 	return fields;
 }

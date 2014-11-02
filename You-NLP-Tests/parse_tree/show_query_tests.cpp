@@ -1,6 +1,6 @@
 //@author A0097630B
 #include "stdafx.h"
-#include "parse_tree/show_query.h"
+#include "parse_tree.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
