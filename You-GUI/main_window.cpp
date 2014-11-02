@@ -230,7 +230,6 @@ void MainWindow::clearTasks() {
 
 void MainWindow::taskSelected() {
 	/// Un-highlight all tasks
-	
 	QTreeWidgetItemIterator it(ui.taskTreePanel);
 	while (*it) {
 		/// If task is not done
@@ -265,7 +264,6 @@ void MainWindow::taskSelected() {
 		Task task = *i;
 
 		/// Handle dependency highlighting
-		
 		for each (Task::ID dependency in task.getDependencies()) {
 			QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
 				boost::lexical_cast<QString>(dependency), 0);
