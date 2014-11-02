@@ -14,11 +14,11 @@ const std::wstring STRING_FORMAT(L"undo");
 namespace You {
 namespace NLP {
 
-std::wostream& operator<<(std::wostream& s, const UNDO_QUERY& q) {
+std::wostream& operator<<(std::wostream& s, const UNDO_QUERY& /*q*/) {
 	return s << STRING_FORMAT;
 }
 
-bool UNDO_QUERY::operator==(const UNDO_QUERY& rhs) const {
+bool UNDO_QUERY::operator==(const UNDO_QUERY& /*rhs*/) const {
 	// All undo queries are the same!
 	return true;
 }
