@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#pragma warning(disable: 4503)  // Boost is too awesome.
 #pragma warning(push)
 #pragma warning(disable: 4127 4100 4244 4555)
 #include <boost/variant.hpp>
