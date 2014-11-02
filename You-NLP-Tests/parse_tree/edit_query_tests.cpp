@@ -106,6 +106,14 @@ public:
 		Assert::AreNotEqual(local, local2);
 
 		local2 = local;
+		local2.childTask = 1;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
+		local2.dependingTask = 1;
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
 		local2.attachments = { { true, L"file://lol" } };
 		Assert::AreNotEqual(local, local2);
 	}

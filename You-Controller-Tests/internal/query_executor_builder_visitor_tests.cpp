@@ -281,11 +281,14 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
+		// TODO(lowjoel): Remove copy-paste.
 		getsCorrectTypeForEditQueries1();
 		getsCorrectTypeForEditQueries2();
 		getsCorrectTypeForEditQueries3();
 		getsCorrectTypeForEditQueries4();
 		getsCorrectTypeForEditQueries5();
+		getsCorrectTypeForEditQueries6();
+		getsCorrectTypeForEditQueries7();
 	}
 
 	void getsCorrectTypeForEditQueries1() {
@@ -309,6 +312,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
 			result.task.isCompleted());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
 	}
 
 	void getsCorrectTypeForEditQueries2() {
@@ -334,6 +339,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
 			result.task.isCompleted());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
 	}
 
 	void getsCorrectTypeForEditQueries3() {
@@ -359,6 +366,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
 			result.task.isCompleted());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
 	}
 
 	void getsCorrectTypeForEditQueries4() {
@@ -383,6 +392,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
 			result.task.isCompleted());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
 	}
 
 	void getsCorrectTypeForEditQueries5() {
@@ -408,6 +419,56 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			result.task.getDeadline());
 		Assert::AreEqual(taskList.front().isCompleted(),
 			result.task.isCompleted());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
+	}
+
+	void getsCorrectTypeForEditQueries6() {
+		Mocks::TaskList taskList(2);
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
+		query2.childTask = 1;
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
+
+		Assert::AreEqual(taskList.front().getID(),
+			result.task.getID());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
+			result.task.getDescription());
+		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
+			Mocks::Queries::EDIT_QUERY.priority.get()),
+			result.task.getPriority());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
+			result.task.getDeadline());
+		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
+			result.task.isCompleted());
+		Assert::IsFalse(result.task.getSubtasks().empty());
+		Assert::IsTrue(result.task.getDependencies().empty());
+	}
+
+	void getsCorrectTypeForEditQueries7() {
+		Mocks::TaskList taskList(2);
+		QueryExecutorBuilderVisitor visitor(taskList);
+
+		You::NLP::EDIT_QUERY query2;
+		query2.taskID = Mocks::Queries::EDIT_QUERY.taskID;
+		query2.dependingTask = 1;
+		You::NLP::QUERY query(query2);
+		std::unique_ptr<QueryExecutor> executor(
+			boost::apply_visitor(visitor, query));
+		EDIT_RESULT result(
+			boost::get<EDIT_RESULT>(executor->execute()));
+
+		// We edit the second element in our task list.
+		taskList.erase(begin(taskList), begin(taskList));
+		Assert::AreNotEqual(taskList.front().getID(),
+			result.task.getID());
+		Assert::IsTrue(result.task.getSubtasks().empty());
+		Assert::IsFalse(result.task.getDependencies().empty());
 	}
 
 	TEST_METHOD(editQueriesOutOfBoundsThrowsContextOutOfRange) {

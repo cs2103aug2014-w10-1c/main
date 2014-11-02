@@ -168,6 +168,20 @@ EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	return result;
 }
 
+EDIT_QUERY QueryParser::constructEditQuerySubtask(int subtask) {
+	EDIT_QUERY result;
+	result.childTask = subtask;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryDependent(int dependent) {
+	EDIT_QUERY result;
+	result.dependingTask = dependent;
+
+	return result;
+}
+
 EDIT_QUERY QueryParser::constructEditQueryAttachment(
 	bool attach,
 	StringType file) {
