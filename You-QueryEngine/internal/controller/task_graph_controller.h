@@ -42,6 +42,13 @@ public:
 	/// \return true if success, false otherwise.
 	static void deleteTask(TaskGraph& graph, const Task::ID id);
 
+	/// Delete a task tree from the graph
+	/// May throw \ref Exception::TaskNotFoundException
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] id The id of the to-be deleted task
+	/// \return true if success, false otherwise.
+	static void deleteTaskTree(TaskGraph& g, const Task::ID id);
+
 	/// Update a task from the graph
 	/// Rebuilds the graph if there is a connection change.
 	/// May throw \ref Exception::TaskNotFoundException if trying

@@ -149,11 +149,14 @@ TEST_CLASS(QueryEngineTests) {
 				QueryEngine::executeQuery(std::move(query)));
 		}
 
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			2);
+
 		{  // NOLINT
 			auto query = QueryEngine::BatchDeleteSubTasks(parent.getID());
-			parent = boost::get<Task>(
-				QueryEngine::executeQuery(std::move(query)));
+			QueryEngine::executeQuery(std::move(query));
 		}
+
 		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
 			0);
 	}

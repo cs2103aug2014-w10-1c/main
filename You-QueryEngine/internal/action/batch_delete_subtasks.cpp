@@ -27,11 +27,10 @@ const std::wstring BatchDeleteSubTasks::logCategory =
 	Query::logCategory + L"[BatchDeleteSubTasks]";
 
 std::unique_ptr<Query> BatchDeleteSubTasks::getReverse() {
-	Task deletedParent = State::get().graph().getTask(id);
 	std::vector<std::unique_ptr<Query>> subtaskAddQueries;
 	// Construct add query for each subtask
 	for (const auto& cid : deletedParent.getSubtasks()) {
-		Task c = State::get().graph().getTask(cid);
+		auto c = childrens[cid];
 		subtaskAddQueries.push_back(
 			std::unique_ptr<Query>(
 				new AddTask(
@@ -51,19 +50,25 @@ std::unique_ptr<Query> BatchDeleteSubTasks::getReverse() {
 		std::move(subtaskAddQueries)));
 }
 
+void BatchDeleteSubTasks::constructUndoTree(
+	State& state, Task::ID id) {
+	Task c = state.get().graph().getTask(id);
+	for (auto cid : c.getSubtasks()) {
+		constructUndoTree(state, cid);
+	}
+	childrens.insert({ id, c });
+}
+
 void BatchDeleteSubTasks::deleteTree(State& state, Task::ID id) {
 	Task c = state.get().graph().getTask(id);
-	for (const auto& cid : c.getSubtasks()) {
+	for (auto cid : c.getSubtasks()) {
 		deleteTree(state, cid);
 	}
-	c.setSubtasks({});
-	Controller::Graph::updateTask(state.graph(), c);
-	Controller::Graph::updateTask(state.sgraph(), c);
-	Controller::Graph::deleteTask(state.graph(), id);
-	Controller::Graph::deleteTask(state.sgraph(), id);
+	DeleteTask(id).execute(state);
 }
 
 Response BatchDeleteSubTasks::execute(State& state) {
+	deletedParent = state.get().graph().getTask(id);
 	deleteTree(state, id);
 	return this->id;
 }

@@ -46,6 +46,7 @@ Response BatchAddSubTasks::execute(State& state) {
 			deadline, priority, dependencies, theSubtasks));
 
 	Response r = addParentquery->execute(state);
+
 	newTask = boost::get<Task>(r);
 	insertedID = newTask.getID();
 	return newTask;

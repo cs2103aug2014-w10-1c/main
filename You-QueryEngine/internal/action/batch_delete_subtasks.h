@@ -18,7 +18,7 @@ class BatchDeleteSubTasks : public Query {
 public:
 	/// Constructor that use datastore to inquire new id
 	explicit BatchDeleteSubTasks(const Task::ID id)
-	: id(id) {}
+	: id(id), deletedParent() {}
 
 	/// Disable assignment operator
 	BatchDeleteSubTasks& operator=(const BatchDeleteSubTasks&) = delete;
@@ -36,10 +36,13 @@ protected:
 private:
 	/// Delete tree
 	void deleteTree(State& state, Task::ID id);
+	void constructUndoTree(State& state, Task::ID id);
 
 	/// Execute add task.
 	Response execute(State& tasks) override;
 	Task::ID id;   ///< Inserted ID of the parent task.
+	Task deletedParent;   ///< Deleted parent
+	std::unordered_map<Task::ID, Task> childrens;
 };
 
 }  // namespace Action
