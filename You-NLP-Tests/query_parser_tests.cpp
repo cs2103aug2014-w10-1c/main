@@ -184,8 +184,15 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQuery) {
+		// Boundary case: no filters nor sorts.
+		QUERY q = QueryParser::parse(L"/show");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+			{}, {}
+		}), q);
+
 		// Boundary case: one filter, zero sort.
-		QUERY q = QueryParser::parse(L"/show description='\\\\\\'meh'");
+		q = QueryParser::parse(L"/show description='\\\\\\'meh'");
 
 		Assert::AreEqual(QUERY(SHOW_QUERY {
 			{

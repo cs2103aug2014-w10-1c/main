@@ -37,10 +37,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	explicitCommand %= (
 		(qi::lit("add") > space > addCommand) |
-		(qi::lit("show") >> space >> showCommand) |
+		(qi::lit("show") > *space > showCommand) |
 		(qi::lit("edit") > space > editCommand) |
-		(qi::lit("delete") >> space >> deleteCommand) |
-		(qi::lit("undo") >> undoCommand)
+		(qi::lit("delete") > space > deleteCommand) |
+		(qi::lit("undo") > *space > undoCommand)
 	);
 	BOOST_SPIRIT_DEBUG_NODE(explicitCommand);
 
@@ -97,8 +97,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Showing tasks
 	showCommand = (
-		-showCommandFiltering >>
-		-(-space >> (qi::lit("sorted by") | qi::lit("order by")) >> space >>
+		-showCommandFiltering >
+		-(-space >> (qi::lit("sorted by") | qi::lit("order by")) > space >
 		showCommandSorting)
 	)[qi::_val = phoenix::bind(&constructShowQuery, qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(showCommand);
@@ -110,8 +110,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(showCommandFiltering);
 
 	showCommandFilteringColumn = (
-		showCommandFields >>
-		-space >> showCommandFilteringPredicate >> -space >>
+		showCommandFields >
+		-space > showCommandFilteringPredicate > -space >
 		utilityValue
 	)[qi::_val = phoenix::bind(&constructShowQueryFilteringColumn,
 		qi::_1,
