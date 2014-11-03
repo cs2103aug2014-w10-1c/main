@@ -224,11 +224,15 @@ void MainWindow::taskSelected() {
 		QString priority = tpm->getPriorityAsText(item);
 		QString dependencies = tpm->getDependenciesAsText(item);
 		QString attachment = tpm->getAttachmentAsText(item);
-		contents = "Index: " + index + "\n" + "Description: " + description
-			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
-			+ "\n" + "Dependencies: " + dependencies
-			+ "\n" + "Attachment:" + attachment;
-		ui.taskDescriptor->setText(contents);
+		contents = "Index: " + index + "<br />"
+			+ "Description: " + description + "<br />"
+			+ "Deadline: " + deadline + "<br />"
+			+ "Priority: " + priority + "<br />"
+			+ "Dependencies: " + dependencies + "<br / >"
+			+ "Attachment: " + "<a href=" + "'file:///" + attachment + "'>"
+			+ attachment + "</a></li></ul>";
+		ui.taskDescriptor->setOpenExternalLinks(true);
+		ui.taskDescriptor->setHtml(contents);
 	}
 	tpm->repaintTasks();
 }
