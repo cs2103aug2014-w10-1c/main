@@ -223,9 +223,11 @@ void MainWindow::taskSelected() {
 		QString deadline = tpm->getDeadlineAsText(item);
 		QString priority = tpm->getPriorityAsText(item);
 		QString dependencies = tpm->getDependenciesAsText(item);
+		QString attachment = tpm->getAttachmentAsText(item);
 		contents = "Index: " + index + "\n" + "Description: " + description
 			+ "\n" + "Deadline: " + deadline + "\n" + "Priority: " + priority
-			+ "\n" + "Dependencies: " + dependencies;
+			+ "\n" + "Dependencies: " + dependencies
+			+ "\n" + "Attachment:" + attachment;
 		ui.taskDescriptor->setText(contents);
 	}
 	tpm->repaintTasks();
