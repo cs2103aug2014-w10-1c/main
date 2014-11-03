@@ -53,9 +53,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 					subtask.priority == TaskPriority::HIGH ?
 						Task::Priority::HIGH : Task::Priority::NORMAL,
 					Task::Dependencies(),
-					Task::Subtasks()
-				)
-			);
+					Task::Subtasks()));
 		}
 		return std::unique_ptr<QueryExecutor>(
 			new AddTaskQueryExecutor(
@@ -65,10 +63,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 					query.priority == TaskPriority::HIGH ?
 						Task::Priority::HIGH : Task::Priority::NORMAL,
 					Task::Dependencies(),
-					std::move(addChildrenQueries)
-				)
-			)
-		);
+					std::move(addChildrenQueries))));
 	} else {
 		return std::unique_ptr<QueryExecutor>(
 			new AddTaskQueryExecutor(
@@ -78,10 +73,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 					query.priority == TaskPriority::HIGH ?
 						Task::Priority::HIGH : Task::Priority::NORMAL,
 					Task::Dependencies(),
-					Task::Subtasks()
-				)
-			)
-		);
+					Task::Subtasks())));
 	}
 }
 
