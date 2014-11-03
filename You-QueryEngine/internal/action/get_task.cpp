@@ -25,7 +25,7 @@ Response GetTask::execute(State& state) {
 	}
 	for (const auto& r : filtered) {
 		// Always show toplevel task.
-		if (r.getParent() == r.getID()) {
+		if (r.isTopLevel()) {
 			result.push_back(r);
 		} else {
 			// Show child task iff the parent is not filtered.

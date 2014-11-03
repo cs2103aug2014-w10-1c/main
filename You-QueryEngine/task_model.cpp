@@ -46,6 +46,10 @@ bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
 }
 
+bool Task::isTopLevel() const {
+	return parent == id;
+}
+
 std::vector<Task> Task::getSubtasksObject() const {
 	std::vector<Task> result;
 	for (const auto& id : subtasks) {

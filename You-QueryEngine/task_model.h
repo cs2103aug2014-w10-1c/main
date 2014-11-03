@@ -63,9 +63,14 @@ public:
 	/// Get dependencies as Task object.
 	std::vector<Task> getDependenciesObject() const;
 
-	/// Check dependency
-	/// \returns true if id is in the dependency, false otherwise.
+	/// Check wheter this task depends on a task.
+	/// \returns true if id is in the dependency.
 	bool isDependOn(const Task::ID id) const;
+
+	/// Check whether this task is a toplevel task.
+	/// A task is a toplevel task if it does not have any parent.
+	/// \returns true if the task is toplevel.
+	bool Task::isTopLevel() const;
 
 	/// \name Field Setters
 	/// @{

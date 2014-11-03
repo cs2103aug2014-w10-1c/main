@@ -52,7 +52,7 @@ void AddTask::ensureSubtasksIsValid() const {
 	for (const auto& id : subtasks) {
 		try {
 			auto task = State::get().sgraph().getTask(id);
-			if (task.getParent() != task.getID()) {
+			if (!task.isTopLevel()) {
 				throw Exception::TaskAlreadyHasParentException();
 			}
 		} catch (const Exception::TaskNotFoundException& e) {

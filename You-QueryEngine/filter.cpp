@@ -106,11 +106,8 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 Filter Filter::isChildOf(Task::ID id) {
 	return Filter([id] (const Task& task) {
-		if (task.getParent() == task.getID()) {
-			return false;
-		} else {
-			return task.getParent() == id;
-		}
+		return !task.isTopLevel() &&
+			task.getParent() == id;
 	});
 }
 

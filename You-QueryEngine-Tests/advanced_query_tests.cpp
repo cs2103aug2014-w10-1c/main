@@ -232,7 +232,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
 		Assert::AreEqual(result.size(), static_cast<std::size_t>(1));
-		Assert::IsTrue(result.at(0).getParent() == result.at(0).getID());
+		Assert::IsTrue(result.at(0).isTopLevel());
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
