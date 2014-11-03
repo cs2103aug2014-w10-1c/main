@@ -32,7 +32,7 @@ void MainWindow::QueryManager::query(
 		: parentGUI(parentGUI) {
 		}
 		void operator()(You::Controller::ADD_RESULT addResult) {
-			parentGUI->addTask(addResult.task);
+			parentGUI->addTasks({ addResult.task });
 		}
 		void operator()(const You::Controller::SHOW_RESULT& showResult) {
 			parentGUI->clearTasks();
