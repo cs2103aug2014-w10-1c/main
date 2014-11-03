@@ -93,10 +93,6 @@ public:
 		std::vector<std::unique_ptr<Query>>&& dependencies,
 		const Task::Subtasks& subtasks);
 
-	/// Construct a batch delete subtask query.
-	static std::unique_ptr<Query> BatchDeleteSubTasks(
-		Task::ID id);
-
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
 		const Task::Time& deadline,

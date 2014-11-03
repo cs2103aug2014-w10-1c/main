@@ -10,7 +10,6 @@
 #include "internal/action/update_task.h"
 #include "internal/action/undo.h"
 #include "internal/action/batch_add_subtasks.h"
-#include "internal/action/batch_delete_subtasks.h"
 #include "internal/action/batch_add_dependencies.h"
 #include "internal/model.h"
 #include "api.h"
@@ -56,12 +55,6 @@ QueryEngine::BatchAddDependencies(
 		priority,
 		std::move(dependencies),
 		subtasks));
-}
-
-std::unique_ptr<Query>
-QueryEngine::BatchDeleteSubTasks(Task::ID id) {
-	using BatchDeleteSubtasks = Internal::Action::BatchDeleteSubTasks;
-	return std::unique_ptr<Query>(new BatchDeleteSubtasks(id));
 }
 
 std::unique_ptr<Query>

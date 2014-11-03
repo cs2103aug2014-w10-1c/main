@@ -37,11 +37,17 @@ protected:
 private:
 	/// Execute delete task.
 	Response execute(State& tasks) override;
-	void makeTransaction();
+	void constructUndoTree(State& state, Task::ID id);
+	void makeTransaction(const Task::ID id);
+	void deleteTree(State& state, Task::ID id);
+	void deleteFromStateAndDataStore(State& state, Task::ID id);
+
 	/// ID of the task to delete.
 	const Task::ID id;
 	/// The object that has been deleted.
 	Task deletedTask;
+	/// The mini database for children.
+	std::unordered_map<Task::ID, Task> children;
 };
 
 }  // namespace Action

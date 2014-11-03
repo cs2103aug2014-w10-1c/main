@@ -48,7 +48,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		Internal::State::clear();
 	}
 
-	TEST_METHOD(executeBatchAddSubtaskQuery) {
+	TEST_METHOD(executeAndUndoBatchAddSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
@@ -61,15 +61,23 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 
 		QueryEngine::executeQuery(std::move(query));
 
-		auto inserted = boost::get<std::vector<Task>>(
+		auto tasklist = boost::get<std::vector<Task>>(
 			QueryEngine::executeQuery(
 				QueryEngine::GetTask(Filter::anyTask())));
 
 		// TODO(evansb) define ToString
-		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(1));
+		Assert::AreEqual(tasklist.size(), static_cast<std::size_t>(1));
+
+		QueryEngine::executeQuery(QueryEngine::Undo());
+
+		tasklist = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+
+		Assert::AreEqual(tasklist.size(), static_cast<std::size_t>(0));
 	}
 
-	TEST_METHOD(executeBatchDeleteSubtaskQuery) {
+	TEST_METHOD(executeAndUndoBatchDeleteSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
@@ -85,7 +93,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 			2);
 
 		{  // NOLINT
-			auto query = QueryEngine::BatchDeleteSubTasks(2);
+			auto query = QueryEngine::DeleteTask(2);
 			QueryEngine::executeQuery(std::move(query));
 		}
 
@@ -234,6 +242,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		Assert::AreEqual(result.size(), static_cast<std::size_t>(1));
 		Assert::IsTrue(result.at(0).isTopLevel());
 	}
+
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
 

@@ -79,7 +79,6 @@
     <ClInclude Include="exception.h" />
     <ClInclude Include="internal\action\batch_add_dependencies.h" />
     <ClInclude Include="internal\action\batch_add_subtasks.h" />
-    <ClInclude Include="internal\action\batch_delete_subtasks.h" />
     <ClInclude Include="internal\action\delete_task.h" />
     <ClInclude Include="internal\action\undo.h" />
     <ClInclude Include="internal\action\update_task.h" />
@@ -101,7 +100,6 @@
     <ClCompile Include="internal\action\add_task.cpp" />
     <ClCompile Include="internal\action\batch_add_dependencies.cpp" />
     <ClCompile Include="internal\action\batch_add_subtasks.cpp" />
-    <ClCompile Include="internal\action\batch_delete_subtasks.cpp" />
     <ClCompile Include="internal\action\delete_task.cpp" />
     <ClCompile Include="internal\action\get_task.cpp" />
     <ClCompile Include="internal\action\undo.cpp" />

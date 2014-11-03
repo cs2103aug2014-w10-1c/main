@@ -4,7 +4,7 @@
 #include "../../../You-Utils/log.h"
 
 #include "add_task.h"
-#include "batch_delete_subtasks.h"
+#include "delete_task.h"
 #include "batch_add_subtasks.h"
 
 namespace You {
@@ -15,11 +15,10 @@ namespace Action {
 using Log = You::Utils::Log;
 
 const std::wstring BatchAddSubTasks::logCategory =
-	Query::logCategory + L"[BatchAddSubTasks]";
+	Query::logCategory + L"[BatchAddSubtasks]";
 
 std::unique_ptr<Query> BatchAddSubTasks::getReverse() {
-	return std::unique_ptr<Query>(new BatchDeleteSubTasks(
-		insertedID));
+	return std::unique_ptr<Query>(new DeleteTask(insertedID));
 }
 
 Response BatchAddSubTasks::execute(State& state) {
