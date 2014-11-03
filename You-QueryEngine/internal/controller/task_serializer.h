@@ -43,6 +43,7 @@ public:
 	static const Key KEY_COMPLETED;
 	static const Key KEY_PARENT;
 	static const Key KEY_SUBTASKS;
+	static const Key KEY_ATTACHMENT;
 	/// @}
 
 	/// \name String for priorities

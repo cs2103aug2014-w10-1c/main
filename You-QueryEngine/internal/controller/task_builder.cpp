@@ -17,7 +17,8 @@ TaskBuilder TaskBuilder::get() {
 		Task::DEFAULT_DEPENDENCIES,
 		Task::DEFAULT_PRIORITY,
 		Task::DEFAULT_ID,
-		Task::DEFAULT_SUBTASKS);
+		Task::DEFAULT_SUBTASKS,
+		Task::DEFAULT_ATTACHMENT);
 	TaskBuilder builder(defaultTask);
 	return builder;
 }
@@ -64,6 +65,11 @@ TaskBuilder& TaskBuilder::parent(const Task::ID parent) {
 
 TaskBuilder& TaskBuilder::subtasks(const Task::Subtasks &subtasks) {
 	instance.setSubtasks(subtasks);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::attachment(const Task::Attachment& attachment) {
+	instance.setAttachment(attachment);
 	return *this;
 }
 
