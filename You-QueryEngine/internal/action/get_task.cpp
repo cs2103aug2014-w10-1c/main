@@ -13,17 +13,28 @@ namespace Action {
 const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
 
 Response GetTask::execute(State& state) {
+	std::vector<Task> filtered;
 	std::vector<Task> result;
-	std::vector<Task> descendants;
 	std::vector<Task> all = state.graph().asTaskList();
+	std::unordered_set<Task::ID> filteredID;
 	for (const auto& task : all) {
 		if (filter(task)) {
-			result.push_back(task);
+			filtered.push_back(task);
+			filteredID.insert(task.getID());
 		}
 	}
-	for (const auto& task : result) {
-		if (Filter::isDescendantOf(task.getID())(task)) {
-			descendants.push_back(task);
+	for (const auto& r : filtered) {
+		// Always show toplevel task.
+		if (r.getParent() == r.getID()) {
+			result.push_back(r);
+		} else {
+			// Show child task iff the parent is not filtered.
+			auto parent = r.getParent();
+			bool parentIsAlreadyFiltered =
+				filteredID.find(parent) != filteredID.end();
+			if (!parentIsAlreadyFiltered) {
+				result.push_back(r);
+			}
 		}
 	}
 	if (sortAfterFilter) {
@@ -32,7 +43,6 @@ Response GetTask::execute(State& state) {
 	} else {
 		state.setActiveComparator(Comparator::notSorted());
 	}
-	result.insert(end(result), begin(descendants), end(descendants));
 	state.setActiveFilter(filter);
 	return result;
 }

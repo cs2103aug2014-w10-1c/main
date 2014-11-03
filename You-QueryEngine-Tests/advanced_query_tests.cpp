@@ -66,22 +66,10 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 				QueryEngine::GetTask(Filter::anyTask())));
 
 		// TODO(evansb) define ToString
-		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(4));
-		std::int8_t numberOfParent = 0;
-		std::int8_t numberOfChildren = 0;
-		for (const auto& task : inserted) {
-			if (task.getParent() != task.getID()) {
-				numberOfChildren++;
-			} else if (!task.getSubtasks().empty()) {
-				numberOfParent++;
-			}
-		}
-		Assert::AreEqual(numberOfParent, std::int8_t(1));
-		Assert::AreEqual(numberOfChildren, std::int8_t(3));
+		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(1));
 	}
 
-
-	TEST_METHOD(executeBatchDeleteQuery) {
+	TEST_METHOD(executeBatchDeleteSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
@@ -103,34 +91,6 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 
 		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
 			0);
-	}
-
-	TEST_METHOD(addTaskWithInvalidDependency) {
-		auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 }, {});
-		Assert::ExpectException<Exception::TaskNotFoundException>([&query] {
-			QueryEngine::executeQuery(std::move(query));
-		});
-		Assert::AreEqual(0, Internal::State::get().graph().getTaskCount());
-	}
-
-	TEST_METHOD(addTaskWithValidDependency) {
-		Task::ID insertedID;
-		#pragma region Add a task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			insertedID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Add a task that depends on that task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, { insertedID }, {});
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
 	}
 
 	TEST_METHOD(executeBatchAddDependenciesQuery) {
@@ -261,6 +221,19 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		#pragma endregion
 	}
 
+	TEST_METHOD(dontShowChildTaskIfTheParentIsAlreadyShown) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, dep, {})));
+		QueryEngine::executeQuery(
+			QueryEngine::BatchAddSubTasks(
+				desc, dead, Task::Priority::HIGH, dep, std::move(childQueries)));
+		auto getTask = QueryEngine::GetTask(Filter::highPriority());
+		auto response = QueryEngine::executeQuery(std::move(getTask));
+		auto result = boost::get<std::vector<Task>>(response);
+		Assert::AreEqual(result.size(), static_cast<std::size_t>(1));
+		Assert::IsTrue(result.at(0).getParent() == result.at(0).getID());
+	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
 
