@@ -51,20 +51,23 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(executeAndUndoBatchAddSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, sub)));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, sub)));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
+			std::move(QueryEngine::AddTask(desc, dead, prio, dep, sub)));
 		auto query = QueryEngine::BatchAddSubTasks(
 			desc, dead, prio, dep, std::move(childQueries));
 
 		QueryEngine::executeQuery(std::move(query));
 
+		auto graph = Internal::State::get().graph();
+
 		auto tasklist = boost::get<std::vector<Task>>(
 			QueryEngine::executeQuery(
 				QueryEngine::GetTask(Filter::anyTask())));
 
+		graph = Internal::State::get().graph();
 		// TODO(evansb) define ToString
 		Assert::AreEqual(tasklist.size(), static_cast<std::size_t>(1));
 

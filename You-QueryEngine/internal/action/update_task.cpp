@@ -106,12 +106,20 @@ void UpdateTask::markAllChildren(const State& state) const {
 	recMarkChildren(state, id);
 }
 
-void UpdateTask::addAsSubtask(const State& state) const {
-	auto parentTask = state.graph().getTask(parent);
+void UpdateTask::addAsSubtask(State& state) const {
+	auto parentTask = state.graph().getTask(parent.get());
 	auto newSubtasks = parentTask.getSubtasks();
 	newSubtasks.insert(id);
 	parentTask.setSubtasks(newSubtasks);
-	Controller::Graph::updateTask(state.graph(), parentTask);
+	UpdateTask(parentTask).execute(state);
+	if (!previous.isTopLevel()) {
+		auto oldParentTask =
+			state.graph().getTask(previous.getParent());
+		auto newSubtasks = oldParentTask.getSubtasks();
+		newSubtasks.erase(previous.getID());
+		oldParentTask.setSubtasks(newSubtasks);
+		UpdateTask(oldParentTask).execute(state);
+	}
 }
 
 Response UpdateTask::execute(State& state) {

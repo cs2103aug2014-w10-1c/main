@@ -66,35 +66,27 @@ void DeleteTask::makeTransaction(const Task::ID id) {
 	t.commit();
 }
 
-void DeleteTask::constructUndoTree(State& state, Task::ID id) {
-	Task c = state.get().graph().getTask(id);
-	for (auto cid : c.getSubtasks()) {
-		constructUndoTree(state, cid);
-	}
-	children.insert({ id, c });
-}
-
-void DeleteTask::deleteFromStateAndDataStore(
-	State& state, Task::ID id) {
-	Controller::Graph::deleteTask(state.graph(), this->id);
-	Controller::Graph::deleteTask(state.sgraph(), this->id);
-	makeTransaction(id);
-}
-
 void DeleteTask::deleteTree(State& state, Task::ID id) {
 	Task c = state.get().graph().getTask(id);
+	children.insert({ id, c });
 	for (auto cid : c.getSubtasks()) {
 		deleteTree(state, cid);
 	}
-	deleteFromStateAndDataStore(state, id);
+	Controller::Graph::deleteTask(state.graph(), id);
+	Controller::Graph::deleteTask(state.sgraph(), id);
 }
 
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
 	if (!deletedTask.getSubtasks().empty()) {
 		deleteTree(state, id);
+		for (const auto& c : children) {
+			makeTransaction(c.first);
+		}
 	} else {
-		deleteFromStateAndDataStore(state, id);
+		Controller::Graph::deleteTask(state.graph(), id);
+		Controller::Graph::deleteTask(state.sgraph(), id);
+		makeTransaction(id);
 	}
 	return this->id;
 }

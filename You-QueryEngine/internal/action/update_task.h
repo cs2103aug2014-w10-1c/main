@@ -68,7 +68,7 @@ private:
 	void updateSubtaskGraph(State& state, const Task& updated) const;
 	void makeTransaction(const Task& updated) const;
 	void markAllChildren(const State& state) const;
-	void addAsSubtask(const State& state) const;
+	void addAsSubtask(State& state) const;
 	void recMarkChildren(const State& state, Task::ID id) const;
 
 	const Task::ID id;

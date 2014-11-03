@@ -48,13 +48,9 @@ TEST_CLASS(DependencyGraphTest) {
 		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
 	}
 
-	TEST_METHOD(deleteNonExistingTaskFromGraph) {
+	TEST_METHOD(deleteNonExistingTaskFromGraphIsANoOp) {
 		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
-		using Exception::TaskNotFoundException;
-		Assert::ExpectException<TaskNotFoundException>([] {
-			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
-			Controller::Graph::deleteTask(graph, 10L);
-		});
+		Controller::Graph::deleteTask(graph, 10L);
 	}
 
 	TEST_METHOD(getExistingTaskFromGraph) {
