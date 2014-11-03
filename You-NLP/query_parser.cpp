@@ -154,10 +154,14 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	#pragma region Editing tasks
 	editCommand = (
-		qi::uint_ > space > (
-			(qi::lit("set") > space > editCommandRule) |
-			(qi::lit("attach") > space > editAttachmentCommandRule(true)) |
-			(qi::lit("detach") > space > editAttachmentCommandRule(false)))
+		qi::uint_ > (
+			(space >> qi::lit("set") > space > editCommandRule) |
+			(qi::lit(":") > *space > editSetSubtask) |
+			(qi::lit("->") > *space > editSetDependent) |
+			(space >> qi::lit("attach") > space >
+				editAttachmentCommandRule(true)) |
+			(space >> qi::lit("detach") > space >
+				editAttachmentCommandRule(false)))
 	)[qi::_val = phoenix::bind(&constructEditQuery,
 		qi::_1, qi::_2)];
 	BOOST_SPIRIT_DEBUG_NODE(editCommand);
@@ -195,6 +199,16 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
+
+	editSetSubtask = (
+		qi::int_
+	)[qi::_val = phoenix::bind(&constructEditQuerySubtask, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(editSetSubtask);
+
+	editSetDependent = (
+		qi::int_
+	)[qi::_val = phoenix::bind(&constructEditQueryDependent, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(editSetDependent);
 
 	editAttachmentCommandRule = (
 		utilityLexeme

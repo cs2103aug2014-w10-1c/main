@@ -25,8 +25,14 @@ enum class TaskField {
 	/// The task is now complete
 	COMPLETE = 1 << 3,
 
+	/// The subtasks of this task.
+	SUBTASKS = 1 << 4,
+
+	/// The dependents of this task.
+	DEPENDENTS = 1 << 5,
+
 	/// The attachments need to be updated
-	ATTACHMENTS = 1 << 4
+	ATTACHMENTS = 1 << 6
 };
 
 /// Formats the given task priority to stream.
