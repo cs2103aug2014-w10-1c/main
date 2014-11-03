@@ -36,11 +36,24 @@ public:
 	  parent(parent),
 	  subtasks(subtasks) {}
 
+	/// Quick constructor for UpdateTask query
+	explicit UpdateTask(const Task& task)
+	: id(task.getID()),
+	  description(task.getDescription()),
+	  deadline(task.getDeadline()),
+	  priority(task.getPriority()),
+	  dependencies(task.getDependencies()),
+	  completed(task.isCompleted()),
+	  parent(task.getParent()),
+	  subtasks(task.getSubtasks()) {}
+
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
 
 	/// Destructor
 	virtual ~UpdateTask() = default;
+
+	Response execute(State& tasks) override;
 
 protected:
 	/// The reverse of updating is returning the original value.
@@ -57,8 +70,6 @@ private:
 	void markAllChildren(const State& state) const;
 	void addAsSubtask(const State& state) const;
 	void recMarkChildren(const State& state, Task::ID id) const;
-
-	Response execute(State& tasks) override;
 
 	const Task::ID id;
 	const You::Utils::Option<Task::Description> description;  ///< Description.

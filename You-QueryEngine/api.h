@@ -36,9 +36,10 @@ namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
 namespace Internal { class State;
 namespace Action {
-class Undo;
-class BatchAddSubTasks;
-class BatchAddDependencies;
+	class AddTask;
+	class Undo;
+	class BatchAddSubTasks;
+	class BatchAddDependencies;
 }
 }
 
@@ -51,6 +52,7 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
+	friend class Internal::Action::AddTask;
 	friend class Internal::Action::Undo;
 	friend class Internal::Action::BatchAddSubTasks;
 	friend class Internal::Action::BatchAddDependencies;
@@ -62,6 +64,7 @@ protected:
 	/// String appended before each log message.
 	static const std::wstring logCategory;
 
+private:
 	/// Execute the query on a state.
 	/// \pre The state has been loaded and valid.
 	virtual Response execute(Internal::State& state) = 0;

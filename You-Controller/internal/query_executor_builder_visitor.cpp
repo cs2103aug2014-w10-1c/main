@@ -43,18 +43,46 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 		}
 	};
 
-	return std::unique_ptr<QueryExecutor>(
-		new AddTaskQueryExecutor(
-			QueryEngine::AddTask(
-				query.description,
-				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-				query.priority == TaskPriority::HIGH ?
-					Task::Priority::HIGH : Task::Priority::NORMAL,
-				Task::Dependencies(),
-				Task::Subtasks()
+	if (!query.subtasks.empty()) {
+		std::vector<std::unique_ptr<QueryEngine::Query>> addChildrenQueries;
+		for (const auto& subtask : query.subtasks) {
+			addChildrenQueries.emplace_back(
+				QueryEngine::AddTask(
+					subtask.description,
+					subtask.deadline ? subtask.deadline.get() : Task::DEFAULT_DEADLINE,
+					subtask.priority == TaskPriority::HIGH ?
+						Task::Priority::HIGH : Task::Priority::NORMAL,
+					Task::Dependencies(),
+					Task::Subtasks()
+				)
+			);
+		}
+		return std::unique_ptr<QueryExecutor>(
+			new AddTaskQueryExecutor(
+				QueryEngine::BatchAddSubTasks(
+					query.description,
+					query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
+					query.priority == TaskPriority::HIGH ?
+						Task::Priority::HIGH : Task::Priority::NORMAL,
+					Task::Dependencies(),
+					std::move(addChildrenQueries)
+				)
 			)
-		)
-	);
+		);
+	} else {
+		return std::unique_ptr<QueryExecutor>(
+			new AddTaskQueryExecutor(
+				QueryEngine::AddTask(
+					query.description,
+					query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
+					query.priority == TaskPriority::HIGH ?
+						Task::Priority::HIGH : Task::Priority::NORMAL,
+					Task::Dependencies(),
+					Task::Subtasks()
+				)
+			)
+		);
+	}
 }
 
 std::unique_ptr<QueryExecutor>
