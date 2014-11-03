@@ -95,6 +95,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="advanced_query_tests.cpp" />
     <ClCompile Include="comparator_tests.cpp" />
     <ClCompile Include="filter_tests.cpp" />
     <ClCompile Include="mocks\task.cpp" />

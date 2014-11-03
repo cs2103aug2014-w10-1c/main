@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "common.h"
-#include "exclusions.h"
 
 #include <type_traits>
 #include "../You-DataStore/datastore.h"
@@ -58,19 +57,6 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsNotNull(&query);
 	}
 
-	TEST_METHOD(constructBatchAddSubTaskQuery) {
-		std::vector<std::unique_ptr<Query>> childQueries;
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		auto query = QueryEngine::BatchAddSubTasks(
-			desc, dead, prio, dep, std::move(childQueries));
-		Assert::IsNotNull(&query);
-	}
-
 	TEST_METHOD(constructGetTaskQuery) {
 		std::vector<Task::ID> emptyVec;
 		auto query = QueryEngine::GetTask(Filter::idIsIn(emptyVec));
@@ -116,63 +102,6 @@ TEST_CLASS(QueryEngineTests) {
 			Assert::AreEqual(newSize, std::size_t(i));
 			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
 		}
-	}
-
-	TEST_METHOD(executeBatchAddQuery) {
-		std::vector<std::unique_ptr<Query>> childQueries;
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-		auto query = QueryEngine::BatchAddSubTasks(
-			desc, dead, prio, dep, std::move(childQueries));
-
-		QueryEngine::executeQuery(std::move(query));
-
-		auto inserted = boost::get<std::vector<Task>>(
-			QueryEngine::executeQuery(
-				QueryEngine::GetTask(Filter::anyTask())));
-
-		// TODO(evansb) define ToString
-		Assert::AreEqual(inserted.size(), static_cast<std::size_t>(4));
-		std::int8_t numberOfParent = 0;
-		std::int8_t numberOfChildren = 0;
-		for (const auto& task : inserted) {
-			if (task.getParent() != task.getID()) {
-				numberOfChildren++;
-			} else if (!task.getSubtasks().empty()) {
-				numberOfParent++;
-			}
-		}
-		Assert::AreEqual(numberOfParent, std::int8_t(1));
-		Assert::AreEqual(numberOfChildren, std::int8_t(3));
-	}
-
-
-	TEST_METHOD(executeBatchDeleteQuery) {
-		std::vector<std::unique_ptr<Query>> childQueries;
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, dep, {})));
-
-		Task parent;
-		{  // NOLINT
-			auto query = QueryEngine::BatchAddSubTasks(
-				desc, dead, prio, dep, std::move(childQueries));
-			QueryEngine::executeQuery(std::move(query));
-		}
-
-		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
-			2);
-
-		{  // NOLINT
-			auto query = QueryEngine::BatchDeleteSubTasks(2);
-			QueryEngine::executeQuery(std::move(query));
-		}
-
-		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
-			0);
 	}
 
 	TEST_METHOD(addTaskWithInvalidDependency) {
@@ -355,22 +284,6 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma endregion
 	}
 
-	TEST_METHOD(executeBatchAddDependenciesQuery) {
-		std::vector<std::unique_ptr<Query>> childQueries;
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
-		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
-		auto query = QueryEngine::BatchAddDependencies(
-			desc, dead, prio, std::move(childQueries), {});
-		auto inserted = boost::get<Task>(
-			QueryEngine::executeQuery(std::move(query)));
-
-		Assert::IsTrue(inserted.isDependOn(3));
-	}
-
 	TEST_METHOD(undoAddQuery) {
 		#pragma region Add one task
 		Task task;
@@ -479,118 +392,6 @@ TEST_CLASS(QueryEngineTests) {
 			auto query = QueryEngine::Undo();
 			auto response = QueryEngine::executeQuery(std::move(query));
 		});
-	}
-
-	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
-		#pragma region Add One Task
-		Task::ID firstID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello World",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				Task::DEFAULT_DEPENDENCIES,
-				Task::DEFAULT_SUBTASKS);
-			auto response = QueryEngine::executeQuery(std::move(query));
-			firstID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Add another Task
-		Task::ID secondID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello Marie",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				Task::DEFAULT_DEPENDENCIES,
-				Task::DEFAULT_SUBTASKS);
-			auto response = QueryEngine::executeQuery(std::move(query));
-			secondID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Make the first one depends on second one.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { secondID };
-			auto query = QueryEngine::UpdateTask(
-				firstID,
-				boost::none,
-				boost::none,
-				boost::none,
-				deps,
-				boost::none,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Add another Task
-		Task::ID thirdID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello Wilson",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				Task::DEFAULT_DEPENDENCIES,
-				Task::DEFAULT_SUBTASKS);
-			auto response = QueryEngine::executeQuery(std::move(query));
-			thirdID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Make the second one depends on third one.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { thirdID };
-			auto query = QueryEngine::UpdateTask(
-				secondID,
-				boost::none,
-				boost::none,
-				boost::none,
-				deps,
-				boost::none,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Mark the first one as completed.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { secondID };
-			auto query = QueryEngine::UpdateTask(
-				firstID,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				true,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Second and Third should be completed too
-		auto secondOne = Internal::State::get().graph()
-			.getTask(secondID);
-
-		auto thirdOne = Internal::State::get().graph()
-			.getTask(thirdID);
-
-		Assert::IsTrue(secondOne.isCompleted());
-		Assert::IsTrue(thirdOne.isCompleted());
-
-		secondOne = Internal::State::get().sgraph()
-			.getTask(secondID);
-
-		thirdOne = Internal::State::get().sgraph()
-			.getTask(thirdID);
-
-		Assert::IsTrue(secondOne.isCompleted());
-		Assert::IsTrue(thirdOne.isCompleted());
-		#pragma endregion
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
