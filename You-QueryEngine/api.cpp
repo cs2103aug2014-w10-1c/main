@@ -93,6 +93,24 @@ QueryEngine::Undo() {
 	return std::unique_ptr<Query>(new Internal::Action::Undo());
 }
 
+std::unique_ptr<Query>
+QueryEngine::AddDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.insert(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.erase(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	Response response;
 	std::unique_ptr<Query> reverse;

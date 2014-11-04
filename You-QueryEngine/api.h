@@ -102,6 +102,14 @@ public:
 		You::Utils::Option<Task::ID> parent,
 		You::Utils::Option<Task::Subtasks> subtasks);
 
+	/// Construct adding dependency query.
+	static std::unique_ptr<Query> AddDependency(Task::ID id,
+		Task::ID dependency);
+
+	/// Construct  removind dependency query.
+	static std::unique_ptr<Query> RemoveDependency(Task::ID id,
+		Task::ID dependency);
+
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
 
