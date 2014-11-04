@@ -49,6 +49,8 @@ protected:
 	/// The header of the log string
 	static const std::wstring logCategory;
 
+	std::unique_ptr<Query> getReverse() override;
+
 private:
 	/// Execute add task.
 	Response execute(State& tasks) override;

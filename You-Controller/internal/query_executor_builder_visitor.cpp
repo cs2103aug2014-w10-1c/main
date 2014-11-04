@@ -60,8 +60,10 @@ QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 
 	std::shared_ptr<ADD_QUERY> dependentQuery = query.dependent;
 	while (dependentQuery) {
-		dependencyQueries.push_back(buildAddQuery(*dependentQuery));
-		dependentQuery = (query.dependent)->dependent;
+		ADD_QUERY withoutDependencies(*dependentQuery);
+		withoutDependencies.dependent.reset();
+		dependencyQueries.push_back(buildAddQuery(withoutDependencies));
+		dependentQuery = dependentQuery->dependent;
 	}
 
 	return QueryEngine::AddTask(

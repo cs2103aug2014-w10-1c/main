@@ -4,6 +4,7 @@
 #include "../../../You-Utils/log.h"
 
 #include "../controller.h"
+#include "update_task.h"
 #include "add_task.h"
 #include "batch_add_dependencies.h"
 
@@ -21,6 +22,10 @@ namespace {
 const std::wstring BatchAddDependencies::logCategory =
 	Query::logCategory + L"[BatchAddDependencies]";
 
+std::unique_ptr<Query> BatchAddDependencies::getReverse() {
+	return QueryEngine::DeleteTask(insertedID);
+}
+
 Response BatchAddDependencies::execute(State& state) {
 	auto qBegin = dependencies.begin();
 	auto qEnd = dependencies.end();
@@ -32,20 +37,23 @@ Response BatchAddDependencies::execute(State& state) {
 		Response r = (*qBegin)->execute(state);
 		auto task = boost::get<Task>(r);
 		task.setDependencies({ lastInserted });
-		Controller::Graph::updateTask(state.get().graph(),
-			task);
-		Controller::Graph::updateTask(state.get().sgraph(),
-			task);
+		UpdateTask(task).execute(state);
 		lastInserted = task.getID();
 	}
 
-	auto addParentquery = (insertedID == -1)
-		? std::unique_ptr<AddTask>(new AddTask(description,
-		deadline, priority, { lastInserted }, subtasks))
-		: std::unique_ptr<AddTask>(new AddTask(insertedID, description,
-		deadline, priority, { lastInserted }, subtasks));
-
-	Response r = addParentquery->execute(state);
+	std::unique_ptr<Query> addParentQuery;
+	if (insertedID == -1) {
+		addParentQuery = std::unique_ptr<AddTask>(
+			new AddTask(description, deadline, priority,
+			{ lastInserted }, subtasks));
+	} else {
+		addParentQuery = std::unique_ptr<AddTask>(
+			new AddTask(insertedID, description,
+			deadline, priority,
+			{ lastInserted }, subtasks));
+	}
+	insertedID = lastInserted;
+	Response r = addParentQuery->execute(state);
 	return boost::get<Task>(r);
 }
 
