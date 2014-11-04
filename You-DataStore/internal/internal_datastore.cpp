@@ -119,6 +119,9 @@ void DataStore::loadData() {
 		bool isFirstLoad =
 			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
 		if (!loadSuccessful && !isFirstLoad) {
+			// TODO(digawp): find a way to inform user where in the xml
+			// the error is located.
+			// Possible solution: log
 			throw Exception::XmlParseErrorException(loadStatus.description());
 		}
 	}
