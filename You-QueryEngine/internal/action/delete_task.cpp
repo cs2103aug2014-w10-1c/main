@@ -42,6 +42,7 @@ std::unique_ptr<Query> DeleteTask::getReverse() {
 			subtaskAddQueries.push_back(
 				std::unique_ptr<Query>(
 					new AddTask(
+						cid,
 						c.getDescription(),
 						c.getDeadline(),
 						c.getPriority(),
