@@ -122,7 +122,7 @@ void DataStore::loadData() {
 			// TODO(digawp): find a way to inform user where in the xml
 			// the error is located.
 			// Possible solution: log
-			throw Exception::XmlParseErrorException(loadStatus.description());
+			throw XmlParseErrorException(loadStatus.description());
 		}
 	}
 }

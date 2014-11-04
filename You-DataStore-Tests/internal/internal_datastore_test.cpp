@@ -198,7 +198,6 @@ public:
 	}
 
 	TEST_METHOD(xmlParseErrorThrowsException) {
-		using XmlParseErrorException = Exception::XmlParseErrorException;
 		createDummyDataXml();
 		auto fun = [] { Internal::DataStore::get().loadData(); };
 		Assert::ExpectException<XmlParseErrorException>(fun);
