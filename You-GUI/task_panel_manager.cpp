@@ -183,8 +183,10 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	switch (task.getPriority()) {
 	case Task::Priority::HIGH:
 		result.push_back(priority[0]);
+		break;
 	case Task::Priority::NORMAL:
 		result.push_back(priority[1]);
+		break;
 	}
 
 	// Insert dependencies

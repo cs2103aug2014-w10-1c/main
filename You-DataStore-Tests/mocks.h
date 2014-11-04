@@ -15,7 +15,7 @@ const std::wstring DESCRIPTION = L"description";
 const std::wstring DEADLINE = L"deadline";
 const std::wstring PRIORITY = L"priority";
 const std::wstring DEPENDENCIES = L"dependency";
-/// }@
+/// @}
 
 /// Dummy serialized task
 /// @{
@@ -33,13 +33,13 @@ const KeyValuePairs task2 = {
 		{ PRIORITY, L"normal" },
 		{ DEPENDENCIES, L"4321" }
 };
-/// }@
+/// @}
 
 /// Dummy constants for resources
 /// @{
 const std::wstring LAST_ID = L"last-id";
 const std::wstring COLOUR = L"colour";
-/// }@
+/// @}
 
 /// Dummy constants for resources
 /// @{
@@ -49,7 +49,7 @@ const KeyValuePairs res1 = {
 const KeyValuePairs res2 = {
 		{ COLOUR, L"green" }
 };
-/// }@
+/// @}
 
 }  // namespace UnitTests
 }  // namespace DataStore

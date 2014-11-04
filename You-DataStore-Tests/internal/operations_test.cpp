@@ -75,7 +75,7 @@ public:
 		Assert::AreEqual(task1.at(PRIORITY), task.at(PRIORITY));
 		Assert::AreEqual(task1.at(DEPENDENCIES), task.at(DEPENDENCIES));
 	}
-	/// }@
+	/// @}
 
 	/// Unit test for post method for valid input
 	TEST_METHOD(postWithNewId) {
@@ -134,7 +134,7 @@ public:
 			Internal::BranchOperation::get(mockDocument, L"resources");
 		Assert::IsTrue(expected == actual);
 	}
-	/// }@
+	/// @}
 };
 }  // namespace UnitTests
 }  // namespace DataStore
