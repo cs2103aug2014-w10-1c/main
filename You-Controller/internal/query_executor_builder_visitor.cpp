@@ -28,7 +28,7 @@ std::unique_ptr<QueryEngine::Query> buildQuery(const ADD_QUERY& query) {
 	std::vector<std::unique_ptr<QueryEngine::Query>> addSubtasks;
 	std::vector<std::unique_ptr<QueryEngine::Query>> addDependencies;
 	for (const auto& subtask : query.subtasks) {
-		addSubtasks.emplace_back(buildQuery(query));
+		addSubtasks.emplace_back(buildQuery(subtask));
 	}
 	auto ptrDep = query.dependent;
 	while (query.dependent != nullptr) {
