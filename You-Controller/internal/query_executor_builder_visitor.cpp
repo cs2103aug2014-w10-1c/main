@@ -241,7 +241,6 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.dependingTask &&
-				!query.attachments &&
 				"Cannot change subtasks with other properties");
 			int childTask = query.childTask;
 			if (childTask < 0) {
@@ -264,7 +263,6 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.childTask &&
-				!query.attachments &&
 				"Cannot change dependencies with other properties");
 			Task::ID dependentTask = task;
 			int dependingTask = query.dependingTask;
@@ -310,7 +308,8 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					boost::none,
 					query.complete,
 					boost::none,
-					boost::none)));
+					boost::none,
+					attachment)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}

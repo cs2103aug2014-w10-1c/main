@@ -47,7 +47,8 @@ public:
 	  dependencies(task.getDependencies()),
 	  completed(task.isCompleted()),
 	  parent(task.getParent()),
-	  subtasks(task.getSubtasks()) {}
+	  subtasks(task.getSubtasks()),
+	  attachment(task.getAttachment()) {}
 
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;

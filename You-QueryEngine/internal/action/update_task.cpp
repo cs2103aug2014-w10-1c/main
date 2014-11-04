@@ -144,6 +144,7 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 Response UpdateTask::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
 		logCategory % id).str();
+	auto ssubtasks = subtasks.get();
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
 	// Has completed/uncompleted
