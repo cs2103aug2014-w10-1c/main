@@ -10,6 +10,7 @@
 #include "exception.h"
 #include "internal/controller/task_builder.h"
 #include "internal/model.h"
+#include "internal/action/update_task.h"
 #include "api.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -268,6 +269,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
 					desc, dead, Task::Priority::HIGH, {}, std::move(childQueries2))));
+
 		// Set the second to parent the child of first one.
 		auto reparent = QueryEngine::UpdateTask(
 			task.getID(), task.getDescription(), task.getDeadline(),
@@ -280,6 +282,65 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
 		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(1));
+	}
+
+	TEST_METHOD(setToplevelWithoutChildTasksAsSubtasks) {
+		// Add two trees
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {}, {})));
+
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {}, {})));
+
+		auto parent3 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					L"Should be shown", dead, Task::Priority::HIGH, {}, {})));
+
+		parent3.setSubtasks({ parent.getID(), parent2.getID() });
+		auto parent4 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(parent3))));
+		Assert::IsTrue(parent4.getSubtasks() == parent3.getSubtasks());
+
+		auto list = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+
+		Assert::AreEqual(list.size(), static_cast<std::size_t>(1));
+		Assert::AreEqual(list.at(0).getDescription(),
+			std::wstring(L"Should be shown"));
+	}
+
+
+	TEST_METHOD(setToplevelWithChildTasksAsSubtasks) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {}, {})));
+		parent2.setSubtasks({ parent.getID() });
+
+		parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(parent2))));
+		Assert::IsTrue(parent2.getSubtasks().size() == 1);
+		Assert::IsTrue(parent2.getSubtasksObject().at(0).getID() == parent.getID());
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };

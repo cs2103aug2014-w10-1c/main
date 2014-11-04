@@ -154,7 +154,7 @@ Response UpdateTask::execute(State& state) {
 	if (parent && (previous.getParent() != parent.get())) {
 		reparentTask(state, id, parent.get());
 	}
-	// Has new subtask.
+	// Reparent every subtask.
 	if (subtasks) {
 		for (auto cid : subtasks.get()) {
 			reparentTask(state, cid, id);
