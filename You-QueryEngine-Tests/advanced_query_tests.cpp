@@ -123,118 +123,24 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	}
 
 	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
-		#pragma region Add One Task
-		Task::ID firstID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello World",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				{},
-				{});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			firstID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Add another Task
-		Task::ID secondID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello Marie",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				{},
-				{});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			secondID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Make the first one depends on second one.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { secondID };
-			auto query = QueryEngine::UpdateTask(
-				firstID,
-				boost::none,
-				boost::none,
-				boost::none,
-				deps,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Add another Task
-		Task::ID thirdID;
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(
-				L"Hello Wilson",
-				Task::DEFAULT_DEADLINE,
-				Task::DEFAULT_PRIORITY,
-				{},
-				{});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			thirdID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Make the second one depends on third one.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { thirdID };
-			auto query = QueryEngine::UpdateTask(
-				secondID,
-				boost::none,
-				boost::none,
-				boost::none,
-				deps,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Mark the first one as completed.
-		{  // NOLINT(whitespace/braces)
-			Task::Dependencies deps = { secondID };
-			auto query = QueryEngine::UpdateTask(
-				firstID,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				true,
-				boost::none,
-				boost::none,
-				boost::none);
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Second and Third should be completed too
-		auto secondOne = Internal::State::get().graph()
-			.getTask(secondID);
-
-		auto thirdOne = Internal::State::get().graph()
-			.getTask(thirdID);
-
-		Assert::IsTrue(secondOne.isCompleted());
-		Assert::IsTrue(thirdOne.isCompleted());
-
-		secondOne = Internal::State::get().sgraph()
-			.getTask(secondID);
-
-		thirdOne = Internal::State::get().sgraph()
-			.getTask(thirdID);
-
-		Assert::IsTrue(secondOne.isCompleted());
-		Assert::IsTrue(thirdOne.isCompleted());
-		#pragma endregion
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, prio, {},
+					std::move(childQueries))));
+		task.setCompleted(true);
+		task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::UpdateTask(task)));
+		auto subtasks = task.getSubtasksObject();
+		Assert::IsTrue(std::all_of(begin(subtasks), end(subtasks),
+				[] (const Task& t) { return t.isCompleted();}));
 	}
 
 	TEST_METHOD(dontShowChildTaskIfTheParentIsAlreadyShown) {

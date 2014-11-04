@@ -108,7 +108,7 @@ private:
 	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, const Priority& priority, ID parent,
-		const Subtasks& subtasks, const Attachment&)
+		const Subtasks& subtasks, const Attachment& attachment)
 	: id(id), description(description), deadline(deadline),
 	  dependencies(dependencies), priority(priority), completed(false),
 	  parent(parent), subtasks(subtasks), attachment(attachment) {}

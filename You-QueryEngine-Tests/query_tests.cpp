@@ -303,6 +303,17 @@ TEST_CLASS(QueryEngineTests) {
 		});
 	}
 
+	TEST_METHOD(setAttachment) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, prio, {}, {})));
+		task.setAttachment(L"index.html");
+		task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::UpdateTask(task)));
+		Assert::AreEqual(task.getAttachment(), std::wstring(L"index.html"));
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

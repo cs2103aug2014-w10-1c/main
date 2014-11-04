@@ -50,13 +50,15 @@ TEST_CLASS(TaskBuilderTests) {
 			.dependencies({ 0 })
 			.dependencies(dep)
 			.parent(43L)
-			.subtasks(sub);
+			.subtasks(sub)
+			.attachment(desc);
 		Assert::AreEqual(task.getDescription(), desc);
 		// The valid one should be the last chain
 		Assert::AreEqual(task.getDeadline(), dead);
 		Assert::IsTrue(task.getDependencies() == dep);
 		Assert::IsTrue(task.getParent() == static_cast<Task::ID>(43L));
 		Assert::IsTrue(task.getSubtasks() == sub);
+		Assert::IsTrue(task.getAttachment() == desc);
 	}
 
 	/// Should throw an exception when trying to create
