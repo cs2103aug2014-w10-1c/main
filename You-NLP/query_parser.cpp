@@ -156,8 +156,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommand = (
 		qi::uint_ > (
 			(space >> qi::lit("set") > space > editCommandRule) |
-			(qi::lit(":") > *space > editSetSubtask) |
-			(qi::lit("->") > *space > editSetDependent) |
+			(*space >> qi::lit(":") > *space > editSetSubtask) |
+			(*space >> qi::lit("->") > *space > editSetDependent) |
 			(space >> qi::lit("attach") > space >
 				editAttachmentCommandRule(true)) |
 			(space >> qi::lit("detach") > space >

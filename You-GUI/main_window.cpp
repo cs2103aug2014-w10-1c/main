@@ -64,17 +64,10 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::populateTaskPanel() {
-	// Grabs tasks from last session from the list of IDs saved
-	QList<Task::ID> IDs = sm->taskIDs;
-	TaskList tl;
-
-	if (IDs.size() != 0) {
-		tl = qm->getTasks(IDs);
-	} else {
-		tl = qm->getTasks();
-	}
+	TaskList tl = qm->getTasks();
 	addTasks(tl);
 	tpm->repaintTasks();
+	updateRowNumbers();
 }
 
 void MainWindow::setVisible(bool visible) {
@@ -101,8 +94,6 @@ void MainWindow::addTask(const Task& task) {
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
-	emit(updateRowNumbers());
-	tpm->repaintTasks();
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -181,6 +172,7 @@ void MainWindow::sendQuery() {
 	ui.statusIcon->setPixmap(pixmap);
 	commandTextBox->setPlainText(QString());
 	updateTaskInfoBar();
+	updateRowNumbers();
 }
 
 void MainWindow::commandEnterPressed() {
@@ -196,6 +188,7 @@ void MainWindow::clearTasks() {
 	ui.taskTreePanel->clear();
 	ui.taskDescriptor->clear();
 	commandTextBox->clear();
+	updateTaskInfoBar();
 }
 
 void MainWindow::taskSelected() {
@@ -273,10 +266,6 @@ void MainWindow::updateTaskInfoBar() {
 }
 
 void MainWindow::applicationExitRequested() {
-	sm->taskIDs.clear();
-	for (int i = 0; i < taskList->size(); i++) {
-		sm->taskIDs.push_back(taskList->at(i).getID());
-	}
 	qApp->quit();
 }
 
