@@ -75,6 +75,7 @@ void MainWindow::populateTaskPanel() {
 	}
 	addTasks(tl);
 	tpm->repaintTasks();
+	updateRowNumbers();
 }
 
 void MainWindow::setVisible(bool visible) {
@@ -113,8 +114,6 @@ void MainWindow::addTask(const Task& task) {
 void MainWindow::addTasks(const TaskList& tl) {
 	std::for_each(tl.begin(), tl.end(),
 		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
-	emit(updateRowNumbers());
-	tpm->repaintTasks();
 }
 
 void MainWindow::deleteTask(Task::ID taskID) {
@@ -193,6 +192,7 @@ void MainWindow::sendQuery() {
 	ui.statusIcon->setPixmap(pixmap);
 	commandTextBox->setPlainText(QString());
 	updateTaskInfoBar();
+	updateRowNumbers();
 }
 
 void MainWindow::commandEnterPressed() {
@@ -208,6 +208,7 @@ void MainWindow::clearTasks() {
 	ui.taskTreePanel->clear();
 	ui.taskDescriptor->clear();
 	commandTextBox->clear();
+	updateTaskInfoBar();
 }
 
 void MainWindow::taskSelected() {
