@@ -105,14 +105,12 @@ void MainWindow::deleteTask(Task::ID taskID) {
 	assert(i != taskList->end());
 	taskList->erase(i);
 	tpm->deleteTask(taskID);
-	tpm->repaintTasks();
 }
 
 void MainWindow::editTask(const Task& task) {
 	tpm->editTask(task);
 	ui.taskTreePanel->viewport()->update();
 	emit(taskSelected());
-	tpm->repaintTasks();
 }
 
 void MainWindow::sendQuery() {
@@ -173,6 +171,7 @@ void MainWindow::sendQuery() {
 	commandTextBox->setPlainText(QString());
 	updateTaskInfoBar();
 	updateRowNumbers();
+	tpm->repaintTasks();
 }
 
 void MainWindow::commandEnterPressed() {
