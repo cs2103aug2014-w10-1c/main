@@ -21,6 +21,7 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE =
 "Dependencies";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Attachment";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
@@ -29,6 +30,7 @@ const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 3;
 const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 4;
 const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 5;
 const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 6;
+const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 7;
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -203,6 +205,9 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	} else {
 		result.push_back(boost::lexical_cast<QString>("No"));
 	}
+
+	// Insert attachment
+	result.push_back(QString::fromStdWString(task.getAttachment()));
 
 	return result;
 }
@@ -397,6 +402,11 @@ QString MainWindow::TaskPanelManager::getDependenciesAsText(
 QString MainWindow::TaskPanelManager::getCompletionAsText(
 	QTreeWidgetItem item) {
 	return item.text(COLUMN_COMPLETION);
+}
+
+QString MainWindow::TaskPanelManager::getAttachmentAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_ATTACHMENT);
 }
 
 }  // namespace GUI

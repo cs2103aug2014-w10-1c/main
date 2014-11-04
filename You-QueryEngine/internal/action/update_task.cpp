@@ -28,7 +28,8 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 		previous.getID(), previous.getDescription(),
 		previous.getDeadline(), previous.getPriority(),
 		previous.getDependencies(), previous.isCompleted(),
-		previous.getParent(), previous.getSubtasks()));
+		previous.getParent(), previous.getSubtasks(),
+		previous.getAttachment()));
 }
 
 Task UpdateTask::buildUpdatedTask(const State& state) const {
@@ -53,6 +54,9 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 	}
 	if (this->subtasks) {
 		builder.subtasks(this->subtasks.get());
+	}
+	if (this->attachment) {
+		builder.attachment(this->attachment.get());
 	}
 	Task newTask = builder;
 	if (this->completed) {

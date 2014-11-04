@@ -138,6 +138,9 @@ private:
 	/// Header string from column 7
 	static const QString TASK_COLUMN_6_TITLE;
 
+	/// Header string from column 7
+	static const QString TASK_COLUMN_7_TITLE;
+
 	/// Column reference to Index column
 	static const int COLUMN_INDEX;
 
@@ -159,6 +162,9 @@ private:
 	/// Column reference to Completion column
 	static const int COLUMN_COMPLETION;
 
+	/// Column reference to Attachment column
+	static const int COLUMN_ATTACHMENT;
+
 public:
 	QString getIndexAsText(QTreeWidgetItem item);
 
@@ -173,6 +179,8 @@ public:
 	QString getDependenciesAsText(QTreeWidgetItem item);
 
 	QString getCompletionAsText(QTreeWidgetItem item);
+
+	QString getAttachmentAsText(QTreeWidgetItem item);
 	/// @}
 };
 

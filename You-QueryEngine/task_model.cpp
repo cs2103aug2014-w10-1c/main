@@ -41,6 +41,10 @@ void Task::setParent(const Task::ID parent) {
 	this->parent = parent;
 }
 
+void Task::setAttachment(const Task::Attachment& attachment) {
+	this->attachment = attachment;
+}
+
 bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
 }
@@ -52,6 +56,7 @@ const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 const Task::Subtasks Task::DEFAULT_SUBTASKS;
+const Task::Attachment Task::DEFAULT_ATTACHMENT = L"";
 
 bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;

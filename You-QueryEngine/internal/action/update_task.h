@@ -26,7 +26,8 @@ public:
 		You::Utils::Option<Task::Dependencies> dependencies,
 		You::Utils::Option<bool> completed,
 		You::Utils::Option<Task::ID> parent,
-		You::Utils::Option<Task::Subtasks> subtasks)
+		You::Utils::Option<Task::Subtasks> subtasks,
+		You::Utils::Option<Task::Attachment> attachment)
 	: id(id),
 	  description(description),
 	  deadline(deadline),
@@ -34,7 +35,8 @@ public:
 	  dependencies(dependencies),
 	  completed(completed),
 	  parent(parent),
-	  subtasks(subtasks) {}
+	  subtasks(subtasks),
+	  attachment(attachment) {}
 
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
@@ -68,6 +70,7 @@ private:
 	const You::Utils::Option<bool> completed;  ///< Completed.
 	const You::Utils::Option<Task::ID> parent;  ///< Parent.
 	const You::Utils::Option<Task::Subtasks> subtasks;  ///< Parent.
+	const You::Utils::Option<Task::Attachment> attachment;  ///< Parent.
 
 	/// The previous state of the task.
 	Task previous;
