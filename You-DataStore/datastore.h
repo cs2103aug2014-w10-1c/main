@@ -40,6 +40,7 @@ public:
 	void put(std::wstring, const KeyValuePairs&);
 	/// Push an erase operation to operation queue
 	void erase(std::wstring);
+	/// @}
 
 	/// Get all tasks
 	/// \return a vector of KeyValuePairs
