@@ -160,12 +160,6 @@ Response UpdateTask::execute(State& state) {
 			reparentTask(state, cid, id);
 		}
 	}
-	// Has new dependency.
-	if (subtasks) {
-		for (auto cid : subtasks.get()) {
-			reparentTask(state, cid, id);
-		}
-	}
 	updateDependencyGraph(state, updated);
 	updateSubtaskGraph(state, updated);
 	makeTransaction(updated);

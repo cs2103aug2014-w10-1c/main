@@ -279,7 +279,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto getTask = QueryEngine::GetTask(Filter::anyTask());
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
-		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(2));
+		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(1));
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
