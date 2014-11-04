@@ -85,10 +85,12 @@ QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<Task::Dependencies> dependencies,
 	You::Utils::Option<bool> completed,
 	You::Utils::Option<Task::ID> parent,
-	You::Utils::Option<Task::Subtasks> subtasks) {
+	You::Utils::Option<Task::Subtasks> subtasks,
+	You::Utils::Option<Task::Attachment> attachment) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, description,
-		deadline, priority, dependencies, completed, parent, subtasks));
+		deadline, priority, dependencies, completed, parent, subtasks,
+		attachment));
 }
 
 std::unique_ptr<Query>
@@ -112,7 +114,7 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 std::wstring ToString(const Task& task) {
 	using Serializer = Internal::TaskSerializer;
 	auto serialized = Serializer::serialize(task);
-	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%]";
+	std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%][%8%]";
 	return (boost::wformat(TASK_FORMAT)
 		% serialized.at(Serializer::KEY_ID)
 		% serialized.at(Serializer::KEY_DESCRIPTION)
@@ -120,7 +122,8 @@ std::wstring ToString(const Task& task) {
 		% serialized.at(Serializer::KEY_DEADLINE)
 		% serialized.at(Serializer::KEY_DEPENDENCIES)
 		% serialized.at(Serializer::KEY_PARENT)
-		% serialized.at(Serializer::KEY_SUBTASKS)).str();
+		% serialized.at(Serializer::KEY_SUBTASKS)
+		% serialized.at(Serializer::KEY_ATTACHMENT)).str();
 }
 
 }  // namespace QueryEngine

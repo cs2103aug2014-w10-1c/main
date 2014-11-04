@@ -115,7 +115,8 @@ public:
 		You::Utils::Option<Task::Dependencies> dependencies,
 		You::Utils::Option<bool> completed,
 		You::Utils::Option<Task::ID> parent,
-		You::Utils::Option<Task::Subtasks> subtasks);
+		You::Utils::Option<Task::Subtasks> subtasks,
+		You::Utils::Option<Task::Attachment> attachment);
 
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
