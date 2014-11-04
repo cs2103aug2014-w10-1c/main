@@ -31,7 +31,7 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 		previous.getParent(), previous.getSubtasks()));
 }
 
-Task UpdateTask::buildUpdatedTask(const State& state) const {
+Task UpdateTask::buildUpdatedTask(State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
 
@@ -87,7 +87,7 @@ void UpdateTask::makeTransaction(const Task& updated) const {
 	t.commit();
 }
 
-void UpdateTask::recMarkChildren(const State& state,
+void UpdateTask::recMarkChildren(State& state,
 	Task::ID id) const {
 	auto task = state.graph().getTask(id);
 	if (!task.getDependencies().empty()) {
@@ -106,24 +106,34 @@ void UpdateTask::recMarkChildren(const State& state,
 	makeTransaction(task);
 }
 
-void UpdateTask::markAllChildren(const State& state) const {
-	assert(completed);
-	recMarkChildren(state, id);
-}
+void UpdateTask::reparentTask(State& state, Task::ID id,
+	Task::ID newParent) const {
+	auto theTask = state.graph().getTask(id);
 
-void UpdateTask::addAsSubtask(State& state) const {
-	auto parentTask = state.graph().getTask(parent.get());
-	auto newSubtasks = parentTask.getSubtasks();
-	newSubtasks.insert(id);
-	parentTask.setSubtasks(newSubtasks);
-	UpdateTask(parentTask).execute(state);
-	if (!previous.isTopLevel()) {
-		auto oldParentTask =
-			state.graph().getTask(previous.getParent());
+	{  // NOLINT(readability/braces)
+		auto oldParentTask = state.graph().getTask(theTask.getParent());
 		auto newSubtasks = oldParentTask.getSubtasks();
-		newSubtasks.erase(previous.getID());
+		newSubtasks.erase(id);
 		oldParentTask.setSubtasks(newSubtasks);
-		UpdateTask(oldParentTask).execute(state);
+		Controller::Graph::updateTask(state.graph(), oldParentTask);
+		Controller::Graph::updateTask(state.sgraph(), oldParentTask);
+		makeTransaction(oldParentTask);
+	}
+
+	{  // NOLINT(readability/braces)
+		auto newParentTask = state.graph().getTask(newParent);
+		auto newSubtasks = newParentTask.getSubtasks();
+		newParentTask.setSubtasks(newSubtasks);
+		Controller::Graph::updateTask(state.graph(), newParentTask);
+		Controller::Graph::updateTask(state.sgraph(), newParentTask);
+		makeTransaction(newParentTask);
+	}
+
+	{  // NOLINT(readability/braces)
+		theTask.setParent(newParent);
+		Controller::Graph::updateTask(state.graph(), theTask);
+		Controller::Graph::updateTask(state.sgraph(), theTask);
+		makeTransaction(theTask);
 	}
 }
 
@@ -132,11 +142,25 @@ Response UpdateTask::execute(State& state) {
 		logCategory % id).str();
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
+	// Has completed/uncompleted
 	if (completed && (previous.isCompleted() != completed.get())) {
-		markAllChildren(state);
+		recMarkChildren(state, id);
 	}
-	if (parent && previous.getParent() != parent.get()) {
-		addAsSubtask(state);
+	// Has new parent.
+	if (parent && (previous.getParent() != parent.get())) {
+		reparentTask(state, id, parent.get());
+	}
+	// Has new subtask.
+	if (subtasks) {
+		for (auto cid : subtasks.get()) {
+			reparentTask(state, cid, id);
+		}
+	}
+	// Has new dependency.
+	if (subtasks) {
+		for (auto cid : subtasks.get()) {
+			reparentTask(state, cid, id);
+		}
 	}
 	updateDependencyGraph(state, updated);
 	updateSubtaskGraph(state, updated);

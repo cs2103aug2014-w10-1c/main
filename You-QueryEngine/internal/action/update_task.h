@@ -63,13 +63,13 @@ protected:
 	static const std::wstring logCategory;
 
 private:
-	Task buildUpdatedTask(const State& state) const;
+	Task buildUpdatedTask(State& state) const;
 	void updateDependencyGraph(State& state, const Task& updated) const;
 	void updateSubtaskGraph(State& state, const Task& updated) const;
+	void recMarkChildren(State& state, Task::ID id) const;
+	void reparentTask(State& state, Task::ID id, Task::ID newParent) const;
+
 	void makeTransaction(const Task& updated) const;
-	void markAllChildren(const State& state) const;
-	void addAsSubtask(State& state) const;
-	void recMarkChildren(const State& state, Task::ID id) const;
 
 	const Task::ID id;
 	const You::Utils::Option<Task::Description> description;  ///< Description.
