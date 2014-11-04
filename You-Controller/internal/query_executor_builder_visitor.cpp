@@ -23,28 +23,6 @@ QueryExecutorBuilderVisitor::QueryExecutorBuilderVisitor(
 	: context(context) {
 }
 
-
-std::unique_ptr<QueryEngine::Query> buildQuery(const ADD_QUERY& query) {
-	std::vector<std::unique_ptr<QueryEngine::Query>> addSubtasks;
-	std::vector<std::unique_ptr<QueryEngine::Query>> addDependencies;
-	for (const auto& subtask : query.subtasks) {
-		addSubtasks.emplace_back(buildQuery(subtask));
-	}
-	auto ptrDep = query.dependent;
-	while (query.dependent != nullptr) {
-		addDependencies.emplace_back(buildQuery(*ptrDep));
-		ptrDep = ptrDep->dependent;
-	}
-	return std::unique_ptr<QueryEngine::Query>(
-		QueryEngine::AddTask(
-			query.description,
-			query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-			query.priority == TaskPriority::HIGH ?
-			Task::Priority::HIGH : Task::Priority::NORMAL,
-			std::move(addDependencies),
-			std::move(addSubtasks)));
-}
-
 std::unique_ptr<QueryExecutor>
 QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 	class AddTaskQueryExecutor : public QueryExecutor {
@@ -72,6 +50,7 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 std::unique_ptr<QueryEngine::Query>
 QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 	std::vector<std::unique_ptr<QueryEngine::Query>> subtaskQueries;
+	std::vector<std::unique_ptr<QueryEngine::Query>> dependencyQueries;
 	//subtaskQueries.reserve(query.subtasks.size());
 
 	std::transform(begin(query.subtasks), end(query.subtasks),
@@ -79,12 +58,18 @@ QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 		return QueryExecutorBuilderVisitor::buildAddQuery(q);
 	});
 
+	std::shared_ptr<ADD_QUERY> dependentQuery = query.dependent;
+	while (dependentQuery) {
+		dependencyQueries.push_back(buildAddQuery(*dependentQuery));
+		dependentQuery = (query.dependent)->dependent;
+	}
+
 	return QueryEngine::AddTask(
 		query.description,
 		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 		query.priority == TaskPriority::HIGH ?
 		Task::Priority::HIGH : Task::Priority::NORMAL,
-		{},
+		std::move(dependencyQueries),
 		std::move(subtaskQueries)
 	);
 }
