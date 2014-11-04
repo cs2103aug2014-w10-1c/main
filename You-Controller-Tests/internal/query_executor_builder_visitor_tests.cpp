@@ -87,6 +87,18 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.deadline.get(),
 			result.task.getDeadline());
+
+		You::NLP::ADD_QUERY queryWithSubtask(Mocks::Queries::ADD_QUERY);
+		queryWithSubtask.subtasks = {
+			You::NLP::ADD_QUERY {
+				Mocks::Queries::ADD_QUERY.description + L"S"
+			}
+		};
+		query = queryWithSubtask;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
+
+		Assert::IsFalse(result.task.getSubtasks().empty());
 	}
 
 	TEST_METHOD(getsCorrectTypeForShowQueries) {
