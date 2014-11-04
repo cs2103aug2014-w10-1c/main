@@ -25,6 +25,12 @@
     <Filter Include="Source Files\internal\operations">
       <UniqueIdentifier>{c8c5e46b-7ece-4999-965e-e9cc043f770c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\exceptions">
+      <UniqueIdentifier>{d7bb65c8-ee38-4383-ba89-11b0f58bcff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\exceptions">
+      <UniqueIdentifier>{4365dde8-626e-4719-b8a4-5df535896b1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -69,6 +75,15 @@
     <ClInclude Include="internal\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\exception.h">
+      <Filter>Header Files\exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\xml_parse_error_exception.h">
+      <Filter>Header Files\exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="internal\constants.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions\xml_parse_error_exception.cpp">
+      <Filter>Source Files\exceptions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
