@@ -75,30 +75,12 @@ public:
 
 	/// Construct a batch addition of task with its
 	/// subtask.
-	static std::unique_ptr<Query> BatchAddSubTasks(
-		const Task::Description& description,
-		const Task::Time& deadline,
-		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>>&& subtasks);
-
-	/// Construct a batch addition of task with its
-	/// dependencies.
-	/// \note The dependency vector will be executed
-	/// from left to right (last one is the parent).
-	static std::unique_ptr<Query> BatchAddDependencies(
-		const Task::Description& description,
-		const Task::Time& deadline,
-		const Task::Priority& priority,
-		std::vector<std::unique_ptr<Query>>&& dependencies,
-		const Task::Subtasks& subtasks);
-
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		const Task::Subtasks& subtasks);
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		std::vector<std::unique_ptr<Query>>&& subtasks);
 
 	/// Construct filter task without sort query
 	static std::unique_ptr<Query> GetTask(const Filter& filter);

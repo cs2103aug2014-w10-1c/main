@@ -19,42 +19,17 @@ namespace QueryEngine {
 
 const std::wstring Query::logCategory = L"[QE]";
 
+using Internal::Action::AddTask;
+using Internal::Action::BatchAddSubTasks;
+using Internal::Action::BatchAddDependencies;
+using Internal::Action::GetTask;
+using Internal::Action::DeleteTask;
+using Internal::Action::Undo;
+using Internal::Controller;
+
 std::unique_ptr<Query>
 Query::getReverse() {
 	throw Exception::NotUndoAbleException();
-}
-
-std::unique_ptr<Query>
-QueryEngine::BatchAddSubTasks(
-	const Task::Description& description,
-	const Task::Time& deadline,
-	const Task::Priority& priority,
-	const Task::Dependencies& dependencies,
-	std::vector<std::unique_ptr<Query>>&& subtasks) {
-	using BatchAddSubTasks = Internal::Action::BatchAddSubTasks;
-	return std::unique_ptr<Query>(new BatchAddSubTasks(
-		description,
-		deadline,
-		priority,
-		dependencies,
-		std::move(subtasks)));
-}
-
-std::unique_ptr<Query>
-QueryEngine::BatchAddDependencies(
-	const Task::Description& description,
-	const Task::Time& deadline,
-	const Task::Priority& priority,
-	std::vector<std::unique_ptr<Query>>&& dependencies,
-	const Task::Subtasks& subtasks) {
-	using BatchAddDependencies =
-		Internal::Action::BatchAddDependencies;
-	return std::unique_ptr<Query>(new BatchAddDependencies(
-		description,
-		deadline,
-		priority,
-		std::move(dependencies),
-		subtasks));
 }
 
 std::unique_ptr<Query>
@@ -62,30 +37,41 @@ QueryEngine::AddTask(
 	const Task::Description& description,
 	const Task::Time& deadline,
 	const Task::Priority& priority,
-	const Task::Dependencies& dependencies,
-	const Task::Subtasks& subtasks) {
-	using AddTask = Internal::Action::AddTask;
-	return std::unique_ptr<Query>(new AddTask(description, deadline,
-		priority, dependencies, subtasks));
+	std::vector<std::unique_ptr<Query>>&& dependencies,
+	std::vector<std::unique_ptr<Query>>&& subtasks) {
+	assert(!(dependencies.size() > 0 && subtasks.size() > 0));
+	if (dependencies.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddDependencies(
+				description, deadline, priority,
+				std::move(dependencies), {}));
+	} else if (subtasks.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddSubTasks(
+				description, deadline, priority,
+				{}, std::move(subtasks)));
+	} else {
+		return std::unique_ptr<Query>(
+			new Internal::Action::AddTask(
+				description, deadline, priority, {}, {}));
+	}
 }
 
 std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter) {
-	using GetTask = Internal::Action::GetTask;
-	return std::unique_ptr<Query>(new GetTask(filter));
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter));
 }
 
 std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter,
 	const Comparator& comparator) {
-	using GetTask = Internal::Action::GetTask;
-	return std::unique_ptr<Query>(new GetTask(filter, comparator));
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter, comparator));
 }
 
 std::unique_ptr<Query>
 QueryEngine::DeleteTask(Task::ID id) {
-	using DeleteTask = Internal::Action::DeleteTask;
-	return std::unique_ptr<Query>(new DeleteTask(id));
+	return std::unique_ptr<Query>(
+		new Internal::Action::DeleteTask(id));
 }
 
 std::unique_ptr<Query>
@@ -97,15 +83,14 @@ QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<bool> completed,
 	You::Utils::Option<Task::ID> parent,
 	You::Utils::Option<Task::Subtasks> subtasks) {
-	using UpdateTask = Internal::Action::UpdateTask;
-	return std::unique_ptr<Query>(new UpdateTask(id, description,
+	return std::unique_ptr<Query>(
+		new Internal::Action::UpdateTask(id, description,
 		deadline, priority, dependencies, completed, parent, subtasks));
 }
 
 std::unique_ptr<Query>
 QueryEngine::Undo() {
-	using Undo = Internal::Action::Undo;
-	return std::unique_ptr<Query>(new Undo());
+	return std::unique_ptr<Query>(new Internal::Action::Undo());
 }
 
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
@@ -121,7 +106,7 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 }
 
 std::wstring ToString(const Task& task) {
-	using Serializer = Internal::TaskSerializer;
+	using Serializer = Controller::Serializer;
 	auto serialized = Serializer::serialize(task);
 	const std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%]";
 	return (boost::wformat(TASK_FORMAT)

@@ -34,7 +34,6 @@ TEST_CLASS(QueryEngineTests) {
 	const Task::Description desc2 = L"Learn me";
 	const Task::Time dead = Task::NEVER;
 	const Task::Priority prio = Task::Priority::HIGH;
-	const Task::Dependencies dep = Task::Dependencies();
 
 	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
 		You::DataStore::DataStore::get().wipeData();
@@ -53,7 +52,7 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(constructAddTaskQuery) {
-		auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+		auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 		Assert::IsNotNull(&query);
 	}
 
@@ -96,7 +95,7 @@ TEST_CLASS(QueryEngineTests) {
 
 	TEST_METHOD(executeAddQuery) {
 		for (int i = 1; i <= 5; i++) {
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			std::size_t newSize = Internal::State::get().graph().asTaskList().size();
 			Assert::AreEqual(newSize, std::size_t(i));
@@ -104,88 +103,11 @@ TEST_CLASS(QueryEngineTests) {
 		}
 	}
 
-	TEST_METHOD(addTaskWithInvalidDependency) {
-		auto query = QueryEngine::AddTask(desc, dead, prio, { 1, 2, 3 }, {});
-		Assert::ExpectException<Exception::TaskNotFoundException>([&query] {
-			QueryEngine::executeQuery(std::move(query));
-		});
-		Assert::AreEqual(0, Internal::State::get().graph().getTaskCount());
-	}
-
-	TEST_METHOD(addTaskWithValidDependency) {
-		Task::ID insertedID;
-		#pragma region Add a task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			insertedID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Add a task that depends on that task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, { insertedID }, {});
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-	}
-
-	TEST_METHOD(addTaskWithValidSubtasks) {
-		Task::ID insertedID;
-		#pragma region Add a task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			insertedID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		#pragma region Add another task that is the parent of that task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, { insertedID });
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-	}
-
-	TEST_METHOD(addTaskWithInvalidSubtasks) {
-		Task::ID insertedID;
-		#pragma region Add a task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
-			auto response = QueryEngine::executeQuery(std::move(query));
-			insertedID = boost::get<Task>(response).getID();
-		}
-		#pragma endregion
-
-		auto remember = insertedID;
-
-		#pragma region Add another task that is the parent of that task
-		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, { insertedID });
-			QueryEngine::executeQuery(std::move(query));
-		}
-		#pragma endregion
-
-		#pragma region Try to claim the child.
-		Assert::ExpectException<Exception::TaskAlreadyHasParentException>([=] {
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, { remember });
-			QueryEngine::executeQuery(std::move(query));
-		});
-		#pragma endregion
-
-		Assert::AreEqual(2, Internal::State::get().graph().getTaskCount());
-	}
-
 	TEST_METHOD(executeEditQuery) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -217,7 +139,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one Task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsFalse(task.isCompleted());
@@ -267,7 +189,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -288,7 +210,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -314,7 +236,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -347,7 +269,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, dep, {});
+			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
