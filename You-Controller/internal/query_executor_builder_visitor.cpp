@@ -222,6 +222,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.dependingTask &&
+				!query.attachments &&
 				"Cannot change subtasks with other properties");
 			int childTask = query.childTask;
 			if (childTask < 0) {
@@ -244,6 +245,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.childTask &&
+				!query.attachments &&
 				"Cannot change dependencies with other properties");
 			Task::ID dependentTask = task;
 			int dependingTask = query.dependingTask;
@@ -259,6 +261,23 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 						QueryEngine::AddDependency(
 							context.at(dependingTask).getID(),
 							dependentTask)));
+			}
+		}
+
+		You::Utils::Option<Task::Attachment> attachment;
+		if (!query.attachments.empty()) {
+			assert(!query.description &&
+				!query.deadline &&
+				!priority &&
+				!query.complete &&
+				!query.childTask &&
+				!query.dependingTask &&
+				"Cannot modify attachments with other properties");
+			assert(query.attachments.size() == 1 &&
+				"Controller currently only supports modifying one attachment "
+				"at a time");
+			if (query.attachments[0].add) {
+				attachment = query.attachments[0].path;
 			}
 		}
 
