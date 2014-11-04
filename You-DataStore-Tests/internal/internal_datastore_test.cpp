@@ -3,7 +3,7 @@
 #include <CppUnitTest.h>
 
 #include <cstdio>
-#include <fstream>
+#include <fstream>  // NOLINT (readability/streams)
 #include "../mocks.h"
 #include "internal/operations/erase_operation.h"
 #include "internal/operations/post_operation.h"
