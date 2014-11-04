@@ -119,6 +119,9 @@ public:
 	static std::unique_ptr<Query> RemoveSubtask(Task::ID id,
 		Task::ID subtask);
 
+	/// Shortest version of update query.
+	static std::unique_ptr<Query> UpdateTask(const Task& task);
+
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
 

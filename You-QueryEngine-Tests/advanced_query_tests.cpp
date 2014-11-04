@@ -342,6 +342,62 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		Assert::IsTrue(parent2.getSubtasks().size() == 1);
 		Assert::IsTrue(parent2.getSubtasksObject().at(0).getID() == parent.getID());
 	}
+
+
+	TEST_METHOD(setSubtaskOfAChildTask) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {}, {})));
+		child.setSubtasks({ parent2.getID() });
+		child = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(child))));
+		auto list = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		parent = Internal::State::get().graph().getTask(parent.getID());
+		Assert::IsTrue(list.size() == 1);
+		Assert::IsTrue(parent.getSubtasksObject().at(0).getID() == child.getID());
+		Assert::IsTrue(child.getSubtasksObject().at(0).getID() == parent2.getID());
+	}
+
+	TEST_METHOD(deleteLevelTwoTree) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+			childQueries.push_back(
+				std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {}, {})));
+		child.setSubtasks({ parent2.getID() });
+		child = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(child))));
+		auto deleted = boost::get<Task::ID>(QueryEngine::executeQuery(
+				QueryEngine::DeleteTask(child.getID())));
+		Assert::IsTrue(deleted == child.getID());
+		parent = Internal::State::get().graph().getTask(parent.getID());
+		Assert::IsTrue(Internal::State::get().graph().getTask(parent.getID())
+			.getSubtasks().empty());
+	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
 

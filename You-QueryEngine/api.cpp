@@ -91,6 +91,12 @@ QueryEngine::UpdateTask(Task::ID id,
 }
 
 std::unique_ptr<Query>
+QueryEngine::UpdateTask(const Task& task) {
+	using UpdateTask = Internal::Action::UpdateTask;
+	return std::unique_ptr<Query>(new UpdateTask(task));
+}
+
+std::unique_ptr<Query>
 QueryEngine::Undo() {
 	return std::unique_ptr<Query>(new Internal::Action::Undo());
 }

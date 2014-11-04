@@ -89,6 +89,15 @@ Response DeleteTask::execute(State& state) {
 		Controller::Graph::deleteTask(state.sgraph(), id);
 		makeTransaction(id);
 	}
+	// If it is a subtask of someone, remove it from parent.
+	if (!deletedTask.isTopLevel()) {
+		auto parent = state.get().graph().getTask(
+			deletedTask.getParent());
+		auto sub = parent.getSubtasks();
+		sub.erase(id);
+		parent.setSubtasks(sub);
+		QueryEngine::UpdateTask(parent)->execute(state);
+	}
 	return this->id;
 }
 
