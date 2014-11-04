@@ -252,24 +252,29 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
 
 		// Add two trees
-		QueryEngine::executeQuery(
-			QueryEngine::AddTask(
-			desc, dead, Task::Priority::HIGH, {}, std::move(childQueries)));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+				desc, dead, Task::Priority::HIGH, {}, std::move(childQueries))));
+
+		std::vector<std::unique_ptr<Query>> childQueries2;
+		childQueries2.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, std::move(childQueries))));
+					desc, dead, Task::Priority::HIGH, {}, std::move(childQueries2))));
 		// Set the second to parent the child of first one.
 		auto reparent = QueryEngine::UpdateTask(
 			task.getID(), task.getDescription(), task.getDeadline(),
 			task.getPriority(), task.getDependencies(),
-			task.isCompleted(), 2, task.getSubtasks());
+			task.isCompleted(), parent.getID(), task.getSubtasks());
 		QueryEngine::executeQuery(std::move(reparent));
 
-		auto getTask = QueryEngine::GetTask(Filter::idIsIn({ 2 }));
+		auto getTask = QueryEngine::GetTask(Filter::anyTask());
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
-		Assert::IsTrue(result.at(0).getSubtasksObject().at(0).getID() == task.getID());
+		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(2));
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
