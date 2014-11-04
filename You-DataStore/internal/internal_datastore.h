@@ -81,6 +81,9 @@ private:
 	bool saveData();
 
 	/// Loads the xml file into the document variable
+	/// May throw \ref XmlParseErrorException when parsing fails
+	/// \exception XmlParseErrorException The exception thrown when parsing
+	///									  the xml file fails
 	void loadData();
 
 	/// Executes the operation queue into the xml_document
