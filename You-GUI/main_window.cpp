@@ -64,15 +64,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::populateTaskPanel() {
-	// Grabs tasks from last session from the list of IDs saved
-	QList<Task::ID> IDs = sm->taskIDs;
-	TaskList tl;
-
-	if (IDs.size() != 0) {
-		tl = qm->getTasks(IDs);
-	} else {
-		tl = qm->getTasks();
-	}
+	TaskList tl = qm->getTasks();
 	addTasks(tl);
 	tpm->repaintTasks();
 	updateRowNumbers();
@@ -286,10 +278,6 @@ void MainWindow::updateTaskInfoBar() {
 }
 
 void MainWindow::applicationExitRequested() {
-	sm->taskIDs.clear();
-	for (int i = 0; i < taskList->size(); i++) {
-		sm->taskIDs.push_back(taskList->at(i).getID());
-	}
 	qApp->quit();
 }
 
