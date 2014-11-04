@@ -49,7 +49,8 @@ public:
 	TaskBuilder& parent(const Task::ID id);
 	/// Initialize task's subtasks.
 	TaskBuilder& subtasks(const Task::Subtasks& subtasks);
-
+	/// Initialize task's attachment
+	TaskBuilder& attachment(const Task::Attachment& attachment);
 	/// Convert the builder to task implicitly
 	operator Task() const;
 

@@ -28,6 +28,7 @@ const TaskSerializer::Key TaskSerializer::KEY_DEPENDENCIES = L"dependencies";
 const TaskSerializer::Key TaskSerializer::KEY_COMPLETED = L"completed";
 const TaskSerializer::Key TaskSerializer::KEY_PARENT = L"parent";
 const TaskSerializer::Key TaskSerializer::KEY_SUBTASKS = L"subtasks";
+const TaskSerializer::Key TaskSerializer::KEY_ATTACHMENT = L"attachment";
 
 const TaskSerializer::Value TaskSerializer::VALUE_PRIORITY_NORMAL = L"normal";
 const TaskSerializer::Value TaskSerializer::VALUE_PRIORITY_HIGH = L"high";
@@ -42,6 +43,8 @@ TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 	Value value_completed = serializeCompleted(task.isCompleted());
 	Value value_parent = serializeParent(task.getParent());
 	Value value_subtasks = serializeSubtasks(task.getSubtasks());
+	Value value_attachment = serializeDescription(task.getAttachment());
+
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
@@ -50,7 +53,8 @@ TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 		{ KEY_DEPENDENCIES, value_dependencies },
 		{ KEY_COMPLETED, value_completed },
 		{ KEY_PARENT, value_parent },
-		{ KEY_SUBTASKS, value_subtasks }
+		{ KEY_SUBTASKS, value_subtasks },
+		{ KEY_ATTACHMENT, value_attachment }
 	};
 }
 
@@ -100,6 +104,10 @@ Task TaskSerializer::deserialize(const STask& stask) {
 		deserializeSubtasks(
 			getOrDefault(stask, KEY_SUBTASKS,
 				serializeSubtasks(Task::DEFAULT_SUBTASKS)));
+	Task::Attachment attachment =
+		deserializeDescription(
+			getOrDefault(stask, KEY_ATTACHMENT,
+				serializeDescription(Task::DEFAULT_ATTACHMENT)));
 	return TaskBuilder::get()
 		.id(id)
 		.description(description)
@@ -108,7 +116,8 @@ Task TaskSerializer::deserialize(const STask& stask) {
 		.priority(priority)
 		.parent(parent)
 		.completed(completed)
-		.subtasks(subtasks);
+		.subtasks(subtasks)
+		.attachment(attachment);
 }
 
 TaskSerializer::Value TaskSerializer::serializeID(const Task::ID id) {

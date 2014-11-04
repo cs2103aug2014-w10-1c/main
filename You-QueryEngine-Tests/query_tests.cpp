@@ -76,24 +76,6 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_FILTERED);
 	}
 
-	TEST_METHOD(constructDeleteTaskQuery) {
-		auto query = QueryEngine::DeleteTask(Task::DEFAULT_ID);
-		Assert::IsNotNull(&query);
-	}
-
-	TEST_METHOD(constructEditTaskQuery) {
-		auto query = QueryEngine::UpdateTask(
-			Task::DEFAULT_ID,
-			boost::none,
-			boost::none,
-			boost::none,
-			boost::none,
-			boost::none,
-			boost::none,
-			boost::none);
-		Assert::IsNotNull(&query);
-	}
-
 	TEST_METHOD(executeAddQuery) {
 		for (int i = 1; i <= 5; i++) {
 			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
@@ -119,6 +101,7 @@ TEST_CLASS(QueryEngineTests) {
 			auto query = QueryEngine::UpdateTask(
 				task.getID(),
 				desc2,
+				boost::none,
 				boost::none,
 				boost::none,
 				boost::none,
@@ -157,6 +140,7 @@ TEST_CLASS(QueryEngineTests) {
 				boost::none,
 				true,
 				boost::none,
+				boost::none,
 				boost::none);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
@@ -175,6 +159,7 @@ TEST_CLASS(QueryEngineTests) {
 				boost::none,
 				boost::none,
 				false,
+				boost::none,
 				boost::none,
 				boost::none);
 			auto response = QueryEngine::executeQuery(std::move(query));
@@ -287,6 +272,7 @@ TEST_CLASS(QueryEngineTests) {
 				task.getDeadline(),
 				task.getPriority(),
 				task.getDependencies(),
+				boost::none,
 				boost::none,
 				boost::none,
 				boost::none);

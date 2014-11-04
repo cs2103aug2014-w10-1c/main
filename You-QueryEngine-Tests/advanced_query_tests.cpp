@@ -161,6 +161,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 				deps,
 				boost::none,
 				boost::none,
+				boost::none,
 				boost::none);
 			QueryEngine::executeQuery(std::move(query));
 		}
@@ -191,6 +192,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 				deps,
 				boost::none,
 				boost::none,
+				boost::none,
 				boost::none);
 			QueryEngine::executeQuery(std::move(query));
 		}
@@ -206,6 +208,7 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 				boost::none,
 				boost::none,
 				true,
+				boost::none,
 				boost::none,
 				boost::none);
 			QueryEngine::executeQuery(std::move(query));
@@ -269,7 +272,8 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto reparent = QueryEngine::UpdateTask(
 			task.getID(), task.getDescription(), task.getDeadline(),
 			task.getPriority(), task.getDependencies(),
-			task.isCompleted(), parent.getID(), task.getSubtasks());
+			task.isCompleted(), parent.getID(), task.getSubtasks(),
+			task.getAttachment());
 		QueryEngine::executeQuery(std::move(reparent));
 
 		auto getTask = QueryEngine::GetTask(Filter::anyTask());

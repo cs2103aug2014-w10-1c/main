@@ -43,6 +43,7 @@ public:
 	typedef std::unordered_set<Task::ID> Dependencies;
 	enum class Priority { NORMAL, HIGH };
 	typedef std::unordered_set<Task::ID> Subtasks;
+	typedef std::wstring Attachment;
 	/// @}
 
 	/// \name Inlined Field Getters.
@@ -55,6 +56,7 @@ public:
 	bool isCompleted() const { return completed; }
 	ID getParent() const { return parent; }
 	Subtasks getSubtasks() const { return subtasks; }
+	Attachment getAttachment() const { return attachment; }
 	/// @}
 
 	/// Get subtasks as Task object.
@@ -81,6 +83,7 @@ public:
 	void setCompleted(bool completed);
 	void setParent(const Task::ID parent);
 	void setSubtasks(const Subtasks& subtasks);
+	void setAttachment(const Attachment& attachment);
 	/// @}
 
 	/// \name Field Default Values
@@ -92,6 +95,7 @@ public:
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
 	static const Subtasks DEFAULT_SUBTASKS;
+	static const Attachment DEFAULT_ATTACHMENT;
 	/// @}
 
 	/// Check equality of two tasks by comparing field by field.
@@ -103,11 +107,11 @@ public:
 private:
 	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
-		const Dependencies& dependencies, Priority priority, ID parent,
-		Subtasks subtasks)
+		const Dependencies& dependencies, const Priority& priority, ID parent,
+		const Subtasks& subtasks, const Attachment&)
 	: id(id), description(description), deadline(deadline),
 	  dependencies(dependencies), priority(priority), completed(false),
-	  parent(parent), subtasks(subtasks) {}
+	  parent(parent), subtasks(subtasks), attachment(attachment) {}
 
 	/// Check if the task is strictly equal with another task
 	/// Two taks are strictly equal if all fields are equal
@@ -124,6 +128,7 @@ private:
 	bool completed;
 	ID parent;
 	Subtasks subtasks;
+	Attachment attachment;
 	/// @}
 };
 

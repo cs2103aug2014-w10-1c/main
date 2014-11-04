@@ -28,7 +28,8 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 		previous.getID(), previous.getDescription(),
 		previous.getDeadline(), previous.getPriority(),
 		previous.getDependencies(), previous.isCompleted(),
-		previous.getParent(), previous.getSubtasks()));
+		previous.getParent(), previous.getSubtasks(),
+		previous.getAttachment()));
 }
 
 Task UpdateTask::buildUpdatedTask(State& state) const {
@@ -53,6 +54,9 @@ Task UpdateTask::buildUpdatedTask(State& state) const {
 	}
 	if (this->subtasks) {
 		builder.subtasks(this->subtasks.get());
+	}
+	if (this->attachment) {
+		builder.attachment(this->attachment.get());
 	}
 	Task newTask = builder;
 	if (this->completed) {
@@ -110,7 +114,7 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 	Task::ID newParent) const {
 	auto theTask = state.graph().getTask(id);
 
-	{  // NOLINT(readability/braces)
+	{  // NOLINT(whitespace/braces)
 		auto oldParentTask = state.graph().getTask(theTask.getParent());
 		auto newSubtasks = oldParentTask.getSubtasks();
 		newSubtasks.erase(id);
@@ -120,7 +124,7 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 		makeTransaction(oldParentTask);
 	}
 
-	{  // NOLINT(readability/braces)
+	{  // NOLINT(whitespace/braces)
 		auto newParentTask = state.graph().getTask(newParent);
 		auto newSubtasks = newParentTask.getSubtasks();
 		newParentTask.setSubtasks(newSubtasks);
@@ -129,7 +133,7 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 		makeTransaction(newParentTask);
 	}
 
-	{  // NOLINT(readability/braces)
+	{  // NOLINT(whitespace/braces)
 		theTask.setParent(newParent);
 		Controller::Graph::updateTask(state.graph(), theTask);
 		Controller::Graph::updateTask(state.sgraph(), theTask);

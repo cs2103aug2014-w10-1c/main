@@ -100,7 +100,8 @@ public:
 		You::Utils::Option<Task::Dependencies> dependencies,
 		You::Utils::Option<bool> completed,
 		You::Utils::Option<Task::ID> parent,
-		You::Utils::Option<Task::Subtasks> subtasks);
+		You::Utils::Option<Task::Subtasks> subtasks,
+		You::Utils::Option<Task::Attachment> attachment);
 
 	/// Construct adding dependency query.
 	static std::unique_ptr<Query> AddDependency(Task::ID id,
