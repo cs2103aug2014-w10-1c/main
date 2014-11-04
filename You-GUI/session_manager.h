@@ -13,8 +13,8 @@ namespace UnitTests { class MainWindowTests; }
 using Task = You::Controller::Task;
 
 /// The component that handles all session-related data of the application. It
-/// handles basics such as the window state of the application and task sets
-/// previously displayed, saving the state on program exit, and restoring them
+/// handles basics such as the window state of the application,
+/// saving the state on program exit, and restoring them
 /// when the program is started again. It inherits from the BaseManager class.
 class MainWindow::SessionManager : public MainWindow::BaseManager{
 	Q_OBJECT
@@ -29,12 +29,6 @@ public:
 
 	/// Wrapper function to load session
 	void setup();
-
-	/// The list of taskIDs that will be filled on program start from the
-	/// session file, to be passed to the NLP manager. Mechanism to pass is
-	/// still being considered. This will also contain the list of IDs to be
-	/// written to the session file.
-	QList<Task::ID> taskIDs;
 
 private:
 	/// Loads the previous state of the GUI. Called during constructor.
