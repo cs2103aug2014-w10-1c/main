@@ -8,6 +8,7 @@
 #include "exceptions/context_index_out_of_range_exception.h"
 #include "You-NLP/exception.h"
 #include "You-QueryEngine/exception.h"
+#include "You-DataStore/exception.h"
 
 namespace You {
 namespace Controller {
@@ -31,6 +32,8 @@ typedef You::NLP::ParserException ParserException;
 typedef You::NLP::ParserTypeException ParserTypeException;
 
 typedef You::NLP::ParseErrorException ParseErrorException;
+
+typedef You::DataStore::XmlParseErrorException XmlParseErrorException;
 
 }  // namespace Controller
 }  // namespace You
