@@ -6,7 +6,6 @@
 
 namespace You {
 namespace DataStore {
-namespace Exception {
 
 /// The exception thrown if there is an error when parsing data.xml
 class XmlParseErrorException : public DataStoreException {
@@ -25,7 +24,6 @@ private:
 	std::string errorMessage;
 };
 
-}  // namespace Exception
 }  // namespace DataStore
 }  // namespace You
 

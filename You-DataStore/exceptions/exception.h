@@ -6,13 +6,11 @@
 
 namespace You {
 namespace DataStore {
-namespace Exception {
 
 /// Base exception class for Data Store exceptions
 class DataStoreException : public You::Utils::Exception {
 };
 
-}  // namespace Exception
 }  // namespace DataStore
 }  // namespace You
 
