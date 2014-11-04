@@ -10,6 +10,7 @@
 #include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
 #include "internal/constants.h"
+#include "exceptions/xml_parse_error_exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -197,9 +198,10 @@ public:
 	}
 
 	TEST_METHOD(xmlParseErrorThrowsException) {
+		using XmlParseErrorException = Exception::XmlParseErrorException;
 		createDummyDataXml();
 		auto fun = [] { Internal::DataStore::get().loadData(); };
-		Assert::ExpectException<char*>(fun);
+		Assert::ExpectException<XmlParseErrorException>(fun);
 	}
 };
 }  // namespace UnitTests
