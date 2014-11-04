@@ -439,7 +439,8 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Mocks::TaskList taskList(2);
 		QueryExecutorBuilderVisitor visitor(taskList);
 
-		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
+		You::NLP::EDIT_QUERY query2;
+		query2.taskID = Mocks::Queries::EDIT_QUERY.taskID;
 		query2.childTask = 1;
 		You::NLP::QUERY query(query2);
 		std::unique_ptr<QueryExecutor> executor(
@@ -449,15 +450,6 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		Assert::AreEqual(taskList.front().getID(),
 			result.task.getID());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
-		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
-			Mocks::Queries::EDIT_QUERY.priority.get()),
-			result.task.getPriority());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
-			result.task.getDeadline());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
-			result.task.isCompleted());
 		Assert::IsFalse(result.task.getSubtasks().empty());
 		Assert::IsTrue(result.task.getDependencies().empty());
 	}
