@@ -310,14 +310,16 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 	/// QSignalMapper is necessary because arguments need to be passed
 	/// as part of the signal.
 	if (item) {
-		deleteSignalMapper.setMapping(&deleteAction, item->text(1).toInt());
+		deleteSignalMapper.setMapping(&deleteAction,
+			item->text(COLUMN_INDEX).toInt());
 		connect(&deleteAction, SIGNAL(triggered()),
 			&deleteSignalMapper, SLOT(map()));
 		itemContextMenu->addAction(&deleteAction);
 		connect(&deleteSignalMapper, SIGNAL(mapped(int)),
 			parentGUI, SLOT(contextDeleteTask(int)));
 
-		editSignalMapper.setMapping(&editAction, item->text(1).toInt());
+		editSignalMapper.setMapping(&editAction,
+			item->text(COLUMN_INDEX).toInt());
 		connect(&editAction, SIGNAL(triggered()),
 			&editSignalMapper, SLOT(map()));
 		itemContextMenu->addAction(&editAction);
