@@ -1,6 +1,6 @@
 /// \file update_task.h
 /// Defines action for updating tasks.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_

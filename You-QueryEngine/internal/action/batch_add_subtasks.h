@@ -1,6 +1,6 @@
 /// \file batch_add_subtasks.h
 /// Defines action for adding a batch of subtasks.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_

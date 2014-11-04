@@ -1,6 +1,6 @@
 /// \file You-QueryEngine/internal/controller.h
 /// Import various controller classes from controller.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_H_

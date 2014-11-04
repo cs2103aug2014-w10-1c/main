@@ -18,7 +18,7 @@
 /// Contains the test classes for QueryEngine.
 /// @}
 
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_API_H_

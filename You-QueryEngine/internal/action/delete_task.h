@@ -1,6 +1,6 @@
 /// \file delete_task.h
 /// Defines action for deleting tasks.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_DELETE_TASK_H_
