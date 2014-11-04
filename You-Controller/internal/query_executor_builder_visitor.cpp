@@ -222,7 +222,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.dependingTask &&
-				!query.attachments &&
+				!query.attachments.empty() &&
 				"Cannot change subtasks with other properties");
 			int childTask = query.childTask;
 			if (childTask < 0) {
@@ -245,7 +245,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!priority &&
 				!query.complete &&
 				!query.childTask &&
-				!query.attachments &&
+				!query.attachments.empty() &&
 				"Cannot change dependencies with other properties");
 			Task::ID dependentTask = task;
 			int dependingTask = query.dependingTask;
