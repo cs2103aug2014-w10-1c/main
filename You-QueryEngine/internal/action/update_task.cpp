@@ -60,22 +60,27 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 	}
 	#pragma endregion
 
+	Log::debug << (boost::wformat(L"%1% : Updated to %2%") %
+		logCategory % ToString(newTask)).str();
+
 	return newTask;
 }
 
 void UpdateTask::updateDependencyGraph(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Updating Dependencies %2% - \"%3%\"\n") %
+	Log::debug << (boost::wformat(L"%1% : Updating Dependencies %2% - \"%3%\"") %
 		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.graph(), task);
 }
 
 void UpdateTask::updateSubtaskGraph(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Updating Subtasks %2% - \"%3%\"\n") %
+	Log::debug << (boost::wformat(L"%1% : Updating Subtasks %2% - \"%3%\"") %
 		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.sgraph(), task);
 }
 
 void UpdateTask::makeTransaction(const Task& updated) const {
+	Log::debug << (boost::wformat(L"%1% : Commiting %2%") %
+		logCategory % id).str();
 	auto serialized = Controller::Serializer::serialize(updated);
 	Transaction t(DataStore::get().begin());
 	DataStore::get().put(this->id, serialized);
@@ -123,6 +128,8 @@ void UpdateTask::addAsSubtask(State& state) const {
 }
 
 Response UpdateTask::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
+		logCategory % id).str();
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
 	if (completed && (previous.isCompleted() != completed.get())) {

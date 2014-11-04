@@ -22,6 +22,7 @@ std::unique_ptr<Query> BatchAddSubTasks::getReverse() {
 }
 
 Response BatchAddSubTasks::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
 	Task newTask;
 	Task::Subtasks theSubtasks;
 
@@ -40,6 +41,7 @@ Response BatchAddSubTasks::execute(State& state) {
 	newTask = boost::get<Task>(r);
 	insertedID = newTask.getID();
 
+	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
 	return newTask;
 }
 

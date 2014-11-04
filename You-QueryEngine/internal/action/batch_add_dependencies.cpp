@@ -27,6 +27,7 @@ std::unique_ptr<Query> BatchAddDependencies::getReverse() {
 }
 
 Response BatchAddDependencies::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
 	auto qBegin = dependencies.begin();
 	auto qEnd = dependencies.end();
 	Task::ID lastInserted =
@@ -54,6 +55,7 @@ Response BatchAddDependencies::execute(State& state) {
 	}
 	insertedID = lastInserted;
 	Response r = addParentQuery->execute(state);
+	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
 	return boost::get<Task>(r);
 }
 

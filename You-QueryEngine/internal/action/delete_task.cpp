@@ -60,7 +60,7 @@ std::unique_ptr<Query> DeleteTask::getReverse() {
 }
 
 void DeleteTask::makeTransaction(const Task::ID id) {
-	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"\n")
+	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"")
 		% logCategory % id).str();
 	Transaction t(DataStore::get().begin());
 	DataStore::get().erase(id);
