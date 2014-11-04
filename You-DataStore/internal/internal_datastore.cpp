@@ -92,7 +92,10 @@ void DataStore::erase(std::wstring branch, std::wstring id) {
 }
 
 std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
-	loadData();
+	try {
+		loadData();
+	} catch (XmlParseErrorException& e) {
+	}
 	pugi::xml_node dataNode = BranchOperation::get(document, nodeName);
 	std::vector<KeyValuePairs> allData;
 	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
