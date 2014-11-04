@@ -259,6 +259,7 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		}
 		++it;
 	}
+	parentGUI->ui.taskTreePanel->expandAll();
 }
 
 void MainWindow::TaskPanelManager::updateRowNumbers() {
