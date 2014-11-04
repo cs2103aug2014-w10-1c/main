@@ -110,6 +110,14 @@ public:
 	static std::unique_ptr<Query> RemoveDependency(Task::ID id,
 		Task::ID dependency);
 
+	/// Construct add subtask query.
+	static std::unique_ptr<Query> AddSubtask(Task::ID id,
+		Task::ID subtask);
+
+	/// Construct remove subtask query.
+	static std::unique_ptr<Query> RemoveSubtask(Task::ID id,
+		Task::ID subtask);
+
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
 

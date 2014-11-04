@@ -111,6 +111,24 @@ QueryEngine::RemoveDependency(Task::ID id, Task::ID dependency) {
 	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
 }
 
+std::unique_ptr<Query>
+QueryEngine::AddSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.insert(subtask);
+	task.setSubtasks(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.erase(subtask);
+	task.setDependencies(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	Response response;
 	std::unique_ptr<Query> reverse;
