@@ -95,7 +95,7 @@ Task TaskSerializer::deserialize(const STask& stask) {
 	bool completed =
 		deserializeCompleted(
 			getOrDefault(stask, KEY_COMPLETED,
-				serializeCompleted(true)));
+				serializeCompleted(false)));
 	Task::ID parent =
 		deserializeParent(
 			getOrDefault(stask, KEY_PARENT,
