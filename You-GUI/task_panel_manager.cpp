@@ -364,7 +364,7 @@ QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
 	} else if (isDueWithin(task.getDeadline(), 28)) {
 		wss << L"Within one month (" << task.getDeadline().date() << L")";
 	} else {
-		wss << L"More than a month away (" << task.getDeadline() << L")";
+		wss << L"More than a month away (" << task.getDeadline().date() << L")";
 	}
 	return boost::lexical_cast<QString>(wss.str());
 }
