@@ -200,7 +200,7 @@ public:
 	TEST_METHOD(xmlParseErrorThrowsException) {
 		createDummyDataXml();
 		auto fun = [] { Internal::DataStore::get().loadData(); };
-		Assert::ExpectException<XmlParseErrorException>(fun);
+		Assert::ExpectException<NotWellFormedXmlException>(fun);
 	}
 };
 }  // namespace UnitTests
