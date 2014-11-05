@@ -204,5 +204,15 @@ void CommandTextBox::wheelEvent(QWheelEvent *e) {
 	e->ignore();
 }
 
+void CommandTextBox::dropEvent(QDropEvent * e) {
+	moveCursor(QTextCursor::End);
+	insertPlainText("\'");
+	moveCursor(QTextCursor::End);
+	QTextEdit::dropEvent(e);
+	moveCursor(QTextCursor::End);
+	insertPlainText("\'");
+	moveCursor(QTextCursor::End);
+}
+
 }  // namespace GUI
 }  // namespace You
