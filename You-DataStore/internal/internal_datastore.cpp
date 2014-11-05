@@ -122,7 +122,7 @@ void DataStore::loadData() {
 			// TODO(digawp): find a way to inform user where in the xml
 			// the error is located.
 			// Possible solution: log
-			throw XmlParseErrorException(loadStatus.description());
+			onXmlParseResult(loadStatus);
 		}
 	}
 }
@@ -146,6 +146,16 @@ void DataStore::executeTransaction(Transaction & transaction,
 			transaction.rollback();
 			assert(false);
 		}
+	}
+}
+
+void DataStore::onXmlParseResult(pugi::xml_parse_result& result) {
+	if (result.status == pugi::xml_parse_status::status_io_error ||
+		result.status == pugi::xml_parse_status::status_out_of_memory ||
+		result.status == pugi::xml_parse_status::status_internal_error) {
+		throw XmlIOException();
+	} else {
+		throw NotWellFormedXmlException();
 	}
 }
 
