@@ -1,6 +1,6 @@
 /// \file update_task.h
 /// Defines action for updating tasks.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
@@ -38,11 +38,25 @@ public:
 	  subtasks(subtasks),
 	  attachment(attachment) {}
 
+	/// Quick constructor for UpdateTask query
+	explicit UpdateTask(const Task& task)
+	: id(task.getID()),
+	  description(task.getDescription()),
+	  deadline(task.getDeadline()),
+	  priority(task.getPriority()),
+	  dependencies(task.getDependencies()),
+	  completed(task.isCompleted()),
+	  parent(task.getParent()),
+	  subtasks(task.getSubtasks()),
+	  attachment(task.getAttachment()) {}
+
 	/// Disable assignment operator
 	UpdateTask& operator=(const UpdateTask&) = delete;
 
 	/// Destructor
 	virtual ~UpdateTask() = default;
+
+	Response execute(State& tasks) override;
 
 protected:
 	/// The reverse of updating is returning the original value.
@@ -52,15 +66,13 @@ protected:
 	static const std::wstring logCategory;
 
 private:
-	Task buildUpdatedTask(const State& state) const;
+	Task buildUpdatedTask(State& state) const;
 	void updateDependencyGraph(State& state, const Task& updated) const;
 	void updateSubtaskGraph(State& state, const Task& updated) const;
-	void makeTransaction(const Task& updated) const;
-	void markAllChildren(const State& state) const;
-	void addAsSubtask(const State& state) const;
-	void recMarkChildren(const State& state, Task::ID id) const;
+	void recMarkChildren(State& state, Task::ID id) const;
+	void reparentTask(State& state, Task::ID id, Task::ID newParent) const;
 
-	Response execute(State& tasks) override;
+	void makeTransaction(const Task& updated) const;
 
 	const Task::ID id;
 	const You::Utils::Option<Task::Description> description;  ///< Description.

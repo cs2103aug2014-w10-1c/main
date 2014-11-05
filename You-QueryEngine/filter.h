@@ -1,6 +1,6 @@
 /// \file You-QueryEngine/filter.h
 /// Defines the base class for filters.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_FILTER_H_

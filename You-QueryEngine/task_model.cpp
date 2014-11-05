@@ -1,5 +1,6 @@
-/// \author A0112054Y
+//@author A0112054Y
 #include "stdafx.h"
+#include "internal/model.h"
 #include "task_model.h"
 
 namespace {
@@ -47,6 +48,26 @@ void Task::setAttachment(const Task::Attachment& attachment) {
 
 bool Task::isDependOn(const Task::ID id) const {
 	return dependencies.find(id) != dependencies.end();
+}
+
+bool Task::isTopLevel() const {
+	return parent == id;
+}
+
+std::vector<Task> Task::getSubtasksObject() const {
+	std::vector<Task> result;
+	for (const auto& id : subtasks) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
+}
+
+std::vector<Task> Task::getDependenciesObject() const {
+	std::vector<Task> result;
+	for (const auto& id : dependencies) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
 }
 
 const Task::ID Task::DEFAULT_ID = 0L;

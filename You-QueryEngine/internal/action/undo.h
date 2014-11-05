@@ -1,6 +1,6 @@
 /// \file undo.h
 /// Defines action for undoing last actions.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UNDO_H_

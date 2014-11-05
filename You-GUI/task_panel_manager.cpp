@@ -130,13 +130,12 @@ void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
 
 /// Takes a single task, a map of all tasks, and produces a QTreeWidgetItem
 /// with all its subtasks, recursively.
-std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::makeTree(
-	const Task& task, const std::map<Task::ID, Task> taskMap) {
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::addTaskTree(
+	const Task& task) {
 	parentGUI->taskList->push_back(task);
 	std::unique_ptr<QTreeWidgetItem> root = createItem(task);
-	for (Task::ID id : task.getSubtasks()) {
-		Task subtask = taskMap.find(id)->second;
-		root->addChild(makeTree(subtask, taskMap).release());
+	for (const Task& subtask : task.getSubtasksObject()) {
+		root->addChild(addTaskTree(subtask).release());
 	}
 	return root;
 }
@@ -260,6 +259,7 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		}
 		++it;
 	}
+	parentGUI->ui.taskTreePanel->expandAll();
 }
 
 void MainWindow::TaskPanelManager::updateRowNumbers() {

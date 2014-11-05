@@ -1,4 +1,4 @@
-/// \author A0112054Y
+//@author A0112054Y
 #include "stdafx.h"
 
 #include "../../../You-Utils/log.h"
@@ -7,6 +7,7 @@
 
 #include "../model.h"
 #include "../controller.h"
+#include "update_task.h"
 #include "delete_task.h"
 #include "add_task.h"
 
@@ -51,7 +52,7 @@ void AddTask::ensureSubtasksIsValid() const {
 	for (const auto& id : subtasks) {
 		try {
 			auto task = State::get().sgraph().getTask(id);
-			if (task.getParent() != task.getID()) {
+			if (!task.isTopLevel()) {
 				throw Exception::TaskAlreadyHasParentException();
 			}
 		} catch (const Exception::TaskNotFoundException& e) {
@@ -62,17 +63,11 @@ void AddTask::ensureSubtasksIsValid() const {
 	}
 }
 
-void AddTask::updateParentPointer() const {
+void AddTask::updateParentPointer(State& state) const {
 	for (const auto& id : subtasks) {
 		auto previous = State::get().sgraph().getTask(id);
-		Controller::Graph::updateTask(
-			State::get().sgraph(),
-			Controller::Builder::fromTask(previous)
-				.parent(this->insertedID));
-		Controller::Graph::updateTask(
-			State::get().graph(),
-			Controller::Builder::fromTask(previous)
-				.parent(this->insertedID));
+		previous.setParent(insertedID);
+		UpdateTask(previous).execute(state);
 	}
 }
 
@@ -105,7 +100,7 @@ Response AddTask::execute(State& state) {
 	ensureDependencyIsValid();
 	addTaskToGraphs(newTask, state);
 	makeTransaction(newTask);
-	updateParentPointer();
+	updateParentPointer(state);
 
 	state.commitMaxIDToDataStore();
 	return newTask;

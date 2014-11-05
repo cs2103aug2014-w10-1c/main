@@ -1,3 +1,4 @@
+//@author A0112054Y
 #include "stdafx.h"
 #include "comparator.h"
 #include "filter.h"
@@ -43,7 +44,7 @@ Comparator Comparator::byPriority() {
 Comparator Comparator::byRelationship(Task::ID id) {
 	return byApplying<int>([id] (const Task& task) {
 		auto theTask = Internal::State::get().graph().getTask(id);
-		if (task.getID() == id) {
+		if (task.isTopLevel()) {
 			return 4;
 		} else if (Filter::isChildOf(id)(task)) {
 			return 3;

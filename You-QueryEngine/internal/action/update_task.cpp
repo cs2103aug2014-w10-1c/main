@@ -1,4 +1,4 @@
-/// \author A0112054Y
+//@author A0112054Y
 #include "stdafx.h"
 
 #include "../../../You-Utils/log.h"
@@ -32,7 +32,7 @@ std::unique_ptr<Query> UpdateTask::getReverse() {
 		previous.getAttachment()));
 }
 
-Task UpdateTask::buildUpdatedTask(const State& state) const {
+Task UpdateTask::buildUpdatedTask(State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
 
@@ -64,29 +64,34 @@ Task UpdateTask::buildUpdatedTask(const State& state) const {
 	}
 	#pragma endregion
 
+	Log::debug << (boost::wformat(L"%1% : Updated to %2%") %
+		logCategory % ToString(newTask)).str();
+
 	return newTask;
 }
 
 void UpdateTask::updateDependencyGraph(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Updating Dependencies %2% - \"%3%\"\n") %
+	Log::debug << (boost::wformat(L"%1% : Updating Dependencies %2% - \"%3%\"") %
 		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.graph(), task);
 }
 
 void UpdateTask::updateSubtaskGraph(State& state, const Task& task) const {
-	Log::debug << (boost::wformat(L"%1% : Updating Subtasks %2% - \"%3%\"\n") %
+	Log::debug << (boost::wformat(L"%1% : Updating Subtasks %2% - \"%3%\"") %
 		logCategory % task.getID() % task.getDescription()).str();
 	Controller::Graph::updateTask(state.sgraph(), task);
 }
 
 void UpdateTask::makeTransaction(const Task& updated) const {
+	Log::debug << (boost::wformat(L"%1% : Commiting %2%") %
+		logCategory % id).str();
 	auto serialized = Controller::Serializer::serialize(updated);
 	Transaction t(DataStore::get().begin());
 	DataStore::get().put(this->id, serialized);
 	t.commit();
 }
 
-void UpdateTask::recMarkChildren(const State& state,
+void UpdateTask::recMarkChildren(State& state,
 	Task::ID id) const {
 	auto task = state.graph().getTask(id);
 	if (!task.getDependencies().empty()) {
@@ -105,27 +110,55 @@ void UpdateTask::recMarkChildren(const State& state,
 	makeTransaction(task);
 }
 
-void UpdateTask::markAllChildren(const State& state) const {
-	assert(completed);
-	recMarkChildren(state, id);
-}
+void UpdateTask::reparentTask(State& state, Task::ID id,
+	Task::ID newParent) const {
+	auto theTask = state.graph().getTask(id);
 
-void UpdateTask::addAsSubtask(const State& state) const {
-	auto parentTask = state.graph().getTask(parent);
-	auto newSubtasks = parentTask.getSubtasks();
-	newSubtasks.insert(id);
-	parentTask.setSubtasks(newSubtasks);
-	Controller::Graph::updateTask(state.graph(), parentTask);
+	{  // NOLINT(whitespace/braces)
+		auto oldParentTask = state.graph().getTask(theTask.getParent());
+		auto newSubtasks = oldParentTask.getSubtasks();
+		newSubtasks.erase(id);
+		oldParentTask.setSubtasks(newSubtasks);
+		Controller::Graph::updateTask(state.graph(), oldParentTask);
+		Controller::Graph::updateTask(state.sgraph(), oldParentTask);
+		makeTransaction(oldParentTask);
+	}
+
+	{  // NOLINT(whitespace/braces)
+		auto newParentTask = state.graph().getTask(newParent);
+		auto newSubtasks = newParentTask.getSubtasks();
+		newParentTask.setSubtasks(newSubtasks);
+		Controller::Graph::updateTask(state.graph(), newParentTask);
+		Controller::Graph::updateTask(state.sgraph(), newParentTask);
+		makeTransaction(newParentTask);
+	}
+
+	{  // NOLINT(whitespace/braces)
+		theTask.setParent(newParent);
+		Controller::Graph::updateTask(state.graph(), theTask);
+		Controller::Graph::updateTask(state.sgraph(), theTask);
+		makeTransaction(theTask);
+	}
 }
 
 Response UpdateTask::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
+		logCategory % id).str();
 	previous = state.graph().getTask(id);
 	auto updated = buildUpdatedTask(state);
+	// Has completed/uncompleted
 	if (completed && (previous.isCompleted() != completed.get())) {
-		markAllChildren(state);
+		recMarkChildren(state, id);
 	}
-	if (parent && previous.getParent() != parent.get()) {
-		addAsSubtask(state);
+	// Has new parent.
+	if (parent && (previous.getParent() != parent.get())) {
+		reparentTask(state, id, parent.get());
+	}
+	// Reparent every subtask.
+	if (subtasks) {
+		for (auto cid : subtasks.get()) {
+			reparentTask(state, cid, id);
+		}
 	}
 	updateDependencyGraph(state, updated);
 	updateSubtaskGraph(state, updated);

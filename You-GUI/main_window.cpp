@@ -83,19 +83,7 @@ const TaskList& MainWindow::getTaskList() const {
 
 /// This function adds a task to the task panel, along with all of its subtasks
 void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
-	/// Build map for fast lookup
-	std::map<Task::ID, Task> taskMap;
-	for (Task t : tl) {
-		taskMap.insert(std::pair<Task::ID, Task>(t.getID(), t));
-	}
-
-	/// Check if parent exists
-	bool parentExists = (taskMap.find(task.getID()) != taskMap.end());
-	if (task.getID() == task.getParent() || !parentExists) {
-		/// Is top level task
-		QTreeWidgetItem *topLevelTask = tpm->makeTree(task, taskMap).release();
-		ui.taskTreePanel->addTopLevelItem(topLevelTask);
-	}
+	ui.taskTreePanel->addTopLevelItem(tpm->addTaskTree(task).release());
 }
 
 void MainWindow::addTask(const Task& task) {

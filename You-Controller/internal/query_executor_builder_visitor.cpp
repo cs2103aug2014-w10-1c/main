@@ -44,16 +44,35 @@ QueryExecutorBuilderVisitor::build(const ADD_QUERY& query) {
 	};
 
 	return std::unique_ptr<QueryExecutor>(
-		new AddTaskQueryExecutor(
-			QueryEngine::AddTask(
-				query.description,
-				query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-				query.priority == TaskPriority::HIGH ?
-					Task::Priority::HIGH : Task::Priority::NORMAL,
-				Task::Dependencies(),
-				Task::Subtasks()
-			)
-		)
+		new AddTaskQueryExecutor(buildAddQuery(query)));
+}
+
+std::unique_ptr<QueryEngine::Query>
+QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
+	std::vector<std::unique_ptr<QueryEngine::Query>> subtaskQueries;
+	std::vector<std::unique_ptr<QueryEngine::Query>> dependencyQueries;
+	// subtaskQueries.reserve(query.subtasks.size());
+
+	std::transform(begin(query.subtasks), end(query.subtasks),
+		std::back_inserter(subtaskQueries), [](const ADD_QUERY& q) {
+		return QueryExecutorBuilderVisitor::buildAddQuery(q);
+	});
+
+	std::shared_ptr<ADD_QUERY> dependentQuery = query.dependent;
+	while (dependentQuery) {
+		ADD_QUERY withoutDependencies(*dependentQuery);
+		withoutDependencies.dependent.reset();
+		dependencyQueries.push_back(buildAddQuery(withoutDependencies));
+		dependentQuery = dependentQuery->dependent;
+	}
+
+	return QueryEngine::AddTask(
+		query.description,
+		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
+		query.priority == TaskPriority::HIGH ?
+		Task::Priority::HIGH : Task::Priority::NORMAL,
+		std::move(dependencyQueries),
+		std::move(subtaskQueries)
 	);
 }
 
@@ -216,11 +235,26 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				query.priority.get());
 		}
 
-		You::Utils::Option<Task::Subtasks> subtasks;
 		if (query.childTask) {
-			Task::Subtasks subtasksList;
-			subtasksList.insert(context.at(query.childTask).getID());
-			subtasks = subtasksList;
+			assert(!query.description &&
+				!query.deadline &&
+				!priority &&
+				!query.complete &&
+				!query.dependingTask &&
+				query.attachments.empty() &&
+				"Cannot change subtasks with other properties");
+			int childTask = query.childTask.get();
+			if (childTask < 0) {
+				return std::unique_ptr<QueryExecutor>(
+					new EditTaskQueryExecutor(
+						QueryEngine::RemoveSubtask(task,
+							context.at(-childTask).getID())));
+			} else {
+				return std::unique_ptr<QueryExecutor>(
+					new EditTaskQueryExecutor(
+						QueryEngine::AddSubtask(task,
+							context.at(childTask).getID())));
+			}
 		}
 
 		You::Utils::Option<Task::Dependencies> dependencies;
@@ -229,11 +263,41 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!query.deadline &&
 				!priority &&
 				!query.complete &&
-				!subtasks && "Cannot change dependencies and other properties");
-			Task::Dependencies dependenciesList;
-			dependenciesList.insert(task);
-			dependencies = dependenciesList;
-			task = context.at(query.dependingTask).getID();
+				!query.childTask &&
+				query.attachments.empty() &&
+				"Cannot change dependencies with other properties");
+			Task::ID dependentTask = task;
+			int dependingTask = query.dependingTask.get();
+			if (dependingTask < 0) {
+				return std::unique_ptr<QueryExecutor>(
+					new EditTaskQueryExecutor(
+						QueryEngine::RemoveDependency(
+							context.at(-dependingTask).getID(),
+							dependentTask)));
+			} else {
+				return std::unique_ptr<QueryExecutor>(
+					new EditTaskQueryExecutor(
+						QueryEngine::AddDependency(
+							context.at(dependingTask).getID(),
+							dependentTask)));
+			}
+		}
+
+		You::Utils::Option<Task::Attachment> attachment;
+		if (!query.attachments.empty()) {
+			assert(!query.description &&
+				!query.deadline &&
+				!priority &&
+				!query.complete &&
+				!query.childTask &&
+				!query.dependingTask &&
+				"Cannot modify attachments with other properties");
+			assert(query.attachments.size() == 1 &&
+				"Controller currently only supports modifying one attachment "
+				"at a time");
+			if (query.attachments[0].add) {
+				attachment = query.attachments[0].path;
+			}
 		}
 
 		return std::unique_ptr<QueryExecutor>(
@@ -243,11 +307,11 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					query.description,
 					query.deadline,
 					priority,
-					dependencies,
+					boost::none,
 					query.complete,
 					boost::none,
-					subtasks,
-					boost::none)));
+					boost::none,
+					attachment)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
 	}
@@ -286,7 +350,7 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 }
 
 std::unique_ptr<QueryExecutor>
-QueryExecutorBuilderVisitor::build(const UNDO_QUERY& query) const {
+QueryExecutorBuilderVisitor::build(const UNDO_QUERY& /*query*/) const {
 	class UndoTaskQueryExecutor : public QueryExecutor {
 	public:
 		explicit UndoTaskQueryExecutor(

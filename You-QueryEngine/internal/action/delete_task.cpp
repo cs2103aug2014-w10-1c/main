@@ -1,4 +1,4 @@
-/// \author A0112054Y
+//@author A0112054Y
 #include "stdafx.h"
 
 #include "../../../You-Utils/log.h"
@@ -8,6 +8,7 @@
 #include "../model.h"
 #include "../controller.h"
 #include "add_task.h"
+#include "batch_add_subtasks.h"
 #include "delete_task.h"
 
 namespace You {
@@ -25,28 +26,78 @@ const std::wstring DeleteTask::logCategory =
 	Query::logCategory + L"[DeleteTask]";
 
 std::unique_ptr<Query> DeleteTask::getReverse() {
-	return std::unique_ptr<Query>(new AddTask(
-		deletedTask.getID(),
-		deletedTask.getDescription(),
-		deletedTask.getDeadline(),
-		deletedTask.getPriority(),
-		deletedTask.getDependencies(),
-		deletedTask.getSubtasks()));
+	if (deletedTask.getSubtasks().empty()) {
+		return std::unique_ptr<Query>(new AddTask(
+			deletedTask.getID(),
+			deletedTask.getDescription(),
+			deletedTask.getDeadline(),
+			deletedTask.getPriority(),
+			deletedTask.getDependencies(),
+			deletedTask.getSubtasks()));
+	} else {
+		std::vector<std::unique_ptr<Query>> subtaskAddQueries;
+		// Construct add query for each subtask
+		for (const auto& cid : deletedTask.getSubtasks()) {
+			auto c = children[cid];
+			subtaskAddQueries.push_back(
+				std::unique_ptr<Query>(
+					new AddTask(
+						cid,
+						c.getDescription(),
+						c.getDeadline(),
+						c.getPriority(),
+						c.getDependencies(),
+						c.getSubtasks())));
+		}
+		return std::unique_ptr<Query>(new BatchAddSubTasks(
+			deletedTask.getID(),
+			deletedTask.getDescription(),
+			deletedTask.getDeadline(),
+			deletedTask.getPriority(),
+			deletedTask.getDependencies(),
+			std::move(subtaskAddQueries)));
+	}
 }
 
-void DeleteTask::makeTransaction() {
-	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"\n")
+void DeleteTask::makeTransaction(const Task::ID id) {
+	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"")
 		% logCategory % id).str();
 	Transaction t(DataStore::get().begin());
 	DataStore::get().erase(id);
 	t.commit();
 }
 
+void DeleteTask::deleteTree(State& state, Task::ID id) {
+	Task c = state.get().graph().getTask(id);
+	children.insert({ id, c });
+	for (auto cid : c.getSubtasks()) {
+		deleteTree(state, cid);
+	}
+	Controller::Graph::deleteTask(state.graph(), id);
+	Controller::Graph::deleteTask(state.sgraph(), id);
+}
+
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
-	Controller::Graph::deleteTask(state.graph(), this->id);
-	Controller::Graph::deleteTask(state.sgraph(), this->id);
-	makeTransaction();
+	if (!deletedTask.getSubtasks().empty()) {
+		deleteTree(state, id);
+		for (const auto& c : children) {
+			makeTransaction(c.first);
+		}
+	} else {
+		Controller::Graph::deleteTask(state.graph(), id);
+		Controller::Graph::deleteTask(state.sgraph(), id);
+		makeTransaction(id);
+	}
+	// If it is a subtask of someone, remove it from parent.
+	if (!deletedTask.isTopLevel()) {
+		auto parent = state.get().graph().getTask(
+			deletedTask.getParent());
+		auto sub = parent.getSubtasks();
+		sub.erase(id);
+		parent.setSubtasks(sub);
+		QueryEngine::UpdateTask(parent)->execute(state);
+	}
 	return this->id;
 }
 

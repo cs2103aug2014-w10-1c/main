@@ -1,7 +1,7 @@
 /// \file get_task.h
 /// Defines action for getting a list of tasks by applying
 /// a filter and a sorter.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_

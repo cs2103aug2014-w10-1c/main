@@ -1,6 +1,6 @@
 /// \file You-QueryEngine/comparator.h
 /// Defines the base class for sorting comparators.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_COMPARATOR_H_

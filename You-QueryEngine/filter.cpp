@@ -1,3 +1,4 @@
+//@author A0112054Y
 #include "stdafx.h"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -106,11 +107,8 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 Filter Filter::isChildOf(Task::ID id) {
 	return Filter([id] (const Task& task) {
-		if (task.getParent() == task.getID()) {
-			return false;
-		} else {
-			return task.getParent() == id;
-		}
+		return !task.isTopLevel() &&
+			task.getParent() == id;
 	});
 }
 

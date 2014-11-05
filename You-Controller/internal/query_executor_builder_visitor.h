@@ -43,6 +43,13 @@ private:
 	static std::unique_ptr<QueryExecutor>
 		build(const You::NLP::ADD_QUERY& query);
 
+	/// Builds a query engine query from the given add syntax tree. This will
+	/// recursively convert subtasks.
+	///
+	/// \param[in] query The syntax tree to build a query from.
+	static std::unique_ptr<You::QueryEngine::Query> buildAddQuery(
+		const You::NLP::ADD_QUERY& query);
+
 	/// Builds a query engine query from the given show syntax tree.
 	///
 	/// \param[in] query The syntax tree to build a query from.

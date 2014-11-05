@@ -1,4 +1,4 @@
-/// \author A0112054Y
+//@author A0112054Y
 #include "stdafx.h"
 
 #include "internal/controller.h"
@@ -10,7 +10,7 @@
 #include "internal/action/update_task.h"
 #include "internal/action/undo.h"
 #include "internal/action/batch_add_subtasks.h"
-#include "internal/action/batch_delete_subtasks.h"
+#include "internal/action/batch_add_dependencies.h"
 #include "internal/model.h"
 #include "api.h"
 
@@ -19,31 +19,17 @@ namespace QueryEngine {
 
 const std::wstring Query::logCategory = L"[QE]";
 
+using Internal::Action::AddTask;
+using Internal::Action::BatchAddSubTasks;
+using Internal::Action::BatchAddDependencies;
+using Internal::Action::GetTask;
+using Internal::Action::DeleteTask;
+using Internal::Action::Undo;
+using Internal::Controller;
+
 std::unique_ptr<Query>
 Query::getReverse() {
 	throw Exception::NotUndoAbleException();
-}
-
-std::unique_ptr<Query>
-QueryEngine::BatchAddSubTasks(
-	const Task::Description& description,
-	const Task::Time& deadline,
-	const Task::Priority& priority,
-	const Task::Dependencies& dependencies,
-	std::vector<std::unique_ptr<Query>>&& subtasks) {
-	using BatchAddSubTasks = Internal::Action::BatchAddSubTasks;
-	return std::unique_ptr<Query>(new BatchAddSubTasks(
-		description,
-		deadline,
-		priority,
-		dependencies,
-		std::move(subtasks)));
-}
-
-std::unique_ptr<Query>
-QueryEngine::BatchDeleteSubTasks(Task::ID id) {
-	using BatchDeleteSubtasks = Internal::Action::BatchDeleteSubTasks;
-	return std::unique_ptr<Query>(new BatchDeleteSubtasks(id));
 }
 
 std::unique_ptr<Query>
@@ -51,30 +37,41 @@ QueryEngine::AddTask(
 	const Task::Description& description,
 	const Task::Time& deadline,
 	const Task::Priority& priority,
-	const Task::Dependencies& dependencies,
-	const Task::Subtasks& subtasks) {
-	using AddTask = Internal::Action::AddTask;
-	return std::unique_ptr<Query>(new AddTask(description, deadline,
-		priority, dependencies, subtasks));
+	std::vector<std::unique_ptr<Query>>&& dependencies,
+	std::vector<std::unique_ptr<Query>>&& subtasks) {
+	assert(!(dependencies.size() > 0 && subtasks.size() > 0));
+	if (dependencies.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddDependencies(
+				description, deadline, priority,
+				std::move(dependencies), {}));
+	} else if (subtasks.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddSubTasks(
+				description, deadline, priority,
+				{}, std::move(subtasks)));
+	} else {
+		return std::unique_ptr<Query>(
+			new Internal::Action::AddTask(
+				description, deadline, priority, {}, {}));
+	}
 }
 
 std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter) {
-	using GetTask = Internal::Action::GetTask;
-	return std::unique_ptr<Query>(new GetTask(filter));
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter));
 }
 
 std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter,
 	const Comparator& comparator) {
-	using GetTask = Internal::Action::GetTask;
-	return std::unique_ptr<Query>(new GetTask(filter, comparator));
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter, comparator));
 }
 
 std::unique_ptr<Query>
 QueryEngine::DeleteTask(Task::ID id) {
-	using DeleteTask = Internal::Action::DeleteTask;
-	return std::unique_ptr<Query>(new DeleteTask(id));
+	return std::unique_ptr<Query>(
+		new Internal::Action::DeleteTask(id));
 }
 
 std::unique_ptr<Query>
@@ -94,9 +91,50 @@ QueryEngine::UpdateTask(Task::ID id,
 }
 
 std::unique_ptr<Query>
+QueryEngine::UpdateTask(const Task& task) {
+	using UpdateTask = Internal::Action::UpdateTask;
+	return std::unique_ptr<Query>(new UpdateTask(task));
+}
+
+std::unique_ptr<Query>
 QueryEngine::Undo() {
-	using Undo = Internal::Action::Undo;
-	return std::unique_ptr<Query>(new Undo());
+	return std::unique_ptr<Query>(new Internal::Action::Undo());
+}
+
+std::unique_ptr<Query>
+QueryEngine::AddDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.insert(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.erase(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::AddSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.insert(subtask);
+	task.setSubtasks(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.erase(subtask);
+	task.setSubtasks(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
 }
 
 Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
@@ -112,7 +150,7 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 }
 
 std::wstring ToString(const Task& task) {
-	using Serializer = Internal::TaskSerializer;
+	using Serializer = Controller::Serializer;
 	auto serialized = Serializer::serialize(task);
 	std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%][%8%]";
 	return (boost::wformat(TASK_FORMAT)

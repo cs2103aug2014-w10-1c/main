@@ -9,13 +9,11 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-namespace {
-	using TGC = TaskGraphController;
-	using Vertex = TaskGraph::Vertex;
-	using Graph = TaskGraph::Graph;
-	using VIterator = TaskGraph::VIterator;
-	using DataStore = You::DataStore::DataStore;
-}
+using TGC = TaskGraphController;
+using Vertex = TaskGraph::Vertex;
+using Graph = TaskGraph::Graph;
+using VIterator = TaskGraph::VIterator;
+using DataStore = You::DataStore::DataStore;
 
 Task::ID TaskGraphController::loadFromFile(TaskGraph& graph) {
 	Task::ID maxID = 0;
@@ -69,43 +67,31 @@ void TaskGraphController::connectEdge(TaskGraph& g,
 	boost::add_edge(cid, pid, g.graph);
 }
 
+void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
+	Task task;
 
-void TaskGraphController::deleteTaskTree(TaskGraph& g, const Task::ID id) {
-	auto task = g.getTask(id);
-	auto children = g.getAdjacentTasks(task);
-
-	for (auto& cid : children) {
-		deleteTaskTree(g, cid);
+	try {
+		task = g.getTask(id);
+	} catch (const Exception::TaskNotFoundException& e) {
+		return;
 	}
 
-	g.taskTable.erase(id);
-	rebuildGraph(g);
-}
-
-void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
-	auto task = g.getTask(id);
-	auto children = g.getAdjacentTasks(task);
-
-	// Connect all children to each parent and remove this task
-	// from their neighbor.
-	for (auto& t : g.asTaskList()) {
-		auto parentChildren = g.getAdjacentTasks(t);
-		if (parentChildren.find(task.getID()) != parentChildren.end()) {
-			parentChildren.erase(task.getID());
-			for (const auto& cid : children) {
-				parentChildren.insert(cid);
+	/// Reparent the graph
+	if (g.type == TaskGraph::GraphType::DEPENDENCY) {
+		auto children = task.getDependencies();
+		for (auto& t : g.asTaskList()) {
+			if (t.isDependOn(task.getID())) {
+				auto dep = t.getDependencies();
+				for (const auto& c : children) {
+					dep.insert(c);
+				}
+				t.setDependencies(dep);
+				g.taskTable[t.getID()] = t;
 			}
 		}
-		if (g.type == TaskGraph::GraphType::DEPENDENCY) {
-			t.setDependencies(parentChildren);
-		} else {
-			t.setSubtasks(parentChildren);
-		}
-		g.taskTable[t.getID()] = t;
 	}
 
 	g.taskTable.erase(id);
-	rebuildGraph(g);
 }
 
 void TaskGraphController::updateTask(TaskGraph& g, const Task& task) {

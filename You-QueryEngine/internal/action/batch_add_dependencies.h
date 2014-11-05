@@ -1,10 +1,10 @@
 /// \file batch_add_subtasks.h
-/// Defines action for adding a batch of subtasks.
+/// Defines action for adding a batch of dependencies.
 //@author A0112054Y
 
 #pragma once
-#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
-#define YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_
 
 #include "../../api.h"
 
@@ -14,43 +14,42 @@ namespace Internal {
 namespace Action {
 
 /// Action for adding a new task
-class BatchAddSubTasks : public Query {
+class BatchAddDependencies : public Query {
 public:
 	/// Constructor that use datastore to inquire new id
-	explicit BatchAddSubTasks(
+	explicit BatchAddDependencies(
 		const Task::Description& description,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>>&& subtasks)
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		const Task::Subtasks& subtasks)
 	: insertedID(-1), description(description), deadline(deadline),
-	  priority(priority), dependencies(dependencies),
-	  subtasks(std::move(subtasks)) {}
+	  priority(priority), dependencies(std::move(dependencies)),
+	  subtasks(subtasks) {}
 
 	/// Constructor for already known id
-	explicit BatchAddSubTasks(
+	explicit BatchAddDependencies(
 		Task::ID id,
 		const Task::Description& description,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>>&& subtasks)
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		const Task::Subtasks subtasks)
 	: insertedID(id), description(description), deadline(deadline),
-		priority(priority), dependencies(dependencies),
-		subtasks(std::move(subtasks)) {}
+		priority(priority), dependencies(std::move(dependencies)),
+		subtasks(subtasks) {}
 
 	/// Disable assignment operator
-	BatchAddSubTasks& operator=(const BatchAddSubTasks&) = delete;
+	BatchAddDependencies& operator=(const BatchAddDependencies&) = delete;
 
 	/// Destructor
-	virtual ~BatchAddSubTasks() = default;
+	virtual ~BatchAddDependencies() = default;
 
 protected:
-	/// The reverse of batch addition is batch deletion.
-	std::unique_ptr<Query> getReverse() override;
-
 	/// The header of the log string
 	static const std::wstring logCategory;
+
+	std::unique_ptr<Query> getReverse() override;
 
 private:
 	/// Execute add task.
@@ -60,8 +59,8 @@ private:
 	const Task::Description description;  ///< Description.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
-	const Task::Dependencies dependencies;  ///< Dependencies.
-	std::vector<std::unique_ptr<Query>> subtasks;	 ///< Subtasks
+	std::vector<std::unique_ptr<Query>> dependencies;  ///< Dependencies
+	const Task::Subtasks subtasks;  ///< Subtasks.
 };
 
 }  // namespace Action
@@ -69,4 +68,4 @@ private:
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_

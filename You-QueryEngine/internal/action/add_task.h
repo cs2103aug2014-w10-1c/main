@@ -1,6 +1,6 @@
 /// \file add_task.h
 /// Defines action for adding tasks.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_ACTION_ADD_TASK_H_
@@ -17,6 +17,8 @@ namespace Action {
 class AddTask : public Query {
 	friend class BatchAddSubTasks;
 	friend class BatchDeleteSubTasks;
+	friend class BatchAddDependencies;
+
 public:
 	/// Constructor that use datastore to inquire new id
 	explicit AddTask(Task::Description description, Task::Time deadline,
@@ -53,7 +55,7 @@ private:
 	void makeTransaction(const Task& newTask) const;
 	void ensureDependencyIsValid() const;
 	void ensureSubtasksIsValid() const;
-	void updateParentPointer() const;
+	void updateParentPointer(State& state) const;
 
 	/// Execute add task.
 	Response execute(State& tasks) override;

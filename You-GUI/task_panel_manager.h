@@ -41,12 +41,9 @@ public:
 	/// Deletes a task.
 	void deleteTask(Task::ID taskID);
 
-
 	void repaintTasks();
 
-	/// Constructs a tree from a task and its subtasks
-	std::unique_ptr<QTreeWidgetItem> makeTree(
-		const Task& task, const std::map<Task::ID, Task> taskMap);
+	std::unique_ptr<QTreeWidgetItem> addTaskTree(const Task& task);
 
 	/// Appends a child task to an existing parent task
 	void addSubtask(const Task& parentTask, const Task& childTask);

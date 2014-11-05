@@ -18,7 +18,7 @@
 /// Contains the test classes for QueryEngine.
 /// @}
 
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_API_H_
@@ -34,8 +34,7 @@
 namespace You {
 namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
-namespace Internal { namespace Action { class Undo;
-	class BatchAddSubTasks; } class State; }
+namespace Internal { class State; }
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
@@ -46,8 +45,10 @@ typedef boost::variant<std::vector<Task>, Task,
 /// as a parameter and return a Response\n
 class Query {
 	friend class QueryEngine;
-	friend class Internal::Action::Undo;
-	friend class Internal::Action::BatchAddSubTasks;
+public:
+	/// Execute the query on a state.
+	/// \pre The state has been loaded and valid.
+	virtual Response execute(Internal::State& state) = 0;
 
 protected:
 	/// Get the reverse of this query for undo.
@@ -55,10 +56,6 @@ protected:
 
 	/// String appended before each log message.
 	static const std::wstring logCategory;
-
-	/// Execute the query on a state.
-	/// \pre The state has been loaded and valid.
-	virtual Response execute(Internal::State& state) = 0;
 };
 
 /// Utility class for QueryEngine \n
@@ -78,24 +75,12 @@ public:
 
 	/// Construct a batch addition of task with its
 	/// subtask.
-	static std::unique_ptr<Query> BatchAddSubTasks(
-		const Task::Description& description,
-		const Task::Time& deadline,
-		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		std::vector<std::unique_ptr<Query>>&& subtasks
-	);
-
-	/// Construct a batch delete subtask query.
-	static std::unique_ptr<Query> BatchDeleteSubTasks(
-		Task::ID id);
-
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
-		const Task::Dependencies& dependencies,
-		const Task::Subtasks& subtasks);
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		std::vector<std::unique_ptr<Query>>&& subtasks);
 
 	/// Construct filter task without sort query
 	static std::unique_ptr<Query> GetTask(const Filter& filter);
@@ -117,6 +102,25 @@ public:
 		You::Utils::Option<Task::ID> parent,
 		You::Utils::Option<Task::Subtasks> subtasks,
 		You::Utils::Option<Task::Attachment> attachment);
+
+	/// Construct adding dependency query.
+	static std::unique_ptr<Query> AddDependency(Task::ID id,
+		Task::ID dependency);
+
+	/// Construct  removind dependency query.
+	static std::unique_ptr<Query> RemoveDependency(Task::ID id,
+		Task::ID dependency);
+
+	/// Construct add subtask query.
+	static std::unique_ptr<Query> AddSubtask(Task::ID id,
+		Task::ID subtask);
+
+	/// Construct remove subtask query.
+	static std::unique_ptr<Query> RemoveSubtask(Task::ID id,
+		Task::ID subtask);
+
+	/// Shortest version of update query.
+	static std::unique_ptr<Query> UpdateTask(const Task& task);
 
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();

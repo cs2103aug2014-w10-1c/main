@@ -1,6 +1,6 @@
 /// \file task_model.h
 /// Defines the task model class.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_TASK_MODEL_H_
@@ -59,9 +59,20 @@ public:
 	Attachment getAttachment() const { return attachment; }
 	/// @}
 
-	/// Check dependency
-	/// \returns true if id is in the dependency, false otherwise.
+	/// Get subtasks as Task object.
+	std::vector<Task> getSubtasksObject() const;
+
+	/// Get dependencies as Task object.
+	std::vector<Task> getDependenciesObject() const;
+
+	/// Check wheter this task depends on a task.
+	/// \returns true if id is in the dependency.
 	bool isDependOn(const Task::ID id) const;
+
+	/// Check whether this task is a toplevel task.
+	/// A task is a toplevel task if it does not have any parent.
+	/// \returns true if the task is toplevel.
+	bool Task::isTopLevel() const;
 
 	/// \name Field Setters
 	/// @{
@@ -97,7 +108,7 @@ private:
 	/// The all-field constructor called by the builder
 	explicit Task(ID id, const Description& description, Time deadline,
 		const Dependencies& dependencies, const Priority& priority, ID parent,
-		const Subtasks& subtasks, const Attachment&)
+		const Subtasks& subtasks, const Attachment& attachment)
 	: id(id), description(description), deadline(deadline),
 	  dependencies(dependencies), priority(priority), completed(false),
 	  parent(parent), subtasks(subtasks), attachment(attachment) {}

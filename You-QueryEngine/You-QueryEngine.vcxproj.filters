@@ -93,11 +93,11 @@
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action\batch_add_subtasks.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\action\batch_add_dependencies.h">
+      <Filter>Header Files\internal\action</Filter>
     </ClInclude>
-    <ClInclude Include="internal\action\batch_delete_subtasks.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\action\batch_add_subtasks.h">
+      <Filter>Header Files\internal\action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,11 +146,11 @@
     <ClCompile Include="internal\model\task_graph.cpp">
       <Filter>Source Files\internal\model</Filter>
     </ClCompile>
-    <ClCompile Include="internal\action\batch_add_subtasks.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="internal\action\batch_add_dependencies.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
-    <ClCompile Include="internal\action\batch_delete_subtasks.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="internal\action\batch_add_subtasks.cpp">
+      <Filter>Source Files\internal\action</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

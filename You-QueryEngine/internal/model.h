@@ -1,6 +1,6 @@
 /// \file You-QueryEngine/internal/model.h
 /// Import various model classes.
-/// \author A0112054Y
+//@author A0112054Y
 
 #pragma once
 #ifndef YOU_QUERYENGINE_INTERNAL_MODEL_H_
