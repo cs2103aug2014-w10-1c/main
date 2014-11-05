@@ -137,6 +137,7 @@ std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::addTaskTree(
 	for (const Task& subtask : task.getSubtasksObject()) {
 		root->addChild(addTaskTree(subtask).release());
 	}
+	root->setExpanded(true);
 	return root;
 }
 
