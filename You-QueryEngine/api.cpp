@@ -133,7 +133,7 @@ QueryEngine::RemoveSubtask(Task::ID id, Task::ID subtask) {
 	Task task = Internal::State::get().graph().getTask(id);
 	Task::Subtasks subtasks = task.getSubtasks();
 	subtasks.erase(subtask);
-	task.setDependencies(subtasks);
+	task.setSubtasks(subtasks);
 	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
 }
 
