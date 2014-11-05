@@ -150,10 +150,6 @@ void MainWindow::sendQuery() {
 	} catch (You::Controller::ParserException& e) {
 		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
-	} catch (...) {
-		ui.statusMessage->setText(UNKNOWN_EXCEPTION_MESSAGE);
-		pixmap.load(RESOURCE_RED, 0);
-		assert(false);
 	}
 
 	/// Selects the item if it was originally selected and still exists
