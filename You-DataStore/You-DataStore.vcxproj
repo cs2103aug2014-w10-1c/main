@@ -94,7 +94,6 @@
     <ClInclude Include="transaction.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="exceptions\xml_parse_error_exception.cpp" />
     <ClCompile Include="internal\constants.cpp" />
     <ClCompile Include="internal\operations\branch_operation.cpp" />
     <ClCompile Include="datastore.cpp" />

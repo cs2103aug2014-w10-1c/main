@@ -10,19 +10,14 @@ namespace DataStore {
 
 /// The exception thrown if there is an error when parsing data.xml
 class XmlParseErrorException : public DataStoreException {
-public:
-	/// Constructor
-	///
-	/// \param[in] errorMessage The error message
-	explicit XmlParseErrorException(std::string errorMessage);
+};
 
-	/// Get the error message
-	///
-	/// \return The error message
-	std::string getErrorMessage();
+/// The exception thrown if there is an I/O error when parsing data.xml
+class XmlIOException : public XmlParseErrorException {
+};
 
-private:
-	std::string errorMessage;
+/// The exception thrown if data.xml is not well-formed XML
+class NotWellFormedXmlException : public XmlParseErrorException {
 };
 
 }  // namespace DataStore
