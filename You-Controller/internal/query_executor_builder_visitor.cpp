@@ -224,7 +224,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!query.dependingTask &&
 				query.attachments.empty() &&
 				"Cannot change subtasks with other properties");
-			int childTask = query.childTask;
+			int childTask = query.childTask.get();
 			if (childTask < 0) {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
@@ -248,7 +248,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				query.attachments.empty() &&
 				"Cannot change dependencies with other properties");
 			Task::ID dependentTask = task;
-			int dependingTask = query.dependingTask;
+			int dependingTask = query.dependingTask.get();
 			if (dependingTask < 0) {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
