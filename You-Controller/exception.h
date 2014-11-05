@@ -35,6 +35,10 @@ typedef You::NLP::ParseErrorException ParseErrorException;
 
 typedef You::DataStore::XmlParseErrorException XmlParseErrorException;
 
+typedef You::DataStore::XmlIOException XmlIOException;
+
+typedef You::DataStore::NotWellFormedXmlException NotWellFormedXmlException;
+
 }  // namespace Controller
 }  // namespace You
 
