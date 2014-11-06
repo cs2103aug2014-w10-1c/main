@@ -14,19 +14,23 @@ namespace {
 namespace You {
 namespace QueryEngine {
 
-void Task::setDescription(const Task::Description &description) {
+void Task::setDescription(const Description& description) {
 	this->description = description;
 }
 
-void Task::setDeadline(Task::Time time) {
-	this->deadline = time;
+void Task::setStartTime(const Time& startTime) {
+	this->startTime = startTime;
 }
 
-void Task::setDependencies(const Task::Dependencies &dependencies) {
+void Task::setDeadline(const Time& deadline) {
+	this->deadline = deadline;
+}
+
+void Task::setDependencies(const Dependencies& dependencies) {
 	this->dependencies = dependencies;
 }
 
-void Task::setPriority(Task::Priority priority) {
+void Task::setPriority(Priority priority) {
 	this->priority = priority;
 }
 
@@ -38,15 +42,15 @@ void Task::setSubtasks(const Subtasks& subtasks) {
 	this->subtasks = subtasks;
 }
 
-void Task::setParent(const Task::ID parent) {
+void Task::setParent(const ID parent) {
 	this->parent = parent;
 }
 
-void Task::setAttachment(const Task::Attachment& attachment) {
+void Task::setAttachment(const Attachment& attachment) {
 	this->attachment = attachment;
 }
 
-bool Task::isDependOn(const Task::ID id) const {
+bool Task::isDependOn(const ID id) const {
 	return dependencies.find(id) != dependencies.end();
 }
 
@@ -82,12 +86,13 @@ const Task::Attachment Task::DEFAULT_ATTACHMENT = L"";
 bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;
 	bool descriptionIsEqual = description == task.description;
+	bool startTimeIsEqual = startTime == task.startTime;
+	bool deadlineIsEqual = deadline == task.deadline;
 	bool priorityIsEqual = priority == task.priority;
 	bool dependenciesIsEqual = dependencies == task.dependencies;
-	bool deadlineIsEqual = deadline == task.deadline;
 	bool completedIsEqual = completed == task.completed;
 	bool subtasksIsEqual = subtasks == task.subtasks;
-	return idIsEqual && descriptionIsEqual && priorityIsEqual
+	return idIsEqual && descriptionIsEqual && startTimeIsEqual && priorityIsEqual
 		&& dependenciesIsEqual && deadlineIsEqual && subtasksIsEqual
 		&& completedIsEqual;
 }
