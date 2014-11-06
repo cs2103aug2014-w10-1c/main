@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "internal/model/state.h"
+#include "internal/state.h"
 #include "filter.h"
 
 namespace You {

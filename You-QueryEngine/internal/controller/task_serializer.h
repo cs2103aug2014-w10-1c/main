@@ -6,7 +6,7 @@
 #ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
 #define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
 
-#include "../model.h"
+#include "../../task_model.h"
 
 namespace You {
 namespace QueryEngine {

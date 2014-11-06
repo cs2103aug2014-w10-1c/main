@@ -10,7 +10,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include "../../exception.h"
-#include "../model.h"
+#include "../task_graph.h"
 
 namespace You {
 namespace QueryEngine {

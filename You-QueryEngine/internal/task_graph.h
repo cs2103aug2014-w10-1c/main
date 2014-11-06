@@ -9,7 +9,7 @@
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include "../../task_model.h"
+#include "../task_model.h"
 
 namespace You {
 namespace QueryEngine {

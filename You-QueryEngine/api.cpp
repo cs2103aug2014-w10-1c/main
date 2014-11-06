@@ -1,7 +1,6 @@
 //@author A0112054Y
 #include "stdafx.h"
 
-#include "internal/controller.h"
 #include "internal/action/add_task.h"
 #include "internal/action/update_task.h"
 #include "internal/action/delete_task.h"
@@ -11,7 +10,8 @@
 #include "internal/action/undo.h"
 #include "internal/action/batch_add_subtasks.h"
 #include "internal/action/batch_add_dependencies.h"
-#include "internal/model.h"
+#include "internal/state.h"
+#include "internal/controller.h"
 #include "api.h"
 
 namespace You {
