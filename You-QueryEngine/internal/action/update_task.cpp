@@ -145,6 +145,7 @@ Response UpdateTask::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
 		logCategory % id).str();
 	previous = state.graph().getTask(id);
+	auto currentSubtasks = previous.getSubtasksObject();
 	auto updated = buildUpdatedTask(state);
 	// Has completed/uncompleted
 	if (completed && (previous.isCompleted() != completed.get())) {
@@ -156,6 +157,16 @@ Response UpdateTask::execute(State& state) {
 	}
 	// Reparent every subtask.
 	if (subtasks) {
+		// Set removed subtasks as toplevel task.
+		for (const auto& c : currentSubtasks) {
+			bool isRemovedFromSubtask =
+				subtasks.get().find(c.getID())
+					== subtasks.get().end();
+			if (isRemovedFromSubtask) {
+				reparentTask(state, c.getID(), c.getID());
+			}
+		}
+		// Reparent new subtasks
 		for (auto cid : subtasks.get()) {
 			reparentTask(state, cid, id);
 		}
