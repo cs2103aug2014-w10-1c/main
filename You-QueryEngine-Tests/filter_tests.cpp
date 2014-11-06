@@ -6,7 +6,7 @@
 #include "common.h"
 #include "mocks/task.h"
 #include "mocks/task_list.h"
-#include "internal/model.h"
+#include "internal/state.h"
 #include "internal/controller.h"
 #include "api.h"
 #include "filter.h"

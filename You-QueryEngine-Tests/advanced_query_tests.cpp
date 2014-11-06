@@ -9,7 +9,7 @@
 #include "mocks/task_list.h"
 #include "exception.h"
 #include "internal/controller/task_builder.h"
-#include "internal/model.h"
+#include "internal/state.h"
 #include "internal/action/update_task.h"
 #include "api.h"
 

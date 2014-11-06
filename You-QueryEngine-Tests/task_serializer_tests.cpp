@@ -78,7 +78,7 @@ public:
 		Task task = getMockTask();
 		auto serialized = TaskSerializer::serialize(task);
 		auto deserialized = TaskSerializer::deserialize(serialized);
-		Assert::AreEqual(deserialized, task);
+		Assert::IsTrue(deserialized == task);
 	}
 
 	TEST_METHOD(deserializeEmptyTaskDefaultedToNotCompleted) {

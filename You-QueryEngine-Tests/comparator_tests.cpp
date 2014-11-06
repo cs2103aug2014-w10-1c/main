@@ -3,7 +3,7 @@
 #include "CppUnitTest.h"
 
 #include "common.h"
-#include "internal/model.h"
+#include "internal/state.h"
 #include "internal/controller.h"
 #include "api.h"
 #include "comparator.h"

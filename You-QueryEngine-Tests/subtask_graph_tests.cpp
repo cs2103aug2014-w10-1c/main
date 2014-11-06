@@ -4,8 +4,8 @@
 
 #include "common.h"
 #include "mocks/task.h"
+#include "internal/state.h"
 #include "internal/controller.h"
-#include "internal/model.h"
 #include "exception.h"
 #include "api.h"
 
