@@ -31,13 +31,14 @@ private:
 	QVector<HighlightingRule> paramHighlightingRules;
 	QVector<HighlightingRule> orderHighlightingRules;
 	QVector<HighlightingRule> orderPrefixHighlightingRule;
-
+	QVector<HighlightingRule> hashtagHighlightingRule;
 
 	QTextCharFormat commandNameFormat;
 	QTextCharFormat parameterNameFormat;
 	QTextCharFormat parameterPrefixFormat;
 	QTextCharFormat orderPrefixFormat;
 	QTextCharFormat orderNameFormat;
+	QTextCharFormat hashtagFormat;
 };
 
 }  // namespace GUI

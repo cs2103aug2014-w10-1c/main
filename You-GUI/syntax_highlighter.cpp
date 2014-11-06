@@ -37,6 +37,9 @@ void SyntaxHighlighter::setColors() {
 
 	orderPrefixFormat.setFontWeight(QFont::Bold);
 	orderPrefixFormat.setForeground(Qt::darkGreen);
+
+	hashtagFormat.setFontWeight(QFont::Bold);
+	hashtagFormat.setForeground(Qt::darkCyan);
 }
 
 void SyntaxHighlighter::buildRules() {
@@ -67,6 +70,11 @@ void SyntaxHighlighter::buildRules() {
 	wss << L"\\s+" << ORDER_PREFIX << L"\\s+";
 	orderPrefixHighlightingRule.append(makeRule(wss.str(),
 		orderPrefixFormat, orderPrefixFormat));
+
+	wss.str(L"");
+	wss << L"\\s+" << HASHTAG_PREFIX << L"\\S+\\s+";
+	hashtagHighlightingRule.append(makeRule(wss.str(),
+		hashtagFormat, hashtagFormat));
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
@@ -121,6 +129,17 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 			setFormat(index, length - offset, rule.format);
 			setFormat(index + length - offset,
 				length - offset, rule.secondaryFormat);
+			index = expression.indexIn(text, index + length);
+		}
+	}
+
+	// Highlights hashtags
+	for (const auto& rule : hashtagHighlightingRule) {
+		QRegExp expression(rule.pattern);
+		int index = expression.indexIn(text);
+		while (index >= 0) {
+			int length = expression.matchedLength();
+			setFormat(index, length, rule.format);
 			index = expression.indexIn(text, index + length);
 		}
 	}
