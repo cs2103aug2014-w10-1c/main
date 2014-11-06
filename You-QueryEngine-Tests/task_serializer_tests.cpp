@@ -4,6 +4,7 @@
 
 #include "internal/controller/task_builder.h"
 #include "internal/controller/task_serializer.h"
+#include "exception.h"
 
 #include "common.h"
 
@@ -78,6 +79,35 @@ public:
 		auto serialized = TaskSerializer::serialize(task);
 		auto deserialized = TaskSerializer::deserialize(serialized);
 		Assert::AreEqual(deserialized, task);
+	}
+
+	TEST_METHOD(deserializeEmptyTaskDefaultedToNotCompleted) {
+		TaskSerializer::STask serialized;
+		serialized.insert({
+			TaskSerializer::KEY_ID, L"0"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DESCRIPTION, L"Any"
+		});
+		Task task = TaskSerializer::deserialize(serialized);
+		Assert::IsFalse(task.isCompleted());
+	}
+
+	TEST_METHOD(deserializeInvalidFieldShouldReturnWhatIsAvailable) {
+		TaskSerializer::STask serialized;
+		serialized.insert({
+			TaskSerializer::KEY_ID, L"0"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DESCRIPTION, L"Wrong!"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DEADLINE, L"Wrong!"
+		});
+		Task task = TaskSerializer::deserialize(serialized);
+		Assert::IsTrue(task.getID() == Task::ID(0L));
+		Assert::AreEqual(task.getDescription(),
+			std::wstring(L"Wrong!"));
 	}
 };
 }  // namespace UnitTests

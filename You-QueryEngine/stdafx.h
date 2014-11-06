@@ -11,11 +11,12 @@
 
 #include <cstdint>
 #include <functional>
-#include <vector>
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <unordered_set>
+#include <unordered_map>
+#include <vector>
 
 #pragma warning(push)
 #pragma warning(disable: 4510 4512 4555 4610)
