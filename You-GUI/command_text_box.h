@@ -25,6 +25,7 @@ protected:
 	void keyPressEvent(QKeyEvent *e);
 	void focusInEvent(QFocusEvent *e);
 	void wheelEvent(QWheelEvent *e);
+	void dropEvent(QDropEvent * e);
 	private slots:
 	void insertCompletion(const QString &completion);
 
