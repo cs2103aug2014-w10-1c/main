@@ -33,9 +33,9 @@ Response BatchAddSubTasks::execute(State& state) {
 
 	auto addParentquery = (insertedID == -1)
 		? std::unique_ptr<AddTask>(new AddTask(description,
-			deadline, priority, dependencies, theSubtasks))
+			startTime, deadline, priority, dependencies, theSubtasks))
 		: std::unique_ptr<AddTask>(new AddTask(insertedID, description,
-			deadline, priority, dependencies, theSubtasks));
+			startTime, deadline, priority, dependencies, theSubtasks));
 
 	Response r = addParentquery->execute(state);
 	newTask = boost::get<Task>(r);

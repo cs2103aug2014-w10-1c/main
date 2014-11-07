@@ -21,18 +21,18 @@ class AddTask : public Query {
 
 public:
 	/// Constructor that use datastore to inquire new id
-	explicit AddTask(Task::Description description, Task::Time deadline,
-		Task::Priority priority, Task::Dependencies dependencies,
-		Task::Subtasks subtasks)
-	: insertedID(-1), description(description),
+	explicit AddTask(Task::Description description, Task::Time startTime,
+		Task::Time deadline, Task::Priority priority,
+		Task::Dependencies dependencies, Task::Subtasks subtasks)
+	: insertedID(-1), description(description), startTime(startTime),
 	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(subtasks) {}
 
 	/// Constructor for already known id
 	explicit AddTask(Task::ID id, Task::Description description,
-		Task::Time deadline, Task::Priority priority,
+		Task::Time startTime, Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies, Task::Subtasks subtasks)
-	: insertedID(id), description(description), deadline(deadline),
+	: insertedID(id), description(description), deadline(deadline), startTime(startTime),
 	  priority(priority), dependencies(dependencies), subtasks(subtasks) {}
 
 	/// Disable assignment operator
@@ -62,6 +62,7 @@ private:
 
 	Task::ID insertedID;  ///< Inserted ID
 	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Deadline.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.

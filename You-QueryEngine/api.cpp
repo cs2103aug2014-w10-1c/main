@@ -43,16 +43,16 @@ QueryEngine::AddTask(
 	assert(!(dependencies.size() > 0 && subtasks.size() > 0));
 	if (dependencies.size() > 0) {
 		return std::unique_ptr<Query>(new BatchAddDependencies(
-				description, deadline, priority,
+				description, startTime, deadline, priority,
 				std::move(dependencies), {}));
 	} else if (subtasks.size() > 0) {
 		return std::unique_ptr<Query>(new BatchAddSubTasks(
-				description, deadline, priority,
+				description, startTime, deadline, priority,
 				{}, std::move(subtasks)));
 	} else {
 		return std::unique_ptr<Query>(
 			new Internal::Action::AddTask(
-				description, deadline,
+				description, startTime, deadline,
 				priority, {}, {}));
 	}
 }

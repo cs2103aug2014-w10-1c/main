@@ -19,6 +19,7 @@ public:
 	/// Constructor that use datastore to inquire new id
 	explicit BatchAddDependencies(
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		std::vector<std::unique_ptr<Query>>&& dependencies,
@@ -31,6 +32,7 @@ public:
 	explicit BatchAddDependencies(
 		Task::ID id,
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		std::vector<std::unique_ptr<Query>>&& dependencies,
@@ -57,6 +59,7 @@ private:
 
 	Task::ID insertedID;   ///< Inserted ID of the parent task.
 	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Deadline.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	std::vector<std::unique_ptr<Query>> dependencies;  ///< Dependencies

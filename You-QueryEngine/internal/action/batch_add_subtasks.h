@@ -19,6 +19,7 @@ public:
 	/// Constructor that use datastore to inquire new id
 	explicit BatchAddSubTasks(
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
@@ -31,6 +32,7 @@ public:
 	explicit BatchAddSubTasks(
 		Task::ID id,
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
@@ -58,6 +60,7 @@ private:
 
 	Task::ID insertedID;   ///< Inserted ID of the parent task.
 	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Start time.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.
