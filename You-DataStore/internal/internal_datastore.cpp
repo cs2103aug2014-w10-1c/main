@@ -28,8 +28,7 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
-	// TODO(digawp): commit not the latest transaction
-	// assume only transaction on top of the stack may be committed
+	// Only transaction on top of the stack may be committed
 	assert(*transactionStack.top().lock() == transaction);
 
 	auto self = transactionStack.top();
@@ -52,7 +51,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
-	// TODO(digawp): rollback not the latest transaction
+	// Can only rollback the latest transaction
 	assert(*(transactionStack.top().lock()) == transaction);
 	transactionStack.pop();
 }
