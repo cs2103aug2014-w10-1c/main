@@ -95,9 +95,6 @@ private:
 
 	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
-
-	/// The stack of committed transactions.
-	std::stack<std::weak_ptr<Transaction>> committedTransaction;
 };
 
 }  // namespace Internal

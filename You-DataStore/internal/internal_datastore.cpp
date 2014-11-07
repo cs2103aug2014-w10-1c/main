@@ -41,7 +41,6 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		temp.reset(document);
 		executeTransaction(transaction, temp);
 		document.reset(temp);
-		committedTransaction.push(self);
 		saveData();
 	} else {
 		// There is a transaction before it that is yet to be committed.
