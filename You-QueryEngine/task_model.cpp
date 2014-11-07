@@ -77,6 +77,7 @@ std::vector<Task> Task::getDependenciesObject() const {
 const Task::ID Task::DEFAULT_ID = 0L;
 const Task::Description Task::DEFAULT_DESCRIPTION = L"";
 const Task::Time Task::NEVER = ptime(date(max_date_time), hours(0));
+const Task::Time Task::DEFAULT_START_TIME = Task::NEVER;
 const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;

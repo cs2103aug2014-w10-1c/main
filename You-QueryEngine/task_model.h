@@ -93,6 +93,7 @@ public:
 	static const ID DEFAULT_ID;
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time NEVER;
+	static const Time DEFAULT_START_TIME;
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
