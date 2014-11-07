@@ -9,7 +9,7 @@ namespace DataStore {
 namespace Internal {
 
 PostOperation::PostOperation(std::wstring branch, std::wstring id,
-const KeyValuePairs& kvp) {
+	const KeyValuePairs& kvp) {
 	branchName = branch;
 	nodeId = id;
 	task = kvp;

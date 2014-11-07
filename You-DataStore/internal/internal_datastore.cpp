@@ -58,7 +58,7 @@ void DataStore::onTransactionRollback(Transaction& transaction) {
 }
 
 void DataStore::post(std::wstring branch, std::wstring id,
-const KeyValuePairs& kvp) {
+	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::Operation> operation =
@@ -70,7 +70,7 @@ const KeyValuePairs& kvp) {
 }
 
 void DataStore::put(std::wstring branch, std::wstring id,
-const KeyValuePairs& kvp) {
+	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::Operation> operation =

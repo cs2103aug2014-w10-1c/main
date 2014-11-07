@@ -24,8 +24,11 @@ bool Transaction::operator==(Transaction& other) {
 }
 
 void Transaction::mergeOperationsQueue(boost::ptr_deque<Operation>& queue) {
-	mergedOperationsQueue.transfer(mergedOperationsQueue.end(), queue.begin(),
-		queue.end(), queue);
+	mergedOperationsQueue.transfer(
+		mergedOperationsQueue.end(),
+		queue.begin(),
+		queue.end(),
+		queue);
 }
 
 }  // namespace Internal
