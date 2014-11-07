@@ -53,13 +53,13 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(executeAndUndoBatchAddSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		auto query = QueryEngine::AddTask(
-			desc, dead, prio, {}, std::move(childQueries));
+			desc, dead, dead, prio, {}, std::move(childQueries));
 
 		QueryEngine::executeQuery(std::move(query));
 
@@ -85,12 +85,12 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(executeAndUndoBatchDeleteSubtaskQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 
 		Task parent;
 		{  // NOLINT
 			auto query = QueryEngine::AddTask(
-				desc, dead, prio, {}, std::move(childQueries));
+				desc, dead, dead, prio, {}, std::move(childQueries));
 			QueryEngine::executeQuery(std::move(query));
 		}
 
@@ -109,13 +109,13 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(executeBatchAddDependenciesQuery) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		auto query = QueryEngine::AddTask(
-			desc, dead, prio, std::move(childQueries), {});
+			desc, dead, dead, prio, std::move(childQueries), {});
 		auto inserted = boost::get<Task>(
 			QueryEngine::executeQuery(std::move(query)));
 
@@ -125,14 +125,14 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, prio, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
-				QueryEngine::AddTask(desc, dead, prio, {},
+				QueryEngine::AddTask(desc, dead, dead, prio, {},
 					std::move(childQueries))));
 		task.setCompleted(true);
 		task = boost::get<Task>(
@@ -146,10 +146,10 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(dontShowChildTaskIfTheParentIsAlreadyShown) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		QueryEngine::executeQuery(
 			QueryEngine::AddTask(
-			desc, dead, Task::Priority::HIGH, {}, std::move(childQueries)));
+			desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries)));
 		auto getTask = QueryEngine::GetTask(Filter::highPriority());
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
@@ -160,28 +160,25 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(editParent) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 
 		// Add two trees
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-				desc, dead, Task::Priority::HIGH, {}, std::move(childQueries))));
+				desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries))));
 
 		std::vector<std::unique_ptr<Query>> childQueries2;
 		childQueries2.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, std::move(childQueries2))));
+					desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries2))));
 
 		// Set the second to parent the child of first one.
-		auto reparent = QueryEngine::UpdateTask(
-			task.getID(), task.getDescription(), task.getDeadline(),
-			task.getPriority(), task.getDependencies(),
-			task.isCompleted(), parent.getID(), task.getSubtasks(),
-			task.getAttachment());
+		task.setParent(parent.getID());
+		auto reparent = QueryEngine::UpdateTask(task);
 		QueryEngine::executeQuery(std::move(reparent));
 
 		auto getTask = QueryEngine::GetTask(Filter::anyTask());
@@ -195,17 +192,17 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
 
 		auto parent2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
 
 		auto parent3 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					L"Should be shown", dead, Task::Priority::HIGH, {}, {})));
+					L"Should be shown", dead, dead, Task::Priority::HIGH, {}, {})));
 
 		parent3.setSubtasks({ parent.getID(), parent2.getID() });
 		auto parent4 = boost::get<Task>(
@@ -227,18 +224,18 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(setToplevelWithChildTasksAsSubtasks) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {},
+					desc, dead, dead, Task::Priority::HIGH, {},
 						std::move(childQueries))));
 
 		auto parent2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		parent2.setSubtasks({ parent.getID() });
 
 		parent2 = boost::get<Task>(
@@ -253,17 +250,17 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(setSubtaskOfAChildTask) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
-			std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+			std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {},
+					desc, dead, dead, Task::Priority::HIGH, {},
 						std::move(childQueries))));
 		auto child = parent.getSubtasksObject().at(0);
 		auto parent2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		child.setSubtasks({ parent2.getID() });
 		child = boost::get<Task>(
 			QueryEngine::executeQuery(
@@ -281,17 +278,17 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(deleteLevelTwoTree) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 			childQueries.push_back(
-				std::move(QueryEngine::AddTask(desc, dead, Task::Priority::HIGH, {}, {})));
+				std::move(QueryEngine::AddTask(desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {},
+					desc, dead, dead, Task::Priority::HIGH, {},
 						std::move(childQueries))));
 		auto child = parent.getSubtasksObject().at(0);
 		auto parent2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
 		child.setSubtasks({ parent2.getID() });
 		child = boost::get<Task>(
 			QueryEngine::executeQuery(
@@ -308,12 +305,12 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	TEST_METHOD(removingSubtaskSetItAsToplevel) {
 		std::vector<std::unique_ptr<Query>> childQueries;
 			childQueries.push_back(
-				std::move(QueryEngine::AddTask(desc, dead,
+				std::move(QueryEngine::AddTask(desc, dead, dead,
 					Task::Priority::HIGH, {}, {})));
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, Task::Priority::HIGH, {},
+					desc, dead, dead, Task::Priority::HIGH, {},
 						std::move(childQueries))));
 		auto child = parent.getSubtasksObject().at(0);
 		auto parent2 = boost::get<Task>(
