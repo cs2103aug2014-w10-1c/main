@@ -35,6 +35,7 @@ Query::getReverse() {
 std::unique_ptr<Query>
 QueryEngine::AddTask(
 	const Task::Description& description,
+	const Task::Time& startTime,
 	const Task::Time& deadline,
 	const Task::Priority& priority,
 	std::vector<std::unique_ptr<Query>>&& dependencies,
@@ -51,7 +52,8 @@ QueryEngine::AddTask(
 	} else {
 		return std::unique_ptr<Query>(
 			new Internal::Action::AddTask(
-				description, deadline, priority, {}, {}));
+				description, deadline,
+				priority, {}, {}));
 	}
 }
 
@@ -77,6 +79,7 @@ QueryEngine::DeleteTask(Task::ID id) {
 std::unique_ptr<Query>
 QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<Task::Description> description,
+	You::Utils::Option<Task::Time> startTime,
 	You::Utils::Option<Task::Time> deadline,
 	You::Utils::Option<Task::Priority> priority,
 	You::Utils::Option<Task::Dependencies> dependencies,
@@ -86,8 +89,8 @@ QueryEngine::UpdateTask(Task::ID id,
 	You::Utils::Option<Task::Attachment> attachment) {
 	using UpdateTask = Internal::Action::UpdateTask;
 	return std::unique_ptr<Query>(new UpdateTask(id, description,
-		deadline, priority, dependencies, completed, parent, subtasks,
-		attachment));
+		startTime, deadline, priority, dependencies, completed,
+		parent, subtasks, attachment));
 }
 
 std::unique_ptr<Query>
