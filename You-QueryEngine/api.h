@@ -73,8 +73,7 @@ public:
 public:
 	#pragma region Query Constructors
 
-	/// Construct a batch addition of task with its
-	/// subtask.
+	/// Construct the query for adding tasks.
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
 		const Task::Time& startTime,

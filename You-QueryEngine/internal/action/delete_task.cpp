@@ -16,11 +16,9 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-namespace {
-	using Transaction = You::DataStore::Transaction;
-	using DataStore = You::DataStore::DataStore;
-	using Log = You::Utils::Log;
-}
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
 
 const std::wstring DeleteTask::logCategory =
 	Query::logCategory + L"[DeleteTask]";
@@ -78,21 +76,19 @@ void DeleteTask::deleteTree(State& state, Task::ID id) {
 	}
 	Controller::Graph::deleteTask(state.graph(), id);
 	Controller::Graph::deleteTask(state.sgraph(), id);
+	makeTransaction(id);
 }
 
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
-	// If it is a subtask of someone, remove it from parent.
+	// Remove the task from the parent's task.
 	if (!deletedTask.isTopLevel()) {
-		auto parent = state.get().graph().getTask(
-			deletedTask.getParent()).getID();
+		auto parent = deletedTask.getParent();
 		QueryEngine::RemoveSubtask(parent, id)->execute(state);
 	}
+	// If it has subtasks, delete the entire tree.
 	if (!deletedTask.getSubtasks().empty()) {
 		deleteTree(state, id);
-		for (const auto& c : children) {
-			makeTransaction(c.first);
-		}
 	} else {
 		Controller::Graph::deleteTask(state.graph(), id);
 		Controller::Graph::deleteTask(state.sgraph(), id);
