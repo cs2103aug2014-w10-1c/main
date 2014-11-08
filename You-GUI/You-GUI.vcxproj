@@ -135,6 +135,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_tray_hotkey_handler.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="gui_log_sink.cpp" />
     <ClCompile Include="query_manager.cpp" />
     <ClCompile Include="session_manager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -159,6 +160,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../command_text_box.h"  -DQT_NO_OPENGL -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DBOOST_DATE_TIME_NO_LIB -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I.\.."</Command>
     </CustomBuild>
+    <ClInclude Include="gui_log_sink.h" />
     <ClInclude Include="keywords.h" />
     <ClInclude Include="main_window_messages.h" />
     <ClInclude Include="window_title.h" />

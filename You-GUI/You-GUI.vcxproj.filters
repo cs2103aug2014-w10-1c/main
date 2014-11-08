@@ -116,6 +116,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_command_text_box.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="gui_log_sink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -134,6 +137,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="keywords.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_log_sink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
