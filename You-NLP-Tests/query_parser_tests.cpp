@@ -296,9 +296,10 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQueryWithWrongType) {
-		Assert::ExpectException<ParserTypeException>([]() {
-			QueryParser::parse(L"/show description=false");
-		});
+		Assert::ExpectException<ParserTypeException>(
+			std::bind(static_cast<
+				QUERY (*)(const QueryParser::StringType& string)>(
+					&QueryParser::parse), L"/show description=false"));
 	}
 
 	TEST_METHOD(parsesEditQuery) {
