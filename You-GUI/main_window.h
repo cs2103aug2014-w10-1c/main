@@ -138,6 +138,8 @@ private:
 	static const QString NOT_UNDOABLE_MESSAGE;
 	static const QString PARSER_TYPE_MESSAGE;
 	static const QString UNKNOWN_EXCEPTION_MESSAGE;
+	static const QString IO_EXCEPTION_MESSAGE;
+	static const QString NOT_WELL_FORMED_XML_MESSAGE;
 
 private slots:
 	/// Sends a query to Controller from the commandInputBox.

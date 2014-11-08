@@ -9,6 +9,13 @@ namespace GUI {
 
 const QString MainWindow::READY_MESSAGE = "Ready.";
 
+const QString MainWindow::IO_EXCEPTION_MESSAGE =
+"Error: Task file could not be loaded from disk.";
+
+const QString MainWindow::NOT_WELL_FORMED_XML_MESSAGE =
+"Error: Task file is not well formed. Please ensure the syntax of the file "
+"is valid.";
+
 const QString MainWindow::EMPTY_TASK_DESCRIPTION_MESSAGE =
 "Error: Please fill in a task description.";
 
