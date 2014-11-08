@@ -10,11 +10,9 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-namespace {
-	using DataStore = You::DataStore::DataStore;
-	using Transaction = You::DataStore::Transaction;
-	using KeyValuePairs = You::DataStore::KeyValuePairs;
-}
+using You::DataStore::DataStore;
+using You::DataStore::Transaction;
+using You::DataStore::KeyValuePairs;
 
 const std::wstring State::MAX_ID_FIELD = L"max-id";
 
