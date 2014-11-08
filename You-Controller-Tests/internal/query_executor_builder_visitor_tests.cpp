@@ -316,9 +316,15 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		query.childTask = 1;
 		executesEditQueryProperly(query);
 
+		query.childTask = -1;
+		executesEditQueryProperly(query);
+
 		query = NLP::EDIT_QUERY {};
 		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
 		query.dependingTask = 1;
+		executesEditQueryProperly(query);
+
+		query.dependingTask = -1;
 		executesEditQueryProperly(query);
 	}
 
@@ -335,7 +341,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		if (editQuery.dependingTask) {
 			Assert::AreNotEqual(first.getID(), result.task.getID());
-			Assert::IsFalse(result.task.getDependencies().empty());
+			if (editQuery.dependingTask.get() > 0) {
+				Assert::IsFalse(result.task.getDependencies().empty());
+			}
 		} else {
 			Assert::AreEqual(first.getID(), result.task.getID());
 			Assert::AreEqual(editQuery.description ?
@@ -351,10 +359,15 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Assert::AreEqual(editQuery.complete ?
 				editQuery.complete.get() : first.isCompleted(),
 				result.task.isCompleted());
-			Assert::AreEqual(editQuery.childTask ?
-				first.getSubtasks().size() + 1 :
-				first.getSubtasks().size(),
-				result.task.getSubtasks().size());
+			if (editQuery.childTask) {
+				if (editQuery.childTask.get() > 0) {
+					Assert::AreEqual(first.getSubtasks().size() + 1,
+						result.task.getSubtasks().size());
+				}
+			} else {
+				Assert::AreEqual(first.getSubtasks().size(),
+					result.task.getSubtasks().size());
+			}
 			Assert::AreEqual(
 				first.getDependencies().size(),
 				result.task.getDependencies().size());
