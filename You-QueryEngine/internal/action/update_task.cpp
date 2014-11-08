@@ -108,7 +108,9 @@ void UpdateTask::recMarkChildren(State& state,
 void UpdateTask::reparentTask(State& state, Task::ID id,
 	Task::ID newParent) const {
 	auto theTask = state.graph().getTask(id);
+	auto theNewParent = state.graph().getTask(newParent);
 
+	// Remove the task from old parent's subtasks list.
 	if (!theTask.isTopLevel()) {
 		auto oldParentTask = state.graph().getTask(theTask.getParent());
 		auto newSubtasks = oldParentTask.getSubtasks();
@@ -119,6 +121,17 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 		makeTransaction(oldParentTask);
 	}
 
+	// Add the task to the newParent subtasks and update it.
+	if (newParent != id) {
+		auto subtasks = theNewParent.getSubtasks();
+		subtasks.insert(id);
+		theNewParent.setSubtasks(subtasks);
+		Controller::Graph::updateTask(state.graph(), theNewParent);
+		Controller::Graph::updateTask(state.sgraph(), theNewParent);
+		makeTransaction(theNewParent);
+	}
+
+	// Set the parent field of the task and update it.
 	{  // NOLINT(whitespace/braces)
 		theTask.setParent(newParent);
 		Controller::Graph::updateTask(state.graph(), theTask);

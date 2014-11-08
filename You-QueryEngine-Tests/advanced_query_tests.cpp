@@ -19,17 +19,13 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
 
-	using You::QueryEngine::Filter;
-	using You::QueryEngine::Task;
-	using You::QueryEngine::Response;
-	using You::QueryEngine::QueryEngine;
-}
-/// \endcond
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
 
 /// Test the advanced functionalities of QueryEngine API
 TEST_CLASS(AdvancedQueryEngineTests) {
@@ -159,35 +155,35 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 	}
 
 	TEST_METHOD(editParent) {
+		// Add two trees
 		std::vector<std::unique_ptr<Query>> childQueries;
 		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, dead,
 			Task::Priority::HIGH, {}, {})));
 
-		// Add two trees
-		auto parent = boost::get<Task>(
+		auto tree1 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-				desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries))));
+				desc, dead, dead, Task::Priority::HIGH, {},
+					std::move(childQueries))));
 
-		std::vector<std::unique_ptr<Query>> childQueries2;
-		childQueries2.push_back(
+		childQueries.push_back(
 			std::move(QueryEngine::AddTask(desc, dead, dead,
 			Task::Priority::HIGH, {}, {})));
-		auto task = boost::get<Task>(
+		auto tree2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries2))));
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
 
-		// Set the second to parent the child of first one.
-		task.setParent(parent.getID());
-		auto reparent = QueryEngine::UpdateTask(task);
-		QueryEngine::executeQuery(std::move(reparent));
+		// Set the second to parent the first one.
+		tree2.setParent(tree1.getID());
+		QueryEngine::executeQuery(QueryEngine::UpdateTask(tree2));
 
 		auto getTask = QueryEngine::GetTask(Filter::anyTask());
 		auto response = QueryEngine::executeQuery(std::move(getTask));
 		auto result = boost::get<std::vector<Task>>(response);
-		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(1));
+		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(2));
 	}
 
 	TEST_METHOD(setToplevelWithoutChildTasksAsSubtasks) {
@@ -195,17 +191,20 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		auto parent = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead,
+						Task::Priority::HIGH, {}, {})));
 
 		auto parent2 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					desc, dead, dead, Task::Priority::HIGH, {}, {})));
+					desc, dead, dead,
+						Task::Priority::HIGH, {}, {})));
 
 		auto parent3 = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(
-					L"Should be shown", dead, dead, Task::Priority::HIGH, {}, {})));
+					L"Should be shown", dead, dead,
+						Task::Priority::HIGH, {}, {})));
 
 		parent3.setSubtasks({ parent.getID(), parent2.getID() });
 		auto parent4 = boost::get<Task>(
@@ -326,6 +325,42 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		Assert::IsTrue(parent2.getSubtasks().empty());
 		auto child2 = Internal::State::get().graph().getTask(child.getID());
 		Assert::IsTrue(child2.isTopLevel());
+	}
+
+	TEST_METHOD(swappingChildBetweenTwoTaskTrees) {
+		// Create a tree with one leaf
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+				Task::Priority::HIGH, {}, {})));
+		auto tree1 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		// Create another tree with one leaf
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+				Task::Priority::HIGH, {}, {})));
+		auto tree2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+
+		auto child = tree1.getSubtasksObject().at(0);
+		child.setParent(tree2.getID());
+		QueryEngine::executeQuery(QueryEngine::UpdateTask(child));
+
+		tree1 = Internal::State::get().graph().getTask(tree1.getID());
+		tree2 = Internal::State::get().graph().getTask(tree2.getID());
+		child = Internal::State::get().graph().getTask(child.getID());
+
+		Assert::IsTrue(child.getParent() == tree2.getID());
+		Assert::AreEqual(tree1.getSubtasks().size(),
+			static_cast<std::size_t>(0));
+		Assert::AreEqual(tree2.getSubtasks().size(),
+			static_cast<std::size_t>(2));
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };
