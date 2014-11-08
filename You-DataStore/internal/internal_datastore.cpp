@@ -6,6 +6,7 @@
 #include "operations/erase_operation.h"
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
+#include "../exception.h"
 #include "internal_datastore.h"
 
 namespace You {
@@ -113,7 +114,16 @@ bool DataStore::saveData() {
 void DataStore::loadData() {
 	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
-		pugi::xml_parse_result status = document.load_file(FILE_PATH.c_str());
+		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH.c_str());
+		bool loadSuccessful = loadStatus;
+		bool isFirstLoad =
+			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
+		if (!loadSuccessful && !isFirstLoad) {
+			// TODO(digawp): find a way to inform user where in the xml
+			// the error is located.
+			// Possible solution: log
+			onXmlParseResult(loadStatus);
+		}
 	}
 }
 
@@ -136,6 +146,16 @@ void DataStore::executeTransaction(Transaction & transaction,
 			transaction.rollback();
 			assert(false);
 		}
+	}
+}
+
+void DataStore::onXmlParseResult(pugi::xml_parse_result& result) {
+	if (result.status == pugi::xml_parse_status::status_io_error ||
+		result.status == pugi::xml_parse_status::status_out_of_memory ||
+		result.status == pugi::xml_parse_status::status_internal_error) {
+		throw IOException();
+	} else {
+		throw NotWellFormedXmlException();
 	}
 }
 

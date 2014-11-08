@@ -75,6 +75,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="exceptions\exception.h" />
+    <ClInclude Include="exceptions\datastore_corrupt_exception.h" />
     <ClInclude Include="internal\constants.h" />
     <ClInclude Include="internal\operations\branch_operation.h" />
     <ClInclude Include="datastore.h" />
