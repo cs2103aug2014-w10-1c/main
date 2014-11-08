@@ -47,17 +47,29 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(year);
 
 	monthNames.add
+		(L"january", boost::gregorian::Jan)
 		(L"jan", boost::gregorian::Jan)
+		(L"february", boost::gregorian::Feb)
 		(L"feb", boost::gregorian::Feb)
+		(L"march", boost::gregorian::Mar)
 		(L"mar", boost::gregorian::Mar)
+		(L"april", boost::gregorian::Apr)
 		(L"apr", boost::gregorian::Apr)
 		(L"may", boost::gregorian::May)
+		(L"june", boost::gregorian::Jun)
 		(L"jun", boost::gregorian::Jun)
+		(L"july", boost::gregorian::Jul)
 		(L"jul", boost::gregorian::Jul)
+		(L"august", boost::gregorian::Aug)
 		(L"aug", boost::gregorian::Aug)
+		(L"september", boost::gregorian::Sep)
+		(L"sept", boost::gregorian::Sep)
 		(L"sep", boost::gregorian::Sep)
+		(L"october", boost::gregorian::Oct)
 		(L"oct", boost::gregorian::Oct)
+		(L"november", boost::gregorian::Nov)
 		(L"nov", boost::gregorian::Nov)
+		(L"december", boost::gregorian::Dec)
 		(L"dec", boost::gregorian::Dec);
 	monthNames.name("monthNames");
 
@@ -68,21 +80,21 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	month.name("month");
 
 	weekDays.add
-		(L"mon", boost::gregorian::Monday)
 		(L"monday", boost::gregorian::Monday)
-		(L"tue", boost::gregorian::Tuesday)
+		(L"mon", boost::gregorian::Monday)
 		(L"tuesday", boost::gregorian::Tuesday)
-		(L"wed", boost::gregorian::Wednesday)
+		(L"tue", boost::gregorian::Tuesday)
 		(L"wednesday", boost::gregorian::Wednesday)
-		(L"thu", boost::gregorian::Thursday)
+		(L"wed", boost::gregorian::Wednesday)
 		(L"thursday", boost::gregorian::Thursday)
-		(L"fri", boost::gregorian::Friday)
+		(L"thu", boost::gregorian::Thursday)
 		(L"friday", boost::gregorian::Friday)
-		(L"sat", boost::gregorian::Saturday)
+		(L"fri", boost::gregorian::Friday)
 		(L"saturday", boost::gregorian::Saturday)
-		(L"sun", boost::gregorian::Sunday)
-		(L"sunday", boost::gregorian::Sunday);
-	weekDays.name("weekDays");
+		(L"sat", boost::gregorian::Saturday)
+		(L"sunday", boost::gregorian::Sunday)
+		(L"sun", boost::gregorian::Sunday);
+		weekDays.name("weekDays");
 
 	day %= (
 		qi::int_
