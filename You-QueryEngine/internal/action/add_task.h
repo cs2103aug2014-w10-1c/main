@@ -32,8 +32,9 @@ public:
 	explicit AddTask(Task::ID id, Task::Description description,
 		Task::Time startTime, Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies, Task::Subtasks subtasks)
-	: insertedID(id), description(description), deadline(deadline), startTime(startTime),
-	  priority(priority), dependencies(dependencies), subtasks(subtasks) {}
+	: insertedID(id), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	AddTask& operator=(const AddTask&) = delete;
