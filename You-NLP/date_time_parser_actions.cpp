@@ -118,11 +118,8 @@ DateTimeParser::Date DateTimeParser::constructRelativeWeekDayDate(
 
 	assert(direction >= -1 && direction <= 1);
 	if (direction == 0) {
-		if (today.day_of_week() <= day) {
-			throw ParserException();
-		} else {
-			return today + boost::gregorian::days(day - today.day_of_week());
-		}
+		return today + boost::gregorian::days(
+			7 - (today.day_of_week() - day));
 	} else if (direction == 1) {
 		return next_weekday(
 			next_weekday(today, boost::gregorian::greg_weekday(

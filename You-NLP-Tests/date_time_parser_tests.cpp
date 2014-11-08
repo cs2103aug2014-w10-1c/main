@@ -139,6 +139,27 @@ public:
 			static_cast<int>(lastMonday.day_of_week()));
 		Assert::IsTrue(lastMonday < today);
 		Assert::IsTrue((today - lastMonday).days() <= 13);
+
+		date thisSaturday = DateTimeParser::parse(L"this sat").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Saturday),
+			static_cast<int>(thisSaturday.day_of_week()));
+		Assert::IsTrue(thisSaturday > today);
+		Assert::IsTrue((thisSaturday - today).days() <= 7);
+
+		date thisSunday = DateTimeParser::parse(L"this sun").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Sunday),
+			static_cast<int>(thisSunday.day_of_week()));
+		Assert::IsTrue(thisSunday > today);
+		Assert::IsTrue((thisSunday - today).days() <= 7);
+
+		date thisFriday = DateTimeParser::parse(L"this fri").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::weekdays::Friday),
+			static_cast<int>(thisFriday.day_of_week()));
+		Assert::IsTrue(thisFriday > today);
+		Assert::IsTrue((thisFriday - today).days() <= 7);
 	}
 
 	TEST_METHOD(parsesTomorrow) {
