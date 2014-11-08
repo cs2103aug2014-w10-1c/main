@@ -11,4 +11,4 @@
 	#define fatal() assert(false); abort()
 #endif
 
-#endif  // YOU_UTILS_LOG_H_
+#endif  // YOU_UTILS_FATAL_H_
