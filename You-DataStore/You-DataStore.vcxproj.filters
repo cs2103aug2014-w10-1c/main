@@ -70,7 +70,7 @@
       <Filter>Header Files\internal\operations</Filter>
     </ClInclude>
     <ClInclude Include="internal\constants.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="exception.h">
       <Filter>Header Files</Filter>
@@ -114,7 +114,7 @@
       <Filter>Source Files\internal\operations</Filter>
     </ClCompile>
     <ClCompile Include="internal\constants.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

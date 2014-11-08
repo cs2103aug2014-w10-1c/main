@@ -6,8 +6,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::wstring TASKS_NODE = std::wstring(L"tasks");
-const std::wstring RESOURCES_NODE = std::wstring(L"resources");
+const std::wstring LOG_CATEGORY = std::wstring(L"[DS]");
 
 }  // namespace Internal
 }  // namespace DataStore

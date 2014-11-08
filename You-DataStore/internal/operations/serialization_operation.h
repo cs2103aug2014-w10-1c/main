@@ -13,10 +13,16 @@ namespace Internal {
 class SerializationOperation : public Operation {
 public:
 	/// Serialize task to an xml node
-	static void serialize(const KeyValuePairs&, pugi::xml_node&);
+	///
+	/// \param[in] kvp The KeyValuePairs to be serialized into the node
+	/// \param[out] node The xml_node to be modifed
+	static void serialize(const KeyValuePairs& kvp, pugi::xml_node& node);
 
 	/// Deserialize task from an xml node
-	static KeyValuePairs deserialize(const pugi::xml_node&);
+	///
+	/// \param[in] node The xml_node to be deserialized
+	/// \return KeyValuePairs deserialized from node
+	static KeyValuePairs deserialize(const pugi::xml_node& node);
 };
 
 }  // namespace Internal

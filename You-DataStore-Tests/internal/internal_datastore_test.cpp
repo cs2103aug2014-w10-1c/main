@@ -9,7 +9,6 @@
 #include "internal/operations/post_operation.h"
 #include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
-#include "internal/constants.h"
 #include "exceptions/datastore_corrupt_exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
@@ -52,11 +51,11 @@ public:
 	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(Internal::TASKS_NODE, L"10", task1);
+		sut.post(TASKS_NODE, L"10", task1);
 		Assert::AreEqual(1U, t->operationsQueue.size());
-		sut.put(Internal::TASKS_NODE, L"10", task2);
+		sut.put(TASKS_NODE, L"10", task2);
 		Assert::AreEqual(2U, t->operationsQueue.size());
-		sut.erase(Internal::TASKS_NODE, L"10");
+		sut.erase(TASKS_NODE, L"10");
 		Assert::AreEqual(3U, t->operationsQueue.size());
 	}
 
@@ -64,7 +63,7 @@ public:
 	TEST_METHOD(commitChangesXmlDocumentTree) {
 		DataStore& sut = DataStore::get();
 		Transaction t(sut.begin());
-		sut.post(Internal::TASKS_NODE, L"10", task1);
+		sut.post(TASKS_NODE, L"10", task1);
 
 		// Note: To check if document is not changed after commit requires
 		// 2 first_child()s because the first one retrieves the tasks node
@@ -78,7 +77,7 @@ public:
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 
 		Transaction t2(sut.begin());
-		sut.erase(Internal::TASKS_NODE, L"10");
+		sut.erase(TASKS_NODE, L"10");
 		// document must not change without commit
 		Assert::IsFalse(sut.document.first_child().first_child().empty());
 		t2.commit();
@@ -144,17 +143,17 @@ public:
 		Internal::Transaction sut;
 
 		std::unique_ptr<Internal::Operation> post =
-			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
+			std::make_unique<Internal::PostOperation>(TASKS_NODE, L"0", task1);
 		sut.push(std::move(post));
 		Assert::AreEqual(1U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::Operation> put =
-			std::make_unique<Internal::PutOperation>(Internal::TASKS_NODE, L"0", task1);
+			std::make_unique<Internal::PutOperation>(TASKS_NODE, L"0", task1);
 		sut.push(std::move(put));
 		Assert::AreEqual(2U, sut.operationsQueue.size());
 
 		std::unique_ptr<Internal::Operation> erase =
-			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
+			std::make_unique<Internal::EraseOperation>(TASKS_NODE, L"0");
 		sut.push(std::move(erase));
 		Assert::AreEqual(3U, sut.operationsQueue.size());
 
@@ -167,9 +166,9 @@ public:
 		boost::ptr_deque<Internal::Operation> q2;
 
 		std::unique_ptr<Internal::Operation> post =
-			std::make_unique<Internal::PostOperation>(Internal::TASKS_NODE, L"0", task1);
+			std::make_unique<Internal::PostOperation>(TASKS_NODE, L"0", task1);
 		std::unique_ptr<Internal::Operation> erase =
-			std::make_unique<Internal::EraseOperation>(Internal::TASKS_NODE, L"0");
+			std::make_unique<Internal::EraseOperation>(TASKS_NODE, L"0");
 		q1.push_back(post.release());
 		q2.push_back(erase.release());
 

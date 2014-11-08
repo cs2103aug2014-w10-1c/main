@@ -9,10 +9,9 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-/// Tag name of the tasks branch in the XML
-extern const std::wstring TASKS_NODE;
-/// Tag name of the resources branch in the XML
-extern const std::wstring RESOURCES_NODE;
+/// DataStore's Log category
+extern const std::wstring LOG_CATEGORY;
+
 
 }  // namespace Internal
 }  // namespace DataStore

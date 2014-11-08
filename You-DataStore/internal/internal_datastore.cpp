@@ -127,7 +127,7 @@ void DataStore::loadData() {
 	}
 }
 
-void DataStore::executeTransaction(Transaction & transaction,
+void DataStore::executeTransaction(Transaction& transaction,
 	pugi::xml_document& xml) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
@@ -149,10 +149,12 @@ void DataStore::executeTransaction(Transaction & transaction,
 	}
 }
 
-void DataStore::onXmlParseResult(pugi::xml_parse_result& result) {
-	if (result.status == pugi::xml_parse_status::status_io_error ||
+void DataStore::onXmlParseResult(const pugi::xml_parse_result& result) {
+	bool isIoError =
+		result.status == pugi::xml_parse_status::status_io_error ||
 		result.status == pugi::xml_parse_status::status_out_of_memory ||
-		result.status == pugi::xml_parse_status::status_internal_error) {
+		result.status == pugi::xml_parse_status::status_internal_error;
+	if (isIoError) {
 		throw IOException();
 	} else {
 		throw NotWellFormedXmlException();
