@@ -9,15 +9,15 @@ namespace You {
 namespace DataStore {
 
 /// The exception thrown if there is an error when parsing data.xml
-class XmlParseErrorException : public DataStoreException {
+class DataStoreCorruptException : public DataStoreException {
 };
 
 /// The exception thrown if there is an I/O error when parsing data.xml
-class XmlIOException : public XmlParseErrorException {
+class XmlIOException : public DataStoreCorruptException {
 };
 
 /// The exception thrown if data.xml is not well-formed XML
-class NotWellFormedXmlException : public XmlParseErrorException {
+class NotWellFormedXmlException : public DataStoreCorruptException {
 };
 
 }  // namespace DataStore
