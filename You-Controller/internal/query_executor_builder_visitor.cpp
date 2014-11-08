@@ -51,7 +51,6 @@ std::unique_ptr<QueryEngine::Query>
 QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 	std::vector<std::unique_ptr<QueryEngine::Query>> subtaskQueries;
 	std::vector<std::unique_ptr<QueryEngine::Query>> dependencyQueries;
-	// subtaskQueries.reserve(query.subtasks.size());
 
 	std::transform(begin(query.subtasks), end(query.subtasks),
 		std::back_inserter(subtaskQueries), [](const ADD_QUERY& q) {

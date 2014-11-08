@@ -99,6 +99,15 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		result = boost::get<ADD_RESULT>(executor->execute());
 
 		Assert::IsFalse(result.task.getSubtasks().empty());
+
+		You::NLP::ADD_QUERY queryWithDependency(Mocks::Queries::ADD_QUERY);
+		queryWithDependency.dependent = std::make_shared<NLP::ADD_QUERY>(
+			NLP::ADD_QUERY {
+				Mocks::Queries::ADD_QUERY.description + L"D"
+			});
+		query = queryWithDependency;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
 	}
 
 	TEST_METHOD(getsCorrectTypeForShowQueries) {
