@@ -88,7 +88,7 @@ private:
 
 	/// Executes the operation queue into the xml_document
 	///
-	/// \param[in] opQueue operations queue to be executed
+	/// \param[in] transaction The transaction to be executed
 	/// \param[out] xml The xml document to be modified by the operations
 	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
 
