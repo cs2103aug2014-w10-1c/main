@@ -1,5 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "You-Utils/fatal.h"
+
 #include "query_executor.h"
 #include "../exceptions/context_index_out_of_range_exception.h"
 #include "../result.h"
@@ -51,7 +53,6 @@ std::unique_ptr<QueryEngine::Query>
 QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 	std::vector<std::unique_ptr<QueryEngine::Query>> subtaskQueries;
 	std::vector<std::unique_ptr<QueryEngine::Query>> dependencyQueries;
-	// subtaskQueries.reserve(query.subtasks.size());
 
 	std::transform(begin(query.subtasks), end(query.subtasks),
 		std::back_inserter(subtaskQueries), [](const ADD_QUERY& q) {
@@ -132,7 +133,7 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 						boost::get<TaskPriority>(field.value)));
 				break;
 			default:
-				assert(false); abort();
+				fatal();
 			}
 
 			filter = filter && Filter(currentFilter);
@@ -153,7 +154,7 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 				break;
 			case TaskField::COMPLETE:
 			default:
-				assert(false); abort();
+				fatal();
 			}
 
 			if (field.order == SHOW_QUERY::Order::ASCENDING) {
@@ -204,7 +205,7 @@ QueryExecutorBuilderVisitor::buildComparator(
 			std::bind(selector, std::placeholders::_1),
 			value);
 	default:
-		assert(false); abort();
+		fatal();
 	}
 }
 

@@ -70,6 +70,16 @@ private:
 		boost::optional<ADD_QUERY> dependent,
 		boost::optional<std::vector<ADD_QUERY>> subtasks);
 
+	/// Process the terminal returned from the add query string parse rule.
+	///
+	/// \param[in] description The string from the parser.
+	/// \param[in] query The \ref ADD_QUERY parse tree to the right of the
+	///                  current terminal.
+	/// \return The synthesised value for the \ref addCommand rule.
+	static ADD_QUERY constructAddQueryFromDescription(
+		StringType description,
+		ADD_QUERY query);
+
 	/// Process the terminal returned from the add query character parse rule,
 	/// stringing characters together to form the description.
 	///
@@ -225,12 +235,6 @@ private:
 	static DELETE_QUERY constructDeleteQuery(const size_t offset);
 	#pragma endregion
 
-	/// Constructs a posix_time::ptime from the given string.
-	///
-	/// \param[in] lexeme The lexeme to construct the time from.
-	/// \return The synthesised value for the \ref time rule.
-	static boost::posix_time::ptime constructDateTime(const StringType& lexeme);
-
 	/// Constructs a value from the given lexemes.
 	///
 	/// \param[in] value The value from the parser.
@@ -261,9 +265,17 @@ private:
 	/// Add command description rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDescription;
 
+	/// Add command description rule, for quoted descriptions.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDescriptionQuoted;
+
+	/// Add command description rule, for unquoted descriptions.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDescriptionUnquoted;
+
 	/// Add command description tail rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
-		addCommandDescriptionTail;
+		addCommandDescriptionUnquotedTail;
 
 	/// Add command priority rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandPriority;

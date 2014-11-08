@@ -36,6 +36,16 @@ public:
 				&QueryParser::parse), L"/throw"));
 	}
 
+	TEST_METHOD(throwsExceptionWhenTrailingText) {
+		Assert::ExpectException<ParserException>(
+			std::bind(static_cast<QUERY(*)(const std::wstring&)>(
+				&QueryParser::parse), L"lol by 14 Decembers"));
+	}
+
+	TEST_METHOD(acceptsTrailingWhitespace) {
+		QueryParser::parse(L"/show		");
+	}
+
 	TEST_METHOD(parsesStringAsTask) {
 		QUERY q = QueryParser::parse(L"win");
 
@@ -183,6 +193,17 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesQuotedDescriptionAddTask) {
+		QUERY q = QueryParser::parse(L"'CS3235: Homework Assignment 3'! by "
+			L"14 Dec 13 ");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"CS3235: Homework Assignment 3",
+			TaskPriority::HIGH,
+			ptime(date(2014, boost::gregorian::Dec, 13))
+		}), q);
+	}
+
 	TEST_METHOD(parsesShowQuery) {
 		// Boundary case: no filters nor sorts.
 		QUERY q = QueryParser::parse(L"/show");
@@ -296,9 +317,10 @@ public:
 	}
 
 	TEST_METHOD(parsesShowQueryWithWrongType) {
-		Assert::ExpectException<ParserTypeException>([]() {
-			QueryParser::parse(L"/show description=false");
-		});
+		Assert::ExpectException<ParserTypeException>(
+			std::bind(static_cast<
+				QUERY (*)(const QueryParser::StringType& string)>(
+					&QueryParser::parse), L"/show description=false"));
 	}
 
 	TEST_METHOD(parsesEditQuery) {

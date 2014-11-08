@@ -3,8 +3,11 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include "You-Utils/fatal.h"
 #include "show_query.h"
 
+namespace You {
+namespace NLP {
 namespace {
 
 /// The format for displaying an SHOW_QUERY
@@ -66,11 +69,8 @@ std::wstring getSortFieldsAsString(const You::NLP::SHOW_QUERY& q) {
 
 }  // namespace
 
-namespace You {
-namespace NLP {
-
 std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p) {
-	const wchar_t* string;
+	const wchar_t* string = nullptr;
 	switch (p) {
 	case SHOW_QUERY::Predicate::EQ:
 		string = L"=";
@@ -91,7 +91,7 @@ std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p) {
 		string = L"<=";
 		break;
 	default:
-		assert(false); abort();
+		fatal();
 	}
 
 	return s << string;

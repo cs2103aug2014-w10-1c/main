@@ -23,6 +23,10 @@ typedef std::wstring::const_iterator ParserIteratorType;
 /// The type of the parser skipper.
 typedef ParserCharTraits::space_type ParserSkipperType;
 
+/// The type of expectation failure exceptions.
+typedef boost::spirit::qi::expectation_failure<ParserIteratorType>
+	ParserExpectationFailure;
+
 }  // namespace NLP
 }  // namespace You
 
