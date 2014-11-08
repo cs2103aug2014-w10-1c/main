@@ -24,23 +24,9 @@ public:
 		const Task::Priority& priority,
 		std::vector<std::unique_ptr<Query>>&& dependencies,
 		const Task::Subtasks& subtasks)
-	: insertedID(-1), startTime(startTime),
-	  description(description), deadline(deadline),
+	: startTime(startTime), description(description), deadline(deadline),
 	  priority(priority), dependencies(std::move(dependencies)),
 	  subtasks(subtasks) {}
-
-	/// Constructor for already known id
-	explicit BatchAddDependencies(
-		Task::ID id,
-		const Task::Description& description,
-		const Task::Time& startTime,
-		const Task::Time& deadline,
-		const Task::Priority& priority,
-		std::vector<std::unique_ptr<Query>>&& dependencies,
-		const Task::Subtasks subtasks)
-	: insertedID(id), description(description), startTime(startTime),
-	  deadline(deadline), priority(priority),
-	  dependencies(std::move(dependencies)), subtasks(subtasks) {}
 
 	/// Disable assignment operator
 	BatchAddDependencies& operator=(const BatchAddDependencies&) = delete;
@@ -55,12 +41,12 @@ protected:
 	std::unique_ptr<Query> getReverse() override;
 
 private:
-	Task executeParentAddQuery(State& state, const Task::ID lastInserted);
+	Task executeParentAddQuery(State& state);
 	Task::ID executeDependenciesAddQuery(State& state);
 	/// Execute add task.
 	Response execute(State& tasks) override;
 
-	Task::ID insertedID;   ///< Inserted ID of the parent task.
+	std::vector<Task::ID> insertedIDs;  ///< List of inserted IDs
 	const Task::Description description;  ///< Description.
 	const Task::Time startTime;  ///< Deadline.
 	const Task::Time deadline;  ///< Deadline.

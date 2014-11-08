@@ -261,7 +261,8 @@ Task::Subtasks TaskSerializer::deserializeSubtasks(const Value& subtasks) {
 	return deserializeDependencies(subtasks);
 }
 
-Task::Attachment TaskSerializer::deserializeAttachment(const Value& attachment) {
+Task::Attachment TaskSerializer::deserializeAttachment(
+	const Value& attachment) {
 	return tokenize(attachment);
 }
 

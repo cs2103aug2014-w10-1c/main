@@ -17,7 +17,23 @@ const std::wstring BatchAddDependencies::logCategory =
 	Query::logCategory + L"[BatchAddDependencies]";
 
 std::unique_ptr<Query> BatchAddDependencies::getReverse() {
-	return QueryEngine::DeleteTask(insertedID);
+	class BatchDeleteDependencies : public Query {
+	public:
+		explicit BatchDeleteDependencies(
+			const std::vector<Task::ID>& dependencies)
+		: dependencies(dependencies) {}
+
+		Response execute(State& state) {
+			for (const auto& id : dependencies) {
+				QueryEngine::DeleteTask(id)->execute(state);
+			}
+			return dependencies.back();
+		}
+	private:
+		const std::vector<Task::ID> dependencies;
+	};
+	return std::unique_ptr<Query>(
+		new BatchDeleteDependencies(insertedIDs));
 }
 
 Task::ID BatchAddDependencies::executeDependenciesAddQuery(State& state) {
@@ -27,39 +43,34 @@ Task::ID BatchAddDependencies::executeDependenciesAddQuery(State& state) {
 		boost::get<Task>((*qBegin)->execute(state)).getID();
 	++qBegin;
 
+	insertedIDs.emplace_back(lastInserted);
 	for (qBegin; qBegin != qEnd; ++qBegin) {
 		Response r = (*qBegin)->execute(state);
 		auto task = boost::get<Task>(r);
 		task.setDependencies({ lastInserted });
 		QueryEngine::UpdateTask(task)->execute(state);
 		lastInserted = task.getID();
+		insertedIDs.emplace_back(lastInserted);
 	}
+
 	return lastInserted;
 }
 
-Task BatchAddDependencies::executeParentAddQuery(
-	State& state, const Task::ID lastInserted) {
+Task BatchAddDependencies::executeParentAddQuery(State& state) {
 	std::unique_ptr<Query> addParentQuery;
-	if (insertedID == -1) {
-		addParentQuery = std::unique_ptr<AddTask>(
-			new AddTask(description, startTime,
-				deadline, priority, { lastInserted },
-				subtasks));
-	} else {
-		addParentQuery = std::unique_ptr<AddTask>(
-			new AddTask(insertedID, description,
-				startTime, deadline, priority,
-				{ lastInserted }, subtasks));
-	}
-	Task parent = boost::get<Task>(addParentQuery->execute(state));
-	insertedID = parent.getID();
+	Task::ID lastInserted = insertedIDs.back();
+	Response response =
+		AddTask(description, startTime, deadline, priority,
+			{ lastInserted }, subtasks).execute(state);
+	Task parent = boost::get<Task>(response);
+	insertedIDs.emplace_back(parent.getID());
 	return parent;
 }
 
 Response BatchAddDependencies::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
 	Task::ID lastInserted = executeDependenciesAddQuery(state);
-	Task parent = executeParentAddQuery(state, lastInserted);
+	Task parent = executeParentAddQuery(state);
 	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
 	return parent;
 }
