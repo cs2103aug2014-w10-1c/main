@@ -355,7 +355,7 @@ public:
 	}
 
 	TEST_METHOD(parsesEditDeadlineQuery) {
-		QUERY q = QueryParser::parse(L"/edit 0 by 13-Dec-14");
+		QUERY q = QueryParser::parse(L"/edit 0 by 2014-Dec-13");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			0,
