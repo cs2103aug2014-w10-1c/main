@@ -63,19 +63,16 @@ template<> static std::wstring ToString<long long>(long long* t) {
 	RETURN_WIDE_STRING(t);
 }
 
-// NOLINTNEXTLINE(runtime/int)
-template<> static std::wstring ToString<unsigned short>(
-	const unsigned short& t) {
+template<> static std::wstring ToString<unsigned short>(  // NOLINT(runtime/int)
+	const unsigned short& t) {  // NOLINT(runtime/int)
 	RETURN_WIDE_STRING(t);
 }
-// NOLINTNEXTLINE(runtime/int)
-template<> static std::wstring ToString<unsigned short>(
-	const unsigned short* t) {
+template<> static std::wstring ToString<unsigned short>(  // NOLINT(runtime/int)
+	const unsigned short* t) {  // NOLINT(runtime/int)
 	RETURN_WIDE_STRING(t);
 }
-// NOLINTNEXTLINE(runtime/int)
-template<> static std::wstring ToString<unsigned short>(
-	unsigned short* t) {
+template<> static std::wstring ToString<unsigned short>(  // NOLINT(runtime/int)
+	unsigned short* t) {  // NOLINT(runtime/int)
 	RETURN_WIDE_STRING(t);
 }
 /// }
