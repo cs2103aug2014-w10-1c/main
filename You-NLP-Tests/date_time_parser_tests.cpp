@@ -24,6 +24,10 @@ public:
 			L"Throws exception on empty string");
 	}
 
+	TEST_METHOD(acceptsTrailingWhitespace) {
+		DateTimeParser::parse(L"13 nov			");
+	}
+
 	TEST_METHOD(parsesYear) {
 		Assert::AreEqual(2056,
 			static_cast<int>(DateTimeParser::parse(L"2056").date().year()));

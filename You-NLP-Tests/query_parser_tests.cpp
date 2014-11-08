@@ -36,6 +36,10 @@ public:
 				&QueryParser::parse), L"/throw"));
 	}
 
+	TEST_METHOD(acceptsTrailingWhitespace) {
+		QueryParser::parse(L"/show		");
+	}
+
 	TEST_METHOD(parsesStringAsTask) {
 		QUERY q = QueryParser::parse(L"win");
 

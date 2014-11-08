@@ -24,7 +24,7 @@ bool QueryParser::parse(const StringType& string, QUERY& result) {
 	return qi::parse(
 		begin(string),
 		end(string),
-		QueryParser() > qi::eoi,
+		QueryParser() > qi::omit[*ParserCharTraits::blank] > qi::eoi,
 		result);
 }
 
