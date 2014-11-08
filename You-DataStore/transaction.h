@@ -30,9 +30,11 @@ public:
 	~Transaction();
 
 	/// Commits the set of operations made.
+	/// Only the latest (innermost) transaction can be committed.
 	void commit();
 
 	/// Rolls back all the operations made.
+	/// Only the latest (innermost) transaction can be rolled back.
 	void rollback();
 
 private:

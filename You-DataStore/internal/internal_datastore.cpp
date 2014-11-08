@@ -1,6 +1,5 @@
 //@author A0114171W
 #include "stdafx.h"
-#include <boost/lexical_cast.hpp>
 #include "operation.h"
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
@@ -28,24 +27,22 @@ You::DataStore::Transaction DataStore::begin() {
 }
 
 void DataStore::onTransactionCommit(Transaction& transaction) {
-	// TODO(digawp): commit not the latest transaction
-	// assume only transaction on top of the stack may be committed
+	// Only transaction on top of the stack may be committed
 	assert(*transactionStack.top().lock() == transaction);
-
 	auto self = transactionStack.top();
-	transactionStack.pop();
 
-	if (transactionStack.empty()) {
+	if (transactionStack.size() == 1) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
 		executeTransaction(transaction, temp);
 		document.reset(temp);
-		committedTransaction.push(self);
 		saveData();
+		transactionStack.pop();
 	} else {
 		// There is a transaction before it that is yet to be committed.
 		// Merge with that transaction
+		transactionStack.pop();
 		auto below = transactionStack.top().lock();
 		below->mergeOperationsQueue(transaction.operationsQueue);
 		below->mergeOperationsQueue(transaction.mergedOperationsQueue);
@@ -53,13 +50,13 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 }
 
 void DataStore::onTransactionRollback(Transaction& transaction) {
-	// TODO(digawp): rollback not the latest transaction
+	// Can only rollback the latest transaction
 	assert(*(transactionStack.top().lock()) == transaction);
 	transactionStack.pop();
 }
 
 void DataStore::post(std::wstring branch, std::wstring id,
-const KeyValuePairs& kvp) {
+	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::Operation> operation =
@@ -71,7 +68,7 @@ const KeyValuePairs& kvp) {
 }
 
 void DataStore::put(std::wstring branch, std::wstring id,
-const KeyValuePairs& kvp) {
+	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
 
 	std::unique_ptr<Internal::Operation> operation =
@@ -126,18 +123,18 @@ void DataStore::executeTransaction(Transaction & transaction,
 		operation != transaction.operationsQueue.end();
 		++operation) {
 		bool status = operation->run(xml);
-		assert(status);
 		if (!status) {
-			// throw exception/assert
+			transaction.rollback();
+			assert(false);
 		}
 	}
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
 		bool status = mergedOperation->run(xml);
-		assert(status);
 		if (!status) {
-			// throw exception/assert
+			transaction.rollback();
+			assert(false);
 		}
 	}
 }
