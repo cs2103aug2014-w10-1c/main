@@ -56,6 +56,12 @@ public:
 private:
 	/// Default constructor. Use \ref get to get the singleton instance.
 	DataStore() = default;
+
+private:
+	/// Tag name of the tasks branch in the XML
+	static const std::wstring TASKS_NODE;
+	/// Tag name of the resources branch in the XML
+	static const std::wstring RESOURCES_NODE;
 };
 
 }  // namespace DataStore
