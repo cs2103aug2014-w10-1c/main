@@ -211,7 +211,6 @@ void MainWindow::taskSelected() {
 			+ "Dependencies: " + dependencies + "<br / >"
 			+ "Attachment: " + "<a href='" + attachment + "'>"
 			+ attachment + "</a></li></ul>";
-		ui.taskDescriptor->setOpenExternalLinks(false);
 		ui.taskDescriptor->setHtml(contents);
 	}
 	tpm->repaintTasks();
