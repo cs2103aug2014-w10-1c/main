@@ -31,6 +31,8 @@ const std::wstring ORDER_DESCENDING = L"descending";
 const std::array<std::wstring, 2> ORDERS = { ORDER_ASCENDING,
 ORDER_DESCENDING };
 
+const std::wstring HASHTAG_PREFIX = L"#";
+
 }  // namespace GUI
 }  // namespace You
 #endif  // YOU_GUI_KEYWORDS_H_
