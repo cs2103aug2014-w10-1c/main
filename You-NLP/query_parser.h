@@ -184,6 +184,14 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
+	/// Constructs an edit query which sets the deadline of a task from the
+	/// given date.
+	///
+	/// \param[in] deadline The new deadline of the task.
+	/// \return The synthesised value for the \ref editSetDeadline rule.
+	static EDIT_QUERY constructEditQueryDeadline(
+		boost::posix_time::ptime deadline);
+
 	/// Constructs an edit query setting the given task as a subtask of the
 	/// first task.
 	///
@@ -351,6 +359,9 @@ private:
 	/// Edit command nonterminal rule for setting the dependency of another
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
+
+	/// Edit command nonterminal rule for setting the task deadline.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDeadline;
 
 	/// Edit command terminal rule for setting the task to be of high priority.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;

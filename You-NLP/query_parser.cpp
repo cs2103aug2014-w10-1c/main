@@ -157,6 +157,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::uint_ > (
 			(space >> qi::lit("set") > space > editCommandRule) |
 			(*space >> qi::lit("!") > editSetHighPriority) |
+			(space >> qi::lit("by") > space > editSetDeadline) |
 			(*space >> qi::lit(":") > *space > editSetSubtask) |
 			(*space >> qi::lit("->") > *space > editSetDependent) |
 			(space >> qi::lit("attach") > space >
@@ -209,6 +210,10 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		TaskPriority::HIGH
 	}];
 	BOOST_SPIRIT_DEBUG_NODE(editSetHighPriority);
+
+	editSetDeadline = (
+		utilityTime
+	)[qi::_val = phoenix::bind(&constructEditQueryDeadline, qi::_1)];
 
 	editSetSubtask = (
 		qi::int_
