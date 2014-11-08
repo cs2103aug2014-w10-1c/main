@@ -3,13 +3,11 @@
 #include "internal/state.h"
 #include "task_model.h"
 
-namespace {
-	using boost::posix_time::ptime;
-	using boost::posix_time::hours;
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
-	using boost::gregorian::day_clock;
-}  // namespace
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+using boost::gregorian::day_clock;
 
 namespace You {
 namespace QueryEngine {

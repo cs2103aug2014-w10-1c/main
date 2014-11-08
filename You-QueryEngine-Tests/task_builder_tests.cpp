@@ -15,12 +15,8 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using Task = You::QueryEngine::Task;
-	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-}
-/// \endcond
+using Task = You::QueryEngine::Task;
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 /// Test the functionality of TaskBuilder
 TEST_CLASS(TaskBuilderTests) {

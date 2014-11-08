@@ -14,18 +14,14 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using boost::posix_time::ptime;
-	using boost::posix_time::time_duration;
-	using boost::gregorian::date;
-	using boost::gregorian::greg_month;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::gregorian::date;
+using boost::gregorian::greg_month;
 
-	using Task = You::QueryEngine::Task;
-	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-	using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
-}
-/// \endcond
+using You::QueryEngine::Task;
+using You::QueryEngine::Internal::TaskBuilder;
+using You::QueryEngine::Internal::TaskSerializer;
 
 /// Test the functionality of TaskSerializer
 TEST_CLASS(TaskSerializerTests) {

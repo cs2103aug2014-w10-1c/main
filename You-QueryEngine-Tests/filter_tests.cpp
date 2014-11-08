@@ -17,14 +17,12 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-namespace {
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
 
-	using State = You::QueryEngine::Internal::State;
-	using Controller = You::QueryEngine::Internal::Controller;
-	using F = You::QueryEngine::Filter;
-}
+using State = You::QueryEngine::Internal::State;
+using Controller = You::QueryEngine::Internal::Controller;
+using F = You::QueryEngine::Filter;
 
 TEST_CLASS(FilterTests) {
 	static const std::size_t N_TASK = 10;

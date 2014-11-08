@@ -15,14 +15,10 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using Task = You::QueryEngine::Task;
-	using TaskGraph = You::QueryEngine::Internal::TaskGraph;
-	using Controller = You::QueryEngine::Internal::Controller;
-	using State = You::QueryEngine::Internal::State;
-}
-/// \endcond
+using You::QueryEngine::Task;
+using You::QueryEngine::Internal::TaskGraph;
+using You::QueryEngine::Internal::Controller;
+using You::QueryEngine::Internal::State;
 
 /// Test the functionality of subtask graph.
 TEST_CLASS(SubtaskGraphTests) {

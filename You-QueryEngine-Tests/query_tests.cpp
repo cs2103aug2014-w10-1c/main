@@ -17,17 +17,13 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
 
-	using You::QueryEngine::Filter;
-	using You::QueryEngine::Task;
-	using You::QueryEngine::Response;
-	using You::QueryEngine::QueryEngine;
-}
-/// \endcond
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
 
 /// Test the main \ref QueryEngine API
 TEST_CLASS(QueryEngineTests) {

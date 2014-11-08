@@ -40,6 +40,7 @@ public:
 	static Comparator byRelationship(Task::ID id);
 	/// @}
 
+public:
 	/// Enum class for comparison result.
 	enum class ComparisonResult { LT, GT, EQ };
 

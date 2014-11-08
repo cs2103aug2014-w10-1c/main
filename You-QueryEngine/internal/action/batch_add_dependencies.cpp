@@ -13,11 +13,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// \cond Imports
-namespace {
-	using Log = You::Utils::Log;
-}
-/// \endcond
+using Log = You::Utils::Log;
 
 const std::wstring BatchAddDependencies::logCategory =
 	Query::logCategory + L"[BatchAddDependencies]";
