@@ -33,9 +33,7 @@ std::int64_t State::getMaxIDFromDataStore() {
 State::State()
 : innerGraph(TaskGraph(TaskGraph::GraphType::DEPENDENCY)),
   innerSubtaskGraph(TaskGraph(TaskGraph::GraphType::SUBTASK)) {
-	maxID = TaskGraphController::loadFromFile(innerGraph);
-	TaskGraphController::loadFromFile(innerSubtaskGraph);
-	commitMaxIDToDataStore();
+	initialize();
 }
 
 State& State::get() {
@@ -50,6 +48,13 @@ void State::clear() {
 		get().undoStack().pop();
 	}
 	get().maxID = 0;
+}
+
+void State::initialize() {
+	clear();
+	get().maxID = TaskGraphController::loadFromFile(get().innerGraph);
+	TaskGraphController::loadFromFile(get().innerSubtaskGraph);
+	get().commitMaxIDToDataStore();
 }
 
 void State::setActiveFilter(const Filter& filter) {

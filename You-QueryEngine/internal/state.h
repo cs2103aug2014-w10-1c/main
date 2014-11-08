@@ -43,9 +43,11 @@ public:
 	/// Update the active comparator
 	void setActiveComparator(const Comparator& comparator);
 
-	/// Reset the state back to empty state. \n
-	/// Should be used only if necessary.
+	/// Reset the state back to empty state.
 	static void clear();
+
+	/// Reinitialize the singleton.
+	static void initialize();
 
 	/// Get the undo stack.
 	inline std::stack<std::unique_ptr<Query>>& undoStack() {
