@@ -63,9 +63,9 @@ void DataStore::post(std::wstring branch, std::wstring id,
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::PostOperation>(branch, id, kvp);
 
-	if (auto transaction = transactionStack.top().lock()) {
-		transaction->push(std::move(operation));
-	}
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
 }
 
 void DataStore::put(std::wstring branch, std::wstring id,
@@ -75,9 +75,9 @@ void DataStore::put(std::wstring branch, std::wstring id,
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::PutOperation>(branch, id, kvp);
 
-	if (auto transaction = transactionStack.top().lock()) {
-		transaction->push(std::move(operation));
-	}
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
 }
 
 void DataStore::erase(std::wstring branch, std::wstring id) {
@@ -86,9 +86,9 @@ void DataStore::erase(std::wstring branch, std::wstring id) {
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::EraseOperation>(branch, id);
 
-	if (auto transaction = transactionStack.top().lock()) {
-		transaction->push(std::move(operation));
-	}
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
 }
 
 std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
