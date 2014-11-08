@@ -107,7 +107,8 @@ DateTimeParser::Date DateTimeParser::constructRelativeMonthDate(
 			difference.number_of_months() == 0) {
 			difference = difference + boost::gregorian::years(1);
 		}
-		return today + boost::gregorian::months(difference);
+		Date result(today + boost::gregorian::months(difference));
+		return Date(result.year(), result.month(), 1);
 	} else {
 		return Date(today.year() + direction, month, 1);
 	}

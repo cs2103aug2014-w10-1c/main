@@ -62,6 +62,22 @@ template<> static std::wstring ToString<long long>(const long long* t) {
 template<> static std::wstring ToString<long long>(long long* t) {
 	RETURN_WIDE_STRING(t);
 }
+
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<unsigned short>(
+	const unsigned short& t) {
+	RETURN_WIDE_STRING(t);
+}
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<unsigned short>(
+	const unsigned short* t) {
+	RETURN_WIDE_STRING(t);
+}
+// NOLINTNEXTLINE(runtime/int)
+template<> static std::wstring ToString<unsigned short>(
+	unsigned short* t) {
+	RETURN_WIDE_STRING(t);
+}
 /// }
 
 }  // namespace CppUnitTestFramework

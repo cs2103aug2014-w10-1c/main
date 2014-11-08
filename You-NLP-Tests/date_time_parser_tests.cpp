@@ -119,12 +119,16 @@ public:
 		Assert::AreEqual(
 			static_cast<int>(boost::date_time::months_of_year::Oct),
 			static_cast<int>(nextOctober.month()));
+		Assert::AreEqual(static_cast<unsigned short>(1),
+			nextOctober.day().as_number());
 		Assert::IsTrue(nextOctober > today);
 
 		date lastOctober = DateTimeParser::parse(L"last oct").date();
 		Assert::AreEqual(
 			static_cast<int>(boost::date_time::months_of_year::Oct),
 			static_cast<int>(lastOctober.month()));
+		Assert::AreEqual(static_cast<unsigned short>(1),
+			lastOctober.day().as_number());
 		Assert::IsTrue(lastOctober < today);
 
 		date thisNovember = DateTimeParser::parse(L"this nov").date();
@@ -132,6 +136,8 @@ public:
 			static_cast<int>(boost::date_time::months_of_year::Nov),
 			static_cast<int>(thisNovember.month()));
 		Assert::IsTrue(thisNovember > today);
+		Assert::AreEqual(static_cast<unsigned short>(1),
+			thisNovember.day().as_number());
 		Assert::IsTrue((thisNovember - today).days() <= 366);
 
 		date thisDecember = DateTimeParser::parse(L"this dec").date();
@@ -139,6 +145,8 @@ public:
 			static_cast<int>(boost::date_time::months_of_year::Dec),
 			static_cast<int>(thisDecember.month()));
 		Assert::IsTrue(thisDecember > today);
+		Assert::AreEqual(static_cast<unsigned short>(1),
+			thisDecember.day().as_number());
 		Assert::IsTrue((thisDecember - today).days() <= 366);
 
 		date thisOctober = DateTimeParser::parse(L"this oct").date();
@@ -146,6 +154,8 @@ public:
 			static_cast<int>(boost::date_time::months_of_year::Oct),
 			static_cast<int>(thisOctober.month()));
 		Assert::IsTrue(thisOctober > today);
+		Assert::AreEqual(static_cast<unsigned short>(1),
+			thisOctober.day().as_number());
 		Assert::IsTrue((thisOctober - today).days() <= 366);
 	}
 
