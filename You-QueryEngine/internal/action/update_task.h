@@ -74,7 +74,8 @@ private:
 	void updateSubtaskGraph(State& state, const Task& updated) const;
 	void recMarkChildren(State& state, Task::ID id) const;
 	void reparentTask(State& state, Task::ID id, Task::ID newParent) const;
-
+	void setRemovedSubtasksAsTopLevel() const;
+	void setRemovedSubtasksAsTopLevel(State& state) const;
 	void makeTransaction(const Task& updated) const;
 
 	const Task::ID id;

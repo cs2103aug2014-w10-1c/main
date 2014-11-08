@@ -14,25 +14,22 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-namespace {
-	using Transaction = You::DataStore::Transaction;
-	using DataStore = You::DataStore::DataStore;
-	using Log = You::Utils::Log;
-}
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
 
 const std::wstring UpdateTask::logCategory =
 	Query::logCategory + L"[UpdateTask]";
 
 std::unique_ptr<Query> UpdateTask::getReverse() {
-	return std::unique_ptr<Query>(
-		new UpdateTask(previous));
+	return QueryEngine::UpdateTask(previous);
 }
 
 Task UpdateTask::buildUpdatedTask(State& state) const {
 	auto current = state.get().graph().getTask(this->id);
 	auto builder = Controller::Builder::fromTask(current);
 
-	#pragma region Update the fields iff it is requested
+	// Update the fields if it is requested
 	if (this->description) {
 		builder.description(this->description.get());
 	}
@@ -61,7 +58,6 @@ Task UpdateTask::buildUpdatedTask(State& state) const {
 	if (this->completed) {
 		newTask.setCompleted(this->completed.get());
 	}
-	#pragma endregion
 
 	Log::debug << (boost::wformat(L"%1% : Updated to %2%") %
 		logCategory % ToString(newTask)).str();
@@ -131,33 +127,36 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 	}
 }
 
+void UpdateTask::setRemovedSubtasksAsTopLevel(State& state) const {
+	for (const auto& c : previous.getSubtasks()) {
+		bool isRemovedFromSubtask =
+			subtasks->find(c) == subtasks->end();
+		if (isRemovedFromSubtask) {
+			reparentTask(state, c, c);
+		}
+	}
+}
+
 Response UpdateTask::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
 		logCategory % id).str();
 	previous = state.graph().getTask(id);
 	auto currentSubtasks = previous.getSubtasksObject();
 	auto updated = buildUpdatedTask(state);
-	// Has completed/uncompleted
-	if (completed && (previous.isCompleted() != completed.get())) {
+	// If a task is marked as complete, mark all the
+	// dependencies and subtasks as complete as well.
+	if (completed && (previous.isCompleted() != *completed)) {
 		recMarkChildren(state, id);
 	}
-	// Has new parent.
-	if (parent && (previous.getParent() != parent.get())) {
-		reparentTask(state, id, parent.get());
+	// If a parent is changed, reparent the task accordingly.
+	if (parent && (previous.getParent() != *parent)) {
+		reparentTask(state, id, *parent);
 	}
-	// Reparent every subtask.
+	// If the subtasks field is changed, reparent every subtask.
+	// as necessary.
 	if (subtasks) {
-		// Set removed subtasks as toplevel task.
-		for (const auto& c : currentSubtasks) {
-			bool isRemovedFromSubtask =
-				subtasks.get().find(c.getID())
-					== subtasks.get().end();
-			if (isRemovedFromSubtask) {
-				reparentTask(state, c.getID(), c.getID());
-			}
-		}
-		// Reparent new subtasks
-		for (auto cid : subtasks.get()) {
+		setRemovedSubtasksAsTopLevel(state);
+		for (Task::ID cid : *subtasks) {
 			reparentTask(state, cid, id);
 		}
 	}
