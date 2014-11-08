@@ -12,6 +12,10 @@ namespace DataStore {
 class DataStoreException : public You::Utils::Exception {
 };
 
+/// The exception thrown if there is an I/O error when parsing data.xml
+class IOException : public DataStoreException {
+};
+
 }  // namespace DataStore
 }  // namespace You
 

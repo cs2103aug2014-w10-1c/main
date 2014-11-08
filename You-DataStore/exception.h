@@ -4,6 +4,6 @@
 #define YOU_DATASTORE_EXCEPTION_H_
 
 #include "exceptions/exception.h"
-#include "exceptions/xml_parse_error_exception.h"
+#include "exceptions/datastore_corrupt_exception.h"
 
 #endif  // YOU_DATASTORE_EXCEPTION_H_

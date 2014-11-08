@@ -78,7 +78,7 @@
     <ClInclude Include="exceptions\exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
-    <ClInclude Include="exceptions\xml_parse_error_exception.h">
+    <ClInclude Include="exceptions\datastore_corrupt_exception.h">
       <Filter>Header Files\exceptions</Filter>
     </ClInclude>
   </ItemGroup>
