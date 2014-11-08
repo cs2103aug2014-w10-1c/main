@@ -59,9 +59,9 @@ public:
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
 		Assert::AreEqual(serialized[TaskSerializer::KEY_START_TIME],
-			std::wstring(L"2001;1;10;1;2;3;"));
+			std::wstring(L"20010110T010203"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
-			std::wstring(L"2002;1;10;1;2;3;"));
+			std::wstring(L"20020110T010203"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
 			std::wstring(L"high"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
