@@ -53,6 +53,10 @@ protected:
 	static const std::wstring logCategory;
 
 private:
+	Task::Subtasks executeSubtasksAddQuery(State& state) const;
+	Task executeParentAddQuery(State& state,
+		const Task::Subtasks& subtasks) const;
+
 	/// Execute add task.
 	Response execute(State& tasks) override;
 
