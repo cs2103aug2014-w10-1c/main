@@ -35,10 +35,10 @@ Task BatchAddSubTasks::executeParentAddQuery(State& state,
 	std::unique_ptr<Query> addParentQuery;
 	if (insertedID == -1) {
 		addParentQuery = std::unique_ptr<AddTask>(new AddTask(description,
-			deadline, priority, dependencies, subtasks));
+			startTime, deadline, priority, dependencies, subtasks));
 	} else {
 		addParentQuery = std::unique_ptr<AddTask>(new AddTask(insertedID, description,
-			deadline, priority, dependencies, subtasks));
+			startTime, deadline, priority, dependencies, subtasks));
 	}
 	return boost::get<Task>(addParentQuery->execute(state));
 }
