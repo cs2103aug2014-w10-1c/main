@@ -20,6 +20,8 @@ bool PutOperation::run(pugi::xml_document& document) {
 	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
 	pugi::xml_node toEdit =
 		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+
+	// Checks if the node to be edited exists
 	if (!toEdit) {
 		return false;
 	}

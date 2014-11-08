@@ -17,7 +17,11 @@ PostOperation::PostOperation(std::wstring branch, std::wstring id,
 
 bool PostOperation::run(pugi::xml_document& document) {
 	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
-	if (xmlBranch.find_child_by_attribute(L"id", nodeId.c_str())) {
+	pugi::xml_node toAdd =
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+
+	// Checks if the id of the node to be added already exists
+	if (toAdd) {
 		return false;
 	}
 
