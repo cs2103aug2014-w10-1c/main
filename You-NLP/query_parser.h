@@ -353,15 +353,15 @@ private:
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
 
-	/// Edit command nonterminal rule for setting the subtask of another task.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
-
 	/// Edit command nonterminal rule for setting the dependency of another
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
 
 	/// Edit command nonterminal rule for setting the task deadline.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDeadline;
+
+	/// Edit command nonterminal rule for setting the subtask of another task.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
 
 	/// Edit command terminal rule for setting the task to be of high priority.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;

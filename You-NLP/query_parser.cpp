@@ -204,16 +204,14 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	editSetHighPriority = (
 		qi::eps
-	)[qi::_val = EDIT_QUERY {
-		0,
-		boost::none,
-		TaskPriority::HIGH
-	}];
+	)[qi::_val = phoenix::bind(&constructEditQueryPriority,
+		TaskPriority::HIGH)];
 	BOOST_SPIRIT_DEBUG_NODE(editSetHighPriority);
 
 	editSetDeadline = (
 		utilityTime
 	)[qi::_val = phoenix::bind(&constructEditQueryDeadline, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(editSetDeadline);
 
 	editSetSubtask = (
 		qi::int_
