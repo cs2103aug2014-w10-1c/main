@@ -293,186 +293,72 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 	}
 
 	TEST_METHOD(getsCorrectTypeForEditQueries) {
-		// TODO(lowjoel): Remove copy-paste.
-		getsCorrectTypeForEditQueries1();
-		getsCorrectTypeForEditQueries2();
-		getsCorrectTypeForEditQueries3();
-		getsCorrectTypeForEditQueries4();
-		getsCorrectTypeForEditQueries5();
-		getsCorrectTypeForEditQueries6();
-		getsCorrectTypeForEditQueries7();
+		NLP::EDIT_QUERY query = Mocks::Queries::EDIT_QUERY;
+		executesEditQueryProperly(query);
+
+		query.description = boost::none;
+		executesEditQueryProperly(query);
+
+		query = Mocks::Queries::EDIT_QUERY;
+		query.priority = boost::none;
+		executesEditQueryProperly(query);
+
+		query = Mocks::Queries::EDIT_QUERY;
+		query.deadline = boost::none;
+		executesEditQueryProperly(query);
+
+		query = Mocks::Queries::EDIT_QUERY;
+		query.complete = boost::none;
+		executesEditQueryProperly(query);
+
+		query = NLP::EDIT_QUERY {};
+		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
+		query.childTask = 1;
+		executesEditQueryProperly(query);
+
+		query = NLP::EDIT_QUERY {};
+		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
+		query.dependingTask = 1;
+		executesEditQueryProperly(query);
 	}
 
-	void getsCorrectTypeForEditQueries1() {
-		Mocks::TaskList taskList;
+	void executesEditQueryProperly(const NLP::EDIT_QUERY& editQuery) {
+		Mocks::TaskList taskList(5);
 		QueryExecutorBuilderVisitor visitor(taskList);
+		Task& first = taskList.front();
 
-		You::NLP::QUERY query(Mocks::Queries::EDIT_QUERY);
+		You::NLP::QUERY query = editQuery;
 		std::unique_ptr<QueryExecutor> executor(
 			boost::apply_visitor(visitor, query));
 		EDIT_RESULT result(
 			boost::get<EDIT_RESULT>(executor->execute()));
 
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
-		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
-			Mocks::Queries::EDIT_QUERY.priority.get()),
-			result.task.getPriority());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
-			result.task.getDeadline());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
-			result.task.isCompleted());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries2() {
-		Mocks::TaskList taskList;
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.deadline = boost::none;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
-		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
-			Mocks::Queries::EDIT_QUERY.priority.get()),
-			result.task.getPriority());
-		Assert::AreEqual(taskList.front().getDeadline(),
-			result.task.getDeadline());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
-			result.task.isCompleted());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries3() {
-		Mocks::TaskList taskList;
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.description = boost::none;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::AreEqual(taskList.front().getDescription(),
-			result.task.getDescription());
-		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
-			Mocks::Queries::EDIT_QUERY.priority.get()),
-			result.task.getPriority());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
-			result.task.getDeadline());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
-			result.task.isCompleted());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries4() {
-		Mocks::TaskList taskList;
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.priority = boost::none;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
-		Assert::AreEqual(taskList.front().getPriority(),
-			result.task.getPriority());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
-			result.task.getDeadline());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.complete.get(),
-			result.task.isCompleted());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries5() {
-		Mocks::TaskList taskList;
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2(Mocks::Queries::EDIT_QUERY);
-		query2.complete = boost::none;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.description.get(),
-			result.task.getDescription());
-		Assert::AreEqual(Controller::nlpToQueryEnginePriority(
-			Mocks::Queries::EDIT_QUERY.priority.get()),
-			result.task.getPriority());
-		Assert::AreEqual(Mocks::Queries::EDIT_QUERY.deadline.get(),
-			result.task.getDeadline());
-		Assert::AreEqual(taskList.front().isCompleted(),
-			result.task.isCompleted());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries6() {
-		Mocks::TaskList taskList(2);
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2;
-		query2.taskID = Mocks::Queries::EDIT_QUERY.taskID;
-		query2.childTask = 1;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		Assert::AreEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::IsFalse(result.task.getSubtasks().empty());
-		Assert::IsTrue(result.task.getDependencies().empty());
-	}
-
-	void getsCorrectTypeForEditQueries7() {
-		Mocks::TaskList taskList(2);
-		QueryExecutorBuilderVisitor visitor(taskList);
-
-		You::NLP::EDIT_QUERY query2;
-		query2.taskID = Mocks::Queries::EDIT_QUERY.taskID;
-		query2.dependingTask = 1;
-		You::NLP::QUERY query(query2);
-		std::unique_ptr<QueryExecutor> executor(
-			boost::apply_visitor(visitor, query));
-		EDIT_RESULT result(
-			boost::get<EDIT_RESULT>(executor->execute()));
-
-		// We edit the second element in our task list.
-		taskList.erase(begin(taskList), begin(taskList));
-		Assert::AreNotEqual(taskList.front().getID(),
-			result.task.getID());
-		Assert::IsTrue(result.task.getSubtasks().empty());
-		Assert::IsFalse(result.task.getDependencies().empty());
+		if (editQuery.dependingTask) {
+			Assert::AreNotEqual(first.getID(), result.task.getID());
+			Assert::IsFalse(result.task.getDependencies().empty());
+		} else {
+			Assert::AreEqual(first.getID(), result.task.getID());
+			Assert::AreEqual(editQuery.description ?
+				editQuery.description.get() : first.getDescription(),
+				result.task.getDescription());
+			Assert::AreEqual(editQuery.priority ?
+				Controller::nlpToQueryEnginePriority(editQuery.priority.get()) :
+				first.getPriority(),
+				result.task.getPriority());
+			Assert::AreEqual(editQuery.deadline ?
+				editQuery.deadline.get() : first.getDeadline(),
+				result.task.getDeadline());
+			Assert::AreEqual(editQuery.complete ?
+				editQuery.complete.get() : first.isCompleted(),
+				result.task.isCompleted());
+			Assert::AreEqual(editQuery.childTask ?
+				first.getSubtasks().size() + 1 :
+				first.getSubtasks().size(),
+				result.task.getSubtasks().size());
+			Assert::AreEqual(
+				first.getDependencies().size(),
+				result.task.getDependencies().size());
+		}
 	}
 
 	TEST_METHOD(editQueriesOutOfBoundsThrowsContextOutOfRange) {
