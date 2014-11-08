@@ -352,6 +352,9 @@ private:
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
 
+	/// Edit command terminal rule for setting the task to be of high priority.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;
+
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>
 		editAttachmentCommandRule;

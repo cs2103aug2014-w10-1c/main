@@ -156,6 +156,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommand = (
 		qi::uint_ > (
 			(space >> qi::lit("set") > space > editCommandRule) |
+			(*space >> qi::lit("!") > editSetHighPriority) |
 			(*space >> qi::lit(":") > *space > editSetSubtask) |
 			(*space >> qi::lit("->") > *space > editSetDependent) |
 			(space >> qi::lit("attach") > space >
@@ -199,6 +200,15 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
 		(L"complete", TaskField::COMPLETE);
+
+	editSetHighPriority = (
+		qi::eps
+	)[qi::_val = EDIT_QUERY {
+		0,
+		boost::none,
+		TaskPriority::HIGH
+	}];
+	BOOST_SPIRIT_DEBUG_NODE(editSetHighPriority);
 
 	editSetSubtask = (
 		qi::int_
