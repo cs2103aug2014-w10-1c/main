@@ -68,6 +68,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\You-QueryEngine\packages.config" />
   </ItemGroup>
 </Project>
