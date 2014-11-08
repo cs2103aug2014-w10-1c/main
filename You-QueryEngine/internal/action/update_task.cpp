@@ -87,7 +87,7 @@ void UpdateTask::makeTransaction(const Task& updated) const {
 		logCategory % id).str();
 	auto serialized = Controller::Serializer::serialize(updated);
 	Transaction t(DataStore::get().begin());
-	DataStore::get().put(this->id, serialized);
+	DataStore::get().put(updated.getID(), serialized);
 	t.commit();
 }
 
@@ -114,7 +114,7 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 	Task::ID newParent) const {
 	auto theTask = state.graph().getTask(id);
 
-	{  // NOLINT(whitespace/braces)
+	if (!theTask.isTopLevel()) {
 		auto oldParentTask = state.graph().getTask(theTask.getParent());
 		auto newSubtasks = oldParentTask.getSubtasks();
 		newSubtasks.erase(id);
@@ -122,15 +122,6 @@ void UpdateTask::reparentTask(State& state, Task::ID id,
 		Controller::Graph::updateTask(state.graph(), oldParentTask);
 		Controller::Graph::updateTask(state.sgraph(), oldParentTask);
 		makeTransaction(oldParentTask);
-	}
-
-	{  // NOLINT(whitespace/braces)
-		auto newParentTask = state.graph().getTask(newParent);
-		auto newSubtasks = newParentTask.getSubtasks();
-		newParentTask.setSubtasks(newSubtasks);
-		Controller::Graph::updateTask(state.graph(), newParentTask);
-		Controller::Graph::updateTask(state.sgraph(), newParentTask);
-		makeTransaction(newParentTask);
 	}
 
 	{  // NOLINT(whitespace/braces)
