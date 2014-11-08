@@ -8,7 +8,6 @@
 #include "../state.h"
 #include "../controller.h"
 #include "update_task.h"
-#include "delete_task.h"
 #include "add_task.h"
 
 namespace You {
@@ -16,18 +15,14 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// \cond Imports
-namespace {
-	using Transaction = You::DataStore::Transaction;
-	using DataStore = You::DataStore::DataStore;
-	using Log = You::Utils::Log;
-}
-/// \endcond
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
 
 const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
 
 std::unique_ptr<Query> AddTask::getReverse() {
-	return std::unique_ptr<Query>(new DeleteTask(insertedID));
+	return QueryEngine::DeleteTask(insertedID);
 }
 
 Task AddTask::buildTask(const Task::ID newID) {
@@ -67,7 +62,7 @@ void AddTask::updateParentPointer(State& state) const {
 	for (const auto& id : subtasks) {
 		auto previous = State::get().sgraph().getTask(id);
 		previous.setParent(insertedID);
-		UpdateTask(previous).execute(state);
+		QueryEngine::UpdateTask(previous)->execute(state);
 	}
 }
 
