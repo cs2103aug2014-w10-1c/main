@@ -126,6 +126,27 @@ public:
 			static_cast<int>(boost::date_time::months_of_year::Oct),
 			static_cast<int>(lastOctober.month()));
 		Assert::IsTrue(lastOctober < today);
+
+		date thisNovember = DateTimeParser::parse(L"this nov").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Nov),
+			static_cast<int>(thisNovember.month()));
+		Assert::IsTrue(thisNovember > today);
+		Assert::IsTrue((thisNovember - today).days() <= 366);
+
+		date thisDecember = DateTimeParser::parse(L"this dec").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Dec),
+			static_cast<int>(thisDecember.month()));
+		Assert::IsTrue(thisDecember > today);
+		Assert::IsTrue((thisDecember - today).days() <= 366);
+
+		date thisOctober = DateTimeParser::parse(L"this oct").date();
+		Assert::AreEqual(
+			static_cast<int>(boost::date_time::months_of_year::Oct),
+			static_cast<int>(thisOctober.month()));
+		Assert::IsTrue(thisOctober > today);
+		Assert::IsTrue((thisOctober - today).days() <= 366);
 	}
 
 	TEST_METHOD(parsesRelativeDaysOfWeek) {
