@@ -60,22 +60,38 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::_3)];
 	BOOST_SPIRIT_DEBUG_NODE(addCommand);
 
-	addCommandDescription = (
-		ParserCharTraits::char_ > addCommandDescriptionTail
-	)[qi::_val = phoenix::bind(
-		&constructAddQueryFromDescription,
-		qi::_1,
-		qi::_2)];
+	addCommandDescription %= (
+		addCommandDescriptionQuoted |
+		addCommandDescriptionUnquoted
+	);
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDescription);
 
-	addCommandDescriptionTail %= (
+	addCommandDescriptionQuoted = (
+		string > addCommandPriority
+	)[qi::_val = phoenix::bind(
+		static_cast<ADD_QUERY (*)(StringType, ADD_QUERY)>(
+			&constructAddQueryFromDescription),
+		qi::_1,
+		qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionQuoted);
+
+	addCommandDescriptionUnquoted = (
+		ParserCharTraits::char_ > addCommandDescriptionUnquotedTail
+	)[qi::_val = phoenix::bind(
+		static_cast<ADD_QUERY(*)(ParserCharEncoding::char_type, ADD_QUERY)>(
+			&constructAddQueryFromDescription),
+		qi::_1,
+		qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionUnquoted);
+
+	addCommandDescriptionUnquotedTail %= (
 		addCommandPriority |
-		addCommandDescription
+		addCommandDescriptionUnquoted
 	);
-	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionTail);
+	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionUnquotedTail);
 
 	addCommandPriority %= (
-		(-space >> qi::lit('!') >> addCommandDeadlineOptional)
+		(*space >> qi::lit('!') >> addCommandDeadlineOptional)
 			[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
 		addCommandDeadlineOptional
 	);

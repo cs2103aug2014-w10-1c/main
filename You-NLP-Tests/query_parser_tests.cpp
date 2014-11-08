@@ -193,6 +193,17 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesQuotedDescriptionAddTask) {
+		QUERY q = QueryParser::parse(L"'CS3235: Homework Assignment 3'! by "
+			L"14 Dec 13 ");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"CS3235: Homework Assignment 3",
+			TaskPriority::HIGH,
+			ptime(date(2014, boost::gregorian::Dec, 13))
+		}), q);
+	}
+
 	TEST_METHOD(parsesShowQuery) {
 		// Boundary case: no filters nor sorts.
 		QUERY q = QueryParser::parse(L"/show");

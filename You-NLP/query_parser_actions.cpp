@@ -35,6 +35,13 @@ ADD_QUERY QueryParser::constructAddQueryFromDescription(
 	return query;
 }
 
+ADD_QUERY QueryParser::constructAddQueryFromDescription(
+	StringType description,
+	ADD_QUERY query) {
+	query.description = std::move(description);
+	return query;
+}
+
 ADD_QUERY QueryParser::constructAddQueryWithPriority(ADD_QUERY query) {
 	query.priority = TaskPriority::HIGH;
 	return query;
