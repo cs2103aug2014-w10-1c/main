@@ -82,7 +82,7 @@ const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 const Task::Subtasks Task::DEFAULT_SUBTASKS;
-const Task::Attachment Task::DEFAULT_ATTACHMENT = L"";
+const Task::Attachment Task::DEFAULT_ATTACHMENT;
 
 bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;

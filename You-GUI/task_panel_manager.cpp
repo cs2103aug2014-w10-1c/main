@@ -206,7 +206,13 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	}
 
 	// Insert attachment
-	result.push_back(QString::fromStdWString(task.getAttachment()));
+	if (task.getAttachment().size() != 0) {
+		Task::Attachment attachments = task.getAttachment();
+		std::wstring temp = boost::algorithm::join(attachments, L", ");
+		result.push_back(boost::lexical_cast<QString>(temp));
+	} else {
+		result.push_back("None");
+	}
 
 	return result;
 }

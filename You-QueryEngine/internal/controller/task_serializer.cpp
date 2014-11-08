@@ -41,7 +41,7 @@ TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 	Value value_completed = serializeCompleted(task.isCompleted());
 	Value value_parent = serializeParent(task.getParent());
 	Value value_subtasks = serializeSubtasks(task.getSubtasks());
-	Value value_attachment = serializeDescription(task.getAttachment());
+	Value value_attachment = serializeAttachment(task.getAttachment());
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
@@ -129,7 +129,7 @@ Task TaskSerializer::deserialize(const STask& stask) {
 
 		Task::Attachment attachment =
 			deserializeOrDefault<Task::Attachment>(
-				&TaskSerializer::deserializeDescription,
+				&TaskSerializer::deserializeAttachment,
 				stask,
 				KEY_ATTACHMENT,
 				Task::DEFAULT_ATTACHMENT);
@@ -194,9 +194,20 @@ TaskSerializer::Value TaskSerializer::serializeCompleted(
 		return L"false";
 	}
 }
+
 TaskSerializer::Value TaskSerializer::serializeSubtasks(
 	const Task::Subtasks& subtasks) {
 	return serializeDependencies(subtasks);
+}
+
+TaskSerializer::Value TaskSerializer::serializeAttachment(
+	const Task::Attachment& attachments) {
+	std::wstringstream ws;
+	for (const auto& attachment : attachments) {
+		ws << attachment;
+		ws << TaskSerializer::VALUE_DELIMITER;
+	}
+	return ws.str();
 }
 
 Task::ID TaskSerializer::deserializeID(const Value& id) {
@@ -248,6 +259,10 @@ Task::ID TaskSerializer::deserializeParent(const Value& parent) {
 
 Task::Subtasks TaskSerializer::deserializeSubtasks(const Value& subtasks) {
 	return deserializeDependencies(subtasks);
+}
+
+Task::Attachment TaskSerializer::deserializeAttachment(const Value& attachment) {
+	return tokenize(attachment);
 }
 
 std::vector<std::wstring> TaskSerializer::tokenize(const std::wstring& input) {

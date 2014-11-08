@@ -78,6 +78,8 @@ private:
 	static Value serializeParent(const Task::ID parent);
 	/// Same with dependencies.
 	static Value serializeSubtasks(const Task::Subtasks& subtasks);
+	/// A string of attachments, delimited by VALUE_DELIMITER.
+	static Value serializeAttachment(const Task::Attachment& attachment);
 	/// @}
 
 	/// Deserialize a field, return the default value
@@ -118,6 +120,8 @@ private:
 	static Task::ID deserializeParent(const Value& parent);
 	/// Same with dependencies.
 	static Task::Subtasks deserializeSubtasks(const Value& subtasks);
+	/// Deserialize the attachment.
+	static Task::Attachment deserializeAttachment(const Value& subtasks);
 	/// @}
 
 	/// Tokenize a string by VALUE_DELIMITER

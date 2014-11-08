@@ -275,11 +275,12 @@ TEST_CLASS(QueryEngineTests) {
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
-		task.setAttachment(L"index.html");
+		Task::Attachment expected = { L"index.html", L"index2.html" };
+		task.setAttachment(expected);
 		task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::UpdateTask(task)));
-		Assert::AreEqual(task.getAttachment(), std::wstring(L"index.html"));
+		Assert::IsTrue(task.getAttachment() == expected);
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;

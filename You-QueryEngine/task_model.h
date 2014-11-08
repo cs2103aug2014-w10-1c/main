@@ -43,7 +43,7 @@ public:
 	typedef std::unordered_set<Task::ID> Dependencies;
 	enum class Priority { NORMAL, HIGH };
 	typedef std::unordered_set<Task::ID> Subtasks;
-	typedef std::wstring Attachment;
+	typedef std::vector<std::wstring> Attachment;
 	/// @}
 
 	/// \name Inlined Field Getters.
