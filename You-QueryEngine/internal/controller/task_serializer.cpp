@@ -17,6 +17,7 @@ namespace {
 
 const TaskSerializer::Key TaskSerializer::KEY_ID = L"id";
 const TaskSerializer::Key TaskSerializer::KEY_DESCRIPTION = L"description";
+const TaskSerializer::Key TaskSerializer::KEY_START_TIME = L"start_time";
 const TaskSerializer::Key TaskSerializer::KEY_DEADLINE = L"deadline";
 const TaskSerializer::Key TaskSerializer::KEY_PRIORITY = L"priority";
 const TaskSerializer::Key TaskSerializer::KEY_DEPENDENCIES = L"dependencies";
@@ -32,17 +33,19 @@ const TaskSerializer::Value TaskSerializer::VALUE_DELIMITER = L";";
 TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 	Value value_id = serializeID(task.getID());
 	Value value_description = serializeDescription(task.getDescription());
-	Value value_deadline = serializeDeadline(task.getDeadline());
+
+	Value value_start_time = serializeTime(task.getStartTime());
+	Value value_deadline = serializeTime(task.getDeadline());
 	Value value_priority = serializePriority(task.getPriority());
 	Value value_dependencies = serializeDependencies(task.getDependencies());
 	Value value_completed = serializeCompleted(task.isCompleted());
 	Value value_parent = serializeParent(task.getParent());
 	Value value_subtasks = serializeSubtasks(task.getSubtasks());
 	Value value_attachment = serializeDescription(task.getAttachment());
-
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
+		{ KEY_START_TIME, value_start_time },
 		{ KEY_DEADLINE, value_deadline },
 		{ KEY_PRIORITY, value_priority },
 		{ KEY_DEPENDENCIES, value_dependencies },
@@ -76,43 +79,48 @@ Task TaskSerializer::deserialize(const STask& stask) {
 		sofar.id(id);
 		Task::Description description =
 			deserializeDescription(
-			getOrDefault(stask, KEY_DESCRIPTION,
-			serializeDescription(Task::DEFAULT_DESCRIPTION)));
+				getOrDefault(stask, KEY_DESCRIPTION,
+					serializeDescription(Task::DEFAULT_DESCRIPTION)));
 		sofar.description(description);
+		Task::Time startTime =
+			deserializeTime(
+				getOrDefault(stask, KEY_START_TIME,
+					serializeTime(Task::DEFAULT_DEADLINE)));
+		sofar.startTime(startTime);
 		Task::Time deadline =
-			deserializeDeadline(
-			getOrDefault(stask, KEY_DEADLINE,
-			serializeDeadline(Task::DEFAULT_DEADLINE)));
+			deserializeTime(
+				getOrDefault(stask, KEY_DEADLINE,
+					serializeTime(Task::DEFAULT_DEADLINE)));
 		sofar.deadline(deadline);
 		Task::Priority priority =
 			deserializePriority(
-			getOrDefault(stask, KEY_PRIORITY,
-			serializePriority(Task::DEFAULT_PRIORITY)));
+				getOrDefault(stask, KEY_PRIORITY,
+					serializePriority(Task::DEFAULT_PRIORITY)));
 		sofar.priority(priority);
 		Task::Dependencies dependencies =
 			deserializeDependencies(
-			getOrDefault(stask, KEY_DEPENDENCIES,
-			serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
+				getOrDefault(stask, KEY_DEPENDENCIES,
+					serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
 		sofar.dependencies(dependencies);
 		bool completed =
 			deserializeCompleted(
-			getOrDefault(stask, KEY_COMPLETED,
-			serializeCompleted(false)));
+				getOrDefault(stask, KEY_COMPLETED,
+					serializeCompleted(false)));
 		sofar.completed(completed);
 		Task::ID parent =
 			deserializeParent(
-			getOrDefault(stask, KEY_PARENT,
-			serializeID(id)));
+				getOrDefault(stask, KEY_PARENT,
+					serializeID(id)));
 		sofar.parent(parent);
 		Task::Dependencies subtasks =
 			deserializeSubtasks(
-			getOrDefault(stask, KEY_SUBTASKS,
-			serializeSubtasks(Task::DEFAULT_SUBTASKS)));
+				getOrDefault(stask, KEY_SUBTASKS,
+					serializeSubtasks(Task::DEFAULT_SUBTASKS)));
 		sofar.subtasks(subtasks);
 		Task::Attachment attachment =
 			deserializeDescription(
-			getOrDefault(stask, KEY_ATTACHMENT,
-			serializeDescription(Task::DEFAULT_ATTACHMENT)));
+				getOrDefault(stask, KEY_ATTACHMENT,
+					serializeDescription(Task::DEFAULT_ATTACHMENT)));
 		sofar.attachment(attachment);
 		return sofar;
 	} catch (const boost::bad_lexical_cast& e) {
@@ -130,7 +138,7 @@ TaskSerializer::Value TaskSerializer::serializeDescription(
 	return description;
 }
 
-TaskSerializer::Value TaskSerializer::serializeDeadline(
+TaskSerializer::Value TaskSerializer::serializeTime(
 	const Task::Time& deadline) {
 	std::wstringstream wss;
 	auto date = deadline.date();
@@ -187,7 +195,7 @@ Task::Description TaskSerializer::deserializeDescription(
 	return description;
 }
 
-Task::Time TaskSerializer::deserializeDeadline(const Value& deadline) {
+Task::Time TaskSerializer::deserializeTime(const Value& deadline) {
 	std::vector<std::int16_t> numbers;
 	std::vector<std::wstring> tokens = tokenize(deadline);
 	for (const auto& token : tokens) {

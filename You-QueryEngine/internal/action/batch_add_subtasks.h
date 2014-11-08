@@ -24,8 +24,8 @@ public:
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
 		std::vector<std::unique_ptr<Query>>&& subtasks)
-	: insertedID(-1), description(description), deadline(deadline),
-	  priority(priority), dependencies(dependencies),
+	: insertedID(-1), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(std::move(subtasks)) {}
 
 	/// Constructor for already known id
@@ -37,9 +37,9 @@ public:
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
 		std::vector<std::unique_ptr<Query>>&& subtasks)
-	: insertedID(id), description(description), deadline(deadline),
-		priority(priority), dependencies(dependencies),
-		subtasks(std::move(subtasks)) {}
+	: insertedID(id), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(std::move(subtasks)) {}
 
 	/// Disable assignment operator
 	BatchAddSubTasks& operator=(const BatchAddSubTasks&) = delete;

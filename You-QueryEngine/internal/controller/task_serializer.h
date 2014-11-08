@@ -37,6 +37,7 @@ public:
 	/// @{
 	static const Key KEY_ID;
 	static const Key KEY_DESCRIPTION;
+	static const Key KEY_START_TIME;
 	static const Key KEY_DEADLINE;
 	static const Key KEY_PRIORITY;
 	static const Key KEY_DEPENDENCIES;
@@ -66,7 +67,7 @@ private:
 	/// Description is already the same
 	static Value serializeDescription(const Task::Description& description);
 	/// YYYY:MM:DD HH::MM::SS to "YYYY;MM;DD;HH;MM;SS;"
-	static Value serializeDeadline(const Task::Time& deadline);
+	static Value serializeTime(const Task::Time& deadline);
 	/// Lowercased enum name
 	static Value serializePriority(const Task::Priority& priority);
 	/// { 1,2,3 } to "1;2;3"
@@ -86,7 +87,7 @@ private:
 	/// Description is already the same
 	static Task::Description deserializeDescription(const Value& description);
 	/// "YYYY;MM;DD;HH;MM;SS;" to ptime object
-	static Task::Time deserializeDeadline(const Value& deadline);
+	static Task::Time deserializeTime(const Value& deadline);
 	/// Lowercased enum name to enum
 	static Task::Priority deserializePriority(const Value& priority);
 	/// "1;2;3" to { 1,2,3 }
