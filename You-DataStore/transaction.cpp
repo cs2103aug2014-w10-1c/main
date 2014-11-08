@@ -1,4 +1,4 @@
-//@author A0114171W
+//@author A0097630B
 #include "stdafx.h"
 #include "internal/internal_transaction.h"
 #include "transaction.h"
