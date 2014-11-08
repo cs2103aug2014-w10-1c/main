@@ -36,6 +36,12 @@ public:
 				&QueryParser::parse), L"/throw"));
 	}
 
+	TEST_METHOD(throwsExceptionWhenTrailingText) {
+		Assert::ExpectException<ParserException>(
+			std::bind(static_cast<QUERY(*)(const std::wstring&)>(
+				&QueryParser::parse), L"lol by 14 Decembers"));
+	}
+
 	TEST_METHOD(acceptsTrailingWhitespace) {
 		QueryParser::parse(L"/show		");
 	}

@@ -28,6 +28,12 @@ public:
 		DateTimeParser::parse(L"13 nov			");
 	}
 
+	TEST_METHOD(throwsExceptionWhenTrailingText) {
+		Assert::ExpectException<ParserException>(
+			std::bind(static_cast<ptime(*)(const std::wstring&)>(
+				&DateTimeParser::parse), L"14 Decembers"));
+	}
+
 	TEST_METHOD(parsesYear) {
 		Assert::AreEqual(2056,
 			static_cast<int>(DateTimeParser::parse(L"2056").date().year()));

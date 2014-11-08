@@ -21,11 +21,15 @@ QUERY QueryParser::parse(const StringType& string) {
 }
 
 bool QueryParser::parse(const StringType& string, QUERY& result) {
-	return qi::parse(
-		begin(string),
-		end(string),
-		QueryParser() > qi::omit[*ParserCharTraits::blank] > qi::eoi,
-		result);
+	try {
+		return qi::parse(
+			begin(string),
+			end(string),
+			QueryParser() > qi::omit[*ParserCharTraits::blank] > qi::eoi,
+			result);
+	} catch (ParserExpectationFailure&) {
+		return false;
+	}
 }
 
 QueryParser::QueryParser() : QueryParser::base_type(start) {

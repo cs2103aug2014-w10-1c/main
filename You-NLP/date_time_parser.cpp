@@ -20,11 +20,15 @@ ptime DateTimeParser::parse(const StringType& string) {
 }
 
 bool DateTimeParser::parse(const StringType& string, ptime& result) {
-	return qi::parse(
-		begin(string),
-		end(string),
-		DateTimeParser() > qi::omit[*ParserCharTraits::blank] > qi::eoi,
-		result);
+	try {
+		return qi::parse(
+			begin(string),
+			end(string),
+			DateTimeParser() > qi::omit[*ParserCharTraits::blank] > qi::eoi,
+			result);
+	} catch (ParserExpectationFailure&) {
+		return false;
+	}
 }
 
 DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
