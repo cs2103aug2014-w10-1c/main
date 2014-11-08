@@ -7,8 +7,8 @@
 namespace You {
 namespace DataStore {
 
-const std::wstring DataStore::TASKS_NODE		= std::wstring(L"tasks");
-const std::wstring DataStore::RESOURCES_NODE	= std::wstring(L"resources");
+const std::wstring DataStore::TASKS_NODE = std::wstring(L"tasks");
+const std::wstring DataStore::RESOURCES_NODE = std::wstring(L"resources");
 
 DataStore& DataStore::get() {
 	static DataStore ds;
