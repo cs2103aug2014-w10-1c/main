@@ -43,12 +43,12 @@ public:
 
 	/// Notifies the data store that the given transaction is being committed.
 	///
-	/// \param[in] transaction The transaction being committed.
+	/// \param[out] transaction The transaction being committed.
 	void onTransactionCommit(Transaction& transaction);
 
 	/// Notifies the data store that the given transaction is being rolled back.
 	///
-	/// \param[in] transaction The transaction being rolled back.
+	/// \param[out] transaction The transaction being rolled back.
 	void onTransactionRollback(Transaction& transaction);
 
 	/// @}
@@ -89,7 +89,7 @@ private:
 	/// Executes the operation queue into the xml_document
 	///
 	/// \param[in] opQueue operations queue to be executed
-	/// \param[in] xml xml document to be modified by the operations
+	/// \param[out] xml The xml document to be modified by the operations
 	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
 
 	/// Throws the exception for the xml_parse_status given

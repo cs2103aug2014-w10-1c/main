@@ -16,7 +16,7 @@ public:
 	/// Get the handler of the XML node with the specified name
 	/// in the specified XML document
 	///
-	/// \param[in] document the XML document to get the handler from
+	/// \param[out] document the XML document to get the handler from
 	/// \param[in] nodeName the name of the node to get the handler of
 	static pugi::xml_node get(pugi::xml_document& document,
 		std::wstring nodeName);
