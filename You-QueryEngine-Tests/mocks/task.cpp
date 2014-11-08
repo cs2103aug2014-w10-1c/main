@@ -3,7 +3,6 @@
 #include "task.h"
 
 #include "../You-QueryEngine/internal/controller.h"
-#include "../You-QueryEngine/internal/model.h"
 
 namespace You {
 namespace QueryEngine {

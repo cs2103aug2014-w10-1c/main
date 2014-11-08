@@ -5,7 +5,7 @@
 #include "../../../You-DataStore/datastore.h"
 #include "../../../You-DataStore/transaction.h"
 
-#include "../model.h"
+#include "../state.h"
 #include "../controller.h"
 #include "add_task.h"
 #include "batch_add_subtasks.h"
@@ -79,6 +79,12 @@ void DeleteTask::deleteTree(State& state, Task::ID id) {
 
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
+	// If it is a subtask of someone, remove it from parent.
+	if (!deletedTask.isTopLevel()) {
+		auto parent = state.get().graph().getTask(
+			deletedTask.getParent()).getID();
+		QueryEngine::RemoveSubtask(parent, id)->execute(state);
+	}
 	if (!deletedTask.getSubtasks().empty()) {
 		deleteTree(state, id);
 		for (const auto& c : children) {
@@ -88,15 +94,6 @@ Response DeleteTask::execute(State& state) {
 		Controller::Graph::deleteTask(state.graph(), id);
 		Controller::Graph::deleteTask(state.sgraph(), id);
 		makeTransaction(id);
-	}
-	// If it is a subtask of someone, remove it from parent.
-	if (!deletedTask.isTopLevel()) {
-		auto parent = state.get().graph().getTask(
-			deletedTask.getParent());
-		auto sub = parent.getSubtasks();
-		sub.erase(id);
-		parent.setSubtasks(sub);
-		QueryEngine::UpdateTask(parent)->execute(state);
 	}
 	return this->id;
 }

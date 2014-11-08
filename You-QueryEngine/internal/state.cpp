@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "../../../You-DataStore/datastore.h"
-#include "../../../You-DataStore/task_typedefs.h"
-#include "../controller/task_graph_controller.h"
+#include "../../You-DataStore/datastore.h"
+#include "../../You-DataStore/task_typedefs.h"
+#include "controller/task_graph_controller.h"
 
 #include "state.h"
 

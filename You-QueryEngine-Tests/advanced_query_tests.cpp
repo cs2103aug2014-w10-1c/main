@@ -9,7 +9,7 @@
 #include "mocks/task_list.h"
 #include "exception.h"
 #include "internal/controller/task_builder.h"
-#include "internal/model.h"
+#include "internal/state.h"
 #include "internal/action/update_task.h"
 #include "api.h"
 
@@ -303,6 +303,26 @@ TEST_CLASS(AdvancedQueryEngineTests) {
 		parent = Internal::State::get().graph().getTask(parent.getID());
 		Assert::IsTrue(Internal::State::get().graph().getTask(parent.getID())
 			.getSubtasks().empty());
+	}
+
+	TEST_METHOD(removingSubtaskSetItAsToplevel) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+			childQueries.push_back(
+				std::move(QueryEngine::AddTask(desc, dead,
+					Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::RemoveSubtask(
+					parent.getID(), child.getID())));
+		Assert::IsTrue(parent2.getSubtasks().empty());
+		auto child2 = Internal::State::get().graph().getTask(child.getID());
+		Assert::IsTrue(child2.isTopLevel());
 	}
 	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
 };

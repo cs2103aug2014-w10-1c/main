@@ -1,11 +1,6 @@
 #include "stdafx.h"
 
-#include <string>
-#include <unordered_map>
-#include <boost/tokenizer.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
+#include "../../exception.h"
 #include "task_builder.h"
 #include "task_serializer.h"
 
@@ -74,51 +69,57 @@ const std::wstring getOrDefault(const TaskSerializer::STask& stask,
 }  // namespace
 
 Task TaskSerializer::deserialize(const STask& stask) {
-	Task::ID id =
-		deserializeID(stask.at(KEY_ID));
-	Task::Description description =
-		deserializeDescription(
+	TaskBuilder sofar = TaskBuilder::get();
+	try {
+		Task::ID id =
+			deserializeID(stask.at(KEY_ID));
+		sofar.id(id);
+		Task::Description description =
+			deserializeDescription(
 			getOrDefault(stask, KEY_DESCRIPTION,
-				serializeDescription(Task::DEFAULT_DESCRIPTION)));
-	Task::Time deadline =
-		deserializeDeadline(
+			serializeDescription(Task::DEFAULT_DESCRIPTION)));
+		sofar.description(description);
+		Task::Time deadline =
+			deserializeDeadline(
 			getOrDefault(stask, KEY_DEADLINE,
-				serializeDeadline(Task::DEFAULT_DEADLINE)));
-	Task::Priority priority =
-		deserializePriority(
+			serializeDeadline(Task::DEFAULT_DEADLINE)));
+		sofar.deadline(deadline);
+		Task::Priority priority =
+			deserializePriority(
 			getOrDefault(stask, KEY_PRIORITY,
-				serializePriority(Task::DEFAULT_PRIORITY)));
-	Task::Dependencies dependencies =
-		deserializeDependencies(
+			serializePriority(Task::DEFAULT_PRIORITY)));
+		sofar.priority(priority);
+		Task::Dependencies dependencies =
+			deserializeDependencies(
 			getOrDefault(stask, KEY_DEPENDENCIES,
-				serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
-	bool completed =
-		deserializeCompleted(
+			serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
+		sofar.dependencies(dependencies);
+		bool completed =
+			deserializeCompleted(
 			getOrDefault(stask, KEY_COMPLETED,
-				serializeCompleted(true)));
-	Task::ID parent =
-		deserializeParent(
+			serializeCompleted(false)));
+		sofar.completed(completed);
+		Task::ID parent =
+			deserializeParent(
 			getOrDefault(stask, KEY_PARENT,
-				serializeID(id)));
-	Task::Dependencies subtasks =
-		deserializeSubtasks(
+			serializeID(id)));
+		sofar.parent(parent);
+		Task::Dependencies subtasks =
+			deserializeSubtasks(
 			getOrDefault(stask, KEY_SUBTASKS,
-				serializeSubtasks(Task::DEFAULT_SUBTASKS)));
-	Task::Attachment attachment =
-		deserializeDescription(
+			serializeSubtasks(Task::DEFAULT_SUBTASKS)));
+		sofar.subtasks(subtasks);
+		Task::Attachment attachment =
+			deserializeDescription(
 			getOrDefault(stask, KEY_ATTACHMENT,
-				serializeDescription(Task::DEFAULT_ATTACHMENT)));
-	return TaskBuilder::get()
-		.id(id)
-		.description(description)
-		.deadline(deadline)
-		.dependencies(dependencies)
-		.priority(priority)
-		.parent(parent)
-		.completed(completed)
-		.subtasks(subtasks)
-		.attachment(attachment);
+			serializeDescription(Task::DEFAULT_ATTACHMENT)));
+		sofar.attachment(attachment);
+		return sofar;
+	} catch (const boost::bad_lexical_cast& e) {
+		return sofar;
+	}
 }
+
 
 TaskSerializer::Value TaskSerializer::serializeID(const Task::ID id) {
 	return boost::lexical_cast<std::wstring>(id);

@@ -3,13 +3,13 @@
 //@author A0112054Y
 
 #pragma once
-#ifndef YOU_QUERYENGINE_INTERNAL_MODEL_TASK_GRAPH_H_
-#define YOU_QUERYENGINE_INTERNAL_MODEL_TASK_GRAPH_H_
+#ifndef YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
+#define YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
 
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include "../../task_model.h"
+#include "../task_model.h"
 
 namespace You {
 namespace QueryEngine {
@@ -62,4 +62,4 @@ private:
 }  // namespace QueryEngine
 }  // namespace You
 
-#endif  // YOU_QUERYENGINE_INTERNAL_MODEL_TASK_GRAPH_H_
+#endif  // YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_

@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "comparator.h"
 #include "filter.h"
-#include "internal/model.h"
+#include "internal/state.h"
 
 namespace You {
 namespace QueryEngine {

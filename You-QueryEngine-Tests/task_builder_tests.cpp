@@ -83,30 +83,6 @@ TEST_CLASS(TaskBuilderTests) {
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail4);
 		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail5);
 	}
-
-	TEST_METHOD(convertTaskToString) {
-		const Task::Description desc = L"Learn Haskell Lens";
-		const Task::Time dead = Task::NEVER;
-		const Task::Dependencies dep = { 1, 2, 3 };
-		const Task::Dependencies dep2 = { 2, 1, 3};
-		const Task::Priority prio = Task::Priority::HIGH;
-		Task task = TaskBuilder::get()
-			.description(desc)
-			.deadline(dead)
-			.priority(prio)
-			.dependencies(dep);
-		Task task2 = TaskBuilder::get()
-			.description(desc)
-			.deadline(dead)
-			.priority(prio)
-			.dependencies(dep);
-		Task task3 = TaskBuilder::get()
-			.description(desc)
-			.deadline(dead)
-			.dependencies(dep);
-		Assert::AreEqual(ToString(task), ToString(task2));
-		Assert::AreNotEqual(ToString(task), ToString(task3));
-	}
 };
 
 }  // namespace UnitTests

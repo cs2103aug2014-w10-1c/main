@@ -3,7 +3,7 @@
 #ifndef YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
 #define YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
 
-#include "../You-QueryEngine/internal/model.h"
+#include "../You-QueryEngine/task_model.h"
 
 namespace You {
 namespace QueryEngine {
