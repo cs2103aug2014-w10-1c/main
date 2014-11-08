@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
 #include "../../exception.h"
 #include "task_builder.h"
 #include "task_serializer.h"
@@ -8,12 +10,10 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-namespace {
-	using boost::posix_time::ptime;
-	using boost::gregorian::date;
-	using boost::gregorian::greg_year_month_day;
-	using boost::posix_time::time_duration;
-}
+using boost::posix_time::ptime;
+using boost::gregorian::date;
+using boost::gregorian::greg_year_month_day;
+using boost::posix_time::time_duration;
 
 const TaskSerializer::Key TaskSerializer::KEY_ID = L"id";
 const TaskSerializer::Key TaskSerializer::KEY_DESCRIPTION = L"description";
@@ -153,17 +153,9 @@ TaskSerializer::Value TaskSerializer::serializeDescription(
 
 TaskSerializer::Value TaskSerializer::serializeTime(
 	const Task::Time& deadline) {
-	std::wstringstream wss;
-	auto date = deadline.date();
-	auto time = deadline.time_of_day();
-	std::vector<int> fields = {
-		date.year(), date.month(), date.day(),
-		time.hours(), time.minutes(), time.seconds()
-	};
-	for (const auto& field : fields) {
-		wss << field << VALUE_DELIMITER;
-	}
-	return wss.str();
+	std::string stime = boost::posix_time::to_iso_string(deadline);
+	std::wstring value(begin(stime), end(stime));
+	return value;
 }
 
 TaskSerializer::Value TaskSerializer::serializePriority(
@@ -220,19 +212,25 @@ Task::Description TaskSerializer::deserializeDescription(
 }
 
 Task::Time TaskSerializer::deserializeTime(const Value& deadline) {
-	std::vector<std::int16_t> numbers;
-	std::vector<std::wstring> tokens = tokenize(deadline);
-	for (const auto& token : tokens) {
-		numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+	if (deadline.find(VALUE_DELIMITER) != std::wstring::npos) {
+		// The user is using the old serialization method.
+		std::vector<std::int16_t> numbers;
+		std::vector<std::wstring> tokens = tokenize(deadline);
+		for (const auto& token : tokens) {
+			numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+		}
+		auto year = numbers[0];
+		auto month = numbers[1];
+		auto day = numbers[2];
+		auto hour = numbers[3];
+		auto minute = numbers[4];
+		auto second = numbers[5];
+		return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+			boost::posix_time::time_duration(hour, minute, second));
+	} else {
+		std::string sdeadline(begin(deadline), end(deadline));
+		return boost::posix_time::from_iso_string(sdeadline);
 	}
-	auto year = numbers[0];
-	auto month = numbers[1];
-	auto day = numbers[2];
-	auto hour = numbers[3];
-	auto minute = numbers[4];
-	auto second = numbers[5];
-	return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
-		boost::posix_time::time_duration(hour, minute, second));
 }
 
 Task::Priority TaskSerializer::deserializePriority(const Value& priority) {
