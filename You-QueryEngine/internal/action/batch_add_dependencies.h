@@ -55,6 +55,8 @@ protected:
 	std::unique_ptr<Query> getReverse() override;
 
 private:
+	Task executeParentAddQuery(State& state, const Task::ID lastInserted);
+	Task::ID executeDependenciesAddQuery(State& state);
 	/// Execute add task.
 	Response execute(State& tasks) override;
 
