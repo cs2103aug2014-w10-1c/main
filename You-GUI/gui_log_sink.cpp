@@ -47,5 +47,5 @@ void GUILogSink::onLog(LogSeverity severity,
 	}
 }
 
-}
-}
+}  // namespace GUI
+}  // namespace You
