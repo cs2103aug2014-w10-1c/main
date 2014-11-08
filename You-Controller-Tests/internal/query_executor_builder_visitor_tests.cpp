@@ -326,6 +326,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		query.dependingTask = -1;
 		executesEditQueryProperly(query);
+
+		query = NLP::EDIT_QUERY {};
+		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
+		query.attachments.push_back({ true, L"test" });
+		executesEditQueryProperly(query);
+
+		query = NLP::EDIT_QUERY {};
+		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
+		query.attachments.push_back({ false, L"test" });
+		executesEditQueryProperly(query);
 	}
 
 	void executesEditQueryProperly(const NLP::EDIT_QUERY& editQuery) {
@@ -371,6 +381,16 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Assert::AreEqual(
 				first.getDependencies().size(),
 				result.task.getDependencies().size());
+			if (!editQuery.attachments.empty()) {
+				assert(editQuery.attachments.size() == 1);
+				if (editQuery.attachments[0].add) {
+					Assert::AreEqual(editQuery.attachments[0].path,
+						result.task.getAttachment());
+				} else {
+					Assert::AreNotEqual(editQuery.attachments[0].path,
+						result.task.getAttachment());
+				}
+			}
 		}
 	}
 
