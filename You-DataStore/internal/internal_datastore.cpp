@@ -150,9 +150,11 @@ void DataStore::executeTransaction(Transaction& transaction,
 }
 
 void DataStore::onXmlParseResult(const pugi::xml_parse_result& result) {
-	if (result.status == pugi::xml_parse_status::status_io_error ||
+	bool isIoError =
+		result.status == pugi::xml_parse_status::status_io_error ||
 		result.status == pugi::xml_parse_status::status_out_of_memory ||
-		result.status == pugi::xml_parse_status::status_internal_error) {
+		result.status == pugi::xml_parse_status::status_internal_error;
+	if (isIoError) {
 		throw IOException();
 	} else {
 		throw NotWellFormedXmlException();
