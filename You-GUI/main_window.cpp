@@ -127,6 +127,18 @@ void MainWindow::sendQuery() {
 	ui.statusMessage->setText(message);
 	try {
 		qm->query(inputString, getTaskList());
+	} catch (You::Controller::IOException& e) {
+		QMessageBox::critical(this,
+			QString("Exception: File could not be opened."),
+			QString(IO_EXCEPTION_MESSAGE),
+			QMessageBox::Close, QMessageBox::NoButton);
+		qApp->quit();
+	} catch (You::Controller::NotWellFormedXmlException& e) {
+		QMessageBox::critical(this,
+			QString("Exception: XML is not well formed"),
+			QString(NOT_WELL_FORMED_XML_MESSAGE),
+			QMessageBox::Close, QMessageBox::NoButton);
+		qApp->quit();
 	} catch (You::Controller::EmptyTaskDescriptionException& e) {
 		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
