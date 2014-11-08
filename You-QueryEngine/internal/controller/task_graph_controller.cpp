@@ -72,7 +72,7 @@ void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
 
 	try {
 		task = g.getTask(id);
-	} catch (const Exception::TaskNotFoundException& e) {
+	} catch (const Exception::TaskNotFoundException&) {
 		return;
 	}
 

@@ -80,6 +80,26 @@ private:
 	static Value serializeSubtasks(const Task::Subtasks& subtasks);
 	/// @}
 
+	/// Deserialize a field, return the default value
+	/// in case an error is encountered.
+	template <typename T>
+	static T deserializeOrDefault(
+		T (*deserializer)(const Value&),
+		const STask& stask,
+		const std::wstring& field,
+		const T& defaultValue) {
+		auto value = stask.find(field);
+		if (value == stask.end()) {
+			return defaultValue;
+		}
+		try {
+			T result = deserializer(value->second);
+			return result;
+		} catch (const boost::bad_lexical_cast&) {
+			return defaultValue;
+		}
+	}
+
 	/// \name Deserializer for each fields.
 	/// @{
 	/// Lexical_cast back the ID to int64

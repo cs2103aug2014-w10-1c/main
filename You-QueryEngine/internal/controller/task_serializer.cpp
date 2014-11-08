@@ -56,74 +56,87 @@ TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 	};
 }
 
-namespace {
-
-const std::wstring getOrDefault(const TaskSerializer::STask& stask,
-	const std::wstring& key,
-	const std::wstring& deflt) {
-	auto found = stask.find(key);
-	if (found == stask.end()) {
-		return deflt;
-	} else {
-		return found->second;
-	}
-}
-
-}  // namespace
-
 Task TaskSerializer::deserialize(const STask& stask) {
 	TaskBuilder sofar = TaskBuilder::get();
 	try {
 		Task::ID id =
 			deserializeID(stask.at(KEY_ID));
 		sofar.id(id);
+
 		Task::Description description =
-			deserializeDescription(
-				getOrDefault(stask, KEY_DESCRIPTION,
-					serializeDescription(Task::DEFAULT_DESCRIPTION)));
+			deserializeOrDefault<Task::Description>(
+				&TaskSerializer::deserializeDescription,
+				stask,
+				KEY_DESCRIPTION,
+				Task::DEFAULT_DESCRIPTION);
 		sofar.description(description);
+
 		Task::Time startTime =
-			deserializeTime(
-				getOrDefault(stask, KEY_START_TIME,
-					serializeTime(Task::DEFAULT_DEADLINE)));
+			deserializeOrDefault<Task::Time>(
+				&TaskSerializer::deserializeTime,
+				stask,
+				KEY_START_TIME,
+				Task::DEFAULT_START_TIME);
 		sofar.startTime(startTime);
+
 		Task::Time deadline =
-			deserializeTime(
-				getOrDefault(stask, KEY_DEADLINE,
-					serializeTime(Task::DEFAULT_DEADLINE)));
+			deserializeOrDefault<Task::Time>(
+				&TaskSerializer::deserializeTime,
+				stask,
+				KEY_DEADLINE,
+				Task::DEFAULT_DEADLINE);
 		sofar.deadline(deadline);
+
 		Task::Priority priority =
-			deserializePriority(
-				getOrDefault(stask, KEY_PRIORITY,
-					serializePriority(Task::DEFAULT_PRIORITY)));
+			deserializeOrDefault<Task::Priority>(
+				&TaskSerializer::deserializePriority,
+				stask,
+				KEY_PRIORITY,
+				Task::DEFAULT_PRIORITY);
 		sofar.priority(priority);
+
 		Task::Dependencies dependencies =
-			deserializeDependencies(
-				getOrDefault(stask, KEY_DEPENDENCIES,
-					serializeDependencies(Task::DEFAULT_DEPENDENCIES)));
+			deserializeOrDefault<Task::Dependencies>(
+				&TaskSerializer::deserializeDependencies,
+				stask,
+				KEY_DEPENDENCIES,
+				Task::DEFAULT_DEPENDENCIES);
 		sofar.dependencies(dependencies);
+
 		bool completed =
-			deserializeCompleted(
-				getOrDefault(stask, KEY_COMPLETED,
-					serializeCompleted(false)));
+			deserializeOrDefault<bool>(
+				&TaskSerializer::deserializeCompleted,
+				stask,
+				KEY_COMPLETED,
+				false);
 		sofar.completed(completed);
+
 		Task::ID parent =
-			deserializeParent(
-				getOrDefault(stask, KEY_PARENT,
-					serializeID(id)));
+			deserializeOrDefault<Task::ID>(
+				&TaskSerializer::deserializeParent,
+				stask,
+				KEY_PARENT,
+				id);
 		sofar.parent(parent);
+
 		Task::Dependencies subtasks =
-			deserializeSubtasks(
-				getOrDefault(stask, KEY_SUBTASKS,
-					serializeSubtasks(Task::DEFAULT_SUBTASKS)));
+			deserializeOrDefault<Task::Subtasks>(
+				&TaskSerializer::deserializeSubtasks,
+				stask,
+				KEY_SUBTASKS,
+				Task::DEFAULT_SUBTASKS);
 		sofar.subtasks(subtasks);
+
 		Task::Attachment attachment =
-			deserializeDescription(
-				getOrDefault(stask, KEY_ATTACHMENT,
-					serializeDescription(Task::DEFAULT_ATTACHMENT)));
+			deserializeOrDefault<Task::Attachment>(
+				&TaskSerializer::deserializeDescription,
+				stask,
+				KEY_ATTACHMENT,
+				Task::DEFAULT_ATTACHMENT);
 		sofar.attachment(attachment);
+
 		return sofar;
-	} catch (const boost::bad_lexical_cast& e) {
+	} catch (const boost::bad_lexical_cast&) {
 		return sofar;
 	}
 }
