@@ -24,12 +24,8 @@ const std::wstring UpdateTask::logCategory =
 	Query::logCategory + L"[UpdateTask]";
 
 std::unique_ptr<Query> UpdateTask::getReverse() {
-	return std::unique_ptr<Query>(new UpdateTask(
-		previous.getID(), previous.getDescription(),
-		previous.getDeadline(), previous.getPriority(),
-		previous.getDependencies(), previous.isCompleted(),
-		previous.getParent(), previous.getSubtasks(),
-		previous.getAttachment()));
+	return std::unique_ptr<Query>(
+		new UpdateTask(previous));
 }
 
 Task UpdateTask::buildUpdatedTask(State& state) const {
@@ -39,6 +35,9 @@ Task UpdateTask::buildUpdatedTask(State& state) const {
 	#pragma region Update the fields iff it is requested
 	if (this->description) {
 		builder.description(this->description.get());
+	}
+	if (this->startTime) {
+		builder.deadline(this->startTime.get());
 	}
 	if (this->deadline) {
 		builder.deadline(this->deadline.get());

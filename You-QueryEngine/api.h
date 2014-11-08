@@ -77,6 +77,7 @@ public:
 	/// subtask.
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		std::vector<std::unique_ptr<Query>>&& dependencies,
@@ -95,6 +96,7 @@ public:
 	/// Construct update task query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id,
 		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> startTime,
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,

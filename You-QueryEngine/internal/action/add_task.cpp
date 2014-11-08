@@ -28,6 +28,7 @@ std::unique_ptr<Query> AddTask::getReverse() {
 Task AddTask::buildTask(const Task::ID newID) {
 	return Controller::Builder::get().id(newID)
 		.description(this->description)
+		.startTime(this->startTime)
 		.deadline(this->deadline)
 		.priority(this->priority)
 		.dependencies(this->dependencies)

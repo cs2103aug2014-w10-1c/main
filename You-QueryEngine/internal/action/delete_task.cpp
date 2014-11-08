@@ -30,6 +30,7 @@ std::unique_ptr<Query> DeleteTask::getReverse() {
 		return std::unique_ptr<Query>(new AddTask(
 			deletedTask.getID(),
 			deletedTask.getDescription(),
+			deletedTask.getStartTime(),
 			deletedTask.getDeadline(),
 			deletedTask.getPriority(),
 			deletedTask.getDependencies(),
@@ -44,6 +45,7 @@ std::unique_ptr<Query> DeleteTask::getReverse() {
 					new AddTask(
 						cid,
 						c.getDescription(),
+						c.getStartTime(),
 						c.getDeadline(),
 						c.getPriority(),
 						c.getDependencies(),
@@ -52,6 +54,7 @@ std::unique_ptr<Query> DeleteTask::getReverse() {
 		return std::unique_ptr<Query>(new BatchAddSubTasks(
 			deletedTask.getID(),
 			deletedTask.getDescription(),
+			deletedTask.getStartTime(),
 			deletedTask.getDeadline(),
 			deletedTask.getPriority(),
 			deletedTask.getDependencies(),

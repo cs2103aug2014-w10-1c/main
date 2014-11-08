@@ -32,6 +32,8 @@ TEST_CLASS(TaskSerializerTests) {
 public:
 	static Task getMockTask() {
 		Task::Description desc = L"Learn Haskell Lens";
+		Task::Time start = ptime(date(2001, 1, 10),
+			time_duration(1, 2, 3));
 		Task::Time dead = ptime(date(2002, 1, 10),
 			time_duration(1, 2, 3));
 		Task::Dependencies dep = { 1, 2, 3 };
@@ -39,6 +41,7 @@ public:
 		Task::ID parent = 43L;
 		return TaskBuilder::get()
 			.description(desc)
+			.startTime(start)
 			.deadline(dead)
 			.priority(prio)
 			.dependencies(dep)
@@ -59,6 +62,8 @@ public:
 		auto serialized = TaskSerializer::serialize(task);
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
+		Assert::AreEqual(serialized[TaskSerializer::KEY_START_TIME],
+			std::wstring(L"2001;1;10;1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
 			std::wstring(L"2002;1;10;1;2;3;"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],

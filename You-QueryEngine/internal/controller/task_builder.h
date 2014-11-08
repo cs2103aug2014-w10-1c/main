@@ -36,6 +36,8 @@ public:
 	TaskBuilder& id(Task::ID id);
 	/// Initialize task description .
 	TaskBuilder& description(const Task::Description& description);
+	/// Initialize task starting time.
+	TaskBuilder& startTime(const Task::Time& startTime);
 	/// Initialize task deadline.
 	TaskBuilder& deadline(const Task::Time& deadline);
 	/// Initialize task dependencies.

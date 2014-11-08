@@ -19,25 +19,27 @@ public:
 	/// Constructor that use datastore to inquire new id
 	explicit BatchAddSubTasks(
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
 		std::vector<std::unique_ptr<Query>>&& subtasks)
-	: insertedID(-1), description(description), deadline(deadline),
-	  priority(priority), dependencies(dependencies),
+	: insertedID(-1), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(std::move(subtasks)) {}
 
 	/// Constructor for already known id
 	explicit BatchAddSubTasks(
 		Task::ID id,
 		const Task::Description& description,
+		const Task::Time& startTime,
 		const Task::Time& deadline,
 		const Task::Priority& priority,
 		const Task::Dependencies& dependencies,
 		std::vector<std::unique_ptr<Query>>&& subtasks)
-	: insertedID(id), description(description), deadline(deadline),
-		priority(priority), dependencies(dependencies),
-		subtasks(std::move(subtasks)) {}
+	: insertedID(id), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(std::move(subtasks)) {}
 
 	/// Disable assignment operator
 	BatchAddSubTasks& operator=(const BatchAddSubTasks&) = delete;
@@ -62,6 +64,7 @@ private:
 
 	Task::ID insertedID;   ///< Inserted ID of the parent task.
 	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Start time.
 	const Task::Time deadline;  ///< Deadline.
 	const Task::Priority priority;  ///< Priority.
 	const Task::Dependencies dependencies;  ///< Dependencies.

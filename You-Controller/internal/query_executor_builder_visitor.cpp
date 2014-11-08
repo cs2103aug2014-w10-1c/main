@@ -68,6 +68,7 @@ QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 
 	return QueryEngine::AddTask(
 		query.description,
+		Task::DEFAULT_START_TIME,
 		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 		query.priority == TaskPriority::HIGH ?
 		Task::Priority::HIGH : Task::Priority::NORMAL,
@@ -305,6 +306,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				QueryEngine::UpdateTask(
 					task,
 					query.description,
+					boost::none,  // query.startTime
 					query.deadline,
 					priority,
 					boost::none,

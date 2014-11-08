@@ -18,6 +18,7 @@ Task TaskList::createTask() {
 
 	std::unique_ptr<QueryEngine::Query> q = QueryEngine::AddTask(
 		L"meh " + boost::lexical_cast<std::wstring>(size()),
+		QueryEngine::Task::DEFAULT_START_TIME,
 		boost::posix_time::second_clock::local_time() +
 			boost::posix_time::hours(size()),
 			static_cast<QueryEngine::Task::Priority>(distribution(generator)),
