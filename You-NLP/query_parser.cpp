@@ -152,7 +152,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		(L"deadline", TaskField::DEADLINE)
 		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
-		(L"complete", TaskField::COMPLETE);
+		(L"complete", TaskField::COMPLETE)
+		(L"completed", TaskField::COMPLETE);
 	#pragma endregion
 
 	#pragma region Editing tasks

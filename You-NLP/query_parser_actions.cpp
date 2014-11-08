@@ -84,10 +84,9 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 
 	try {
 		switch (field) {
-		case TaskField::DESCRIPTION: {
+		case TaskField::DESCRIPTION:
 			result.value = boost::get<StringType>(value);
 			break;
-		}
 		case TaskField::DEADLINE:
 			result.value = boost::get<boost::posix_time::ptime>(value);
 			break;
