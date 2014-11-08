@@ -81,9 +81,10 @@ private:
 	bool saveData();
 
 	/// Loads the xml file into the document variable
-	/// May throw \ref XmlParseErrorException when parsing fails
-	/// \exception XmlParseErrorException The exception thrown when parsing
-	///									  the xml file fails
+	/// May throw \ref DataStoreCorruptException when parsing fails
+	/// \exception NotWellFormedException The exception thrown if data.xml is
+	///									  not well formed
+	/// \exception IOException The exception thrown if I/O error occurs
 	void loadData();
 
 	/// Executes the operation queue into the xml_document
