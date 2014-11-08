@@ -297,7 +297,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				"Controller currently only supports modifying one attachment "
 				"at a time");
 			if (query.attachments[0].add) {
-				attachment->emplace_back(query.attachments[0].path);
+				attachment->emplace_back(std::move(query.attachments[0].path));
 			}
 		}
 
