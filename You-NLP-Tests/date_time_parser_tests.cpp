@@ -203,6 +203,11 @@ public:
 		Assert::IsTrue((thisFriday - today).days() <= 7);
 	}
 
+	TEST_METHOD(parsesToday) {
+		date today = boost::posix_time::second_clock::local_time().date();
+		Assert::AreEqual(today, DateTimeParser::parse(L"today").date());
+	}
+
 	TEST_METHOD(parsesTomorrow) {
 		date today = boost::posix_time::second_clock::local_time().date();
 		date tomorrow = today + boost::gregorian::days(1);

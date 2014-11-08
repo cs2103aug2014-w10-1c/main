@@ -174,6 +174,10 @@ DateTimeParser::DateTimeParser() : DateTimeParser::base_type(start) {
 	relativeDateInDirection.name("relativeDateInDirection");
 
 	relativeDateInDays = (
+		ParserCharTraits::no_case[qi::lit(L"today")][
+			qi::_val = phoenix::bind(&constructRelativeDate, 0)
+		] |
+
 		ParserCharTraits::no_case[qi::lit(L"tomorrow")][
 			qi::_val = phoenix::bind(&constructRelativeDate, 1)
 		] |
