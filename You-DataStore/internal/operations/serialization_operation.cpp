@@ -19,7 +19,7 @@ void SerializationOperation::serialize(const KeyValuePairs& kvp,
 
 KeyValuePairs SerializationOperation::deserialize(const pugi::xml_node& node) {
 	KeyValuePairs kvp;
-	for (auto iter = taskNode.begin(); iter != taskNode.end(); ++iter) {
+	for (auto iter = node.begin(); iter != node.end(); ++iter) {
 		kvp.insert(KeyValuePair(Key(iter->name()),
 			Value(iter->child_value())));
 	}
