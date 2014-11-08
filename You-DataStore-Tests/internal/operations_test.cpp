@@ -8,7 +8,6 @@
 #include "internal/operations/put_operation.h"
 #include "internal/operations/serialization_operation.h"
 #include "internal/operations/branch_operation.h"
-#include "internal/constants.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
@@ -27,7 +26,7 @@ public:
 	TEST_METHOD_INITIALIZE(initializeMockDocument) {
 		mockDocument.reset();
 		pugi::xml_node node = mockDocument.
-			append_child(Internal::TASKS_NODE.c_str()).
+			append_child(TASKS_NODE.c_str()).
 			append_child(L"task");
 		node.append_attribute(L"id").set_value(L"0");
 		node.append_child(TASK_ID.c_str()).
@@ -79,42 +78,42 @@ public:
 
 	/// Unit test for post method for valid input
 	TEST_METHOD(postWithNewId) {
-		Internal::PostOperation post(Internal::TASKS_NODE, L"1", task2);
+		Internal::PostOperation post(TASKS_NODE, L"1", task2);
 		bool status = post.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	/// Unit test for post method for invalid input
 	TEST_METHOD(postWithUsedId) {
-		Internal::PostOperation post(Internal::TASKS_NODE, L"0", task1);
+		Internal::PostOperation post(TASKS_NODE, L"0", task1);
 		bool status = post.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	/// Unit test for put method for valid input
 	TEST_METHOD(putWithExistingId) {
-		Internal::PutOperation put(Internal::TASKS_NODE, L"0", task1);
+		Internal::PutOperation put(TASKS_NODE, L"0", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	/// Unit test for put method for invalid input
 	TEST_METHOD(putNonExistentId) {
-		Internal::PutOperation put(Internal::TASKS_NODE, L"1", task1);
+		Internal::PutOperation put(TASKS_NODE, L"1", task1);
 		bool status = put.run(mockDocument);
 		Assert::IsFalse(status);
 	}
 
 	/// Unit test for erase method for valid input
 	TEST_METHOD(eraseExistingId) {
-		Internal::EraseOperation erase(Internal::TASKS_NODE, L"0");
+		Internal::EraseOperation erase(TASKS_NODE, L"0");
 		bool status = erase.run(mockDocument);
 		Assert::IsTrue(status);
 	}
 
 	/// Unit test for erase method for invalid input
 	TEST_METHOD(eraseNonExistentId) {
-		Internal::EraseOperation erase(Internal::TASKS_NODE, L"1");
+		Internal::EraseOperation erase(TASKS_NODE, L"1");
 		bool status = erase.run(mockDocument);
 		Assert::IsFalse(status);
 	}
