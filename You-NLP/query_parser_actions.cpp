@@ -207,11 +207,6 @@ DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
 	};
 }
 
-boost::posix_time::ptime QueryParser::constructDateTime(
-	const StringType& lexeme) {
-	return DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()));
-}
-
 QueryParser::ValueType QueryParser::constructValue(ValueType value) {
 	// Only process if it is a string. It can be a date, in that case.
 	if (const StringType* lexeme = boost::get<StringType>(&value)) {

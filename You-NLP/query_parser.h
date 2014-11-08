@@ -225,12 +225,6 @@ private:
 	static DELETE_QUERY constructDeleteQuery(const size_t offset);
 	#pragma endregion
 
-	/// Constructs a posix_time::ptime from the given string.
-	///
-	/// \param[in] lexeme The lexeme to construct the time from.
-	/// \return The synthesised value for the \ref time rule.
-	static boost::posix_time::ptime constructDateTime(const StringType& lexeme);
-
 	/// Constructs a value from the given lexemes.
 	///
 	/// \param[in] value The value from the parser.
