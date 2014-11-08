@@ -344,6 +344,28 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesEditHighPriorityQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0!");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			TaskPriority::HIGH
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditDeadlineQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0 by 2014-Dec-13");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			boost::none,
+			boost::posix_time::ptime(
+				boost::gregorian::date(2014, boost::gregorian::Dec, 13))
+		}), q);
+	}
+
 	TEST_METHOD(parsesEditSubtaskQuery) {
 		QUERY q = QueryParser::parse(L"/edit 0:1");
 
