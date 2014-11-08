@@ -53,7 +53,7 @@ TEST_CLASS(QueryEngineTests) {
 	}
 
 	TEST_METHOD(constructAddTaskQuery) {
-		auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+		auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 		Assert::IsNotNull(&query);
 	}
 
@@ -78,7 +78,7 @@ TEST_CLASS(QueryEngineTests) {
 
 	TEST_METHOD(executeAddQuery) {
 		for (int i = 1; i <= 5; i++) {
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			std::size_t newSize = Internal::State::get().graph().asTaskList().size();
 			Assert::AreEqual(newSize, std::size_t(i));
@@ -90,7 +90,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -98,16 +98,8 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Update the description
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(
-				task.getID(),
-				desc2,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none);
+			task.setDescription(desc2);
+			auto query = QueryEngine::UpdateTask(task);
 			auto response = QueryEngine::executeQuery(std::move(query));
 
 			Task::ID id = boost::get<Task>(response).getID();
@@ -123,7 +115,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one Task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsFalse(task.isCompleted());
@@ -132,16 +124,8 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Mark the task added as done
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(
-				task.getID(),
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				true,
-				boost::none,
-				boost::none,
-				boost::none);
+			task.setCompleted(true);
+			auto query = QueryEngine::UpdateTask(task);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsTrue(task.isCompleted());
@@ -152,16 +136,8 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Mark the task added as undone again
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(
-				task.getID(),
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none,
-				false,
-				boost::none,
-				boost::none,
-				boost::none);
+			task.setCompleted(false);
+			auto query = QueryEngine::UpdateTask(task);
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 			Assert::IsFalse(task.isCompleted());
@@ -175,7 +151,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -196,7 +172,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -222,7 +198,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -255,7 +231,7 @@ TEST_CLASS(QueryEngineTests) {
 		#pragma region Add one task
 		Task task;
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::AddTask(desc, dead, prio, {}, {});
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
 			auto response = QueryEngine::executeQuery(std::move(query));
 			task = boost::get<Task>(response);
 		}
@@ -266,16 +242,8 @@ TEST_CLASS(QueryEngineTests) {
 
 		#pragma region Update one task
 		{  // NOLINT(whitespace/braces)
-			auto query = QueryEngine::UpdateTask(
-				task.getID(),
-				std::wstring(L"De geso"),
-				task.getDeadline(),
-				task.getPriority(),
-				task.getDependencies(),
-				boost::none,
-				boost::none,
-				boost::none,
-				boost::none);
+			task.setDescription(L"De geso");
+			auto query = QueryEngine::UpdateTask(task);
 			auto response = QueryEngine::executeQuery(std::move(query));
 		}
 		#pragma endregion
@@ -293,7 +261,7 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::AreEqual(Internal::State::get().undoStack().size(),
 			std::size_t(1));
 		Assert::AreEqual(Internal::State::get().graph().getTask(task.getID())
-			.getDescription(), task.getDescription());
+			.getDescription(), desc);
 	}
 
 	TEST_METHOD(undoWithEmptyStackShouldThrowException) {
@@ -306,7 +274,7 @@ TEST_CLASS(QueryEngineTests) {
 	TEST_METHOD(setAttachment) {
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
-				QueryEngine::AddTask(desc, dead, prio, {}, {})));
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 		task.setAttachment(L"index.html");
 		task = boost::get<Task>(
 			QueryEngine::executeQuery(

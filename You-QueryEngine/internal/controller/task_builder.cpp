@@ -14,6 +14,7 @@ TaskBuilder TaskBuilder::get() {
 		Task::DEFAULT_ID,
 		Task::DEFAULT_DESCRIPTION,
 		Task::DEFAULT_DEADLINE,
+		Task::DEFAULT_DEADLINE,
 		Task::DEFAULT_DEPENDENCIES,
 		Task::DEFAULT_PRIORITY,
 		Task::DEFAULT_ID,
@@ -35,6 +36,11 @@ TaskBuilder& TaskBuilder::id(Task::ID id) {
 
 TaskBuilder& TaskBuilder::description(const Task::Description &description) {
 	instance.setDescription(description);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::startTime(const Task::Time& startTime) {
+	instance.setStartTime(startTime);
 	return *this;
 }
 

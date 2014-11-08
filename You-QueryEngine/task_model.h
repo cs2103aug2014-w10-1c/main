@@ -50,6 +50,7 @@ public:
 	/// @{
 	ID getID() const { return id; }
 	Description getDescription() const { return description; }
+	Time getStartTime() const { return startTime; }
 	Time getDeadline() const { return deadline; }
 	Dependencies getDependencies() const { return dependencies; }
 	Priority getPriority() const { return priority; }
@@ -77,7 +78,8 @@ public:
 	/// \name Field Setters
 	/// @{
 	void setDescription(const Description& description);
-	void setDeadline(Time deadline);
+	void setStartTime(const Time& startTime);
+	void setDeadline(const Time& deadline);
 	void setDependencies(const Dependencies& dependencies);
 	void setPriority(Priority priority);
 	void setCompleted(bool completed);
@@ -91,6 +93,7 @@ public:
 	static const ID DEFAULT_ID;
 	static const Description DEFAULT_DESCRIPTION;
 	static const Time NEVER;
+	static const Time DEFAULT_START_TIME;
 	static const Time DEFAULT_DEADLINE;
 	static const Dependencies DEFAULT_DEPENDENCIES;
 	static const Priority DEFAULT_PRIORITY;
@@ -106,10 +109,11 @@ public:
 
 private:
 	/// The all-field constructor called by the builder
-	explicit Task(ID id, const Description& description, Time deadline,
-		const Dependencies& dependencies, const Priority& priority, ID parent,
-		const Subtasks& subtasks, const Attachment& attachment)
-	: id(id), description(description), deadline(deadline),
+	explicit Task(ID id, const Description& description, const Time& startTime,
+		const Time& deadline, const Dependencies& dependencies,
+		const Priority& priority, ID parent, const Subtasks& subtasks,
+		const Attachment& attachment)
+	: id(id), description(description), startTime(startTime), deadline(deadline),
 	  dependencies(dependencies), priority(priority), completed(false),
 	  parent(parent), subtasks(subtasks), attachment(attachment) {}
 
@@ -122,6 +126,7 @@ private:
 	/// @{
 	ID id;
 	Description description;
+	Time startTime;
 	Time deadline;
 	Dependencies dependencies;
 	Priority priority;

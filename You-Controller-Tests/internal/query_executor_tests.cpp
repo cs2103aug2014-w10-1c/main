@@ -46,6 +46,7 @@ TEST_CLASS(QueryExecutorTests) {
 		std::unique_ptr<QueryEngine::Query> query(
 			QueryEngine::AddTask(
 				L"yay",
+				QueryEngine::Task::DEFAULT_START_TIME,
 				QueryEngine::Task::DEFAULT_DEADLINE,
 				QueryEngine::Task::DEFAULT_PRIORITY,
 				{},

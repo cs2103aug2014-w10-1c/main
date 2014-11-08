@@ -21,6 +21,7 @@ public:
 	explicit UpdateTask(
 		Task::ID id,
 		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> startTime,
 		You::Utils::Option<Task::Time> deadline,
 		You::Utils::Option<Task::Priority> priority,
 		You::Utils::Option<Task::Dependencies> dependencies,
@@ -30,6 +31,7 @@ public:
 		You::Utils::Option<Task::Attachment> attachment)
 	: id(id),
 	  description(description),
+	  startTime(startTime),
 	  deadline(deadline),
 	  priority(priority),
 	  dependencies(dependencies),
@@ -42,6 +44,7 @@ public:
 	explicit UpdateTask(const Task& task)
 	: id(task.getID()),
 	  description(task.getDescription()),
+	  startTime(task.getStartTime()),
 	  deadline(task.getDeadline()),
 	  priority(task.getPriority()),
 	  dependencies(task.getDependencies()),
@@ -76,6 +79,7 @@ private:
 
 	const Task::ID id;
 	const You::Utils::Option<Task::Description> description;  ///< Description.
+	const You::Utils::Option<Task::Time> startTime;  ///< Start time.
 	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
 	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
 	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.

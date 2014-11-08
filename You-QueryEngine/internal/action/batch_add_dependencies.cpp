@@ -45,13 +45,14 @@ Response BatchAddDependencies::execute(State& state) {
 	std::unique_ptr<Query> addParentQuery;
 	if (insertedID == -1) {
 		addParentQuery = std::unique_ptr<AddTask>(
-			new AddTask(description, deadline, priority,
-			{ lastInserted }, subtasks));
+			new AddTask(description, startTime,
+				deadline, priority, { lastInserted },
+				subtasks));
 	} else {
 		addParentQuery = std::unique_ptr<AddTask>(
 			new AddTask(insertedID, description,
-			deadline, priority,
-			{ lastInserted }, subtasks));
+				startTime, deadline, priority,
+				{ lastInserted }, subtasks));
 	}
 	insertedID = lastInserted;
 	Response r = addParentQuery->execute(state);
