@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->insertPermanentWidget(
 		0, ui.statusTasks, 0);
 	updateTaskInfoBar();
+	ui.taskDescriptor->setOpenLinks(false);
+	ui.taskDescriptor->setOpenExternalLinks(false);
+	connect(ui.taskDescriptor, SIGNAL(anchorClicked(const QUrl &)),
+		this, SLOT(openURL(const QUrl &)));
 }
 
 MainWindow::~MainWindow() {
@@ -191,7 +195,7 @@ void MainWindow::taskSelected() {
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
 	if (selection.size() == 0) {
-		ui.taskDescriptor->setText(contents);
+		ui.taskDescriptor->setHtml(contents);
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		QString index = tpm->getIndexAsText(item);
@@ -205,9 +209,9 @@ void MainWindow::taskSelected() {
 			+ "Deadline: " + deadline + "<br />"
 			+ "Priority: " + priority + "<br />"
 			+ "Dependencies: " + dependencies + "<br / >"
-			+ "Attachment: " + "<a href=" + "'file:///" + attachment + "'>"
+			+ "Attachment: " + "<a href='" + attachment + "'>"
 			+ attachment + "</a></li></ul>";
-		ui.taskDescriptor->setOpenExternalLinks(true);
+		ui.taskDescriptor->setOpenExternalLinks(false);
 		ui.taskDescriptor->setHtml(contents);
 	}
 	tpm->repaintTasks();
@@ -281,6 +285,10 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
 	}
 	QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::openURL(const QUrl &url) {
+	QDesktopServices::openUrl(url);
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
