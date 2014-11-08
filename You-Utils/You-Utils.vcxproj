@@ -73,6 +73,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="exceptions\exception.h" />
+    <ClInclude Include="fatal.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="log\log.h" />
     <ClInclude Include="log\logger.h" />

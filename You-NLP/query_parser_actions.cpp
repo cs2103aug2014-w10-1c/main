@@ -1,5 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "You-Utils/fatal.h"
+
 #include "exception.h"
 #include "date_time_parser.h"
 #include "query_parser.h"
@@ -96,7 +98,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 			result.value = boost::get<bool>(value);
 			break;
 		default:
-			assert(false); abort();
+			fatal();
 		}
 	} catch (boost::bad_get&) {
 		throw ParserTypeException();
@@ -130,7 +132,7 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 		result.complete = true;
 		break;
 	default:
-		assert(false); abort();
+		fatal();
 	}
 
 	return result;
@@ -152,7 +154,7 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 				boost::get<boost::posix_time::ptime>(newValue));
 			break;
 		default:
-			assert(false);
+			fatal();
 		}
 
 		return result;
