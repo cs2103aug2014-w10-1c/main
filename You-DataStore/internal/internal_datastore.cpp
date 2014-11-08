@@ -6,7 +6,7 @@
 #include "operations/erase_operation.h"
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
-#include "../exceptions/xml_parse_error_exception.h"
+#include "../exception.h"
 #include "internal_datastore.h"
 
 namespace You {
@@ -153,7 +153,7 @@ void DataStore::onXmlParseResult(pugi::xml_parse_result& result) {
 	if (result.status == pugi::xml_parse_status::status_io_error ||
 		result.status == pugi::xml_parse_status::status_out_of_memory ||
 		result.status == pugi::xml_parse_status::status_internal_error) {
-		throw XmlIOException();
+		throw IOException();
 	} else {
 		throw NotWellFormedXmlException();
 	}

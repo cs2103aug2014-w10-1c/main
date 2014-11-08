@@ -35,7 +35,7 @@ typedef You::NLP::ParseErrorException ParseErrorException;
 
 typedef You::DataStore::DataStoreCorruptException DataStoreCorruptException;
 
-typedef You::DataStore::XmlIOException XmlIOException;
+typedef You::DataStore::IOException IOException;
 
 typedef You::DataStore::NotWellFormedXmlException NotWellFormedXmlException;
 

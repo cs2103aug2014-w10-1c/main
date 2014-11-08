@@ -10,7 +10,7 @@
 #include "internal/operations/put_operation.h"
 #include "internal/internal_datastore.h"
 #include "internal/constants.h"
-#include "exceptions/xml_parse_error_exception.h"
+#include "exceptions/datastore_corrupt_exception.h"
 
 using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
 
