@@ -58,20 +58,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-	if (stm->trayIcon.isVisible()) {
-		QMessageBox::information(this, tr("Systray"),
-			tr("The program will keep running in the "
-			"system tray. To terminate the program, "
-			"choose <b>Quit</b> in the context menu "
-			"of the system tray entry."));
-		hide();
-		event->ignore();
-	} else {
-		QMainWindow::closeEvent(event);
-	}
-}
-
 void MainWindow::populateTaskPanel() {
 	StatusUpdate update;
 	try {

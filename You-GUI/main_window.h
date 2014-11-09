@@ -130,9 +130,6 @@ private:
 	/// Reimplementation of setVisible for system tray manager
 	void setVisible(bool visible);
 
-	/// Reimplementation of closeEvent to save state of GUI.
-	void closeEvent(QCloseEvent *event);
-
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
 
