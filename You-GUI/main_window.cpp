@@ -225,12 +225,14 @@ void MainWindow::taskSelected() {
 		QTreeWidgetItem item = *selection.at(0);
 		QString index = tpm->getIndexAsText(item);
 		QString description = tpm->getDescriptionAsText(item);
+		QString startdate = tpm->getStartDateAsText(item);
 		QString deadline = tpm->getDeadlineAsText(item);
 		QString priority = tpm->getPriorityAsText(item);
 		QString dependencies = tpm->getDependenciesAsText(item);
 		QString attachment = tpm->getAttachmentAsText(item);
 		contents = "Index: " + index + "<br />"
 			+ "Description: " + description + "<br />"
+			+ "Start date: " + startdate + "<br />"
 			+ "Deadline: " + deadline + "<br />"
 			+ "Priority: " + priority + "<br />"
 			+ "Dependencies: " + dependencies + "<br / >"
