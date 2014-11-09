@@ -29,6 +29,9 @@ struct SHOW_QUERY {
 		/// Equality.
 		EQ,
 
+		/// Similarity.
+		SIMILAR,
+
 		/// Inequality
 		NOT_EQ,
 
