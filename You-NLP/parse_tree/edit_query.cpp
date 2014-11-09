@@ -117,6 +117,7 @@ bool EDIT_QUERY::operator==(const EDIT_QUERY& rhs) const {
 
 	return description == rhs.description &&
 		priority == rhs.priority &&
+		start == rhs.start &&
 		deadline == rhs.deadline &&
 		complete == rhs.complete &&
 		childTask == rhs.childTask &&
