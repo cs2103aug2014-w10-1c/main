@@ -71,7 +71,7 @@ public:
 			pixmap.load(color, 0);
 			(*ui).statusMessage->setText(message);
 			(*ui).statusIcon->setPixmap(pixmap);
-		};
+		}
 	};
 
 	/// Calls TaskPanelManager and requests addition of a single task,
