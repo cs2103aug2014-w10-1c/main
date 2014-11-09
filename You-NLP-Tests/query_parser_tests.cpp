@@ -353,6 +353,15 @@ public:
 			L"meh with spaces"
 		}), q);
 
+		q = QueryParser::parse(L"/edit 10 set start='oct 2014'");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			boost::none,
+			boost::none,
+			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
+		}), q);
+
 		q = QueryParser::parse(L"/edit 10 set deadline='oct 2014'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {

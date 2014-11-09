@@ -165,6 +165,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	showCommandFields.add
 		(L"description", TaskField::DESCRIPTION)
+		(L"start", TaskField::START)
 		(L"deadline", TaskField::DEADLINE)
 		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
@@ -216,11 +217,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	editCommandFieldsUnary.add
 		(L"description", TaskField::DESCRIPTION)
+		(L"start", TaskField::START)
 		(L"deadline", TaskField::DEADLINE);
 
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
-		(L"complete", TaskField::COMPLETE);
+		(L"complete", TaskField::COMPLETE)
+		(L"completed", TaskField::COMPLETE);
 
 	editSetHighPriority = (
 		qi::eps

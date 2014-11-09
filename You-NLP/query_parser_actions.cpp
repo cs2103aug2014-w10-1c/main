@@ -95,6 +95,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 		case TaskField::DESCRIPTION:
 			result.value = boost::get<StringType>(value);
 			break;
+		case TaskField::START:
 		case TaskField::DEADLINE:
 			result.value = boost::get<boost::posix_time::ptime>(value);
 			break;
@@ -152,10 +153,13 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 
 	try {
 		switch (field) {
-		case TaskField::DESCRIPTION: {
+		case TaskField::DESCRIPTION:
 			result.description = std::move(boost::get<StringType>(newValue));
 			break;
-		}
+		case TaskField::START:
+			result.start = std::move(
+				boost::get<boost::posix_time::ptime>(newValue));
+			break;
 		case TaskField::DEADLINE:
 			result.deadline = std::move(
 				boost::get<boost::posix_time::ptime>(newValue));
