@@ -51,6 +51,13 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 			q.priority.get()).str());
 	}
 
+	if (q.start) {
+		fields.emplace_back(
+			(boost::wformat(CHANGE_FIELD_FORMAT) %
+			TaskField::START %
+			q.start.get()).str());
+	}
+
 	if (q.deadline) {
 		fields.emplace_back(
 			(boost::wformat(CHANGE_FIELD_FORMAT) %

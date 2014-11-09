@@ -359,6 +359,7 @@ public:
 			10,
 			boost::none,
 			boost::none,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
 		}), q);
 
@@ -366,6 +367,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -398,6 +400,7 @@ public:
 			0,
 			boost::none,
 			boost::none,
+			boost::none,
 			boost::posix_time::ptime(
 				boost::gregorian::date(2014, boost::gregorian::Dec, 13))
 		}), q);
@@ -412,6 +415,7 @@ public:
 			boost::none,
 			boost::none,
 			boost::none,
+			boost::none,
 			1
 		}), q);
 	}
@@ -421,6 +425,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			0,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -441,6 +446,7 @@ public:
 			boost::none,
 			boost::none,
 			boost::none,
+			boost::none,
 			{ { true, L"lol" } }
 		}), q);
 
@@ -448,6 +454,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
