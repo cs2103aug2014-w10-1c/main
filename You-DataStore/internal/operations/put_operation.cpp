@@ -16,8 +16,8 @@ PutOperation::PutOperation(std::wstring branch, std::wstring id,
 	task = kvp;
 }
 
-bool PutOperation::run(pugi::xml_document& document) {
-	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
+bool PutOperation::run(pugi::xml_node& node) {
+	pugi::xml_node xmlBranch = BranchOperation::get(node, branchName);
 	pugi::xml_node toEdit =
 		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
 
@@ -29,7 +29,7 @@ bool PutOperation::run(pugi::xml_document& document) {
 	xmlBranch.remove_child(toEdit);
 
 	PostOperation post(branchName, nodeId, task);
-	return post.run(document);
+	return post.run(node);
 }
 
 }  // namespace Internal
