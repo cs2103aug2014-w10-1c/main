@@ -18,7 +18,6 @@ GUILogSink::GUILogSink() : file(new QFile(LOG_FILENAME)) {
 void GUILogSink::onLog(LogSeverity severity,
 	const std::wstring& category,
 	const std::wstring& message) {
-
 	QTextStream severityStr(file.get());
 	switch (severity) {
 	case LogSeverity::DEBUG:

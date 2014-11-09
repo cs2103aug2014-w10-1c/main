@@ -1,7 +1,7 @@
 //@author A0094446X
 #pragma once
-#ifndef YOU_GUI_LOG_SINK_H_
-#define YOU_GUI_LOG_SINK_H_
+#ifndef YOU_LOG_SINK_H_
+#define YOU_LOG_SINK_H_
 #include "You-Utils/log.h"
 #include "You-Utils/log/log_severity.h"
 
@@ -26,4 +26,4 @@ private:
 
 }  // namespace You
 
-#endif  // YOU_GUI_GUI_LOG_SINK_H_
+#endif  // YOU_LOG_SINK_H_

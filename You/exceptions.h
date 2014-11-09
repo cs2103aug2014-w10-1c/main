@@ -1,7 +1,7 @@
 //@author A0094446X
 #pragma once
-#ifndef YOU_GUI_EXCEPTIONS_H_
-#define YOU_GUI_EXCEPTIONS_H_
+#ifndef YOU_EXCEPTIONS_H_
+#define YOU_EXCEPTIONS_H_
 
 #include "You-Utils/exceptions/exception.h"
 
@@ -18,4 +18,4 @@ class InitLogFileFailedException : public BaseException {
 }  // namespace Exception
 }  // namespace You
 
-#endif  // YOU_GUI_EXCEPTIONS_H_
+#endif  // YOU_EXCEPTIONS_H_
