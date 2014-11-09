@@ -19,6 +19,7 @@ namespace QueryEngine {
 
 const std::wstring Query::logCategory = L"[QE]";
 
+using You::Utils::Option;
 using Internal::Action::AddTask;
 using Internal::Action::BatchAddSubTasks;
 using Internal::Action::BatchAddDependencies;
@@ -87,19 +88,28 @@ QueryEngine::DeleteTask(Task::ID id) {
 
 std::unique_ptr<Query>
 QueryEngine::UpdateTask(Task::ID id,
-	You::Utils::Option<Task::Description> description,
-	You::Utils::Option<Task::Time> startTime,
-	You::Utils::Option<Task::Time> deadline,
-	You::Utils::Option<Task::Priority> priority,
-	You::Utils::Option<Task::Dependencies> dependencies,
-	You::Utils::Option<bool> completed,
-	You::Utils::Option<Task::ID> parent,
-	You::Utils::Option<Task::Subtasks> subtasks,
-	You::Utils::Option<Task::Attachment> attachment) {
+	Option<Task::Description> description,
+	Option<Task::Time> startTime,
+	Option<Task::Time> deadline,
+	Option<Task::Priority> priority,
+	Delta<Task::Dependencies::value_type> dependencies,
+	Option<bool> completed,
+	Option<Task::ID> parent,
+	Delta<Task::Subtasks::value_type> subtasks,
+	Delta<Task::Attachment::value_type> attachment) {
 	using UpdateTask = Internal::Action::UpdateTask;
-	return std::unique_ptr<Query>(new UpdateTask(id, description,
-		startTime, deadline, priority, dependencies, completed,
-		parent, subtasks, attachment));
+	Task task = Internal::State::get().graph().getTask(id);
+	auto newSubtasks =
+		subtasksFromDelta(subtasks, task);
+	auto newDependencies =
+		dependenciesFromDelta(dependencies, task);
+	auto newAttachment =
+		attachmentsFromDelta(attachment, task);
+	return std::unique_ptr<Query>(
+		new UpdateTask(id, description,
+			startTime, deadline, priority,
+			newDependencies, completed,
+			parent, newSubtasks, newAttachment));
 }
 
 std::unique_ptr<Query>
@@ -159,6 +169,59 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 	} catch (const Exception::NotUndoAbleException&) {
 	}
 	return response;
+}
+
+Option<Task::Attachment> QueryEngine::attachmentsFromDelta(
+	const Delta<Task::Attachment::value_type>& attachment,
+	const Task& task) {
+	Task::Attachment att = task.getAttachment();
+	if (attachment.type ==
+			Delta<Task::Attachment::value_type>::Type::ADD) {
+		att.insert(
+			end(att),
+			begin(attachment.elements),
+			end(attachment.elements));
+	} else {
+		for (const auto& a : attachment.elements) {
+			auto pos = std::find(begin(att), end(att), a);
+			att.erase(pos);
+		}
+	}
+	return att;
+}
+
+Option<Task::Subtasks> QueryEngine::subtasksFromDelta(
+	const Delta<Task::Subtasks::value_type>& subtasks,
+	const Task& task) {
+	Task::Subtasks subs= task.getSubtasks();
+	if (subtasks.type ==
+			Delta<Task::Subtasks::value_type>::Type::ADD) {
+		for (const auto& s : subtasks.elements) {
+			subs.insert(s);
+		}
+	} else {
+		for (const auto& s : subtasks.elements) {
+			subs.erase(s);
+		}
+	}
+	return subs;
+}
+
+Option<Task::Dependencies> QueryEngine::dependenciesFromDelta(
+	const Delta<Task::Dependencies::value_type>& dependencies,
+	const Task& task) {
+	Task::Dependencies deps = task.getDependencies();
+	if (dependencies.type ==
+			Delta<Task::Dependencies::value_type>::Type::ADD) {
+		for (const auto& s : dependencies.elements) {
+			deps.insert(s);
+		}
+	} else {
+		for (const auto& s : dependencies.elements) {
+			deps.erase(s);
+		}
+	}
+	return deps;
 }
 
 std::wstring ToString(const Task& task) {

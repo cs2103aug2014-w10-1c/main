@@ -36,6 +36,10 @@ namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
 namespace Internal { class State; }
 
+namespace {
+	using You::Utils::Option;
+}  // namespace
+
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
 	Task::ID, std::wstring> Response;
@@ -71,8 +75,18 @@ public:
 	/// @}
 
 public:
-	#pragma region Query Constructors
+	/// Delta data structure to denote insertion/deletion of elements.
+	/// This will be used and passed to UpdateTask by the Controller.
+	template<typename T>
+	struct Delta {
+		enum class Type { ADD, DELETE };
+		/// The type of the delta.
+		Type type;
+		/// The element.
+		std::vector<T> elements;
+	};
 
+public:
 	/// Construct the query for adding tasks.
 	static std::unique_ptr<Query> AddTask(
 		const Task::Description& description,
@@ -97,16 +111,17 @@ public:
 
 	/// Construct update task query.
 	static std::unique_ptr<Query> UpdateTask(Task::ID id,
-		You::Utils::Option<Task::Description> description,
-		You::Utils::Option<Task::Time> startTime,
-		You::Utils::Option<Task::Time> deadline,
-		You::Utils::Option<Task::Priority> priority,
-		You::Utils::Option<Task::Dependencies> dependencies,
-		You::Utils::Option<bool> completed,
-		You::Utils::Option<Task::ID> parent,
-		You::Utils::Option<Task::Subtasks> subtasks,
-		You::Utils::Option<Task::Attachment> attachment);
+		Option<Task::Description> description,
+		Option<Task::Time> startTime,
+		Option<Task::Time> deadline,
+		Option<Task::Priority> priority,
+		Delta<Task::Dependencies::value_type> dependencies,
+		Option<bool> completed,
+		Option<Task::ID> parent,
+		Delta<Task::Subtasks::value_type> subtasks,
+		Delta<Task::Attachment::value_type> attachment);
 
+public:
 	/// Construct adding dependency query.
 	static std::unique_ptr<Query> AddDependency(Task::ID id,
 		Task::ID dependency);
@@ -129,14 +144,24 @@ public:
 	/// Construct undo query.
 	static std::unique_ptr<Query> Undo();
 
-	#pragma endregion
-
 public:
 	/// Execute a query and return a response
 	///  \return The result of the query as a response object.
 	static Response executeQuery(std::unique_ptr<Query> query);
 
 private:
+	static Option<Task::Attachment> attachmentsFromDelta(
+		const Delta<Task::Attachment::value_type>& attachment,
+		const Task& task);
+
+	static Option<Task::Subtasks> subtasksFromDelta(
+		const Delta<Task::Subtasks::value_type>& subtasks,
+		const Task& task);
+
+	static Option<Task::Dependencies> dependenciesFromDelta(
+		const Delta<Task::Dependencies::value_type>& dependencies,
+		const Task& task);
+
 	QueryEngine() = delete;
 };  // class QueryEngine
 

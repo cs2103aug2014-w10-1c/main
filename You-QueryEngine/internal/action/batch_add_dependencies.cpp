@@ -71,7 +71,7 @@ Task BatchAddDependencies::executeParentAddQuery(State& state) {
 
 Response BatchAddDependencies::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
-	Task::ID lastInserted = executeDependenciesAddQuery(state);
+	executeDependenciesAddQuery(state);
 	Task parent = executeParentAddQuery(state);
 	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
 	return parent;

@@ -394,10 +394,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 				assert(editQuery.attachments.size() == 1);
 				if (editQuery.attachments[0].add) {
 					Assert::AreEqual(editQuery.attachments[0].path,
-						result.task.getAttachment());
+						result.task.getAttachment()[0]);
 				} else {
 					Assert::AreNotEqual(editQuery.attachments[0].path,
-						result.task.getAttachment());
+						result.task.getAttachment()[0]);
 				}
 			}
 		}
