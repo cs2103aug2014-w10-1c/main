@@ -17,12 +17,12 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE =
 "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Deadline";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Priority";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE =
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE =
 "Dependencies";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Attachment";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Attachment";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
