@@ -98,7 +98,7 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
-void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList& tl) {
 	QTreeWidgetItem *item = tpm->addTaskTree(task).release();
 	ui.taskTreePanel->addTopLevelItem(item);
 	expandAllSubtasks(item);
