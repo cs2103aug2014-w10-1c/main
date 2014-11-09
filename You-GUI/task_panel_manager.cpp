@@ -27,8 +27,8 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Attachment";
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
 const int MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 2;
-const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 3;
-const int MainWindow::TaskPanelManager::COLUMN_STARTDATE = 4;
+const int MainWindow::TaskPanelManager::COLUMN_STARTDATE = 3;
+const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 4;
 const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
 const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
 const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
@@ -159,11 +159,11 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	// Insert description
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
-	// Insert deadline
-	result.push_back(getReadableDateTime(task.getDeadline()));
-	
 	// Insert start time
 	result.push_back(getReadableDateTime(task.getStartTime()));
+
+	// Insert deadline
+	result.push_back(getReadableDateTime(task.getDeadline()));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -338,8 +338,11 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 
 QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	std::wstringstream wss;
-	boost::gregorian::date_facet *facet
-		= new boost::gregorian::date_facet("%d-%b-%Y");
+	//boost::date_time::date_facet<bo facet("%d %B %Y");
+	//wss.imbue(std::locale(wss.getloc(), facet));
+	boost::posix_time::wtime_facet *facet = 
+		new boost::posix_time::wtime_facet(L"%d %B %Y at %I:%M%p");
+	std::stringstream ss;
 	wss.imbue(std::locale(wss.getloc(), facet));
 	std::wstringstream time_of_day;
 	boost::posix_time::time_duration time =
@@ -354,36 +357,27 @@ QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	if (datetime == Task::NEVER) {
 		wss << L"Never";
 	} else if (isPastDue(datetime)) {
-		wss << L"Overdue (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"Overdue (" << datetime << L")";
 	} else if (isDueAfter(datetime, 0)) {
-		wss << L"Today (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"Today (" << datetime << L")";
 	} else if (isDueAfter(datetime, 1)) {
-		wss << L"Tomorrow (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"Tomorrow (" << datetime << L")";
 	} else if (isDueAfter(datetime, 2)) {
-		wss << L"In two days (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"In two days (" << datetime << L")";
 	} else if (isDueWithin(datetime, 7)) {
 		Date dl = Date(datetime.date());
 		wss << L"This coming " << dl.day_of_week()
-			<< L" (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+			<< L" (" << datetime << L")";
 	} else if (isDueWithin(datetime, 14)) {
 		Date dl = Date(datetime.date());
 		wss << L"Next " << dl.day_of_week()
-			<< L" (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+			<< L" (" << datetime << L")";
 	} else if (isDueWithin(datetime, 21)) {
-		wss << L"Within three weeks (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"Within three weeks (" << datetime << L")";
 	} else if (isDueWithin(datetime, 28)) {
-		wss << L"Within one month (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"Within one month (" << datetime << L")";
 	} else {
-		wss << L"More than a month away (" << datetime.date() << L" at "
-			<< time_of_day.str() << L")";
+		wss << L"More than a month away (" << datetime << L")";
 	}
 	return boost::lexical_cast<QString>(wss.str());
 }
