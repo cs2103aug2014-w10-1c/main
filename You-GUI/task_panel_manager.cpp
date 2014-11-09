@@ -100,22 +100,6 @@ void MainWindow::TaskPanelManager::editTask(const Task& task) {
 	QTreeWidgetItem item = *items.at(0);
 	QStringList wstr = taskToStrVec(task);
 	*items.at(0) = *createItem(wstr);
-	if (task.isCompleted()) {
-		for (int i = 0; i < items.at(0)->columnCount(); i++) {
-			QFont font = (items.at(0)->font(i));
-			QBrush brush(Qt::gray);
-			font.setStrikeOut(true);
-			items.at(0)->setFont(i, font);
-			items.at(0)->setForeground(i, brush);
-		}
-	} else {
-		for (int i = 0; i < items.at(0)->columnCount(); i++) {
-			QFont font = (items.at(0)->font(i));
-			font.setStrikeOut(false);
-			items.at(0)->setFont(i, font);
-			items.at(0)->setForeground(i, Qt::black);
-		}
-	}
 }
 
 void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
@@ -241,22 +225,23 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 				if (std::find(dependencies.begin(), dependencies.end(), index)
 					/// Color it blue
 					!= dependencies.end()) {
-					colorTask(item, Qt::blue, font);
+					font.setBold(true);
+					colorTask(item, Qt::darkGreen, Qt::lightGray, font);
 				} else {
 					/// Otherwise color it black
-					colorTask(item, Qt::black, font);
+					colorTask(item, Qt::black, Qt::white, font);
 				}
 			} else {
 				/// No selection
 				QFont font = (item->font(0));
 				font.setStrikeOut(false);
-				colorTask(item, Qt::black, font);
+				colorTask(item, Qt::black, Qt::white, font);
 			}
 		} else {
 			/// Overrides all other formats if task is already done
 			QFont font = (item->font(0));
 			font.setStrikeOut(true);
-			colorTask(item, Qt::gray, font);
+			colorTask(item, Qt::gray, Qt::white, font);
 		}
 		++it;
 	}
@@ -276,9 +261,10 @@ void MainWindow::TaskPanelManager::updateRowNumbers() {
 }
 
 void MainWindow::TaskPanelManager::colorTask(
-	QTreeWidgetItem *taskItem, QColor color, QFont font) {
+	QTreeWidgetItem *taskItem, QColor color, QColor bgColor, QFont font) {
 	for (int i = 0; i < taskItem->columnCount(); i++) {
 		taskItem->setTextColor(i, color);
+		taskItem->setBackgroundColor(i, bgColor);
 		taskItem->setFont(i, font);
 	}
 }
