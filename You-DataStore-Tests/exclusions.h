@@ -15,6 +15,7 @@
 
 ExcludeFromCodeCoverage(boost, L"boost::*");
 ExcludeFromCodeCoverage(pugixml, L"pugi::*");
+ExcludeFromCodeCoverage(You_Utils, L"You::Utils::*")
 
 #pragma managed(pop)
 
