@@ -31,14 +31,14 @@ struct similar_to<std::basic_string<CharT>> {
 	bool operator()(const StringType& lhs, const StringType& rhs);
 
 private:
-	/// Checks if any needle is in the given haystack.
+	/// Checks the needle is in any haystack.
 	///
-	/// \param[in] needles The needles to search for.
-	/// \param[in] haystack The haystack to search.
-	/// \return True if any needle is in the haystack. If the haystack is empty,
-	///         returns false.
-	static bool needlesInHaystack(const std::vector<StringType>& needles,
-		const StringType& haystack);
+	/// \param[in] needle The needle to search for.
+	/// \param[in] haystacks The haystacks to search.
+	/// \return True if the needle is in any haystack. If the haystacks are
+	///         empty, returns false.
+	static bool isAnyNeedleInHaystacks(const StringType& needle,
+		const std::vector<StringType>& haystacks);
 
 	/// Checks if the given needle is in the given haystack.
 	///
@@ -46,12 +46,9 @@ private:
 	/// \param[in] haystack The haystack to search.
 	/// \return True if any needle is in the haystack. If the haystack is empty,
 	///         returns false.
-	static bool needleInHaystack(const StringType& needle,
+	static bool isNeedleInHaystack(const StringType& needle,
 		const StringType& haystack);
 };
-
-template struct similar_to<std::wstring>;
-template struct similar_to<std::string>;
 
 }  // namespace Utils
 }  // namespace You

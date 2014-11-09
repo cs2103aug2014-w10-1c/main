@@ -31,6 +31,10 @@ TEST_CLASS(StringSimilarityTests) {
 		testContains("", "", false);
 	}
 
+	TEST_METHOD(emptySearchDoesNotMatch) {
+		testContains("abc", "", false);
+	}
+
 	TEST_METHOD(singleWordContains) {
 		testContains("ab", "a", true);
 		testContains("ab", "b", true);
@@ -42,6 +46,11 @@ TEST_CLASS(StringSimilarityTests) {
 
 	TEST_METHOD(multiWordContains) {
 		testContains("ab cd", "cd", true);
+	}
+
+	TEST_METHOD(searchMustMatchAll) {
+		testContains("abc", "ab bc", true);
+		testContains("abc", "ab cd", false);
 	}
 };
 
