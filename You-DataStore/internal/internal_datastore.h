@@ -100,7 +100,10 @@ private:
 
 private:
 	static const std::string FILE_PATH;
+	static const std::wstring ROOT_NODE_NAME;
+
 	pugi::xml_document document;
+	pugi::xml_node root;
 
 	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;

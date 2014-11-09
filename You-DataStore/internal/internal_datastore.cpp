@@ -14,6 +14,7 @@ namespace DataStore {
 namespace Internal {
 
 const std::string DataStore::FILE_PATH = std::string("data.xml");
+const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -93,7 +94,7 @@ void DataStore::erase(std::wstring branch, std::wstring id) {
 
 std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 	loadData();
-	pugi::xml_node dataNode = BranchOperation::get(document, nodeName);
+	pugi::xml_node dataNode = BranchOperation::get(root, nodeName);
 	std::vector<KeyValuePairs> allData;
 	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
 		allData.push_back(SerializationOperation::deserialize(*i));
