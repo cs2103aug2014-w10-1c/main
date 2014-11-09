@@ -52,6 +52,7 @@ ADD_QUERY QueryParser::constructAddQueryWithDeadline(
 	return ADD_QUERY {
 		std::wstring(),
 		TaskPriority::NORMAL,
+		boost::none,
 		deadline
 	};
 }

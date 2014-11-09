@@ -16,15 +16,17 @@ public:
 		std::wostringstream stream;
 		stream << DUMMY;
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
+			(boost::wformat(L"%1% (start %2%, deadline %3%, normal priority, "
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % START %
+				DEADLINE).str(),
 			stream.str());
 	}
 
 	TEST_METHOD(convertsToString) {
 		Assert::AreEqual(
-			(boost::wformat(L"%1% (deadline %2%, normal priority, "
-				L"1 subtasks, 1 dependents)") % DESCRIPTION % DEADLINE).str(),
+			(boost::wformat(L"%1% (start %2%, deadline %3%, normal priority, "
+				L"1 subtasks, 1 dependents)") % DESCRIPTION % START %
+				DEADLINE).str(),
 			boost::lexical_cast<std::wstring>(DUMMY));
 	}
 
@@ -32,6 +34,7 @@ public:
 		ADD_QUERY local {
 			DESCRIPTION,
 			TaskPriority::NORMAL,
+			START,
 			DEADLINE,
 			{ ADD_QUERY { DESCRIPTION } },
 			std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })
@@ -62,6 +65,9 @@ private:
 	/// The dummy description.
 	static const std::wstring DESCRIPTION;
 
+	/// The dummy start time.
+	static const boost::posix_time::ptime START;
+
 	/// The dummy deadline.
 	static const boost::posix_time::ptime DEADLINE;
 
@@ -70,12 +76,16 @@ private:
 };
 
 const std::wstring AddQueryTests::DESCRIPTION(L"Hello world");
+const boost::posix_time::ptime AddQueryTests::START(
+	boost::gregorian::date(2010, boost::gregorian::Dec, 3),
+	boost::posix_time::hours(0));
 const boost::posix_time::ptime AddQueryTests::DEADLINE(
 	boost::gregorian::date(2010, boost::gregorian::Dec, 4),
 	boost::posix_time::hours(0));
 const ADD_QUERY AddQueryTests::DUMMY {
 	DESCRIPTION,
 	TaskPriority::NORMAL,
+	START,
 	DEADLINE,
 	{ ADD_QUERY { DESCRIPTION } },
 	std::shared_ptr<ADD_QUERY>(new ADD_QUERY { DESCRIPTION + L"3" })

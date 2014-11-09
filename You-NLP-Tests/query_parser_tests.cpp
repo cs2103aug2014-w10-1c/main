@@ -66,6 +66,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 
@@ -74,6 +75,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -91,6 +93,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
 			TaskPriority::HIGH,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -102,6 +105,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Walk the dog",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 20)),
 			{
 				{ L"Eat breakfast" },
@@ -110,6 +114,7 @@ public:
 				{
 					L"Buy a new collar",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2015, boost::gregorian::Oct, 12))
 				}
 			}
@@ -123,16 +128,19 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Buy her flower",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 14)),
 			{},
 			std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 				L"Ask her out",
 				TaskPriority::NORMAL,
+				boost::none,
 				ptime(date(2014, boost::gregorian::Dec, 15)),
 				{},
 				std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 					L"Confess to her",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2014, boost::gregorian::Dec, 16))
 				})
 			})
@@ -148,6 +156,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Walk the dog",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 20)),
 			{
 				{ L"Eat breakfast" },
@@ -155,16 +164,19 @@ public:
 				{
 					L"Buy her flower",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2014, boost::gregorian::Dec, 14)),
 					{},
 					std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 						L"Ask her out",
 						TaskPriority::NORMAL,
+						boost::none,
 						ptime(date(2014, boost::gregorian::Dec, 15)),
 						{},
 						std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 							L"Confess to her",
 							TaskPriority::NORMAL,
+							boost::none,
 							ptime(date(2014, boost::gregorian::Dec, 16))
 						})
 					})
@@ -172,6 +184,7 @@ public:
 				{
 					L"Buy a new collar",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2015, boost::gregorian::Oct, 12))
 				}
 			}
@@ -189,6 +202,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"E",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 22), hours(0))
 		}), q);
 	}
@@ -200,6 +214,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"CS3235: Homework Assignment 3",
 			TaskPriority::HIGH,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 13))
 		}), q);
 	}
