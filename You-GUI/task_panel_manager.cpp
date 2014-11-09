@@ -79,7 +79,6 @@ void MainWindow::TaskPanelManager::setup() {
 	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
 	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
 	taskTreePanel->setColumnHidden(COLUMN_ATTACHMENT, true);
-
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -198,7 +197,6 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	} else {
 		result.push_back(boost::lexical_cast<QString>("No"));
 	}
-	
 	// Insert attachment
 	result.push_back(QString::fromStdWString(task.getAttachment()));
 
@@ -341,21 +339,13 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 
 QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	std::wstringstream wss;
-	//boost::date_time::date_facet<bo facet("%d %B %Y");
-	//wss.imbue(std::locale(wss.getloc(), facet));
-	boost::posix_time::wtime_facet *facet = 
+	boost::posix_time::wtime_facet *facet =
 		new boost::posix_time::wtime_facet(L"%d %B %Y at %I:%M%p");
 	std::stringstream ss;
 	wss.imbue(std::locale(wss.getloc(), facet));
 	std::wstringstream time_of_day;
 	boost::posix_time::time_duration time =
 		datetime.time_of_day();
-	if (time.hours() >= 12) {
-		time_of_day << time << L"PM";
-	}
-	else {
-		time_of_day << time << L"AM";
-	}
 
 	if (datetime == Task::NEVER) {
 		wss << L"Never";
