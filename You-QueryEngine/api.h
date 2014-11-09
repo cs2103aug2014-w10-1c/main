@@ -36,9 +36,7 @@ namespace QueryEngine {
 namespace UnitTests { class QueryEngineTests; }
 namespace Internal { class State; }
 
-namespace {
-	using You::Utils::Option;
-}  // namespace
+using You::Utils::Option;
 
 /// A synthesized type for holding query responses
 typedef boost::variant<std::vector<Task>, Task,
