@@ -18,7 +18,7 @@ namespace Internal {
 
 using Log = Utils::Log;
 
-const std::string DataStore::FILE_PATH = std::string("data.xml");
+const char* DataStore::FILE_PATH = "data.xml";
 const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
 
 const std::wstring DataStore::LOG_CATEGORY =
@@ -132,18 +132,18 @@ void DataStore::wipeData() {
 	Log::warning << LOG_CATEGORY << L": All DataStore state, including data.xml"
 		L"and the XML document will be wiped.";
 	document.reset();
-	std::remove(FILE_PATH.c_str());
+	std::remove(FILE_PATH);
 }
 
 bool DataStore::saveData() {
-	bool status = document.save_file(FILE_PATH.c_str());
+	bool status = document.save_file(FILE_PATH);
 	return status;
 }
 
 void DataStore::loadData() {
 	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
-		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH.c_str());
+		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH);
 		bool loadSuccessful = loadStatus;
 		bool isFirstLoad =
 			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
