@@ -219,6 +219,7 @@ void MainWindow::taskSelected() {
 		QString attachment = tpm->getAttachmentAsText(item);
 		contents = "Index: " + index + "<br />"
 			+ "Description: " + description + "<br />"
+			+ "Start date: "
 			+ "Deadline: " + deadline + "<br />"
 			+ "Priority: " + priority + "<br />"
 			+ "Dependencies: " + dependencies + "<br / >"

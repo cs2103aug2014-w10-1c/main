@@ -22,15 +22,17 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE =
 "Dependencies";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Attachment";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Start Date";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
 const int MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 2;
 const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 3;
-const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 4;
-const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 5;
-const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 6;
-const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 7;
+const int MainWindow::TaskPanelManager::COLUMN_STARTDATE = 4;
+const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
+const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
+const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
+const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 8;
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -49,7 +51,8 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_3_TITLE,
 		TASK_COLUMN_4_TITLE,
 		TASK_COLUMN_5_TITLE,
-		TASK_COLUMN_6_TITLE
+		TASK_COLUMN_6_TITLE,
+		TASK_COLUMN_8_TITLE
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
@@ -145,6 +148,7 @@ QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 
 QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	const You::Controller::Task& task) {
+	std::wstringstream wss;
 	QStringList result;
 	// Insert dummy count
 	result.push_back("0");
@@ -157,6 +161,9 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 
 	// Insert deadline
 	result.push_back(getReadableDeadline(task));
+	
+	wss << task.getStartTime().date();
+	result.push_back(QString::fromStdWString(wss.str()));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -188,9 +195,13 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	} else {
 		result.push_back(boost::lexical_cast<QString>("No"));
 	}
-
+	
 	// Insert attachment
 	result.push_back(QString::fromStdWString(task.getAttachment()));
+
+
+	// Insert start date
+	result.push_back(getReadableDeadline(task));
 
 	return result;
 }
@@ -339,7 +350,7 @@ QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
 	} else if (isPastDue(task.getDeadline())) {
 		wss << L"Overdue (" << task.getDeadline().date() << L")";
 	} else if (isDueAfter(task.getDeadline(), 0)) {
-		wss << L"Today (" << task.getDeadline() << L")";
+		wss << L"Today (" << task.getDeadline().date() << L")";
 	} else if (isDueAfter(task.getDeadline(), 1)) {
 		wss << L"Tomorrow (" << task.getDeadline().date() << L")";
 	} else if (isDueAfter(task.getDeadline(), 2)) {
@@ -375,6 +386,11 @@ QString MainWindow::TaskPanelManager::getHiddenIDAsText(
 QString MainWindow::TaskPanelManager::getDescriptionAsText(
 	QTreeWidgetItem item) {
 	return item.text(COLUMN_DESCRIPTION);
+}
+
+QString MainWindow::TaskPanelManager::getStartDateAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_STARTDATE);
 }
 
 QString MainWindow::TaskPanelManager::getDeadlineAsText(
