@@ -19,17 +19,11 @@ namespace Action {
 /// Action for getting tasks by applying a filter and optionally a sorter.
 class GetTask : public Query {
 public:
-	/// Construct from filter, do not sort.
-	/// \param [in] filter The filter used.
-	explicit GetTask(const Filter& filter)
-	: filter(filter), comparator(Comparator::byTimeCreated()),
-		sortAfterFilter(false) {}
-
 	/// Construct from filter and sort.
 	/// \param [in] filter The filter used.
 	/// \param [in] comparator The comparator used.
 	explicit GetTask(const Filter& filter, const Comparator& comparator)
-	: filter(filter), comparator(comparator), sortAfterFilter(true) {}
+	: filter(filter), comparator(comparator) {}
 
 	/// Destructor
 	virtual ~GetTask() = default;
@@ -49,7 +43,6 @@ private:
 	GetTask& operator=(const GetTask&) = delete;
 	Filter filter;
 	Comparator comparator;
-	bool sortAfterFilter = false;
 };
 
 }  // namespace Action

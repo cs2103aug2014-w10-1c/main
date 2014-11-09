@@ -45,7 +45,8 @@ std::vector<Task> GetTask::removeTaskIfParentIsShown(
 }
 
 void GetTask::sortTheResultIfRequested(std::vector<Task>& result) const {
-	if (sortAfterFilter) {
+	if (!comparator.isDefault()) {
+		std::remove_if(begin(result), end(result), Filter::completed());
 		std::sort(begin(result), end(result), comparator);
 	} else {
 		std::sort(begin(result), end(result), Comparator::byTimeCreated());

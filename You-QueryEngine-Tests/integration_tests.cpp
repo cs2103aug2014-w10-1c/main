@@ -67,7 +67,6 @@ TEST_CLASS(IntegrateWithDataStoreTest) {
 				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
 
 		Internal::State::initialize();
-		Task::ID initialID = Internal::State::get().getMaxIDFromDataStore();
 		task.setDescription(L"Hello World");
 		QueryEngine::executeQuery(QueryEngine::UpdateTask(task));
 
@@ -94,7 +93,8 @@ TEST_CLASS(IntegrateWithDataStoreTest) {
 		Assert::AreEqual(taskList.size(), static_cast<std::size_t>(0));
 	}
 
-	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
+	IntegrateWithDataStoreTest& operator=(
+		const IntegrateWithDataStoreTest&) = delete;
 };
 
 }  // namespace UnitTests

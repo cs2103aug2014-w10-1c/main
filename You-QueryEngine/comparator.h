@@ -55,6 +55,9 @@ public:
 	/// Constructor using binary function.
 	Comparator(const ComparatorFunc& func);  // NOLINT
 
+	/// Return whether this is the default comparator.
+	inline bool isDefault() const { return isDefaultComparator; }
+
 	/// Cast to binary comparison function used by std::sort and
 	/// the others.
 	/// \note Default is ascending
@@ -93,6 +96,7 @@ private:
 	void negateAllComparators();
 	std::vector<const ComparatorFunc> comparators;
 	bool isAscending = true;
+	bool isDefaultComparator = false;
 };
 
 }  // namespace QueryEngine

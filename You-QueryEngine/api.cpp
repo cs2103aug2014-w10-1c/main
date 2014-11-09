@@ -60,7 +60,8 @@ QueryEngine::AddTask(
 std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter) {
 	return std::unique_ptr<Query>(
-		new Internal::Action::GetTask(filter));
+		new Internal::Action::GetTask(filter,
+			Comparator::byTimeCreated()));
 }
 
 std::unique_ptr<Query>
