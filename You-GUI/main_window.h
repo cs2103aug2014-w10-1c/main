@@ -61,6 +61,19 @@ public:
 	/// from the BaseManager class.
 	class QueryManager;
 
+	struct StatusUpdate {
+		Ui::MainWindowClass* ui;
+		QPixmap pixmap;
+		QString message;
+		void setUpdate(QString color, QString message, Ui::MainWindowClass* ui) {
+			QPixmap pixmap;
+			pixmap.fill(Qt::transparent);
+			pixmap.load(color, 0);
+			(*ui).statusMessage->setText(message);
+			(*ui).statusIcon->setPixmap(pixmap);
+		}
+	};
+
 	/// Calls TaskPanelManager and requests addition of a single task,
 	/// with its subtasks
 	void addTaskWithSubtasks(const Task& task, const TaskList& tl);
@@ -81,6 +94,8 @@ public:
 
 	/// Gets the current list of tasks.
 	const TaskList& getTaskList() const;
+
+	void showErrorAndExit(QString message, QString title);
 
 signals:
 	void taskPanelContextMenu(const QPoint &pos);
