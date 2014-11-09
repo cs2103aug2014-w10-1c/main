@@ -322,18 +322,18 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 
 		query = NLP::EDIT_QUERY {};
 		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
-		query.childTask = 1;
+		query.childTask = 2;
 		executesEditQueryProperly(query);
 
-		query.childTask = -1;
+		query.childTask = -2;
 		executesEditQueryProperly(query);
 
 		query = NLP::EDIT_QUERY {};
 		query.taskID = Mocks::Queries::EDIT_QUERY.taskID;
-		query.dependingTask = 1;
+		query.dependingTask = 2;
 		executesEditQueryProperly(query);
 
-		query.dependingTask = -1;
+		query.dependingTask = -2;
 		executesEditQueryProperly(query);
 
 		query = NLP::EDIT_QUERY {};
