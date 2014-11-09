@@ -35,10 +35,15 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 
 	if (transactionStack.size() == 1) {
 		// it is the only active transaction, execute the operations and save
+
+		// Create a copy of the current data, so that if transaction fails,
+		// the original document is not corrupted
 		pugi::xml_document temp;
 		temp.reset(document);
 		pugi::xml_node tempRoot = BranchOperation::get(temp, ROOT_NODE_NAME.c_str());
 		executeTransaction(transaction, tempRoot);
+
+		// Commit successful, overwrite the document and root
 		document.reset(temp);
 		root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
 		saveData();

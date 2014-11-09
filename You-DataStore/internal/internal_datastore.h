@@ -102,7 +102,10 @@ private:
 	static const std::string FILE_PATH;
 	static const std::wstring ROOT_NODE_NAME;
 
+	/// The xml_document representation of data.xml
 	pugi::xml_document document;
+
+	/// The root node of data.xml
 	pugi::xml_node root;
 
 	/// The current stack of active transactions.
