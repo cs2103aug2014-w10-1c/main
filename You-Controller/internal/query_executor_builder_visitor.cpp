@@ -1,6 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
 #include "You-Utils/fatal.h"
+#include "You-Utils/algorithms.h"
 
 #include "query_executor.h"
 #include "../exceptions/context_index_out_of_range_exception.h"
@@ -182,6 +183,10 @@ QueryExecutorBuilderVisitor::buildComparator(
 	switch (predicate) {
 	case SHOW_QUERY::Predicate::EQ:
 		return std::bind(std::equal_to<TValue>(),
+			std::bind(selector, std::placeholders::_1),
+			value);
+	case SHOW_QUERY::Predicate::SIMILAR:
+		return std::bind(Utils::similar_to<TValue>(),
 			std::bind(selector, std::placeholders::_1),
 			value);
 	case SHOW_QUERY::Predicate::NOT_EQ:
