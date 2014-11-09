@@ -61,7 +61,7 @@ public:
 	static bool isDueWithinExactly(Task::Time deadline, int days);
 
 	/// Returns human-readable form for a deadline
-	static QString getReadableDeadline(Task task);
+	static QString getReadableDateTime(Task::Time datetime);
 
 	/// Colors a task
 	void colorTask(QTreeWidgetItem *taskItem, QColor color, QColor bgColor,

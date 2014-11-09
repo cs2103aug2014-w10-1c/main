@@ -160,10 +160,10 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
 	// Insert deadline
-	result.push_back(getReadableDeadline(task));
+	result.push_back(getReadableDateTime(task.getDeadline()));
 	
-	wss << task.getStartTime().date();
-	result.push_back(QString::fromStdWString(wss.str()));
+	// Insert start time
+	result.push_back(getReadableDateTime(task.getStartTime()));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -198,10 +198,6 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	
 	// Insert attachment
 	result.push_back(QString::fromStdWString(task.getAttachment()));
-
-
-	// Insert start date
-	result.push_back(getReadableDeadline(task));
 
 	return result;
 }
@@ -340,35 +336,54 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }
 
-QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
+QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	std::wstringstream wss;
 	boost::gregorian::date_facet *facet
 		= new boost::gregorian::date_facet("%d-%b-%Y");
 	wss.imbue(std::locale(wss.getloc(), facet));
-	if (task.getDeadline() == Task::NEVER) {
+	std::wstringstream time_of_day;
+	boost::posix_time::time_duration time =
+		datetime.time_of_day();
+	if (time.hours() >= 12) {
+		time_of_day << time << L"PM";
+	}
+	else {
+		time_of_day << time << L"AM";
+	}
+
+	if (datetime == Task::NEVER) {
 		wss << L"Never";
-	} else if (isPastDue(task.getDeadline())) {
-		wss << L"Overdue (" << task.getDeadline().date() << L")";
-	} else if (isDueAfter(task.getDeadline(), 0)) {
-		wss << L"Today (" << task.getDeadline().date() << L")";
-	} else if (isDueAfter(task.getDeadline(), 1)) {
-		wss << L"Tomorrow (" << task.getDeadline().date() << L")";
-	} else if (isDueAfter(task.getDeadline(), 2)) {
-		wss << L"In two days (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 7)) {
-		Date dl = Date(task.getDeadline().date());
+	} else if (isPastDue(datetime)) {
+		wss << L"Overdue (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueAfter(datetime, 0)) {
+		wss << L"Today (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueAfter(datetime, 1)) {
+		wss << L"Tomorrow (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueAfter(datetime, 2)) {
+		wss << L"In two days (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueWithin(datetime, 7)) {
+		Date dl = Date(datetime.date());
 		wss << L"This coming " << dl.day_of_week()
-			<< L" (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 14)) {
-		Date dl = Date(task.getDeadline().date());
+			<< L" (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueWithin(datetime, 14)) {
+		Date dl = Date(datetime.date());
 		wss << L"Next " << dl.day_of_week()
-			<< L" (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 21)) {
-		wss << L"Within three weeks (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 28)) {
-		wss << L"Within one month (" << task.getDeadline().date() << L")";
+			<< L" (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueWithin(datetime, 21)) {
+		wss << L"Within three weeks (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
+	} else if (isDueWithin(datetime, 28)) {
+		wss << L"Within one month (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
 	} else {
-		wss << L"More than a month away (" << task.getDeadline().date() << L")";
+		wss << L"More than a month away (" << datetime.date() << L" at "
+			<< time_of_day.str() << L")";
 	}
 	return boost::lexical_cast<QString>(wss.str());
 }
