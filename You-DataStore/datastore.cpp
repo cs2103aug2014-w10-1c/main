@@ -1,7 +1,6 @@
 //@author A0114171W
 #include "stdafx.h"
 #include "internal/internal_datastore.h"
-#include "internal/constants.h"
 #include "datastore.h"
 
 namespace You {

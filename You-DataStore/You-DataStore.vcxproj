@@ -78,7 +78,6 @@
     <ClInclude Include="exception.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="exceptions\datastore_corrupt_exception.h" />
-    <ClInclude Include="internal\constants.h" />
     <ClInclude Include="internal\operations\branch_operation.h" />
     <ClInclude Include="datastore.h" />
     <ClInclude Include="internal\operations\erase_operation.h" />
@@ -94,7 +93,6 @@
     <ClInclude Include="transaction.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="internal\constants.cpp" />
     <ClCompile Include="internal\operations\branch_operation.cpp" />
     <ClCompile Include="datastore.cpp" />
     <ClCompile Include="internal\internal_datastore.cpp" />
@@ -112,6 +110,9 @@
   <ItemGroup>
     <ProjectReference Include="..\pugixml\pugixml.vcxproj">
       <Project>{37c6baaa-e37d-4558-9595-dfb5c9fb59bc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\You-Utils\You-Utils.vcxproj">
+      <Project>{bb59ad84-cde2-49e9-b32a-f8a8ebf36fc3}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

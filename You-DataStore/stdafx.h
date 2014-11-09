@@ -19,5 +19,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/ptr_container/ptr_deque.hpp>
+#include <boost/format.hpp>
 
 #endif  // YOU_DATASTORE_STDAFX_H_

@@ -116,7 +116,7 @@ public:
 		// Create mock
 		sut.root.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
-		sut.document.save_file(sut.FILE_PATH.c_str());
+		sut.document.save_file(sut.FILE_PATH);
 		sut.document.reset();
 
 		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");

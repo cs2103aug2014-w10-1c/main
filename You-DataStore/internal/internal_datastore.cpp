@@ -1,20 +1,26 @@
 //@author A0114171W
 #include "stdafx.h"
+#include <boost/format.hpp>
+#include "../../You-Utils/log.h"
+#include "../exception.h"
 #include "operation.h"
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
 #include "operations/erase_operation.h"
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
-#include "../exception.h"
 #include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::string DataStore::FILE_PATH = std::string("data.xml");
+using Log = Utils::Log;
+
+const char* DataStore::FILE_PATH = "data.xml";
 const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
+
+const std::wstring DataStore::LOG_CATEGORY = L"[DS][InternalDataStore]";
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -22,6 +28,7 @@ DataStore& DataStore::get() {
 }
 
 You::DataStore::Transaction DataStore::begin() {
+	Log::info << LOG_CATEGORY << L": Begin transaction.";
 	You::DataStore::Transaction result;
 	transactionStack.push(std::weak_ptr<Internal::Transaction>(result));
 
@@ -35,6 +42,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 
 	if (transactionStack.size() == 1) {
 		// it is the only active transaction, execute the operations and save
+		Log::info << LOG_CATEGORY << L": Committing transaction to data.xml.";
 
 		// Create a copy of the current data, so that if transaction fails,
 		// the original document is not corrupted
@@ -51,6 +59,7 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 	} else {
 		// There is a transaction before it that is yet to be committed.
 		// Merge with that transaction
+		Log::info << LOG_CATEGORY << L": Merging transaction.";
 		transactionStack.pop();
 		auto below = transactionStack.top().lock();
 		below->mergeOperationsQueue(transaction.operationsQueue);
@@ -61,12 +70,15 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 void DataStore::onTransactionRollback(Transaction& transaction) {
 	// Can only rollback the latest transaction
 	assert(*(transactionStack.top().lock()) == transaction);
+	Log::info << LOG_CATEGORY << L": Popping transaction from the stack.";
 	transactionStack.pop();
 }
 
 void DataStore::post(std::wstring branch, std::wstring id,
 	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: POST to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
 
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::PostOperation>(branch, id, kvp);
@@ -79,6 +91,8 @@ void DataStore::post(std::wstring branch, std::wstring id,
 void DataStore::put(std::wstring branch, std::wstring id,
 	const KeyValuePairs& kvp) {
 	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: PUT to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
 
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::PutOperation>(branch, id, kvp);
@@ -90,6 +104,8 @@ void DataStore::put(std::wstring branch, std::wstring id,
 
 void DataStore::erase(std::wstring branch, std::wstring id) {
 	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: ERASE to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
 
 	std::unique_ptr<Internal::Operation> operation =
 		std::make_unique<Internal::EraseOperation>(branch, id);
@@ -100,6 +116,7 @@ void DataStore::erase(std::wstring branch, std::wstring id) {
 }
 
 std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
+	Log::info << LOG_CATEGORY << L": Getting all " << nodeName;
 	loadData();
 	pugi::xml_node dataNode = BranchOperation::get(root, nodeName);
 	std::vector<KeyValuePairs> allData;
@@ -110,26 +127,25 @@ std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 }
 
 void DataStore::wipeData() {
+	Log::warning << LOG_CATEGORY << L": All DataStore state, including data.xml"
+		L"and the XML document will be wiped.";
 	document.reset();
-	std::remove(FILE_PATH.c_str());
+	std::remove(FILE_PATH);
 }
 
 bool DataStore::saveData() {
-	bool status = document.save_file(FILE_PATH.c_str());
+	bool status = document.save_file(FILE_PATH);
 	return status;
 }
 
 void DataStore::loadData() {
 	bool isInitialized = !document.first_child().empty();
 	if (!isInitialized) {
-		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH.c_str());
+		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH);
 		bool loadSuccessful = loadStatus;
 		bool isFirstLoad =
 			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
 		if (!loadSuccessful && !isFirstLoad) {
-			// TODO(digawp): find a way to inform user where in the xml
-			// the error is located.
-			// Possible solution: log
 			onXmlParseResult(loadStatus);
 		} else {
 			root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
@@ -139,6 +155,7 @@ void DataStore::loadData() {
 
 void DataStore::executeTransaction(Transaction& transaction,
 	pugi::xml_node& node) {
+	Log::debug << LOG_CATEGORY << L": Executing operationsQueue.";
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
@@ -148,6 +165,8 @@ void DataStore::executeTransaction(Transaction& transaction,
 			assert(false);
 		}
 	}
+
+	Log::debug << LOG_CATEGORY << L": Executing mergedOperationsQueue.";
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
@@ -165,8 +184,11 @@ void DataStore::onXmlParseResult(const pugi::xml_parse_result& result) {
 		result.status == pugi::xml_parse_status::status_out_of_memory ||
 		result.status == pugi::xml_parse_status::status_internal_error;
 	if (isIoError) {
+		Log::error << LOG_CATEGORY << L": An I/O error occured, data.xml "
+			L"is not loaded.";
 		throw IOException();
 	} else {
+		Log::error << LOG_CATEGORY << L": " << result.description();
 		throw NotWellFormedXmlException();
 	}
 }
