@@ -263,9 +263,9 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 }
 
 void MainWindow::TaskPanelManager::updateRowNumbers() {
-	int rowNum = 0;
+	int rowNum = 1;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
-		(*it)->setData(0, Qt::DisplayRole, rowNum++);
+		(*it)->setData(COLUMN_INDEX, Qt::DisplayRole, rowNum++);
 	}
 }
 
