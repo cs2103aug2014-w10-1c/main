@@ -52,6 +52,7 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_4_TITLE,
 		TASK_COLUMN_5_TITLE,
 		TASK_COLUMN_6_TITLE,
+		TASK_COLUMN_7_TITLE,
 		TASK_COLUMN_8_TITLE
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
@@ -77,6 +78,8 @@ void MainWindow::TaskPanelManager::setup() {
 	taskTreePanel->setColumnHidden(COLUMN_HIDDEN_ID, true);
 	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
 	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
+	taskTreePanel->setColumnHidden(COLUMN_ATTACHMENT, true);
+
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
