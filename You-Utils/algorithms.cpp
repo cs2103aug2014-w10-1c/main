@@ -23,12 +23,9 @@ template<typename CharT>
 bool similar_to<std::basic_string<CharT>>::isAnyNeedleInHaystacks(
 	const StringType& needle,
 	const std::vector<StringType>& haystacks) {
-	if (haystacks.empty()) {
-		return false;
-	} else {
-		return std::any_of(begin(haystacks), end(haystacks),
-			std::bind(&isNeedleInHaystack, needle, std::placeholders::_1));
-	}
+	assert(!haystacks.empty());
+	return std::any_of(begin(haystacks), end(haystacks),
+		std::bind(&isNeedleInHaystack, needle, std::placeholders::_1));
 }
 
 template<typename CharT>
