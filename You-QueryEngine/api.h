@@ -82,7 +82,10 @@ public:
 		std::vector<std::unique_ptr<Query>>&& dependencies,
 		std::vector<std::unique_ptr<Query>>&& subtasks);
 
-	/// Construct filter task without sort query
+	/// Reapply current filter and sorter to the task lists.
+	static std::unique_ptr<Query> GetTask();
+
+	/// Construct filter task without sort query.
 	static std::unique_ptr<Query> GetTask(const Filter& filter);
 
 	/// Construct filter and sort task query.

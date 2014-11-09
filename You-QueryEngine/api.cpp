@@ -58,6 +58,14 @@ QueryEngine::AddTask(
 }
 
 std::unique_ptr<Query>
+QueryEngine::GetTask() {
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(
+			Internal::State::get().getActiveFilter(),
+			Internal::State::get().getActiveComparator()));
+}
+
+std::unique_ptr<Query>
 QueryEngine::GetTask(const Filter& filter) {
 	return std::unique_ptr<Query>(
 		new Internal::Action::GetTask(filter,
@@ -156,10 +164,11 @@ Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
 std::wstring ToString(const Task& task) {
 	using Serializer = Controller::Serializer;
 	auto serialized = Serializer::serialize(task);
-	std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%][%8%]";
+	std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%][%8%][%9%]";
 	return (boost::wformat(TASK_FORMAT)
 		% serialized.at(Serializer::KEY_ID)
 		% serialized.at(Serializer::KEY_DESCRIPTION)
+		% serialized.at(Serializer::KEY_START_TIME)
 		% serialized.at(Serializer::KEY_PRIORITY)
 		% serialized.at(Serializer::KEY_DEADLINE)
 		% serialized.at(Serializer::KEY_DEPENDENCIES)
