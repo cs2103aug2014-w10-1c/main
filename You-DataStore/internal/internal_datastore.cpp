@@ -123,16 +123,18 @@ void DataStore::loadData() {
 			// the error is located.
 			// Possible solution: log
 			onXmlParseResult(loadStatus);
+		} else {
+			root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
 		}
 	}
 }
 
 void DataStore::executeTransaction(Transaction& transaction,
-	pugi::xml_document& xml) {
+	pugi::xml_node& node) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
-		bool status = operation->run(xml);
+		bool status = operation->run(node);
 		if (!status) {
 			transaction.rollback();
 			assert(false);
@@ -141,7 +143,7 @@ void DataStore::executeTransaction(Transaction& transaction,
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
-		bool status = mergedOperation->run(xml);
+		bool status = mergedOperation->run(node);
 		if (!status) {
 			transaction.rollback();
 			assert(false);

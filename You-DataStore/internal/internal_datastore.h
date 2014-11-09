@@ -91,7 +91,7 @@ private:
 	///
 	/// \param[in] transaction The transaction to be executed
 	/// \param[out] xml The xml document to be modified by the operations
-	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
+	void executeTransaction(Transaction& transaction, pugi::xml_node& node);
 
 	/// Throws the exception for the xml_parse_status given
 	///
