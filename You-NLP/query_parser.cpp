@@ -91,22 +91,25 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(addCommandDescriptionUnquotedTail);
 
 	addCommandPriority %= (
-		(*space >> qi::lit('!') >> addCommandDeadlineOptional)
+		(*space >> qi::lit('!') >> addCommandTimeOptional)
 			[qi::_val = phoenix::bind(&constructAddQueryWithPriority, qi::_1)] |
-		addCommandDeadlineOptional
+			addCommandTimeOptional
 	);
 	BOOST_SPIRIT_DEBUG_NODE(addCommandPriority);
 
-	addCommandDeadline = (
-		space >> (qi::lit("by") | qi::lit("before")) >> space >> time >> *space
-	)[qi::_val = phoenix::bind(&constructAddQueryWithDeadline, qi::_1)];
-	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadline);
+	addCommandTime = (
+		(space >> (qi::lit("from")) >> space >> time) ||
+		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) >>
+			space >> time) >>
+		*space
+	)[qi::_val = phoenix::bind(&constructAddQueryWithTime, qi::_1, qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(addCommandTime);
 
-	addCommandDeadlineOptional = (
-		addCommandDeadline || (
+	addCommandTimeOptional = (
+		addCommandTime || (
 			*space >> &(qi::char_(":;") | qi::lit("->") | qi::eoi))
-	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalDeadline, qi::_1)];
-	BOOST_SPIRIT_DEBUG_NODE(addCommandDeadlineOptional);
+	)[qi::_val = phoenix::bind(&constructAddQueryWithOptionalTime, qi::_1)];
+	BOOST_SPIRIT_DEBUG_NODE(addCommandTimeOptional);
 
 	addCommandSubtasks %= (
 		addCommand % (*space >> qi::lit(';') >> *space)
@@ -165,6 +168,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	showCommandFields.add
 		(L"description", TaskField::DESCRIPTION)
+		(L"start", TaskField::START)
 		(L"deadline", TaskField::DEADLINE)
 		(L"priority", TaskField::PRIORITY)
 		(L"done", TaskField::COMPLETE)
@@ -177,7 +181,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		qi::uint_ > (
 			(space >> qi::lit("set") > space > editCommandRule) |
 			(*space >> qi::lit("!") > editSetHighPriority) |
-			(space >> qi::lit("by") > space > editSetDeadline) |
+			(editSetTimes) |
 			(*space >> qi::lit(":") > *space > editSetSubtask) |
 			(*space >> qi::lit("->") > *space > editSetDependent) |
 			(space >> qi::lit("attach") > space >
@@ -216,11 +220,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	editCommandFieldsUnary.add
 		(L"description", TaskField::DESCRIPTION)
+		(L"start", TaskField::START)
 		(L"deadline", TaskField::DEADLINE);
 
 	editCommandFieldsNullary.add
 		(L"done", TaskField::COMPLETE)
-		(L"complete", TaskField::COMPLETE);
+		(L"complete", TaskField::COMPLETE)
+		(L"completed", TaskField::COMPLETE);
 
 	editSetHighPriority = (
 		qi::eps
@@ -228,10 +234,13 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		TaskPriority::HIGH)];
 	BOOST_SPIRIT_DEBUG_NODE(editSetHighPriority);
 
-	editSetDeadline = (
-		time
-	)[qi::_val = phoenix::bind(&constructEditQueryDeadline, qi::_1)];
-	BOOST_SPIRIT_DEBUG_NODE(editSetDeadline);
+	editSetTimes = (
+		(space >> qi::lit("from") > space > time) ||
+		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) > space >
+			time)
+	)[qi::_val = phoenix::bind(&constructEditQueryTimes,
+		qi::_1, qi::_2)];
+	BOOST_SPIRIT_DEBUG_NODE(editSetTimes);
 
 	editSetSubtask = (
 		qi::int_

@@ -47,16 +47,18 @@ ADD_QUERY QueryParser::constructAddQueryWithPriority(ADD_QUERY query) {
 	return query;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(
-	boost::posix_time::ptime deadline) {
+ADD_QUERY QueryParser::constructAddQueryWithTime(
+	boost::optional<boost::posix_time::ptime> start,
+	boost::optional<boost::posix_time::ptime> deadline) {
 	return ADD_QUERY {
 		std::wstring(),
 		TaskPriority::NORMAL,
-		deadline
+		std::move(start),
+		std::move(deadline)
 	};
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
+ADD_QUERY QueryParser::constructAddQueryWithOptionalTime(
 	boost::optional<ADD_QUERY> query) {
 	if (query) {
 		return query.get();
@@ -94,6 +96,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 		case TaskField::DESCRIPTION:
 			result.value = boost::get<StringType>(value);
 			break;
+		case TaskField::START:
 		case TaskField::DEADLINE:
 			result.value = boost::get<boost::posix_time::ptime>(value);
 			break;
@@ -151,10 +154,13 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 
 	try {
 		switch (field) {
-		case TaskField::DESCRIPTION: {
+		case TaskField::DESCRIPTION:
 			result.description = std::move(boost::get<StringType>(newValue));
 			break;
-		}
+		case TaskField::START:
+			result.start = std::move(
+				boost::get<boost::posix_time::ptime>(newValue));
+			break;
 		case TaskField::DEADLINE:
 			result.deadline = std::move(
 				boost::get<boost::posix_time::ptime>(newValue));
@@ -176,9 +182,11 @@ EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	return result;
 }
 
-EDIT_QUERY QueryParser::constructEditQueryDeadline(
-	boost::posix_time::ptime deadline) {
+EDIT_QUERY QueryParser::constructEditQueryTimes(
+	boost::optional<boost::posix_time::ptime> start,
+	boost::optional<boost::posix_time::ptime> deadline) {
 	EDIT_QUERY result;
+	result.start = std::move(start);
 	result.deadline = std::move(deadline);
 
 	return result;

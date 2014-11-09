@@ -28,6 +28,9 @@ public:
 	static Comparator byDescription();
 
 	/// Sort by deadline.
+	static Comparator byStartTime();
+
+	/// Sort by deadline.
 	static Comparator byDeadline();
 
 	/// Sort by the number of dependencies.

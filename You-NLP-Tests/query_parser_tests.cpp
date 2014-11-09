@@ -60,12 +60,51 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesStringWithStartAsTask) {
+		QUERY q = QueryParser::parse(L"win from may 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::May, 1), hours(0))
+		}), q);
+
+		q = QueryParser::parse(L"win lottery from dec 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesStringWithStartAndDeadlineAsTask) {
+		QUERY q = QueryParser::parse(L"win from may 2014 to jun 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::May, 1), hours(0)),
+			ptime(date(2014, boost::gregorian::Jun, 1), hours(0))
+		}), q);
+
+		q = QueryParser::parse(L"win lottery from dec 2014 to jun 2015");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0)),
+			ptime(date(2015, boost::gregorian::Jun, 1), hours(0))
+		}), q);
+	}
+
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
 		QUERY q = QueryParser::parse(L"win by may 2014");
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::May, 1), hours(0))
 		}), q);
 
@@ -74,6 +113,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -91,6 +131,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"win lottery",
 			TaskPriority::HIGH,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
 		}), q);
 	}
@@ -102,6 +143,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Walk the dog",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 20)),
 			{
 				{ L"Eat breakfast" },
@@ -110,6 +152,7 @@ public:
 				{
 					L"Buy a new collar",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2015, boost::gregorian::Oct, 12))
 				}
 			}
@@ -123,16 +166,19 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Buy her flower",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 14)),
 			{},
 			std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 				L"Ask her out",
 				TaskPriority::NORMAL,
+				boost::none,
 				ptime(date(2014, boost::gregorian::Dec, 15)),
 				{},
 				std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 					L"Confess to her",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2014, boost::gregorian::Dec, 16))
 				})
 			})
@@ -148,6 +194,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Walk the dog",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 20)),
 			{
 				{ L"Eat breakfast" },
@@ -155,16 +202,19 @@ public:
 				{
 					L"Buy her flower",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2014, boost::gregorian::Dec, 14)),
 					{},
 					std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 						L"Ask her out",
 						TaskPriority::NORMAL,
+						boost::none,
 						ptime(date(2014, boost::gregorian::Dec, 15)),
 						{},
 						std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 							L"Confess to her",
 							TaskPriority::NORMAL,
+							boost::none,
 							ptime(date(2014, boost::gregorian::Dec, 16))
 						})
 					})
@@ -172,6 +222,7 @@ public:
 				{
 					L"Buy a new collar",
 					TaskPriority::NORMAL,
+					boost::none,
 					ptime(date(2015, boost::gregorian::Oct, 12))
 				}
 			}
@@ -189,6 +240,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"E",
 			TaskPriority::NORMAL,
+			boost::none,
 			ptime(date(2015, boost::gregorian::Oct, 22), hours(0))
 		}), q);
 	}
@@ -200,6 +252,7 @@ public:
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"CS3235: Homework Assignment 3",
 			TaskPriority::HIGH,
+			boost::none,
 			ptime(date(2014, boost::gregorian::Dec, 13))
 		}), q);
 	}
@@ -338,10 +391,20 @@ public:
 			L"meh with spaces"
 		}), q);
 
+		q = QueryParser::parse(L"/edit 10 set start='oct 2014'");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			10,
+			boost::none,
+			boost::none,
+			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
+		}), q);
+
 		q = QueryParser::parse(L"/edit 10 set deadline='oct 2014'");
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
 			boost::none,
 			boost::none,
 			ptime(date(2014, boost::gregorian::Oct, 1), hours(0))
@@ -351,6 +414,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -383,8 +447,35 @@ public:
 			0,
 			boost::none,
 			boost::none,
+			boost::none,
 			boost::posix_time::ptime(
 				boost::gregorian::date(2014, boost::gregorian::Dec, 13))
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditStartDateQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0 from 2014-Dec-13");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			boost::none,
+			boost::posix_time::ptime(
+				boost::gregorian::date(2014, boost::gregorian::Dec, 13))
+		}), q);
+	}
+
+	TEST_METHOD(parsesEditStartDateAndDeadlineQuery) {
+		QUERY q = QueryParser::parse(L"/edit 0 from 2014-Dec-13 to 2015-Dec");
+
+		Assert::AreEqual(QUERY(EDIT_QUERY {
+			0,
+			boost::none,
+			boost::none,
+			boost::posix_time::ptime(
+				boost::gregorian::date(2014, boost::gregorian::Dec, 13)),
+			boost::posix_time::ptime(
+				boost::gregorian::date(2015, boost::gregorian::Dec, 1))
 		}), q);
 	}
 
@@ -393,6 +484,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			0,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -406,6 +498,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			0,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,
@@ -426,6 +519,7 @@ public:
 			boost::none,
 			boost::none,
 			boost::none,
+			boost::none,
 			{ { true, L"lol" } }
 		}), q);
 
@@ -433,6 +527,7 @@ public:
 
 		Assert::AreEqual(QUERY(EDIT_QUERY {
 			10,
+			boost::none,
 			boost::none,
 			boost::none,
 			boost::none,

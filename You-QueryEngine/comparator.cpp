@@ -19,6 +19,12 @@ Comparator Comparator::byDescription() {
 	});
 }
 
+Comparator Comparator::byStartTime() {
+	return byApplying<Task::Time>([](const Task& task) {
+		return task.getStartTime();
+	});
+}
+
 Comparator Comparator::byDeadline() {
 	return byApplying<Task::Time>([](const Task& task) {
 		return task.getDeadline();

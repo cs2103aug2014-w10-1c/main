@@ -11,9 +11,9 @@ extern const You::NLP::ADD_QUERY ADD_QUERY {
 	L"wow",
 	You::NLP::TaskPriority::NORMAL,
 	boost::posix_time::ptime(
-		boost::gregorian::date(2014, boost::gregorian::Oct, 1),
-		boost::posix_time::hours(0)
-	)
+		boost::gregorian::date(2014, boost::gregorian::Sep, 15)),
+	boost::posix_time::ptime(
+		boost::gregorian::date(2014, boost::gregorian::Oct, 1))
 };
 
 extern const You::NLP::SHOW_QUERY SHOW_QUERY {
@@ -37,6 +37,7 @@ extern const You::NLP::EDIT_QUERY EDIT_QUERY {
 	1,
 	L"new description",
 	You::NLP::TaskPriority::NORMAL,
+	boost::none,
 	boost::posix_time::ptime(
 		boost::gregorian::date(2014, boost::gregorian::Oct, 1),
 		boost::posix_time::hours(1) + boost::posix_time::minutes(1)

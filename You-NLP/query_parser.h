@@ -102,26 +102,29 @@ private:
 	/// \return The synthesised value for the \ref addCommandPriority rule.
 	static ADD_QUERY constructAddQueryWithPriority(ADD_QUERY query);
 
-	/// Process the nonterminal indicating a deadline, converting it to an
-	/// appropriate \ref ADD_QUERY type.
+	/// Process the nonterminal indicating a start time or deadline, converting
+	/// it to an appropriate \ref ADD_QUERY type.
 	///
-	/// \see addCommandDeadline
+	/// \see addCommandTime
 	/// The production rule associated with this semantic action.
 	///
+	/// \param[in] start The start time from the parser.
 	/// \param[in] deadline The deadline from the parser.
-	/// \return The synthesised value for the \ref addCommandDeadline rule.
-	static ADD_QUERY constructAddQueryWithDeadline(
-		boost::posix_time::ptime deadline);
+	/// \return The synthesised value for the \ref addCommandTime rule.
+	static ADD_QUERY constructAddQueryWithTime(
+		boost::optional<boost::posix_time::ptime> start,
+		boost::optional<boost::posix_time::ptime> deadline);
 
-	/// Process the end-of-input nonterminal, potentially including a deadline.
-	/// This captures the deadline, if one is present.
+	/// Process the end-of-input nonterminal, potentially including a start
+	/// time or deadline. This captures the start time or deadline, if one is
+	/// present.
 	///
-	/// \see addCommandDeadline
+	/// \see addCommandTime
 	/// The production rule associated with this semantic action.
 	///
 	/// \param[in] query The nonterminal from the parser.
-	/// \return The synthesised value for the \ref addCommandDeadline rule.
-	static ADD_QUERY constructAddQueryWithOptionalDeadline(
+	/// \return The synthesised value for the \ref addCommandTime rule.
+	static ADD_QUERY constructAddQueryWithOptionalTime(
 		boost::optional<ADD_QUERY> query);
 	#pragma endregion
 
@@ -194,13 +197,15 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
-	/// Constructs an edit query which sets the deadline of a task from the
-	/// given date.
+	/// Constructs an edit query which sets the start time or deadline of a task
+	/// from the given dates.
 	///
+	/// \param[in] start The new start time of the task.
 	/// \param[in] deadline The new deadline of the task.
 	/// \return The synthesised value for the \ref editSetDeadline rule.
-	static EDIT_QUERY constructEditQueryDeadline(
-		boost::posix_time::ptime deadline);
+	static EDIT_QUERY constructEditQueryTimes(
+		boost::optional<boost::posix_time::ptime> start,
+		boost::optional<boost::posix_time::ptime> deadline);
 
 	/// Constructs an edit query setting the given task as a subtask of the
 	/// first task.
@@ -280,17 +285,17 @@ private:
 	/// Add command priority rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandPriority;
 
-	/// Add command's deadline rule.
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDeadline;
+	/// Add command's start time/deadline rule.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandTime;
+
+	/// Add command's optional start time/deadline rule. This acts as the
+	/// terminal for the add query parser.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandTimeOptional;
 
 	/// Add command's subtasks
 	boost::spirit::qi::rule<IteratorType, std::vector<ADD_QUERY>()>
 		addCommandSubtasks;
-
-	/// Add command's optional deadline rule. This acts as the terminal for the
-	/// add query parser.
-	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
-		addCommandDeadlineOptional;
 	#pragma endregion
 
 	#pragma region Showing tasks
@@ -369,14 +374,14 @@ private:
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
 
-	/// Edit command nonterminal rule for setting the task deadline.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDeadline;
-
 	/// Edit command nonterminal rule for setting the subtask of another task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
 
 	/// Edit command terminal rule for setting the task to be of high priority.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;
+
+	/// Edit command terminal rule for setting the task start time or deadlines.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetTimes;
 
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>

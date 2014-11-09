@@ -53,6 +53,28 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Task::Priority::NORMAL,
 			result.task.getPriority());
 		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.start.get(),
+			result.task.getStartTime());
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.deadline.get(),
+			result.task.getDeadline());
+
+		You::NLP::ADD_QUERY queryWithoutStart(Mocks::Queries::ADD_QUERY);
+		queryWithoutStart.start = boost::none;
+		query = queryWithoutStart;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
+
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.description,
+			result.task.getDescription());
+		Assert::AreEqual(
+			Task::Priority::NORMAL,
+			result.task.getPriority());
+		Assert::AreEqual(
+			Task::DEFAULT_START_TIME,
+			result.task.getStartTime());
+		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.deadline.get(),
 			result.task.getDeadline());
 
@@ -69,6 +91,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			Task::Priority::NORMAL,
 			result.task.getPriority());
 		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.start.get(),
+			result.task.getStartTime());
+		Assert::AreEqual(
 			Task::DEFAULT_DEADLINE,
 			result.task.getDeadline());
 
@@ -84,6 +109,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		Assert::AreEqual(
 			Task::Priority::HIGH,
 			result.task.getPriority());
+		Assert::AreEqual(
+			Mocks::Queries::ADD_QUERY.start.get(),
+			result.task.getStartTime());
 		Assert::AreEqual(
 			Mocks::Queries::ADD_QUERY.deadline.get(),
 			result.task.getDeadline());
@@ -193,6 +221,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::wstring(L"meh 1"));
 
 		auto runTime = boost::posix_time::second_clock::local_time();
+		appliesCorrectFilters<You::NLP::TaskField::START>(
+			std::bind(&Task::getStartTime, std::placeholders::_1),
+			runTime - boost::posix_time::hours(1));
+
 		appliesCorrectFilters<You::NLP::TaskField::DEADLINE>(
 			std::bind(&Task::getDeadline, std::placeholders::_1),
 			runTime + boost::posix_time::hours(1));
@@ -201,7 +233,6 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 			std::bind(&Task::isCompleted, std::placeholders::_1),
 			true);
 
-		// TODO(lowjoel): Implement comparators for priorities.
 		appliesCorrectFilters<You::NLP::TaskField::PRIORITY>(
 			[](const Task& task) {
 				return Controller::queryEngineToNlpPriority(
@@ -313,6 +344,10 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		executesEditQueryProperly(query);
 
 		query = Mocks::Queries::EDIT_QUERY;
+		query.start = boost::none;
+		executesEditQueryProperly(query);
+
+		query = Mocks::Queries::EDIT_QUERY;
 		query.deadline = boost::none;
 		executesEditQueryProperly(query);
 
@@ -372,6 +407,9 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 				Controller::nlpToQueryEnginePriority(editQuery.priority.get()) :
 				first.getPriority(),
 				result.task.getPriority());
+			Assert::AreEqual(editQuery.start ?
+				editQuery.start.get() : first.getStartTime(),
+				result.task.getStartTime());
 			Assert::AreEqual(editQuery.deadline ?
 				editQuery.deadline.get() : first.getDeadline(),
 				result.task.getDeadline());
