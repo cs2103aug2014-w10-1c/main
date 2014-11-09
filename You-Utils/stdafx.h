@@ -16,6 +16,7 @@
 #include <functional>
 
 #pragma warning(push)
+#include <boost/algorithm/string.hpp>
 #pragma warning(disable: 4555)
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/format.hpp>
