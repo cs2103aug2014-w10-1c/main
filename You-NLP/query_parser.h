@@ -197,13 +197,15 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
-	/// Constructs an edit query which sets the deadline of a task from the
-	/// given date.
+	/// Constructs an edit query which sets the start time or deadline of a task
+	/// from the given dates.
 	///
+	/// \param[in] start The new start time of the task.
 	/// \param[in] deadline The new deadline of the task.
 	/// \return The synthesised value for the \ref editSetDeadline rule.
-	static EDIT_QUERY constructEditQueryDeadline(
-		boost::posix_time::ptime deadline);
+	static EDIT_QUERY constructEditQueryTimes(
+		boost::optional<boost::posix_time::ptime> start,
+		boost::optional<boost::posix_time::ptime> deadline);
 
 	/// Constructs an edit query setting the given task as a subtask of the
 	/// first task.
@@ -283,11 +285,11 @@ private:
 	/// Add command priority rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandPriority;
 
-	/// Add command's deadline rule.
+	/// Add command's start time/deadline rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandTime;
 
-	/// Add command's optional deadline rule. This acts as the terminal for the
-	/// add query parser.
+	/// Add command's optional start time/deadline rule. This acts as the
+	/// terminal for the add query parser.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
 		addCommandTimeOptional;
 
@@ -372,14 +374,14 @@ private:
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
 
-	/// Edit command nonterminal rule for setting the task deadline.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDeadline;
-
 	/// Edit command nonterminal rule for setting the subtask of another task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
 
 	/// Edit command terminal rule for setting the task to be of high priority.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;
+
+	/// Edit command terminal rule for setting the task start time or deadlines.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetTimes;
 
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>

@@ -182,9 +182,11 @@ EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	return result;
 }
 
-EDIT_QUERY QueryParser::constructEditQueryDeadline(
-	boost::posix_time::ptime deadline) {
+EDIT_QUERY QueryParser::constructEditQueryTimes(
+	boost::optional<boost::posix_time::ptime> start,
+	boost::optional<boost::posix_time::ptime> deadline) {
 	EDIT_QUERY result;
+	result.start = std::move(start);
 	result.deadline = std::move(deadline);
 
 	return result;
