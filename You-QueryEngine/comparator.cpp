@@ -23,7 +23,10 @@ Comparator Comparator::byTimeCreated() {
 
 Comparator Comparator::byDescription() {
 	return byApplying<Task::Description>([](const Task& task) {
-		return task.getDescription();
+		auto desc = task.getDescription();
+		std::transform(desc.begin(), desc.end(),
+			desc.begin(), ::tolower);
+		return desc;
 	});
 }
 
