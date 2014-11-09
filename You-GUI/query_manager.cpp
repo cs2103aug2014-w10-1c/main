@@ -39,8 +39,9 @@ void MainWindow::QueryManager::query(
 			parentGUI->clearTasks();
 			parentGUI->addTasks(showResult.tasks);
 		}
-		void operator()(You::Controller::EDIT_RESULT editResult) {
-			parentGUI->editTask(editResult.task);
+		void operator()(You::Controller::EDIT_RESULT) {
+			parentGUI->clearTasks();
+			parentGUI->populateTaskPanel();
 		}
 		void operator()(You::Controller::DELETE_RESULT deleteResult) {
 			parentGUI->deleteTask(deleteResult.task);
