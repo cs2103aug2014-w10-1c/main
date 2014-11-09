@@ -13,7 +13,8 @@ namespace DataStore {
 namespace UnitTests { class DataStoreTest; class DataStoreApiTest; }
 namespace Internal {
 
-/// The actual class that contains the logic for managing transactions.
+/// The class that stores a group of \ref Operation s that need to collectively
+/// succeed or fail
 class Transaction {
 	friend class DataStore;
 	friend class UnitTests::DataStoreTest;
@@ -44,13 +45,18 @@ public:
 	///					  The queue will be empty at the end of the function call.
 	void mergeOperationsQueue(boost::ptr_deque<Operation>& queue);
 
-	bool operator==(Transaction&);
+	/// Checks whether this and rhs refer the same \ref Internal::Transaction
+	///
+	/// \param[in] rhs The other Transaction to compare with
+	bool operator==(Transaction& rhs);
 
 private:
-	/// The set of operations that need to be executed when the transaction is
-	/// committed.
+	/// The collection of operations that need to be executed when the
+	/// transaction is committed.
 	boost::ptr_deque<Operation> operationsQueue;
 
+	/// The collection of operations from the subsequent commits that are
+	/// merged before this transaction.
 	boost::ptr_deque<Operation> mergedOperationsQueue;
 };
 

@@ -19,21 +19,23 @@ class DataStoreTest;
 class DataStoreApiTest;
 }
 
-/// The internal components of DataStore
+/// The internal components of data store
 namespace Internal {
 
 /// The most primitive class that does the changes to the actual xml file
 class DataStore {
 	/// Test classes
+	/// @{
 	friend class UnitTests::DataStoreTest;
 	friend class UnitTests::DataStoreApiTest;
+	/// @}
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
 	/// \return The internal data store instance.
 	static DataStore& get();
 
-	/// Transaction management.
+	/// \name Transaction management.
 	/// @{
 
 	/// Starts a new transaction.
