@@ -16,8 +16,8 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_0_TITLE = "Index";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE =
 "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Deadline";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Deadline";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE =
 "Dependencies";
