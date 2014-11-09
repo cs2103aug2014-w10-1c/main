@@ -91,7 +91,7 @@ private:
 	///
 	/// \param[in] transaction The transaction to be executed
 	/// \param[out] xml The xml document to be modified by the operations
-	void executeTransaction(Transaction& transaction, pugi::xml_document& xml);
+	void executeTransaction(Transaction& transaction, pugi::xml_node& node);
 
 	/// Throws the exception for the xml_parse_status given
 	///
@@ -100,7 +100,13 @@ private:
 
 private:
 	static const std::string FILE_PATH;
+	static const std::wstring ROOT_NODE_NAME;
+
+	/// The xml_document representation of data.xml
 	pugi::xml_document document;
+
+	/// The root node of data.xml
+	pugi::xml_node root;
 
 	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;

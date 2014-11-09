@@ -11,6 +11,9 @@ const std::wstring DESCRIPTION_FIELD(L"Description");
 /// The priority field.
 const std::wstring PRIORITY_FIELD(L"Priority");
 
+/// The start field.
+const std::wstring START_FIELD(L"Start");
+
 /// The deadline field.
 const std::wstring DEADLINE_FIELD(L"Deadline");
 
@@ -55,6 +58,8 @@ std::wstring ToString(const TaskField& field) {
 		return DESCRIPTION_FIELD;
 	case TaskField::PRIORITY:
 		return PRIORITY_FIELD;
+	case TaskField::START:
+		return START_FIELD;
 	case TaskField::DEADLINE:
 		return DEADLINE_FIELD;
 	case TaskField::COMPLETE:

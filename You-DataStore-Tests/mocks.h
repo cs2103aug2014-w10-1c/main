@@ -10,6 +10,7 @@ namespace UnitTests {
 
 /// Redefinition of \ref DataStore constants for unit test purposes
 /// @{
+const std::wstring ROOT_NODE = L"You";
 const std::wstring TASKS_NODE = L"tasks";
 const std::wstring RESOURCES_NODE = L"resources";
 /// @}

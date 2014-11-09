@@ -14,6 +14,7 @@ namespace DataStore {
 namespace Internal {
 
 const std::string DataStore::FILE_PATH = std::string("data.xml");
+const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
 
 DataStore& DataStore::get() {
 	static DataStore store;
@@ -34,10 +35,17 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 
 	if (transactionStack.size() == 1) {
 		// it is the only active transaction, execute the operations and save
+
+		// Create a copy of the current data, so that if transaction fails,
+		// the original document is not corrupted
 		pugi::xml_document temp;
 		temp.reset(document);
-		executeTransaction(transaction, temp);
+		pugi::xml_node tempRoot = BranchOperation::get(temp, ROOT_NODE_NAME.c_str());
+		executeTransaction(transaction, tempRoot);
+
+		// Commit successful, overwrite the document and root
 		document.reset(temp);
+		root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
 		saveData();
 		transactionStack.pop();
 	} else {
@@ -93,7 +101,7 @@ void DataStore::erase(std::wstring branch, std::wstring id) {
 
 std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
 	loadData();
-	pugi::xml_node dataNode = BranchOperation::get(document, nodeName);
+	pugi::xml_node dataNode = BranchOperation::get(root, nodeName);
 	std::vector<KeyValuePairs> allData;
 	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
 		allData.push_back(SerializationOperation::deserialize(*i));
@@ -123,16 +131,18 @@ void DataStore::loadData() {
 			// the error is located.
 			// Possible solution: log
 			onXmlParseResult(loadStatus);
+		} else {
+			root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
 		}
 	}
 }
 
 void DataStore::executeTransaction(Transaction& transaction,
-	pugi::xml_document& xml) {
+	pugi::xml_node& node) {
 	for (auto operation = transaction.operationsQueue.begin();
 		operation != transaction.operationsQueue.end();
 		++operation) {
-		bool status = operation->run(xml);
+		bool status = operation->run(node);
 		if (!status) {
 			transaction.rollback();
 			assert(false);
@@ -141,7 +151,7 @@ void DataStore::executeTransaction(Transaction& transaction,
 	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
 		mergedOperation != transaction.mergedOperationsQueue.end();
 		++mergedOperation) {
-		bool status = mergedOperation->run(xml);
+		bool status = mergedOperation->run(node);
 		if (!status) {
 			transaction.rollback();
 			assert(false);

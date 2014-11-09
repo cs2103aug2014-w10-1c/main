@@ -1,6 +1,9 @@
 //@author A0094446X
 #include "stdafx.h"
 #include <QtWidgets/QApplication>
+#include "You-Utils/log.h"
+#include "log_sink.h"
+#include "exceptions.h"
 #include "../You-GUI/main_window.h"
 #include "../You-GUI/window_title.h"
 
@@ -19,7 +22,21 @@ int main(int argc, char *argv[]) {
 #endif
 }
 
-#ifdef _WIN32
+int loadApplication(int argc, char *argv[]) {
+	QApplication a(argc, argv);
+	try {
+		std::shared_ptr<You::GUILogSink> ls =
+			std::make_shared<You::GUILogSink>();
+		You::Utils::Log::setSink(ls);
+	}
+	catch (You::Exception::InitLogFileFailedException &e) {
+		qDebug() << "Failed to initialize log file.";
+	}
+	You::GUI::MainWindow w;
+	w.show();
+	return a.exec();
+}
+
 int loadSingleApplication(int argc, char *argv[]) {
 	HANDLE hMutex;
 	hMutex = CreateMutex(NULL, FALSE, TEXT("YouGUIUniqueApplicationInstance"));
@@ -29,17 +46,6 @@ int loadSingleApplication(int argc, char *argv[]) {
 		SetForegroundWindow(hwnd);
 		return 0;
 	} else {
-		QApplication a(argc, argv);
-		You::GUI::MainWindow w;
-		w.show();
-		return a.exec();
+		return loadApplication(argc, argv);
 	}
 }
-#else
-int loadApplication(int argc, char *argv[]) {
-	QApplication a(argc, argv);
-	You::GUI::MainWindow w;
-	w.show();
-	return a.exec();
-}
-#endif

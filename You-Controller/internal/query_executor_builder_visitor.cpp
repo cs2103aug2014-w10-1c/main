@@ -69,7 +69,7 @@ QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 
 	return QueryEngine::AddTask(
 		query.description,
-		Task::DEFAULT_START_TIME,
+		query.start ? query.start.get() : Task::DEFAULT_START_TIME,
 		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
 		query.priority == TaskPriority::HIGH ?
 		Task::Priority::HIGH : Task::Priority::NORMAL,
@@ -113,6 +113,12 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 					field.predicate,
 					boost::get<std::wstring>(field.value));
 				break;
+			case TaskField::START:
+				assert(boost::get<boost::posix_time::ptime>(&field.value));
+				currentFilter = buildComparator(&Task::getStartTime,
+					field.predicate,
+					boost::get<boost::posix_time::ptime>(field.value));
+				break;
 			case TaskField::DEADLINE:
 				assert(boost::get<boost::posix_time::ptime>(&field.value));
 				currentFilter = buildComparator(&Task::getDeadline,
@@ -145,6 +151,9 @@ QueryExecutorBuilderVisitor::build(const SHOW_QUERY& query) {
 			switch (field.field) {
 			case TaskField::DESCRIPTION:
 				comp = Comparator::byDescription();
+				break;
+			case TaskField::START:
+				comp = Comparator::byStartTime();
 				break;
 			case TaskField::DEADLINE:
 				comp = Comparator::byDeadline();
@@ -312,7 +321,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				QueryEngine::UpdateTask(
 					task,
 					query.description,
-					boost::none,  // query.startTime
+					query.start,
 					query.deadline,
 					priority,
 					dependencies,

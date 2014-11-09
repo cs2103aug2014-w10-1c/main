@@ -9,8 +9,8 @@
 namespace {
 
 /// The format for displaying an ADD_QUERY
-const boost::wformat STRING_FORMAT(L"%1% (deadline %2%, %3% priority, %4% "
-	L"subtasks, %5% dependents)");
+const boost::wformat STRING_FORMAT(L"%1% (start %2%, deadline %3%, "
+	L"%4% priority, %5% subtasks, %6% dependents)");
 
 }  // namespace
 
@@ -19,6 +19,9 @@ namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 	return s << (boost::wformat(STRING_FORMAT) % q.description % (
+		q.start ?
+			boost::lexical_cast<std::wstring>(q.start.get()) : L"none"
+	) % (
 		q.deadline ?
 			boost::lexical_cast<std::wstring>(q.deadline.get()) : L"none"
 	) % (
@@ -33,6 +36,7 @@ std::wostream& operator<<(std::wostream& s, const ADD_QUERY& q) {
 bool ADD_QUERY::operator==(const ADD_QUERY& rhs) const {
 	return description == rhs.description &&
 		priority == rhs.priority &&
+		start == rhs.start &&
 		deadline == rhs.deadline &&
 		subtasks.size() == rhs.subtasks.size() &&
 		std::equal(begin(subtasks), end(subtasks), begin(rhs.subtasks)) &&

@@ -19,20 +19,23 @@ enum class TaskField {
 	/// The priority of the task
 	PRIORITY = 1 << 1,
 
-	/// The deadline field needs to be changed
-	DEADLINE = 1 << 2,
+	/// The start field of the task
+	START = 1 << 2,
+
+	/// The deadline field
+	DEADLINE = 1 << 3,
 
 	/// The task is now complete
-	COMPLETE = 1 << 3,
+	COMPLETE = 1 << 4,
 
 	/// The subtasks of this task.
-	SUBTASKS = 1 << 4,
+	SUBTASKS = 1 << 5,
 
 	/// The dependents of this task.
-	DEPENDENTS = 1 << 5,
+	DEPENDENTS = 1 << 6,
 
 	/// The attachments need to be updated
-	ATTACHMENTS = 1 << 6
+	ATTACHMENTS = 1 << 7
 };
 
 /// Formats the given task priority to stream.

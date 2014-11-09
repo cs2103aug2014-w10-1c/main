@@ -15,9 +15,9 @@ class Operation {
 public:
 	/// Executes the operation
 	///
-	/// \param[out] document The document to modify.
+	/// \param[out] node The XML node to modify.
 	/// \return True if the operation succeeded.
-	virtual bool run(pugi::xml_document& document) = 0;
+	virtual bool run(pugi::xml_node& node) = 0;
 
 	virtual ~Operation() = default;
 

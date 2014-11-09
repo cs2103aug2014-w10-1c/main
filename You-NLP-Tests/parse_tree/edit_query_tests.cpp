@@ -92,6 +92,12 @@ public:
 		Assert::AreNotEqual(DUMMY, local2);
 
 		local2 = local;
+		local2.start = boost::posix_time::ptime(
+			boost::gregorian::date(1970, 1, 1),
+			boost::posix_time::hours(1));
+		Assert::AreNotEqual(local, local2);
+
+		local2 = local;
 		local2.deadline = boost::posix_time::ptime(
 			boost::gregorian::date(1970, 1, 1),
 			boost::posix_time::hours(1));

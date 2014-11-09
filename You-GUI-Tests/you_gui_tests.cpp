@@ -55,7 +55,7 @@ public:
 		w.commandEnterPressed();
 
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
-		int column1 = QString::compare(item.text(0), QString("0"));
+		int column1 = QString::compare(item.text(0), QString("1"));
 		int column2 = QString::compare(item.text(2), QString("test"));
 		int column3 = QString::compare(
 			item.text(3),
@@ -165,10 +165,10 @@ public:
 		w.commandTextBox->setPlainText(QString("/add test by Nov 99"));
 		w.commandEnterPressed();
 		w.commandTextBox->setPlainText(
-			QString("/edit 0 set description = 'abc'"));
+			QString("/edit 1 set description = 'abc'"));
 		w.commandEnterButtonClicked();
 		QTreeWidgetItem item = *w.ui.taskTreePanel->topLevelItem(0);
-		int column1 = QString::compare(item.text(0), QString("0"));
+		int column1 = QString::compare(item.text(0), QString("1"));
 		int column2 = QString::compare(item.text(2), QString("abc"));
 		int column3 = QString::compare(
 			item.text(3),

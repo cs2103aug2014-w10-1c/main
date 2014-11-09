@@ -25,6 +25,9 @@ struct ADD_QUERY {
 	/// The priority of the task.
 	TaskPriority priority;
 
+	/// The start time of the task.
+	You::Utils::Option<boost::posix_time::ptime> start;
+
 	/// The deadline of the task.
 	You::Utils::Option<boost::posix_time::ptime> deadline;
 
