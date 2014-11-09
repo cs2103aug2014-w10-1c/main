@@ -245,7 +245,6 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		}
 		++it;
 	}
-	parentGUI->ui.taskTreePanel->expandAll();
 	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
 	parentGUI->ui.taskTreePanel->update();
 }

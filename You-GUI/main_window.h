@@ -97,6 +97,8 @@ public:
 
 	void showErrorAndExit(QString message, QString title);
 
+	void expandAllSubtasks(QTreeWidgetItem *item);
+
 signals:
 	void taskPanelContextMenu(const QPoint &pos);
 
