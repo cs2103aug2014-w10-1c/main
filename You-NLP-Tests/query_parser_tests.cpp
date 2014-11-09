@@ -60,6 +60,44 @@ public:
 		}), q);
 	}
 
+	TEST_METHOD(parsesStringWithStartAsTask) {
+		QUERY q = QueryParser::parse(L"win from may 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::May, 1), hours(0))
+		}), q);
+
+		q = QueryParser::parse(L"win lottery from dec 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0))
+		}), q);
+	}
+
+	TEST_METHOD(parsesStringWithStartAndDeadlineAsTask) {
+		QUERY q = QueryParser::parse(L"win from may 2014 to jun 2014");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::May, 1), hours(0)),
+			ptime(date(2014, boost::gregorian::Jun, 1), hours(0))
+		}), q);
+
+		q = QueryParser::parse(L"win lottery from dec 2014 to jun 2015");
+
+		Assert::AreEqual(QUERY(ADD_QUERY {
+			L"win lottery",
+			TaskPriority::NORMAL,
+			ptime(date(2014, boost::gregorian::Dec, 1), hours(0)),
+			ptime(date(2015, boost::gregorian::Jun, 1), hours(0))
+		}), q);
+	}
+
 	TEST_METHOD(parsesStringWithDeadlineAsTask) {
 		QUERY q = QueryParser::parse(L"win by may 2014");
 

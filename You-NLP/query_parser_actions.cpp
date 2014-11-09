@@ -47,17 +47,18 @@ ADD_QUERY QueryParser::constructAddQueryWithPriority(ADD_QUERY query) {
 	return query;
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithDeadline(
-	boost::posix_time::ptime deadline) {
+ADD_QUERY QueryParser::constructAddQueryWithTime(
+	boost::optional<boost::posix_time::ptime> start,
+	boost::optional<boost::posix_time::ptime> deadline) {
 	return ADD_QUERY {
 		std::wstring(),
 		TaskPriority::NORMAL,
-		boost::none,
-		deadline
+		std::move(start),
+		std::move(deadline)
 	};
 }
 
-ADD_QUERY QueryParser::constructAddQueryWithOptionalDeadline(
+ADD_QUERY QueryParser::constructAddQueryWithOptionalTime(
 	boost::optional<ADD_QUERY> query) {
 	if (query) {
 		return query.get();
