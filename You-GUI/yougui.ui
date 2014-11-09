@@ -162,7 +162,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="statusTasks">
       <property name="text">
-       <string>Panic Bar</string>
+       <string/>
       </property>
       <property name="margin">
        <number>4</number>
