@@ -22,7 +22,8 @@ public:
 	/// Construct from filter, do not sort.
 	/// \param [in] filter The filter used.
 	explicit GetTask(const Filter& filter)
-	: filter(filter), comparator(Comparator::notSorted()) {}
+	: filter(filter), comparator(Comparator::byTimeCreated()),
+		sortAfterFilter(false) {}
 
 	/// Construct from filter and sort.
 	/// \param [in] filter The filter used.
