@@ -33,10 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
-	sm->setup();
 	stm->setup();
 	qm->setup();
 	tpm->setup();
+	sm->setup();
 	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
 	commandTextBox->setup();
 	connect(&*commandTextBox, SIGNAL(enterKey()),
@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.taskDescriptor->setOpenExternalLinks(false);
 	connect(ui.taskDescriptor, SIGNAL(anchorClicked(const QUrl &)),
 		this, SLOT(openURL(const QUrl &)));
+	for (int i = 0; i < ui.taskTreePanel->columnCount(); i++) {
+//		parentGUI->ui.taskTreePanel->header()->sectionSize(i);
+	}
 }
 
 MainWindow::~MainWindow() {
@@ -298,19 +301,6 @@ void MainWindow::updateTaskInfoBar() {
 
 void MainWindow::applicationExitRequested() {
 	qApp->quit();
-}
-
-void MainWindow::resizeEvent(QResizeEvent* event) {
-	double oldWidth = event->oldSize().width();
-	double newWidth = event->size().width();
-	double ratio = newWidth / oldWidth;
-	for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
-		double currWidth = ui.taskTreePanel->header()->sectionSize(i);
-		double finalWidth = currWidth * ratio;
-		if (finalWidth >75)
-			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
-	}
-	QMainWindow::resizeEvent(event);
 }
 
 void MainWindow::openURL(const QUrl &url) {

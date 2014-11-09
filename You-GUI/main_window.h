@@ -104,11 +104,6 @@ signals:
 
 	void updateRowNumbers();
 
-protected:
-	/// Reimplementation of QMainWindow's resizeEvent to try and preserve
-	/// task panel proportions on resize.
-	void resizeEvent(QResizeEvent* event);
-
 private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;

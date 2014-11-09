@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>528</height>
+    <width>550</width>
+    <height>391</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>550</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>YouGUI</string>
@@ -23,7 +29,7 @@
       <widget class="QTreeWidget" name="taskTreePanel">
        <property name="minimumSize">
         <size>
-         <width>400</width>
+         <width>532</width>
          <height>100</height>
         </size>
        </property>
@@ -40,7 +46,7 @@
         <enum>QAbstractScrollArea::AdjustIgnored</enum>
        </property>
        <property name="indentation">
-        <number>20</number>
+        <number>10</number>
        </property>
        <property name="rootIsDecorated">
         <bool>true</bool>
@@ -58,10 +64,13 @@
         <number>1</number>
        </property>
        <attribute name="headerDefaultSectionSize">
-        <number>75</number>
+        <number>50</number>
        </attribute>
        <attribute name="headerMinimumSectionSize">
-        <number>75</number>
+        <number>50</number>
+       </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>true</bool>
        </attribute>
        <column>
         <property name="text">
@@ -179,7 +188,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>572</width>
+     <width>550</width>
      <height>21</height>
     </rect>
    </property>
