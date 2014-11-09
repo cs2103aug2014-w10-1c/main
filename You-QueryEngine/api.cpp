@@ -20,6 +20,7 @@ namespace QueryEngine {
 const std::wstring Query::logCategory = L"[QE]";
 
 using You::Utils::Option;
+using You::Utils::make_option;
 using Internal::Action::AddTask;
 using Internal::Action::BatchAddSubTasks;
 using Internal::Action::BatchAddDependencies;
@@ -184,10 +185,12 @@ Option<Task::Attachment> QueryEngine::attachmentsFromDelta(
 	} else {
 		for (const auto& a : attachment.elements) {
 			auto pos = std::find(begin(att), end(att), a);
-			att.erase(pos);
+			if (pos != end(att)) {
+				att.erase(pos);
+			}
 		}
 	}
-	return att;
+	return make_option<Task::Attachment>(att);
 }
 
 Option<Task::Subtasks> QueryEngine::subtasksFromDelta(
@@ -204,7 +207,7 @@ Option<Task::Subtasks> QueryEngine::subtasksFromDelta(
 			subs.erase(s);
 		}
 	}
-	return subs;
+	return make_option<Task::Subtasks>(subs);
 }
 
 Option<Task::Dependencies> QueryEngine::dependenciesFromDelta(
@@ -221,7 +224,7 @@ Option<Task::Dependencies> QueryEngine::dependenciesFromDelta(
 			deps.erase(s);
 		}
 	}
-	return deps;
+	return make_option<Task::Dependencies>(deps);
 }
 
 std::wstring ToString(const Task& task) {

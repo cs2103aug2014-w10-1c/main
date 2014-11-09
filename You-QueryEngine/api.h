@@ -79,9 +79,18 @@ public:
 	/// This will be used and passed to UpdateTask by the Controller.
 	template<typename T>
 	struct Delta {
-		enum class Type { ADD, DELETE };
+		enum class Type { ADD, DELETE, NO_CHANGE };
+		/// Default constructor.
+		Delta()
+		: type(Type::NO_CHANGE), elements() {}
+
+		/// Construct with type and elements.
+		Delta(Type type, const std::vector<T>& elements)
+		: type(type), elements(elements) {}
+
 		/// The type of the delta.
 		Type type;
+
 		/// The element.
 		std::vector<T> elements;
 	};

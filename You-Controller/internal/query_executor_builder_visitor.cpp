@@ -237,6 +237,11 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				query.priority.get());
 		}
 
+		typedef QueryEngine::Delta<Task::Attachment::value_type> Attachment;
+		typedef QueryEngine::Delta<Task::Dependencies::value_type> Dependencies;
+		typedef QueryEngine::Delta<Task::Subtasks::value_type> Subtasks;
+
+		Subtasks subtasks;
 		if (query.childTask) {
 			assert(!query.description &&
 				!query.deadline &&
@@ -247,19 +252,15 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				"Cannot change subtasks with other properties");
 			int childTask = query.childTask.get();
 			if (childTask < 0) {
-				return std::unique_ptr<QueryExecutor>(
-					new EditTaskQueryExecutor(
-						QueryEngine::RemoveSubtask(task,
-							context.at(-childTask - 1).getID())));
+				subtasks.type = Subtasks::Type::DELETE;
+				subtasks.elements = { context.at(-childTask).getID() };
 			} else {
-				return std::unique_ptr<QueryExecutor>(
-					new EditTaskQueryExecutor(
-						QueryEngine::AddSubtask(task,
-							context.at(childTask - 1).getID())));
+				subtasks.type = Subtasks::Type::ADD;
+				subtasks.elements = { context.at(childTask).getID() };
 			}
 		}
 
-		You::Utils::Option<Task::Dependencies> dependencies;
+		Dependencies dependencies;
 		if (query.dependingTask) {
 			assert(!query.description &&
 				!query.deadline &&
@@ -268,24 +269,18 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				!query.childTask &&
 				query.attachments.empty() &&
 				"Cannot change dependencies with other properties");
-			Task::ID dependentTask = task;
 			int dependingTask = query.dependingTask.get();
 			if (dependingTask < 0) {
-				return std::unique_ptr<QueryExecutor>(
-					new EditTaskQueryExecutor(
-						QueryEngine::RemoveDependency(
-							context.at(-dependingTask - 1).getID(),
-							dependentTask)));
+				dependencies.type = Dependencies::Type::DELETE;
+				dependencies.elements = { task };
+				task = context.at(-dependingTask - 1).getID();
 			} else {
-				return std::unique_ptr<QueryExecutor>(
-					new EditTaskQueryExecutor(
-						QueryEngine::AddDependency(
-							context.at(dependingTask - 1).getID(),
-							dependentTask)));
+				dependencies.type = Dependencies::Type::ADD;
+				dependencies.elements = { task };
+				task = context.at(dependingTask - 1).getID();
 			}
 		}
-
-		You::Utils::Option<Task::Attachment> attachment;
+		Attachment attachment;
 		if (!query.attachments.empty()) {
 			assert(!query.description &&
 				!query.deadline &&
@@ -297,9 +292,19 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 			assert(query.attachments.size() == 1 &&
 				"Controller currently only supports modifying one attachment "
 				"at a time");
-			if (query.attachments[0].add) {
-				attachment->emplace_back(std::move(query.attachments[0].path));
-			}
+			std::for_each(begin(query.attachments), end(query.attachments),
+				[&attachment] (const EDIT_QUERY::ATTACHMENT_ACTION& att) {
+					if (att.add) {
+						assert(attachment.type == Attachment::Type::ADD
+							|| attachment.type == Attachment::Type::NO_CHANGE);
+						attachment.type = Attachment::Type::ADD;
+					} else {
+						assert(attachment.type == Attachment::Type::DELETE
+							|| attachment.type == Attachment::Type::NO_CHANGE);
+						attachment.type = Attachment::Type::DELETE;
+					}
+					attachment.elements.emplace_back(std::move(att.path));
+			});
 		}
 
 		return std::unique_ptr<QueryExecutor>(
@@ -310,10 +315,10 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 					boost::none,  // query.startTime
 					query.deadline,
 					priority,
-					boost::none,
+					dependencies,
 					query.complete,
 					boost::none,
-					boost::none,
+					subtasks,
 					attachment)));
 	} catch (std::out_of_range& e) {
 		throw ContextIndexOutOfRangeException(e);
