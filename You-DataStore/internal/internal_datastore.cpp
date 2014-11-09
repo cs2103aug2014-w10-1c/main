@@ -37,8 +37,10 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// it is the only active transaction, execute the operations and save
 		pugi::xml_document temp;
 		temp.reset(document);
-		executeTransaction(transaction, temp);
+		pugi::xml_node tempRoot = BranchOperation::get(temp, ROOT_NODE_NAME.c_str());
+		executeTransaction(transaction, tempRoot);
 		document.reset(temp);
+		root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
 		saveData();
 		transactionStack.pop();
 	} else {
