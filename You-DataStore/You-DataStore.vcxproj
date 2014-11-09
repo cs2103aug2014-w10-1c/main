@@ -113,6 +113,9 @@
     <ProjectReference Include="..\pugixml\pugixml.vcxproj">
       <Project>{37c6baaa-e37d-4558-9595-dfb5c9fb59bc}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\You-Utils\You-Utils.vcxproj">
+      <Project>{bb59ad84-cde2-49e9-b32a-f8a8ebf36fc3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

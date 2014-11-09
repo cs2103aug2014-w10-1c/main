@@ -6,7 +6,7 @@ namespace You {
 namespace DataStore {
 namespace Internal {
 
-const std::wstring LOG_CATEGORY = std::wstring(L"[DS]");
+const std::wstring DATASTORE_LOG_CATEGORY = std::wstring(L"[DS]");
 
 }  // namespace Internal
 }  // namespace DataStore

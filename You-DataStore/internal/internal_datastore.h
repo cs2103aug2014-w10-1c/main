@@ -110,6 +110,9 @@ private:
 
 	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
+
+	/// The log category for \ref Internal::DataStore
+	static const std::wstring LOG_CATEGORY;
 };
 
 }  // namespace Internal

@@ -1,20 +1,28 @@
 //@author A0114171W
 #include "stdafx.h"
+#include <boost/format.hpp>
+#include "../../You-Utils/log.h"
+#include "../exception.h"
+#include "constants.h"
 #include "operation.h"
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
 #include "operations/erase_operation.h"
 #include "operations/branch_operation.h"
 #include "internal_transaction.h"
-#include "../exception.h"
 #include "internal_datastore.h"
 
 namespace You {
 namespace DataStore {
 namespace Internal {
 
+using Log = Utils::Log;
+
 const std::string DataStore::FILE_PATH = std::string("data.xml");
 const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
+
+const std::wstring DataStore::LOG_CATEGORY =
+	Internal::LOG_CATEGORY + L"[InternalDataStore]";
 
 DataStore& DataStore::get() {
 	static DataStore store;

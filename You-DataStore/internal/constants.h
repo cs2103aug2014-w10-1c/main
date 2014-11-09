@@ -10,7 +10,7 @@ namespace DataStore {
 namespace Internal {
 
 /// DataStore's Log category
-extern const std::wstring LOG_CATEGORY;
+extern const std::wstring DATASTORE_LOG_CATEGORY;
 
 
 }  // namespace Internal
