@@ -10,6 +10,7 @@ namespace Queries {
 extern const You::NLP::ADD_QUERY ADD_QUERY {
 	L"wow",
 	You::NLP::TaskPriority::NORMAL,
+	boost::none,
 	boost::posix_time::ptime(
 		boost::gregorian::date(2014, boost::gregorian::Oct, 1),
 		boost::posix_time::hours(0)
