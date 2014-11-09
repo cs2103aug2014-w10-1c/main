@@ -17,7 +17,7 @@ public:
 	/// in the specified XML document
 	/// Creates the XML node if none exists
 	///
-	/// \param[out] document the XML document to get the handler from
+	/// \param[out] node the XML node to get the handler from
 	/// \param[in] nodeName the name of the node to get the handler of
 	/// \return the pugi::xml_node handler
 	static pugi::xml_node get(pugi::xml_node& node, std::wstring nodeName);
