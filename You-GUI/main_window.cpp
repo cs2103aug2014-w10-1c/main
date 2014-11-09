@@ -24,7 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
 		tpm(new MainWindow::TaskPanelManager(this)),
 		qm(new MainWindow::QueryManager(this)),
 		commandTextBox(new CommandTextBox(this)),
-		ls(new GUILogSink),
 		taskList(new TaskList) {
 	#pragma warning(push)
 	#pragma warning(disable: 4127)
@@ -33,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.setupUi(this);
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
-	You::Utils::Log::setSink(ls);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
 	sm->setup();
 	stm->setup();

@@ -7,7 +7,6 @@
 #include "You-Controller/result.h"
 #include "ui_yougui.h"
 #include "command_text_box.h"
-#include "gui_log_sink.h"
 
 namespace You {
 namespace GUI {
@@ -105,8 +104,6 @@ private:
 
 	/// The QueryManager instance
 	const std::unique_ptr<QueryManager> qm;
-
-	const std::shared_ptr<You::Utils::LogSink> ls;
 
 private:
 	/// The QT object that holds all items that are defined when building the
