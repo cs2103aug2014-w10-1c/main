@@ -21,8 +21,12 @@ class Comparator {
 public:
 	/// \name Commonly used comparators
 	/// @{
+
 	/// Do not sort.
 	static Comparator notSorted();
+
+	/// Sort by time the task is created
+	static Comparator byTimeCreated();
 
 	/// Sort lexicographically by description.
 	static Comparator byDescription();

@@ -13,6 +13,12 @@ Comparator Comparator::notSorted() {
 	});
 }
 
+Comparator Comparator::byTimeCreated() {
+	return byApplying<Task::ID>([](const Task& task) {
+		return task.getID();
+	});
+}
+
 Comparator Comparator::byDescription() {
 	return byApplying<Task::Description>([](const Task& task) {
 		return task.getDescription();

@@ -48,6 +48,7 @@ void GetTask::sortTheResultIfRequested(std::vector<Task>& result) const {
 	if (sortAfterFilter) {
 		std::sort(begin(result), end(result), comparator);
 	} else {
+		std::sort(begin(result), end(result), Comparator::byTimeCreated());
 	}
 }
 
