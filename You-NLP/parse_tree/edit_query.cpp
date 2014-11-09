@@ -10,6 +10,8 @@
 
 using You::NLP::EDIT_QUERY;
 
+namespace You {
+namespace NLP {
 namespace {
 
 /// The format for displaying an EDIT_QUERY.
@@ -88,9 +90,6 @@ std::vector<std::wstring> getChangedFieldsAsString(const EDIT_QUERY& q) {
 }
 
 }  // namespace
-
-namespace You {
-namespace NLP {
 
 std::wostream& operator<<(std::wostream& s, const EDIT_QUERY& q) {
 	return s << boost::wformat(STRING_FORMAT) % q.taskID %

@@ -70,6 +70,16 @@ private:
 		boost::optional<ADD_QUERY> dependent,
 		boost::optional<std::vector<ADD_QUERY>> subtasks);
 
+	/// Process the terminal returned from the add query string parse rule.
+	///
+	/// \param[in] description The string from the parser.
+	/// \param[in] query The \ref ADD_QUERY parse tree to the right of the
+	///                  current terminal.
+	/// \return The synthesised value for the \ref addCommand rule.
+	static ADD_QUERY constructAddQueryFromDescription(
+		StringType description,
+		ADD_QUERY query);
+
 	/// Process the terminal returned from the add query character parse rule,
 	/// stringing characters together to form the description.
 	///
@@ -184,6 +194,14 @@ private:
 	static EDIT_QUERY constructEditQueryPriority(
 		TaskPriority priority);
 
+	/// Constructs an edit query which sets the deadline of a task from the
+	/// given date.
+	///
+	/// \param[in] deadline The new deadline of the task.
+	/// \return The synthesised value for the \ref editSetDeadline rule.
+	static EDIT_QUERY constructEditQueryDeadline(
+		boost::posix_time::ptime deadline);
+
 	/// Constructs an edit query setting the given task as a subtask of the
 	/// first task.
 	///
@@ -217,16 +235,10 @@ private:
 	static DELETE_QUERY constructDeleteQuery(const size_t offset);
 	#pragma endregion
 
-	/// Constructs a posix_time::ptime from the given string.
-	///
-	/// \param[in] lexeme The lexeme to construct the time from.
-	/// \return The synthesised value for the \ref utilityTime rule.
-	static boost::posix_time::ptime constructDateTime(const StringType& lexeme);
-
 	/// Constructs a value from the given lexemes.
 	///
 	/// \param[in] value The value from the parser.
-	/// \return The concrete synthesised value for the \ref utilityValue rule.
+	/// \return The concrete synthesised value for the \ref value rule.
 	static ValueType constructValue(ValueType value);
 
 	/// Handles failures in parsing. This raises a \ref ParseErrorException.
@@ -253,9 +265,17 @@ private:
 	/// Add command description rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandDescription;
 
+	/// Add command description rule, for quoted descriptions.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDescriptionQuoted;
+
+	/// Add command description rule, for unquoted descriptions.
+	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
+		addCommandDescriptionUnquoted;
+
 	/// Add command description tail rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
-		addCommandDescriptionTail;
+		addCommandDescriptionUnquotedTail;
 
 	/// Add command priority rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandPriority;
@@ -345,12 +365,18 @@ private:
 		ParserCharEncoding::char_type,
 		TaskField> editCommandFieldsNullary;
 
-	/// Edit command nonterminal rule for setting the subtask of another task.
-	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
-
 	/// Edit command nonterminal rule for setting the dependency of another
 	/// task.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDependent;
+
+	/// Edit command nonterminal rule for setting the task deadline.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetDeadline;
+
+	/// Edit command nonterminal rule for setting the subtask of another task.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetSubtask;
+
+	/// Edit command terminal rule for setting the task to be of high priority.
+	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetHighPriority;
 
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>
@@ -374,26 +400,26 @@ private:
 
 	/// A utility rule which converts numbers to ints, booleans to bools,
 	/// dates to posix_time::ptime, and strings verbatim.
-	boost::spirit::qi::rule<IteratorType, ValueType()> utilityValue;
+	boost::spirit::qi::rule<IteratorType, ValueType()> value;
 
 	/// The symbol mapping from priority strings to task priorities.
 	boost::spirit::qi::symbols<
 		ParserCharEncoding::char_type,
-		TaskPriority> utilityTaskPriority;
+		TaskPriority> taskPriority;
 
 	/// A utility rule which converts raw strings (unquoted) into a
 	/// posix_time::ptime.
-	DateTimeParser utilityTime;
+	DateTimeParser time;
 
 	/// A utility rule which will process all characters verbatim. This is how
 	/// the user specifies that he does not want the parser to perform syntax
 	/// analysis for this part of the input.
-	boost::spirit::qi::rule<IteratorType, StringType()> utilityLexeme;
+	boost::spirit::qi::rule<IteratorType, StringType()> string;
 
 	/// A utility rule which processes all characters within the quotes of
 	/// the verbatim string.
 	boost::spirit::qi::rule<IteratorType,
-		ParserCharEncoding::char_type()> utilityLexemeContents;
+		ParserCharEncoding::char_type()> stringContents;
 	#pragma endregion
 };
 

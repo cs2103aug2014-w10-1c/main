@@ -8,6 +8,12 @@ namespace You {
 namespace DataStore {
 namespace UnitTests {
 
+/// Redefinition of \ref DataStore constants for unit test purposes
+/// @{
+const std::wstring TASKS_NODE = L"tasks";
+const std::wstring RESOURCES_NODE = L"resources";
+/// @}
+
 /// Dummy constants for task
 /// @{
 const std::wstring TASK_ID = L"id";

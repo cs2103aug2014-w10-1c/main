@@ -32,13 +32,16 @@ public:
 	/// Pushes a transaction onto the stack. This is meant to be called by
 	/// \ref DataStore.
 	///
-	/// \param[in] operation The operation to push.
+	/// \param[out] operation The operation to push, wrapped in a unique_ptr.
+	///						  The pointer will be invalidated at the end of
+	///						  the function call.
 	void push(std::unique_ptr<Operation> operation);
 
 	/// Merges the operationsQueue of the next transaction that is committed
 	/// earlier.
 	///
-	/// \param[in] queue The operations queue
+	/// \param[out] queue The operations queue
+	///					  The queue will be empty at the end of the function call.
 	void mergeOperationsQueue(boost::ptr_deque<Operation>& queue);
 
 	bool operator==(Transaction&);

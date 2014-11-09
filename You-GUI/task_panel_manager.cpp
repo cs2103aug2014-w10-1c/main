@@ -187,11 +187,11 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	}
 
 	// Insert dependencies
-	if (task.getDependencies().size() != 0) {
-		Task::Dependencies dependencies = task.getDependencies();
+	std::vector<Task> dependencies = task.getDependenciesObject();
+	if (dependencies.size() != 0) {
 		std::wstring temp = boost::algorithm::join(dependencies |
 			boost::adaptors::transformed(
-			static_cast<std::wstring (*)(Task::ID)>(&std::to_wstring)),
+			std::mem_fn(&Task::getDescription)),
 			L", ");
 		result.push_back(boost::lexical_cast<QString>(temp));
 	} else {
@@ -269,9 +269,9 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 }
 
 void MainWindow::TaskPanelManager::updateRowNumbers() {
-	int rowNum = 0;
+	int rowNum = 1;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
-		(*it)->setData(0, Qt::DisplayRole, rowNum++);
+		(*it)->setData(COLUMN_INDEX, Qt::DisplayRole, rowNum++);
 	}
 }
 

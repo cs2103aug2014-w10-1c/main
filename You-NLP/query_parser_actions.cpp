@@ -1,5 +1,7 @@
 //@author A0097630B
 #include "stdafx.h"
+#include "You-Utils/fatal.h"
+
 #include "exception.h"
 #include "date_time_parser.h"
 #include "query_parser.h"
@@ -30,6 +32,13 @@ ADD_QUERY QueryParser::constructAddQueryFromDescription(
 	ParserCharEncoding::char_type lexeme,
 	ADD_QUERY query) {
 	query.description.insert(query.description.begin(), lexeme);
+	return query;
+}
+
+ADD_QUERY QueryParser::constructAddQueryFromDescription(
+	StringType description,
+	ADD_QUERY query) {
+	query.description = std::move(description);
 	return query;
 }
 
@@ -82,10 +91,9 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 
 	try {
 		switch (field) {
-		case TaskField::DESCRIPTION: {
+		case TaskField::DESCRIPTION:
 			result.value = boost::get<StringType>(value);
 			break;
-		}
 		case TaskField::DEADLINE:
 			result.value = boost::get<boost::posix_time::ptime>(value);
 			break;
@@ -96,7 +104,7 @@ SHOW_QUERY::FIELD_FILTER QueryParser::constructShowQueryFilteringColumn(
 			result.value = boost::get<bool>(value);
 			break;
 		default:
-			assert(false); abort();
+			fatal();
 		}
 	} catch (boost::bad_get&) {
 		throw ParserTypeException();
@@ -130,7 +138,7 @@ EDIT_QUERY QueryParser::constructEditQueryNullary(TaskField field) {
 		result.complete = true;
 		break;
 	default:
-		assert(false); abort();
+		fatal();
 	}
 
 	return result;
@@ -152,7 +160,7 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 				boost::get<boost::posix_time::ptime>(newValue));
 			break;
 		default:
-			assert(false);
+			fatal();
 		}
 
 		return result;
@@ -164,6 +172,14 @@ EDIT_QUERY QueryParser::constructEditQueryUnary(
 EDIT_QUERY QueryParser::constructEditQueryPriority(TaskPriority priority) {
 	EDIT_QUERY result;
 	result.priority = priority;
+
+	return result;
+}
+
+EDIT_QUERY QueryParser::constructEditQueryDeadline(
+	boost::posix_time::ptime deadline) {
+	EDIT_QUERY result;
+	result.deadline = std::move(deadline);
 
 	return result;
 }
@@ -195,11 +211,6 @@ DELETE_QUERY QueryParser::constructDeleteQuery(const size_t offset) {
 	return DELETE_QUERY {
 		offset
 	};
-}
-
-boost::posix_time::ptime QueryParser::constructDateTime(
-	const StringType& lexeme) {
-	return DateTimeParser::parse(std::wstring(lexeme.begin(), lexeme.end()));
 }
 
 QueryParser::ValueType QueryParser::constructValue(ValueType value) {

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include <CppUnitTest.h>
 
+#include <cstdio>
 #include "datastore.h"
 #include "transaction.h"
 #include "internal/internal_datastore.h"
@@ -20,12 +21,12 @@ public:
 	/// Clears xml document tree and save empty xml file
 	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+		std::remove("data.xml");
 	}
 
 	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
 		Internal::DataStore::get().document.reset();
-		Internal::DataStore::get().saveData();
+		std::remove("data.xml");
 	}
 
 	/// Checks if rollback cleans up the transaction stack

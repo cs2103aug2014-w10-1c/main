@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->insertPermanentWidget(
 		0, ui.statusTasks, 0);
 	updateTaskInfoBar();
+	ui.taskDescriptor->setOpenLinks(false);
+	ui.taskDescriptor->setOpenExternalLinks(false);
+	connect(ui.taskDescriptor, SIGNAL(anchorClicked(const QUrl &)),
+		this, SLOT(openURL(const QUrl &)));
 }
 
 MainWindow::~MainWindow() {
@@ -123,6 +127,18 @@ void MainWindow::sendQuery() {
 	ui.statusMessage->setText(message);
 	try {
 		qm->query(inputString, getTaskList());
+	} catch (You::Controller::IOException& e) {
+		QMessageBox::critical(this,
+			QString("Exception: File could not be opened."),
+			QString(IO_EXCEPTION_MESSAGE),
+			QMessageBox::Close, QMessageBox::NoButton);
+		qApp->quit();
+	} catch (You::Controller::NotWellFormedXmlException& e) {
+		QMessageBox::critical(this,
+			QString("Exception: XML is not well formed"),
+			QString(NOT_WELL_FORMED_XML_MESSAGE),
+			QMessageBox::Close, QMessageBox::NoButton);
+		qApp->quit();
 	} catch (You::Controller::EmptyTaskDescriptionException& e) {
 		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
@@ -191,7 +207,7 @@ void MainWindow::taskSelected() {
 	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
 	QString contents = "";
 	if (selection.size() == 0) {
-		ui.taskDescriptor->setText(contents);
+		ui.taskDescriptor->setHtml(contents);
 	} else {
 		QTreeWidgetItem item = *selection.at(0);
 		QString index = tpm->getIndexAsText(item);
@@ -205,9 +221,8 @@ void MainWindow::taskSelected() {
 			+ "Deadline: " + deadline + "<br />"
 			+ "Priority: " + priority + "<br />"
 			+ "Dependencies: " + dependencies + "<br / >"
-			+ "Attachment: " + "<a href=" + "'file:///" + attachment + "'>"
+			+ "Attachment: " + "<a href='" + attachment + "'>"
 			+ attachment + "</a></li></ul>";
-		ui.taskDescriptor->setOpenExternalLinks(true);
 		ui.taskDescriptor->setHtml(contents);
 	}
 	tpm->repaintTasks();
@@ -281,6 +296,10 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
 	}
 	QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::openURL(const QUrl &url) {
+	QDesktopServices::openUrl(url);
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)

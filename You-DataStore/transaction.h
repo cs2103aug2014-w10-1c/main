@@ -1,4 +1,4 @@
-//@author A0114171W
+//@author A0097630B
 #pragma once
 #ifndef YOU_DATASTORE_TRANSACTION_H_
 #define YOU_DATASTORE_TRANSACTION_H_
@@ -30,9 +30,11 @@ public:
 	~Transaction();
 
 	/// Commits the set of operations made.
+	/// Only the latest (innermost) transaction can be committed.
 	void commit();
 
 	/// Rolls back all the operations made.
+	/// Only the latest (innermost) transaction can be rolled back.
 	void rollback();
 
 private:

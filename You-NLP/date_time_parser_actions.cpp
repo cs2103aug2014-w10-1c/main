@@ -99,11 +99,16 @@ DateTimeParser::Date DateTimeParser::constructRelativeMonthDate(
 
 	assert(direction >= -1 && direction <= 1);
 	if (direction == 0) {
-		if (today.month() <= month) {
-			throw ParserException();
-		} else {
-			return Date(today.year(), month, 1);
+		boost::gregorian::months difference(
+			month - today.month());
+
+		// Because boost::date_time doesn't have operator <=
+		if (difference.number_of_months() < 0 ||
+			difference.number_of_months() == 0) {
+			difference = difference + boost::gregorian::years(1);
 		}
+		Date result(today + boost::gregorian::months(difference));
+		return Date(result.year(), result.month(), 1);
 	} else {
 		return Date(today.year() + direction, month, 1);
 	}
@@ -118,11 +123,12 @@ DateTimeParser::Date DateTimeParser::constructRelativeWeekDayDate(
 
 	assert(direction >= -1 && direction <= 1);
 	if (direction == 0) {
-		if (today.day_of_week() <= day) {
-			throw ParserException();
-		} else {
-			return today + boost::gregorian::days(day - today.day_of_week());
+		boost::gregorian::days difference(
+			static_cast<int>(day) - today.day_of_week());
+		if (difference.days() <= 0) {
+			difference = difference + boost::gregorian::weeks(1);
 		}
+		return today + difference;
 	} else if (direction == 1) {
 		return next_weekday(
 			next_weekday(today, boost::gregorian::greg_weekday(
