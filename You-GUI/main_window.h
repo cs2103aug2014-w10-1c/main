@@ -61,6 +61,8 @@ public:
 	/// from the BaseManager class.
 	class QueryManager;
 
+	/// A struct to assist in building a status update to indicate
+	/// program state.
 	struct StatusUpdate {
 		Ui::MainWindowClass* ui;
 		QPixmap pixmap;
@@ -77,8 +79,6 @@ public:
 	/// Calls TaskPanelManager and requests addition of a single task,
 	/// with its subtasks
 	void addTaskWithSubtasks(const Task& task, const TaskList& tl);
-
-	void addTask(const Task& task);
 
 	/// Calls TaskPanelManager and requests addition of a list of tasks.
 	void addTasks(const TaskList& tl);
@@ -124,14 +124,17 @@ private:
 
 	const std::unique_ptr<CommandTextBox> commandTextBox;
 
-	/// TaskList containing tasks to be placed in the task panel
+	/// TaskList containing tasks to be placed in the task panel.
 	std::unique_ptr<TaskList> taskList;
 
-	/// Reimplementation of setVisible for system tray manager
+	/// Reimplementation of setVisible for system tray manager.
 	void setVisible(bool visible);
 
 	/// Sends the current query to the NLP manager.
 	void sendQuery();
+
+	/// Helper function to get ID of selected task.
+	Task::ID getSelectedTaskID();
 
 private:
 	static const QString READY_MESSAGE;
@@ -152,30 +155,34 @@ private:
 
 private slots:
 	/// Sends a query to Controller from the commandInputBox.
+	/// Connected to signal enterKey() from commandTextBox
 	void commandEnterPressed();
 
 	/// Sends a query to Controller from the commandInputBox.
+	/// Connected via moc to commandEnterButton
 	void commandEnterButtonClicked();
 
-	/// Reimplementation of application exit, called from SystemTrayManager
+	/// Triggers application exit
+	/// Connected to signal triggered() from quitAction
 	void applicationExitRequested();
 
 	/// Task panel context menu Add action
 	void contextAddTask();
 
-	/// Task panel context menu Edit/Delete action
+	/// Task panel context menu Delete action
 	void contextDeleteTask(int id);
 
+	/// Task panel context menu Edit action
 	void contextEditTask(int id);
 
+	/// Opens a URL. Connected to signal anchorClicked() from taskDescriptor
 	void openURL(const QUrl &);
 
 	/// Updates task descriptor panel on task selection.
 	void taskSelected();
 
+	/// Updates task information bar on task addition/deletion/edit
 	void updateTaskInfoBar();
-
-	Task::ID getSelectedTaskID();
 };
 
 

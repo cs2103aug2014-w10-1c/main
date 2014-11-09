@@ -28,15 +28,8 @@ void MainWindow::SessionManager::loadSession() {
 		parentGUI->setWindowState(
 			parentGUI->windowState() & (~Qt::WindowMaximized));
 	}
-	parentGUI->ui.taskTreePanel->header()->restoreState(settings.value("width").toByteArray());
-	//settings.beginReadArray("colWidths");
-	//for (int i = 0; i < parentGUI->ui.taskTreePanel->columnCount(); i++) {
-	//	settings.setArrayIndex(i);
-	//	int width = settings.value("width").toInt();
-	//	parentGUI->ui.taskTreePanel->setColumnWidth(i, width);
-	//	qDebug() << width;
-	//}
-	//settings.endArray();
+	parentGUI->ui.taskTreePanel->header()->
+		restoreState(settings.value("width").toByteArray());
 
 	settings.endGroup();
 }
@@ -48,15 +41,6 @@ void MainWindow::SessionManager::saveSession() {
 	settings.setValue("pos", parentGUI->pos());
 	settings.setValue("maximized", parentGUI->isMaximized());
 	settings.setValue("width", parentGUI->ui.taskTreePanel->header()->saveState());
-	/*
-	settings.beginWriteArray("colWidths");
-	for (int i = 0; i < parentGUI->ui.taskTreePanel->columnCount(); i++) {
-		settings.setArrayIndex(i);
-		int width = parentGUI->ui.taskTreePanel->columnWidth(i);
-		settings.setValue("width", width);
-		qDebug() << width;
-	}
-	settings.endArray();*/
 	settings.endGroup();
 }
 

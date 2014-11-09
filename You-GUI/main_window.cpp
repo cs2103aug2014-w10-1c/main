@@ -50,9 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.taskDescriptor->setOpenExternalLinks(false);
 	connect(ui.taskDescriptor, SIGNAL(anchorClicked(const QUrl &)),
 		this, SLOT(openURL(const QUrl &)));
-	for (int i = 0; i < ui.taskTreePanel->columnCount(); i++) {
-//		parentGUI->ui.taskTreePanel->header()->sectionSize(i);
-	}
 }
 
 MainWindow::~MainWindow() {
