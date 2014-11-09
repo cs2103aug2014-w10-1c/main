@@ -212,6 +212,7 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 }
 
 void MainWindow::TaskPanelManager::repaintTasks() {
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(false);
 	QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel);
 	/// Iterate through all tasks
 	while (*it) {
@@ -260,13 +261,18 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		++it;
 	}
 	parentGUI->ui.taskTreePanel->expandAll();
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
+	parentGUI->ui.taskTreePanel->update();
 }
 
 void MainWindow::TaskPanelManager::updateRowNumbers() {
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(false);
 	int rowNum = 1;
 	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
 		(*it)->setData(COLUMN_INDEX, Qt::DisplayRole, rowNum++);
 	}
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
+	parentGUI->ui.taskTreePanel->update();
 }
 
 void MainWindow::TaskPanelManager::colorTask(
@@ -276,6 +282,7 @@ void MainWindow::TaskPanelManager::colorTask(
 		taskItem->setFont(i, font);
 	}
 }
+
 bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
 	Task::Time now = boost::posix_time::second_clock::local_time();
 	return deadline < now;
