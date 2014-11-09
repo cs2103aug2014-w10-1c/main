@@ -3,7 +3,6 @@
 #include <boost/format.hpp>
 #include "../../You-Utils/log.h"
 #include "../exception.h"
-#include "constants.h"
 #include "operation.h"
 #include "operations/post_operation.h"
 #include "operations/put_operation.h"
@@ -21,8 +20,7 @@ using Log = Utils::Log;
 const char* DataStore::FILE_PATH = "data.xml";
 const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
 
-const std::wstring DataStore::LOG_CATEGORY =
-	DATASTORE_LOG_CATEGORY + L"[InternalDataStore]";
+const std::wstring DataStore::LOG_CATEGORY = L"[DS][InternalDataStore]";
 
 DataStore& DataStore::get() {
 	static DataStore store;
