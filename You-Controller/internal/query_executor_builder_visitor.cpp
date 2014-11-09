@@ -230,7 +230,7 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 	};
 
 	try {
-		Task::ID task = context.at(query.taskID).getID();
+		Task::ID task = context.at(query.taskID - 1).getID();
 		You::Utils::Option<Task::Priority> priority;
 		if (query.priority) {
 			priority = Controller::nlpToQueryEnginePriority(
@@ -250,12 +250,12 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
 						QueryEngine::RemoveSubtask(task,
-							context.at(-childTask).getID())));
+							context.at(-childTask - 1).getID())));
 			} else {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
 						QueryEngine::AddSubtask(task,
-							context.at(childTask).getID())));
+							context.at(childTask - 1).getID())));
 			}
 		}
 
@@ -274,13 +274,13 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
 						QueryEngine::RemoveDependency(
-							context.at(-dependingTask).getID(),
+							context.at(-dependingTask - 1).getID(),
 							dependentTask)));
 			} else {
 				return std::unique_ptr<QueryExecutor>(
 					new EditTaskQueryExecutor(
 						QueryEngine::AddDependency(
-							context.at(dependingTask).getID(),
+							context.at(dependingTask - 1).getID(),
 							dependentTask)));
 			}
 		}
@@ -341,7 +341,7 @@ QueryExecutorBuilderVisitor::build(const DELETE_QUERY& query) const {
 	};
 
 	try {
-		const Task& task = context.at(query.taskID);
+		const Task& task = context.at(query.taskID - 1);
 
 		return std::unique_ptr<QueryExecutor>(
 			new DeleteTaskQueryExecutor(

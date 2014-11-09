@@ -34,7 +34,7 @@ extern const You::NLP::SHOW_QUERY SHOW_QUERY {
 };
 
 extern const You::NLP::EDIT_QUERY EDIT_QUERY {
-	0,
+	1,
 	L"new description",
 	You::NLP::TaskPriority::NORMAL,
 	boost::posix_time::ptime(
@@ -45,7 +45,7 @@ extern const You::NLP::EDIT_QUERY EDIT_QUERY {
 };
 
 extern const You::NLP::DELETE_QUERY DELETE_QUERY {
-	0
+	1
 };
 
 extern const You::NLP::UNDO_QUERY UNDO_QUERY {
