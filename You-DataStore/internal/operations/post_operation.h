@@ -19,7 +19,7 @@ public:
 	/// \param[in] id the id attribute of the node to be added
 	/// \param[in] kvp the KeyValuePairs of the node to be added
 	PostOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
-	bool run(pugi::xml_document& document) override;
+	bool run(pugi::xml_node& node) override;
 	virtual ~PostOperation() = default;
 
 private:

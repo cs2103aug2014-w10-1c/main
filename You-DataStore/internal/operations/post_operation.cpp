@@ -15,8 +15,8 @@ PostOperation::PostOperation(std::wstring branch, std::wstring id,
 	task = kvp;
 }
 
-bool PostOperation::run(pugi::xml_document& document) {
-	pugi::xml_node xmlBranch = BranchOperation::get(document, branchName);
+bool PostOperation::run(pugi::xml_node& node) {
+	pugi::xml_node xmlBranch = BranchOperation::get(node, branchName);
 	pugi::xml_node toAdd =
 		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
 

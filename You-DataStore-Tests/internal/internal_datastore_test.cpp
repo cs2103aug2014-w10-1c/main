@@ -30,6 +30,7 @@ public:
 	TEST_METHOD_INITIALIZE(clearDataStoreState) {
 		DataStore::get().document.reset();
 		std::remove("data.xml");
+		DataStore::get().loadData();
 	}
 
 	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
@@ -71,18 +72,18 @@ public:
 		// is empty
 
 		// document must not change without commit
-		Assert::IsTrue(sut.document.first_child().first_child().empty());
+		Assert::IsTrue(sut.root.first_child().first_child().empty());
 		t.commit();
 		// document changes after commit
-		Assert::IsFalse(sut.document.first_child().first_child().empty());
+		Assert::IsFalse(sut.root.first_child().first_child().empty());
 
 		Transaction t2(sut.begin());
 		sut.erase(TASKS_NODE, L"10");
 		// document must not change without commit
-		Assert::IsFalse(sut.document.first_child().first_child().empty());
+		Assert::IsFalse(sut.root.first_child().first_child().empty());
 		t2.commit();
 		// document changes after commit
-		Assert::IsTrue(sut.document.first_child().first_child().empty());
+		Assert::IsTrue(sut.root.first_child().first_child().empty());
 	}
 
 	/// Checks if rollback cleans up the transaction stack too
@@ -100,7 +101,7 @@ public:
 		DataStore& sut = DataStore::get();
 
 		// Create mock
-		sut.document.append_child(L"tasks").append_child(L"task").
+		sut.root.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 
 		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
@@ -113,7 +114,7 @@ public:
 		DataStore& sut = DataStore::get();
 
 		// Create mock
-		sut.document.append_child(L"tasks").append_child(L"task").
+		sut.root.append_child(L"tasks").append_child(L"task").
 			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
 		sut.document.save_file(sut.FILE_PATH.c_str());
 		sut.document.reset();
@@ -197,6 +198,7 @@ public:
 	}
 
 	TEST_METHOD(xmlParseErrorThrowsException) {
+		DataStore::get().wipeData();
 		createDummyDataXml();
 		auto fun = [] { Internal::DataStore::get().loadData(); };
 		Assert::ExpectException<NotWellFormedXmlException>(fun);
