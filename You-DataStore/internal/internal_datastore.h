@@ -19,21 +19,23 @@ class DataStoreTest;
 class DataStoreApiTest;
 }
 
-/// The internal components of DataStore
+/// The internal components of data store
 namespace Internal {
 
 /// The most primitive class that does the changes to the actual xml file
 class DataStore {
-	/// Test classes
+	/// \name Test classes
+	/// @{
 	friend class UnitTests::DataStoreTest;
 	friend class UnitTests::DataStoreApiTest;
+	/// @}
 public:
 	/// Gets the singleton instance of the internal data store.
 	///
 	/// \return The internal data store instance.
 	static DataStore& get();
 
-	/// Transaction management.
+	/// \name Transaction management.
 	/// @{
 
 	/// Starts a new transaction.
@@ -44,6 +46,7 @@ public:
 	/// Notifies the data store that the given transaction is being committed.
 	///
 	/// \param[out] transaction The transaction being committed.
+	/// \exception IOException if I/O error occurs
 	void onTransactionCommit(Transaction& transaction);
 
 	/// Notifies the data store that the given transaction is being rolled back.
@@ -54,6 +57,10 @@ public:
 	/// @}
 
 	/// Pushes \ref PostOperation into the active \ref Transaction
+	///
+	/// \param[in] branch The name of the XML branch to be modified
+	/// \param[in] id The ID of the data to be added
+	/// \param[in] kvp The KeyValuePairs of the data to be added
 	void post(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
 
 	/// Pushes \ref PutOperation into the active \ref Transaction
@@ -77,14 +84,15 @@ private:
 	DataStore() = default;
 
 	/// Saves the xml object to a file
+	///
 	/// \return true if operation successful and false otherwise
 	bool saveData();
 
 	/// Loads the xml file into the document variable
 	/// May throw \ref DataStoreCorruptException when parsing fails
-	/// \exception NotWellFormedException The exception thrown if data.xml is
-	///									  not well formed
-	/// \exception IOException The exception thrown if I/O error occurs
+	///
+	/// \exception NotWellFormedException if data.xml is not well formed
+	/// \exception IOException if I/O error occurs
 	void loadData();
 
 	/// Executes the operation queue into the xml_document

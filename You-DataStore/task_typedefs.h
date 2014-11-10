@@ -13,7 +13,7 @@ namespace DataStore {
 /// typedef for Task ID
 typedef int64_t TaskId;
 
-/// Typedefs for serializing to xml
+/// \name Typedefs for serializing to xml
 /// @{
 typedef std::wstring Key;
 typedef std::wstring Value;
