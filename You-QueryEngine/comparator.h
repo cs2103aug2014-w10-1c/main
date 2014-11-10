@@ -14,8 +14,11 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests { class ComparatorTests; }
 
-/// Base class for task comparators.
-/// Needed by Controller to construct GetTask query.
+/// Base class for binary comparators.
+/// Comparators are utility objects used to sort any object based on
+/// a certain properties of the object.
+/// Comparators can be combined by using the && operator.
+/// \see \ref You::QueryEngine::GetTask
 class Comparator {
 	friend class You::QueryEngine::UnitTests::ComparatorTests;
 public:
@@ -79,8 +82,9 @@ public:
 	Comparator& operator&&(const Comparator& rhs);
 
 private:
-	/// Helper function to create a comparator by applying a function
-	/// beforehand.
+	/// Helper function to create a comparator for two task objects
+	/// by previously applying a unary function to both task objects.
+	/// \param [in] func The unary function to be pre-applied.
 	template <class T>
 	static Comparator byApplying(std::function<T(const Task&)> func) {
 		return Comparator([func] (const Task& lhs, const Task& rhs) {
