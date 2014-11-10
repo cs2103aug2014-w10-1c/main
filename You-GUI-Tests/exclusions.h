@@ -15,6 +15,19 @@
 #pragma managed(push, off)
 
 ExcludeFromCodeCoverage(boost, L"boost::*");
+ExcludeFromCodeCoverage(boost_meta, L"??@*@");
+ExcludeFromCodeCoverage(Qt_AtomicOps, L"QAtomicOpsBySize*");
+ExcludeFromCodeCoverage(Qt_BasicAtomicInteger, L"QBasicAtomicInteger*");
+ExcludeFromCodeCoverage(Qt_GenericAtomicOps, L"QGenericAtomicOps*");
+ExcludeFromCodeCoverage(Qt_List, L"QList*");
+ExcludeFromCodeCoverage(Qt_Flags, L"QFlag*");
+ExcludeFromCodeCoverage(Qt_Meta, L"QtMetaTypePrivate*");
+ExcludeFromCodeCoverage(Qt_Private, L"QtPrivate*");
+ExcludeFromCodeCoverage(Qt_ScopedPointer, L"QScopedPointer*");
+ExcludeFromCodeCoverage(Qt_StringList, L"QStringList*");
+ExcludeFromCodeCoverage(Qt_StaticStringData, L"QStaticStringData*");
+ExcludeFromCodeCoverage(Qt_TypedArrayData, L"QTypedArrayData*");
+ExcludeFromCodeCoverage(Qt_Vector, L"QVector*");
 ExcludeFromCodeCoverage(You_NLP, L"You::NLP::*");
 ExcludeFromCodeCoverage(You_QueryEngine, L"You::QueryEngine::*");
 ExcludeFromCodeCoverage(You_Utils, L"You::Utils::*");

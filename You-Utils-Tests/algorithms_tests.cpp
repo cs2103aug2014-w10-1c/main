@@ -52,6 +52,10 @@ TEST_CLASS(StringSimilarityTests) {
 		testContains("abc", "ab bc", true);
 		testContains("abc", "ab cd", false);
 	}
+
+	TEST_METHOD(caseInsensitiveCompare) {
+		testContains("abc", "AB BC", true);
+	}
 };
 
 }  // namespace UnitTests

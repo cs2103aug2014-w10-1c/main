@@ -41,7 +41,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	explicitCommand %= (
 		(qi::lit("add") > space > addCommand) |
-		(qi::lit("show") > *space > showCommand) |
+		((qi::lit("show") | qi::lit("find")) > *space > showCommand) |
 		(qi::lit("edit") > space > editCommand) |
 		(qi::lit("delete") > space > deleteCommand) |
 		(qi::lit("undo") > *space > undoCommand)
@@ -98,7 +98,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(addCommandPriority);
 
 	addCommandTime = (
-		(space >> (qi::lit("from")) >> space >> time) ||
+		(space >> (qi::lit("from") | qi::lit("after")) >> space >> time) ||
 		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) >>
 			space >> time) >>
 		*space

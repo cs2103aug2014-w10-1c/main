@@ -7,12 +7,14 @@ namespace Utils {
 
 template<typename CharT>
 bool similar_to<std::basic_string<CharT>>::operator()(
-	const StringType& lhs,
-	const StringType& rhs) {
+	StringType lhs,
+	StringType rhs) {
 	std::vector<StringType> needles;
+	boost::to_lower(rhs);
 	boost::split(needles, rhs, boost::is_space(), boost::token_compress_on);
 
 	std::vector<StringType> haystacks;
+	boost::to_lower(lhs);
 	boost::split(haystacks, lhs, boost::is_space(), boost::token_compress_on);
 
 	return std::all_of(begin(needles), end(needles),

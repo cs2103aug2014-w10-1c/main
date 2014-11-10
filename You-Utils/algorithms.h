@@ -28,7 +28,7 @@ struct similar_to<std::basic_string<CharT>> {
 	/// substrings of lhs.
 	///
 	/// \return True if rhs matches anything in lhs.
-	bool operator()(const StringType& lhs, const StringType& rhs);
+	bool operator()(StringType lhs, StringType rhs);
 
 private:
 	/// Checks the needle is in any haystack.
