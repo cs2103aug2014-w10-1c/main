@@ -21,8 +21,12 @@ class Comparator {
 public:
 	/// \name Commonly used comparators
 	/// @{
+
 	/// Do not sort.
 	static Comparator notSorted();
+
+	/// Sort by time the task is created
+	static Comparator byTimeCreated();
 
 	/// Sort lexicographically by description.
 	static Comparator byDescription();
@@ -43,6 +47,7 @@ public:
 	static Comparator byRelationship(Task::ID id);
 	/// @}
 
+public:
 	/// Enum class for comparison result.
 	enum class ComparisonResult { LT, GT, EQ };
 
@@ -52,6 +57,9 @@ public:
 
 	/// Constructor using binary function.
 	Comparator(const ComparatorFunc& func);  // NOLINT
+
+	/// Return whether this is the default comparator.
+	inline bool isDefault() const { return isDefaultComparator; }
 
 	/// Cast to binary comparison function used by std::sort and
 	/// the others.
@@ -91,6 +99,7 @@ private:
 	void negateAllComparators();
 	std::vector<const ComparatorFunc> comparators;
 	bool isAscending = true;
+	bool isDefaultComparator = false;
 };
 
 }  // namespace QueryEngine

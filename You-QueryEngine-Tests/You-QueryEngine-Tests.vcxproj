@@ -98,6 +98,7 @@
     <ClCompile Include="advanced_query_tests.cpp" />
     <ClCompile Include="comparator_tests.cpp" />
     <ClCompile Include="filter_tests.cpp" />
+    <ClCompile Include="integration_tests.cpp" />
     <ClCompile Include="mocks\task.cpp" />
     <ClCompile Include="mocks\task_list.cpp" />
     <ClCompile Include="query_tests.cpp" />

@@ -19,7 +19,7 @@ namespace {
 
 #pragma region Common Filters
 Filter Filter::anyTask() {
-	return Filter([] (const Task& task) {
+	return Filter([] (const Task&) {
 		return true;
 	});
 }

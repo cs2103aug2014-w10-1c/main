@@ -13,13 +13,9 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using Task = You::QueryEngine::Task;
-	using TaskGraph = You::QueryEngine::Internal::TaskGraph;
-	using Controller = You::QueryEngine::Internal::Controller;
-}
-/// \endcond
+using Task = You::QueryEngine::Task;
+using TaskGraph = You::QueryEngine::Internal::TaskGraph;
+using Controller = You::QueryEngine::Internal::Controller;
 
 /// Test the functionality of Dependency graph
 TEST_CLASS(DependencyGraphTest) {

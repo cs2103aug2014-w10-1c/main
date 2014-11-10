@@ -15,8 +15,6 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-class TaskGraphController;
-
 /// Defines a simple task graph
 class TaskGraph {
 	friend class TaskGraphController;

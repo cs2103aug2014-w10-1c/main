@@ -15,12 +15,8 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using Task = You::QueryEngine::Task;
-	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-}
-/// \endcond
+using Task = You::QueryEngine::Task;
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
 
 /// Test the functionality of TaskBuilder
 TEST_CLASS(TaskBuilderTests) {
@@ -42,6 +38,7 @@ TEST_CLASS(TaskBuilderTests) {
 		const Task::Dependencies dep = { 1, 2, 3 };
 		const Task::Priority prio = Task::Priority::HIGH;
 		const Task::Subtasks sub = { 1, 2, 3 };
+		const Task::Attachment att = { desc };
 		Task task = TaskBuilder::get()
 			.description(desc)
 			.deadline(Task::NEVER)
@@ -51,14 +48,14 @@ TEST_CLASS(TaskBuilderTests) {
 			.dependencies(dep)
 			.parent(43L)
 			.subtasks(sub)
-			.attachment(desc);
+			.attachment(att);
 		Assert::AreEqual(task.getDescription(), desc);
 		// The valid one should be the last chain
 		Assert::AreEqual(task.getDeadline(), dead);
 		Assert::IsTrue(task.getDependencies() == dep);
 		Assert::IsTrue(task.getParent() == static_cast<Task::ID>(43L));
 		Assert::IsTrue(task.getSubtasks() == sub);
-		Assert::IsTrue(task.getAttachment() == desc);
+		Assert::IsTrue(task.getAttachment() == att);
 	}
 
 	/// Should throw an exception when trying to create

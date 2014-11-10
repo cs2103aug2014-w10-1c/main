@@ -17,17 +17,13 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
 
-	using You::QueryEngine::Filter;
-	using You::QueryEngine::Task;
-	using You::QueryEngine::Response;
-	using You::QueryEngine::QueryEngine;
-}
-/// \endcond
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
 
 /// Test the main \ref QueryEngine API
 TEST_CLASS(QueryEngineTests) {
@@ -275,11 +271,12 @@ TEST_CLASS(QueryEngineTests) {
 		auto task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
-		task.setAttachment(L"index.html");
+		Task::Attachment expected = { L"index.html", L"index2.html" };
+		task.setAttachment(expected);
 		task = boost::get<Task>(
 			QueryEngine::executeQuery(
 				QueryEngine::UpdateTask(task)));
-		Assert::AreEqual(task.getAttachment(), std::wstring(L"index.html"));
+		Assert::IsTrue(task.getAttachment() == expected);
 	}
 
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;

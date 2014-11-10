@@ -78,6 +78,11 @@ TEST_CLASS(ComparatorTests) {
 			(NINE_DEPENDENCIES(), TEN_DEPENDENCIES()));
 	}
 
+	TEST_METHOD(compareByTimeCreated) {
+		Assert::IsTrue((Comparator::byTimeCreated())
+			(TASK_WITH_ID_1(), TASK_WITH_ID_2()));
+	}
+
 	ComparatorTests& operator=(const ComparatorTests&) = delete;
 };
 

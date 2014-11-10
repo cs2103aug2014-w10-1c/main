@@ -14,18 +14,14 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-/// \cond Imports
-namespace {
-	using boost::posix_time::ptime;
-	using boost::posix_time::time_duration;
-	using boost::gregorian::date;
-	using boost::gregorian::greg_month;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::gregorian::date;
+using boost::gregorian::greg_month;
 
-	using Task = You::QueryEngine::Task;
-	using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
-	using TaskSerializer = You::QueryEngine::Internal::TaskSerializer;
-}
-/// \endcond
+using You::QueryEngine::Task;
+using You::QueryEngine::Internal::TaskBuilder;
+using You::QueryEngine::Internal::TaskSerializer;
 
 /// Test the functionality of TaskSerializer
 TEST_CLASS(TaskSerializerTests) {
@@ -63,9 +59,9 @@ public:
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
 			task.getDescription());
 		Assert::AreEqual(serialized[TaskSerializer::KEY_START_TIME],
-			std::wstring(L"2001;1;10;1;2;3;"));
+			std::wstring(L"20010110T010203"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
-			std::wstring(L"2002;1;10;1;2;3;"));
+			std::wstring(L"20020110T010203"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
 			std::wstring(L"high"));
 		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],

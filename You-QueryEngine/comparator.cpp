@@ -8,14 +8,25 @@ namespace You {
 namespace QueryEngine {
 
 Comparator Comparator::notSorted() {
-	return Comparator([](const Task&, const Task&) {
+	Comparator comp([](const Task&, const Task&) {
 		return ComparisonResult::EQ;
+	});
+	comp.isDefaultComparator = true;
+	return comp;
+}
+
+Comparator Comparator::byTimeCreated() {
+	return byApplying<Task::ID>([](const Task& task) {
+		return task.getID();
 	});
 }
 
 Comparator Comparator::byDescription() {
 	return byApplying<Task::Description>([](const Task& task) {
-		return task.getDescription();
+		auto desc = task.getDescription();
+		std::transform(desc.begin(), desc.end(),
+			desc.begin(), ::tolower);
+		return desc;
 	});
 }
 
@@ -107,6 +118,7 @@ Comparator& Comparator::descending() {
 }
 
 Comparator& Comparator::operator&&(const Comparator& rhs) {
+	isDefaultComparator = isDefaultComparator && rhs.isDefault();
 	comparators.insert(comparators.end(),
 		begin(rhs.comparators), end(rhs.comparators));
 	return *this;

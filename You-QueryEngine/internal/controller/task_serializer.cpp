@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
 #include "../../exception.h"
 #include "task_builder.h"
 #include "task_serializer.h"
@@ -8,12 +10,10 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-namespace {
-	using boost::posix_time::ptime;
-	using boost::gregorian::date;
-	using boost::gregorian::greg_year_month_day;
-	using boost::posix_time::time_duration;
-}
+using boost::posix_time::ptime;
+using boost::gregorian::date;
+using boost::gregorian::greg_year_month_day;
+using boost::posix_time::time_duration;
 
 const TaskSerializer::Key TaskSerializer::KEY_ID = L"id";
 const TaskSerializer::Key TaskSerializer::KEY_DESCRIPTION = L"description";
@@ -41,7 +41,7 @@ TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
 	Value value_completed = serializeCompleted(task.isCompleted());
 	Value value_parent = serializeParent(task.getParent());
 	Value value_subtasks = serializeSubtasks(task.getSubtasks());
-	Value value_attachment = serializeDescription(task.getAttachment());
+	Value value_attachment = serializeAttachment(task.getAttachment());
 	return {
 		{ KEY_ID, value_id },
 		{ KEY_DESCRIPTION, value_description },
@@ -129,7 +129,7 @@ Task TaskSerializer::deserialize(const STask& stask) {
 
 		Task::Attachment attachment =
 			deserializeOrDefault<Task::Attachment>(
-				&TaskSerializer::deserializeDescription,
+				&TaskSerializer::deserializeAttachment,
 				stask,
 				KEY_ATTACHMENT,
 				Task::DEFAULT_ATTACHMENT);
@@ -153,17 +153,9 @@ TaskSerializer::Value TaskSerializer::serializeDescription(
 
 TaskSerializer::Value TaskSerializer::serializeTime(
 	const Task::Time& deadline) {
-	std::wstringstream wss;
-	auto date = deadline.date();
-	auto time = deadline.time_of_day();
-	std::vector<int> fields = {
-		date.year(), date.month(), date.day(),
-		time.hours(), time.minutes(), time.seconds()
-	};
-	for (const auto& field : fields) {
-		wss << field << VALUE_DELIMITER;
-	}
-	return wss.str();
+	std::string stime = boost::posix_time::to_iso_string(deadline);
+	std::wstring value(begin(stime), end(stime));
+	return value;
 }
 
 TaskSerializer::Value TaskSerializer::serializePriority(
@@ -194,9 +186,20 @@ TaskSerializer::Value TaskSerializer::serializeCompleted(
 		return L"false";
 	}
 }
+
 TaskSerializer::Value TaskSerializer::serializeSubtasks(
 	const Task::Subtasks& subtasks) {
 	return serializeDependencies(subtasks);
+}
+
+TaskSerializer::Value TaskSerializer::serializeAttachment(
+	const Task::Attachment& attachments) {
+	std::wstringstream ws;
+	for (const auto& attachment : attachments) {
+		ws << attachment;
+		ws << TaskSerializer::VALUE_DELIMITER;
+	}
+	return ws.str();
 }
 
 Task::ID TaskSerializer::deserializeID(const Value& id) {
@@ -209,19 +212,25 @@ Task::Description TaskSerializer::deserializeDescription(
 }
 
 Task::Time TaskSerializer::deserializeTime(const Value& deadline) {
-	std::vector<std::int16_t> numbers;
-	std::vector<std::wstring> tokens = tokenize(deadline);
-	for (const auto& token : tokens) {
-		numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+	if (deadline.find(VALUE_DELIMITER) != std::wstring::npos) {
+		// The user is using the old serialization method.
+		std::vector<std::int16_t> numbers;
+		std::vector<std::wstring> tokens = tokenize(deadline);
+		for (const auto& token : tokens) {
+			numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+		}
+		auto year = numbers[0];
+		auto month = numbers[1];
+		auto day = numbers[2];
+		auto hour = numbers[3];
+		auto minute = numbers[4];
+		auto second = numbers[5];
+		return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+			boost::posix_time::time_duration(hour, minute, second));
+	} else {
+		std::string sdeadline(begin(deadline), end(deadline));
+		return boost::posix_time::from_iso_string(sdeadline);
 	}
-	auto year = numbers[0];
-	auto month = numbers[1];
-	auto day = numbers[2];
-	auto hour = numbers[3];
-	auto minute = numbers[4];
-	auto second = numbers[5];
-	return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
-		boost::posix_time::time_duration(hour, minute, second));
 }
 
 Task::Priority TaskSerializer::deserializePriority(const Value& priority) {
@@ -248,6 +257,11 @@ Task::ID TaskSerializer::deserializeParent(const Value& parent) {
 
 Task::Subtasks TaskSerializer::deserializeSubtasks(const Value& subtasks) {
 	return deserializeDependencies(subtasks);
+}
+
+Task::Attachment TaskSerializer::deserializeAttachment(
+	const Value& attachment) {
+	return tokenize(attachment);
 }
 
 std::vector<std::wstring> TaskSerializer::tokenize(const std::wstring& input) {

@@ -3,13 +3,11 @@
 #include "internal/state.h"
 #include "task_model.h"
 
-namespace {
-	using boost::posix_time::ptime;
-	using boost::posix_time::hours;
-	using boost::gregorian::date;
-	using boost::gregorian::max_date_time;
-	using boost::gregorian::day_clock;
-}  // namespace
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+using boost::gregorian::day_clock;
 
 namespace You {
 namespace QueryEngine {
@@ -82,7 +80,7 @@ const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
 const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
 const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
 const Task::Subtasks Task::DEFAULT_SUBTASKS;
-const Task::Attachment Task::DEFAULT_ATTACHMENT = L"";
+const Task::Attachment Task::DEFAULT_ATTACHMENT;
 
 bool Task::isStrictEqual(const Task& task) const {
 	bool idIsEqual = id == task.id;

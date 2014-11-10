@@ -8,20 +8,18 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests {
 
-namespace {
-	using boost::gregorian::greg_month;
-	using boost::gregorian::greg_year;
-	using boost::posix_time::ptime;
-	using boost::posix_time::time_duration;
-	using boost::posix_time::to_tm;
-	using boost::posix_time::hours;
-	using boost::gregorian::date;
-	using boost::gregorian::days;
-	using boost::gregorian::day_clock;
+using boost::gregorian::greg_month;
+using boost::gregorian::greg_year;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::posix_time::to_tm;
+using boost::posix_time::hours;
+using boost::gregorian::date;
+using boost::gregorian::days;
+using boost::gregorian::day_clock;
 
-	using Task = You::QueryEngine::Task;
-	using Controller = You::QueryEngine::Internal::Controller;
-}  // namespace
+using Task = You::QueryEngine::Task;
+using Controller = You::QueryEngine::Internal::Controller;
 
 Task TASK_WITH_ID_1() {
 	return Controller::Builder::get()

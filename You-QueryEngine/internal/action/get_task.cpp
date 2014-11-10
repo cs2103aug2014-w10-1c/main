@@ -12,38 +12,57 @@ namespace Action {
 
 const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
 
-Response GetTask::execute(State& state) {
-	std::vector<Task> filtered;
-	std::vector<Task> result;
+std::unordered_map<Task::ID, Task>
+GetTask::getFilteredTasks(const State& state) const {
+	std::unordered_map<Task::ID, Task> filtered;
 	std::vector<Task> all = state.graph().asTaskList();
-	std::unordered_set<Task::ID> filteredID;
 	for (const auto& task : all) {
 		if (filter(task)) {
-			filtered.push_back(task);
-			filteredID.insert(task.getID());
+			filtered.insert({ task.getID(), task });
 		}
 	}
+	return filtered;
+}
+
+std::vector<Task> GetTask::removeTaskIfParentIsShown(
+	std::unordered_map<Task::ID, Task>& filtered) const {
+	std::vector<Task> result;
 	for (const auto& r : filtered) {
 		// Always show toplevel task.
-		if (r.isTopLevel()) {
-			result.push_back(r);
+		if (r.second.isTopLevel()) {
+			result.push_back(r.second);
 		} else {
 			// Show child task iff the parent is not filtered.
-			auto parent = r.getParent();
+			auto parent = r.second.getParent();
 			bool parentIsAlreadyFiltered =
-				filteredID.find(parent) != filteredID.end();
+				filtered.find(parent) != filtered.end();
 			if (!parentIsAlreadyFiltered) {
-				result.push_back(r);
+				result.push_back(r.second);
 			}
 		}
 	}
-	if (sortAfterFilter) {
+	return result;
+}
+
+void GetTask::sortTheResultIfRequested(std::vector<Task>& result) const {
+	if (!comparator.isDefault()) {
+		std::remove_if(begin(result), end(result), Filter::completed());
 		std::sort(begin(result), end(result), comparator);
-		state.setActiveComparator(comparator);
 	} else {
-		state.setActiveComparator(Comparator::notSorted());
+		std::sort(begin(result), end(result), Comparator::byTimeCreated());
 	}
+}
+
+void GetTask::updateActiveFilterAndSorter(State& state) const {
+	state.setActiveComparator(comparator);
 	state.setActiveFilter(filter);
+}
+
+Response GetTask::execute(State& state) {
+	std::unordered_map<Task::ID, Task> filtered = getFilteredTasks(state);
+	std::vector<Task> result = removeTaskIfParentIsShown(filtered);
+	sortTheResultIfRequested(result);
+	updateActiveFilterAndSorter(state);
 	return result;
 }
 

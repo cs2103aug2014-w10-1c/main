@@ -10,11 +10,9 @@ namespace You {
 namespace QueryEngine {
 namespace Internal {
 
-namespace {
-	using DataStore = You::DataStore::DataStore;
-	using Transaction = You::DataStore::Transaction;
-	using KeyValuePairs = You::DataStore::KeyValuePairs;
-}
+using You::DataStore::DataStore;
+using You::DataStore::Transaction;
+using You::DataStore::KeyValuePairs;
 
 const std::wstring State::MAX_ID_FIELD = L"max-id";
 
@@ -35,9 +33,7 @@ std::int64_t State::getMaxIDFromDataStore() {
 State::State()
 : innerGraph(TaskGraph(TaskGraph::GraphType::DEPENDENCY)),
   innerSubtaskGraph(TaskGraph(TaskGraph::GraphType::SUBTASK)) {
-	maxID = TaskGraphController::loadFromFile(innerGraph);
-	TaskGraphController::loadFromFile(innerSubtaskGraph);
-	commitMaxIDToDataStore();
+	initialize();
 }
 
 State& State::get() {
@@ -52,6 +48,13 @@ void State::clear() {
 		get().undoStack().pop();
 	}
 	get().maxID = 0;
+}
+
+void State::initialize() {
+	clear();
+	get().maxID = TaskGraphController::loadFromFile(get().innerGraph);
+	TaskGraphController::loadFromFile(get().innerSubtaskGraph);
+	get().commitMaxIDToDataStore();
 }
 
 void State::setActiveFilter(const Filter& filter) {

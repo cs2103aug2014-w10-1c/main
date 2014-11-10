@@ -15,11 +15,9 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-namespace {
-	using Transaction = You::DataStore::Transaction;
-	using DataStore = You::DataStore::DataStore;
-	using Log = You::Utils::Log;
-}
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
 
 Response Undo::execute(State& state) {
 	if (!State::get().undoStack().empty()) {

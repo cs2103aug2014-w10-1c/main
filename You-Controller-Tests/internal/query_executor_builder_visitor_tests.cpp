@@ -430,12 +430,18 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 				result.task.getDependencies().size());
 			if (!editQuery.attachments.empty()) {
 				assert(editQuery.attachments.size() == 1);
+				Task::Attachment resultAttachment =
+					result.task.getAttachment();
 				if (editQuery.attachments[0].add) {
-					Assert::AreEqual(editQuery.attachments[0].path,
-						result.task.getAttachment());
+					Assert::IsTrue(
+						std::find(begin(resultAttachment), end(resultAttachment),
+							editQuery.attachments[0].path) != end(resultAttachment));
 				} else {
-					Assert::AreNotEqual(editQuery.attachments[0].path,
-						result.task.getAttachment());
+					Assert::IsTrue(
+						std::all_of(begin(resultAttachment), end(resultAttachment),
+							std::bind(std::not_equal_to<std::wstring>(),
+									  editQuery.attachments[0].path,
+								      std::placeholders::_1)));
 				}
 			}
 		}
