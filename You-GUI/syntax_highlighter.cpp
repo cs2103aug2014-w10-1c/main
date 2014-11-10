@@ -51,11 +51,10 @@ void SyntaxHighlighter::buildRules() {
 		wss.str(L"");
 	}
 
-		wss << L"\\s" << PARAM_PREFIX << L"\\s+";
-		paramHighlightingRules.append(makeRule(wss.str(),
-			parameterPrefixFormat, parameterPrefixFormat));
-		wss.str(L"");
-	
+	wss << L"\\s" << PARAM_PREFIX << L"\\s+";
+	paramHighlightingRules.append(makeRule(wss.str(),
+		parameterPrefixFormat, parameterPrefixFormat));
+	wss.str(L"");
 
 	for (const auto& param : PARAMS) {
 		wss << L"\\s+" << param << L"\\b";
