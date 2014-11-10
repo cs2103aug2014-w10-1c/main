@@ -143,6 +143,7 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 
 	showCommandFilteringPredicate.add
 		(L"=", SHOW_QUERY::Predicate::EQ)
+		(L"~", SHOW_QUERY::Predicate::SIMILAR)
 		(L"!=", SHOW_QUERY::Predicate::NOT_EQ)
 		(L"<", SHOW_QUERY::Predicate::LESS_THAN)
 		(L"<=", SHOW_QUERY::Predicate::LESS_THAN_EQ)

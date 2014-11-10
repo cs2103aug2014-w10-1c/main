@@ -279,6 +279,19 @@ public:
 			{}
 		}), q);
 
+		q = QueryParser::parse(L"/show description~'meh'");
+
+		Assert::AreEqual(QUERY(SHOW_QUERY {
+				{
+					{
+						TaskField::DESCRIPTION,
+						SHOW_QUERY::Predicate::SIMILAR,
+						std::wstring(L"meh")
+					}
+				},
+				{}
+		}), q);
+
 		// Boundary case: more than one filter, zero sort.
 		q = QueryParser::parse(L"/show description!='\\\\\\'meh', "
 			L"priority<high");

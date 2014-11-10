@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="algorithms.h" />
     <ClInclude Include="exceptions\exception.h" />
     <ClInclude Include="fatal.h" />
     <ClInclude Include="log.h" />
@@ -85,6 +86,7 @@
     <ClInclude Include="string_utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="log\log.cpp" />
     <ClCompile Include="log\logger.cpp" />
     <ClCompile Include="log\log_message.cpp" />

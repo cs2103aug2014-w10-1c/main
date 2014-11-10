@@ -18,7 +18,8 @@ namespace Utils {
 class LogMessage {
 	friend class Logger;
 
-	/// Template metaprogram to check if T is a functor.
+	/// Template metaprogram to check if T is a functor. This is named like this
+	/// for mixing with Boost and the standard library.
 	///
 	/// Modified from http://stackoverflow.com/questions/15393938
 	///
