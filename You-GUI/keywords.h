@@ -31,7 +31,18 @@ const std::wstring ORDER_DESCENDING = L"descending";
 const std::array<std::wstring, 2> ORDERS = { ORDER_ASCENDING,
 ORDER_DESCENDING };
 
-const std::wstring HASHTAG_PREFIX = L"#";
+const std::wstring SYMBOL_SUBTASK = L":";
+const std::wstring SYMBOL_SIBLING = L";";
+const std::wstring SYMBOL_HASHTAG = L"#";
+const std::wstring SYMBOL_DEPENDENCY = L"->";
+const std::wstring SYMBOL_LESS_THAN = L"<";
+const std::wstring SYMBOL_MORE_THAN = L">";
+const std::wstring SYMBOL_EQUALS = L"=";
+const std::wstring SYMBOL_IMPT = L"!";
+
+const std::array<std::wstring, 8> SYMBOLS = { SYMBOL_SUBTASK,
+SYMBOL_SIBLING, SYMBOL_HASHTAG, SYMBOL_DEPENDENCY, SYMBOL_LESS_THAN,
+SYMBOL_LESS_THAN, SYMBOL_EQUALS, SYMBOL_IMPT };
 
 }  // namespace GUI
 }  // namespace You
