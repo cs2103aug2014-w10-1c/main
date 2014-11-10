@@ -342,12 +342,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
 				return true;
 			}
 			return false;
-		}
-		else {
+		} else {
 			return false;
 		}
-	}
-	else {
+	} else {
 		// pass the event on to the parent class
 		return QMainWindow::eventFilter(obj, event);
 	}
