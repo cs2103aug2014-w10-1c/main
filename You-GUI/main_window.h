@@ -107,6 +107,8 @@ signals:
 protected:
 	void changeEvent(QEvent *event);
 
+	bool eventFilter(QObject *obj, QEvent *event);
+
 private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;
