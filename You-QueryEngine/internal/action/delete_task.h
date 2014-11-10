@@ -42,7 +42,7 @@ private:
 	Response execute(State& tasks) override;
 	void makeTransaction(const Task::ID id);
 	void deleteTree(State& state, Task::ID id);
-
+	void disconnectDependencies(State& state);
 	/// ID of the task to be deleted.
 	const Task::ID id;
 	/// The task object that has been deleted.
