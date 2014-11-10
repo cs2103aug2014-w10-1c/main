@@ -54,7 +54,14 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 		// Commit successful, overwrite the document and root
 		document.reset(temp);
 		root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
-		saveData();
+		bool isSaved = saveData();
+		if (isSaved) {
+			Log::info << LOG_CATEGORY << L": data.xml is saved successfully.";
+		} else {
+			Log::error << LOG_CATEGORY << L": An I/O error occured, data.xml "
+				L"is not saved.";
+			throw IOException();
+		}
 		transactionStack.pop();
 	} else {
 		// There is a transaction before it that is yet to be committed.
