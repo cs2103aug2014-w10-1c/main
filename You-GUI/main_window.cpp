@@ -179,6 +179,9 @@ void MainWindow::sendQuery() {
 	} catch (You::Controller::ParserException& e) {
 		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::IOException& e) {
+		showErrorAndExit(IO_EXCEPTION_MESSAGE,
+			QString("Exception: Tasks File could not be edited."));
 	}
 
 	/// Selects the item if it was originally selected and still exists
