@@ -83,6 +83,12 @@ void AddTask::makeTransaction(const Task& newTask) const {
 	t.commit();
 }
 
+void AddTask::updateActiveFilter(State& state) const {
+	state.setActiveFilter(
+		state.getActiveFilter() ||
+			Filter::idIsIn({ insertedID }));
+}
+
 Response AddTask::execute(State& state) {
 	bool isFirstTime = false;
 	if (insertedID == -1) {
