@@ -285,6 +285,15 @@ void MainWindow::applicationExitRequested() {
 	qApp->quit();
 }
 
+void MainWindow::changeEvent(QEvent *event) {
+	if (event->type() == QEvent::WindowStateChange) {
+		if (isMinimized()) {
+		hide();
+		}
+	}
+	QMainWindow::changeEvent(event);
+}
+
 void MainWindow::openURL(const QUrl &url) {
 	QDesktopServices::openUrl(url);
 }

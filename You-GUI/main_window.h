@@ -104,6 +104,9 @@ signals:
 
 	void updateRowNumbers();
 
+protected:
+	void changeEvent(QEvent *event);
+
 private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;
