@@ -59,7 +59,6 @@ void DataStore::onTransactionCommit(Transaction& transaction) {
 			Log::error << LOG_CATEGORY << L": An I/O error occured, data.xml "
 				L"is not saved.";
 			throw IOException();
-			
 		}
 		Log::info << LOG_CATEGORY << L": data.xml is saved successfully.";
 		transactionStack.pop();
