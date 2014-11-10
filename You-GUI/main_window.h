@@ -109,6 +109,8 @@ protected:
 	/// task panel proportions on resize.
 	void resizeEvent(QResizeEvent* event);
 
+	bool eventFilter(QObject *obj, QEvent *event);
+
 private:
 	/// The SessionManager instance
 	const std::unique_ptr<SessionManager> sm;

@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 		this, SLOT(commandEnterPressed()));
 	connect(this, SIGNAL(updateRowNumbers()), &*tpm, SLOT(updateRowNumbers()));
 	populateTaskPanel();
+	this->installEventFilter(this);
 	statusBar()->insertPermanentWidget(
 		0, ui.statusTasks, 0);
 	updateTaskInfoBar();
@@ -325,6 +326,39 @@ void MainWindow::showErrorAndExit(QString message, QString title) {
 	messageBox.setStandardButtons(QMessageBox::Ok);
 	messageBox.exec();
 	QTimer::singleShot(250, qApp, SLOT(quit()));
+}
+
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+	if (obj == this) {
+		if (event->type() == QEvent::KeyPress) {
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->matches(QKeySequence::Undo)) {
+				std::wstringstream wss;
+				wss << L"/undo";
+				commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+				commandTextBox->setFocus();
+				commandTextBox->moveCursor(QTextCursor::End);
+				return true;
+			}
+			if (keyEvent->matches(QKeySequence::Redo)) {
+				std::wstringstream wss;
+				wss << L"/redo";
+				commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+				commandTextBox->setFocus();
+				commandTextBox->moveCursor(QTextCursor::End);
+				return true;
+			}
+			return false;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		// pass the event on to the parent class
+		return QMainWindow::eventFilter(obj, event);
+	}
 }
 
 MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
