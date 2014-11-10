@@ -13,7 +13,7 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for adding a new task
+/// Action for adding a new task alongside dependencies.
 class BatchAddDependencies : public Query {
 public:
 	/// Constructor that use datastore to inquire new id

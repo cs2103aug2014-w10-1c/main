@@ -13,8 +13,9 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Update a task task.
-/// (e.g changing its description or marking it as done)
+/// Update a task. (e.g changing its description or marking it as done)
+/// To denote that a certain field should not be updated, pass boost::none
+/// as argument.
 class UpdateTask : public Query {
 public:
 	/// Constructor for UpdateTask query

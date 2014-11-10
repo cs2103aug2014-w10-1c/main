@@ -12,27 +12,25 @@ namespace You {
 namespace QueryEngine {
 namespace Exception {
 
-/// Base exception class.
+/// Base exception class that will be thrown by Query Engine.
 class BaseException : public You::Utils::Exception {
 };
 
-/// An exception thrown when trying to create task
-/// with empty description.
+/// An exception thrown when trying to create task with empty description.
 class EmptyTaskDescriptionException : public BaseException {
 };
 
-/// An exception thrown when trying to delete or edit a task
-/// that does not exists.
+/// An exception thrown when trying to delete or edit a task that does not
+/// exists.
 class TaskNotFoundException : public BaseException {
 };
 
-/// An exception thrown when dependency of two or more tasks
-/// is circular
+/// An exception thrown when dependency/subtasks of two or more tasks
+/// is circular.
 class CircularDependencyException : public BaseException {
 };
 
-/// An exception thrown when trying to undo an undoable
-/// query (e.g GetTask)
+/// An exception thrown when trying to undo an undoable query (e.g GetTask)
 class NotUndoAbleException : public BaseException {
 };
 

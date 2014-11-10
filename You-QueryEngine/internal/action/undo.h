@@ -13,11 +13,10 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Undo last action, then reapply the current filter
-/// and comparator and return the task list as a
-/// response.
+/// Undo last action, then reapply the current filter and comparator
+/// and return the task list as a response.
 /// - The undo of add task is delete task and vice versa.
-/// - The undo of update task is update task.
+/// - The undo of update task is update the task with the old one.
 class Undo : public Query {
 public:
 	/// Construct Undo query

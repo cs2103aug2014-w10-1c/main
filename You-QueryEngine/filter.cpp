@@ -8,16 +8,13 @@
 namespace You {
 namespace QueryEngine {
 
-namespace {
-	using boost::posix_time::ptime;
-	using boost::posix_time::time_duration;
-	using boost::gregorian::date;
-	using boost::gregorian::to_tm;
-	using boost::gregorian::day_clock;
-	using boost::gregorian::weeks;
-}
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::gregorian::date;
+using boost::gregorian::to_tm;
+using boost::gregorian::day_clock;
+using boost::gregorian::weeks;
 
-#pragma region Common Filters
 Filter Filter::anyTask() {
 	return Filter([] (const Task&) {
 		return true;
@@ -63,29 +60,25 @@ Filter Filter::overdue() {
 
 Filter Filter::dueThisYear() {
 	return !completed() && Filter([] (const Task& task) {
-		return task.getDeadline().date().year()
-			== now().year;
+		return task.getDeadline().date().year() == now().year;
 	});
 }
 
 Filter Filter::dueThisMonth() {
 	return dueThisYear() && Filter([] (const Task& task) {
-		return task.getDeadline().date().month()
-			== now().month;
+		return task.getDeadline().date().month() == now().month;
 	});
 }
 
 Filter Filter::dueToday() {
 	return dueThisMonth() && Filter([] (const Task& task) {
-		return task.getDeadline().date().day()
-			== now().day;
+		return task.getDeadline().date().day() == now().day;
 	});
 }
 
 Filter Filter::dueThisWeek() {
 	return dueThisMonth() && Filter([] (const Task& task) {
-		return (task.getDeadline().date() - day_clock::local_day()) <
-			weeks(1);
+		return (task.getDeadline().date() - day_clock::local_day()) < weeks(1);
 	});
 }
 
@@ -99,7 +92,7 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 	std::int16_t day, std::int16_t hour, std::int16_t minute,
 	std::int16_t seconds) {
 	auto due = ptime(date(year, month, day),
-			time_duration(hour, minute, seconds));
+		time_duration(hour, minute, seconds));
 	return Filter([due] (const Task& task) {
 		return task.getDeadline() < due;
 	});
@@ -107,8 +100,7 @@ Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
 
 Filter Filter::isChildOf(Task::ID id) {
 	return Filter([id] (const Task& task) {
-		return !task.isTopLevel() &&
-			task.getParent() == id;
+		return !task.isTopLevel() && task.getParent() == id;
 	});
 }
 
@@ -151,8 +143,6 @@ Filter Filter::isDescendantOf(Task::ID id) {
 		return cond;
 	});
 }
-
-#pragma endregion
 
 Filter& Filter::operator&&(const Filter& filter) {
 	ffilter = AND(ffilter, filter.ffilter);

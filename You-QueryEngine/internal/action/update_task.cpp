@@ -165,8 +165,7 @@ Response UpdateTask::execute(State& state) {
 	if (parent && (previous.getParent() != *parent)) {
 		reparentTask(state, id, *parent);
 	}
-	// If the subtasks field is changed, reparent every subtask.
-	// as necessary.
+	// If the subtasks field is changed, reparent every subtask as necessary.
 	if (subtasks) {
 		setRemovedSubtasksAsTopLevel(state);
 		for (Task::ID cid : *subtasks) {

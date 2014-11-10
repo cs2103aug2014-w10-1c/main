@@ -18,17 +18,7 @@ namespace QueryEngine {
 namespace UnitTests { class TaskBuilderTests; }
 namespace Internal { class TaskSerializer; class TaskBuilder; }
 
-/// Defines the task model
-///
-/// The instances of the task model can be created using
-/// TaskBuilder. No-arg default constructor still
-/// available to satisfy the requirement of TaskGraph \n
-/// The task model has these following fields
-///		- id
-///		- description
-///		- deadline
-///		- priority
-///		- dependencies
+/// Defines the task model.
 class Task {
 	friend class Internal::TaskBuilder;
 public:
@@ -60,19 +50,22 @@ public:
 	Attachment getAttachment() const { return attachment; }
 	/// @}
 
-	/// Get subtasks as Task object.
+	/// Get subtasks as a list of Task objects.
+	/// \returns The list of children of the task.
 	std::vector<Task> getSubtasksObject() const;
 
-	/// Get dependencies as Task object.
+	/// Get dependencies as a list of Task objects.
+	/// \returns The list of dependencies of the task.
 	std::vector<Task> getDependenciesObject() const;
 
 	/// Check wheter this task depends on a task.
-	/// \returns true if id is in the dependency.
+	/// \param [in] id The id of the dependant task.
+	/// \returns True if the task id is in the dependency.
 	bool isDependOn(const Task::ID id) const;
 
 	/// Check whether this task is a toplevel task.
 	/// A task is a toplevel task if it does not have any parent.
-	/// \returns true if the task is toplevel.
+	/// \returns True if the task is toplevel.
 	bool Task::isTopLevel() const;
 
 	/// \name Field Setters
@@ -103,6 +96,7 @@ public:
 
 	/// Check equality of two tasks by comparing field by field.
 	/// \param[in] rhs The task object to be compared
+	/// \returns True if the tasks is equal.
 	inline bool operator==(const Task& rhs) const {
 		return isStrictEqual(rhs);
 	}
