@@ -19,7 +19,7 @@ void MainWindow::SessionManager::setup() {
 void MainWindow::SessionManager::loadSession() {
 	QSettings settings("session.txt", QSettings::IniFormat);
 	settings.beginGroup("MainWindow");
-	parentGUI->resize(settings.value("size", QSize(400, 400)).toSize());
+	parentGUI->resize(settings.value("size", QSize(572, 528)).toSize());
 	parentGUI->move(settings.value("pos", QPoint(200, 200)).toPoint());
 	if (settings.value("maximized", false).toBool()) {
 		parentGUI->setWindowState(
@@ -28,6 +28,9 @@ void MainWindow::SessionManager::loadSession() {
 		parentGUI->setWindowState(
 			parentGUI->windowState() & (~Qt::WindowMaximized));
 	}
+	parentGUI->ui.taskTreePanel->header()->
+		restoreState(settings.value("width").toByteArray());
+
 	settings.endGroup();
 }
 
@@ -37,6 +40,7 @@ void MainWindow::SessionManager::saveSession() {
 	settings.setValue("size", parentGUI->size());
 	settings.setValue("pos", parentGUI->pos());
 	settings.setValue("maximized", parentGUI->isMaximized());
+	settings.setValue("width", parentGUI->ui.taskTreePanel->header()->saveState());
 	settings.endGroup();
 }
 

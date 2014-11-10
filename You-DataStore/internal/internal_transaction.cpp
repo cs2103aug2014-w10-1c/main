@@ -19,8 +19,8 @@ void Transaction::push(std::unique_ptr<Internal::Operation> op) {
 	operationsQueue.push_back(op.release());
 }
 
-bool Transaction::operator==(Transaction& other) {
-	return &*this == &other;
+bool Transaction::operator==(Transaction& rhs) {
+	return &*this == &rhs;
 }
 
 void Transaction::mergeOperationsQueue(boost::ptr_deque<Operation>& queue) {

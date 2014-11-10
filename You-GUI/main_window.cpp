@@ -33,10 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
 	ui.menuBar->setVisible(false);
 	ui.mainToolBar->setVisible(false);
 	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
-	sm->setup();
 	stm->setup();
 	qm->setup();
 	tpm->setup();
+	sm->setup();
 	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
 	commandTextBox->setup();
 	connect(&*commandTextBox, SIGNAL(enterKey()),
@@ -53,20 +53,6 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
-}
-
-void MainWindow::closeEvent(QCloseEvent *event) {
-	if (stm->trayIcon.isVisible()) {
-		QMessageBox::information(this, tr("Systray"),
-			tr("The program will keep running in the "
-			"system tray. To terminate the program, "
-			"choose <b>Quit</b> in the context menu "
-			"of the system tray entry."));
-		hide();
-		event->ignore();
-	} else {
-		QMainWindow::closeEvent(event);
-	}
 }
 
 void MainWindow::populateTaskPanel() {
@@ -113,11 +99,6 @@ void MainWindow::expandAllSubtasks(QTreeWidgetItem *item) {
 			expandAllSubtasks(item->child(i));
 		}
 	}
-}
-
-void MainWindow::addTask(const Task& task) {
-	taskList->push_back(task);
-	tpm->addTask(task);
 }
 
 void MainWindow::addTasks(const TaskList& tl) {
@@ -300,17 +281,13 @@ void MainWindow::applicationExitRequested() {
 	qApp->quit();
 }
 
-void MainWindow::resizeEvent(QResizeEvent* event) {
-	double oldWidth = event->oldSize().width();
-	double newWidth = event->size().width();
-	double ratio = newWidth / oldWidth;
-	for (int i = 0; i < ui.taskTreePanel->columnCount(); ++i) {
-		double currWidth = ui.taskTreePanel->header()->sectionSize(i);
-		double finalWidth = currWidth * ratio;
-		if (finalWidth >75)
-			ui.taskTreePanel->header()->resizeSection(i, currWidth * ratio);
+void MainWindow::changeEvent(QEvent *event) {
+	if (event->type() == QEvent::WindowStateChange) {
+		if (isMinimized()) {
+		hide();
+		}
 	}
-	QMainWindow::resizeEvent(event);
+	QMainWindow::changeEvent(event);
 }
 
 void MainWindow::openURL(const QUrl &url) {
