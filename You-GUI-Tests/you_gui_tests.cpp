@@ -71,7 +71,7 @@ public:
 		int column2 = QString::compare(item.text(2), QString("test"));
 		int column3 = QString::compare(
 			item.text(4),
-			QString("Overdue (01 November 1999 at 12:00AM)"));
+			QString("Overdue (01 November 1999)"));
 		int column4 = QString::compare(item.text(5), QString("Normal"));
 
 		Assert::IsTrue(w->ui.taskTreePanel->topLevelItemCount() == 1 &&
@@ -91,7 +91,7 @@ public:
 		int column2 = QString::compare(item.text(2), QString("abc"));
 		int column3 = QString::compare(
 			item.text(4),
-			QString("Overdue (01 November 1999 at 12:00AM)"));
+			QString("Overdue (01 November 1999)"));
 		int column4 = QString::compare(item.text(5), QString("Normal"));
 		int i = w->ui.taskTreePanel->topLevelItemCount();
 		w->clearTasks();
@@ -180,11 +180,6 @@ public:
 		w->commandEnterPressed();
 		Assert::IsTrue(w->ui.taskTreePanel->findItems(
 			QString("1"), Qt::MatchExactly, 1).size() == 0);
-	}
-
-	TEST_METHOD(toggleTrayIcon) {
-		w->clearTasks();
-		Assert::IsTrue(true);
 	}
 };
 }  // namespace UnitTests

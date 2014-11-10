@@ -23,7 +23,7 @@ const QString MainWindow::TASK_NOT_FOUND_MESSAGE =
 "Error: Requested task was not found.";
 
 const QString MainWindow::PARSE_ERROR_MESSAGE =
-"Error: Unable to parse input.";
+"Error: Unable to parse: ";
 
 const QString MainWindow::PARSER_EXCEPTION_MESSAGE =
 "Error: Unable to parse input.";

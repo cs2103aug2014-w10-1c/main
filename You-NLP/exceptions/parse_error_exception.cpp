@@ -14,5 +14,11 @@ ParseErrorException::ParseErrorException(
   token(token) {
 }
 
+std::wstring ParseErrorException::getToken() {
+	return token;
+}
+boost::spirit::info ParseErrorException::getMessage() {
+	return message;
+}
 }  // namespace NLP
 }  // namespace You

@@ -20,6 +20,10 @@ public:
 		boost::spirit::info message,
 		std::wstring token);
 
+	std::wstring getToken();
+
+	boost::spirit::info getMessage();
+
 private:
 	/// The Spirit parse error.
 	boost::spirit::info message;
