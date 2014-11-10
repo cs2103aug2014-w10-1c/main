@@ -11,7 +11,6 @@ const std::wstring COMMAND_DELETE = L"/delete";
 const std::wstring COMMAND_EDIT = L"/edit";
 const std::wstring COMMAND_SHOW = L"/show";
 const std::wstring COMMAND_UNDO = L"/undo";
-const std::wstring COMMAND_REDO = L"/redo";
 const std::wstring COMMAND_ATTACH = L"/attach";
 const std::array<std::wstring, 6> COMMANDS = { COMMAND_SHOW, COMMAND_ADD,
 COMMAND_DELETE, COMMAND_EDIT, COMMAND_UNDO, COMMAND_ATTACH };

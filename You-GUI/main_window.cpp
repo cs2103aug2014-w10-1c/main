@@ -341,14 +341,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
 				commandTextBox->moveCursor(QTextCursor::End);
 				return true;
 			}
-			if (keyEvent->matches(QKeySequence::Redo)) {
-				std::wstringstream wss;
-				wss << L"/redo";
-				commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
-				commandTextBox->setFocus();
-				commandTextBox->moveCursor(QTextCursor::End);
-				return true;
-			}
 			return false;
 		}
 		else {
