@@ -94,19 +94,26 @@ private:
 	/// automatically deleted.
 	void deleteTask(QTreeWidgetItem* task);
 
+	/// The item context menu on right click.
 	QScopedPointer<QMenu> itemContextMenu;
 
+	/// The add action in the context menu.
 	QAction addAction;
 
+	/// The delete action in the context menu.
 	QAction deleteAction;
 
+	/// The edit action in the context menu.
 	QAction editAction;
 
+	/// A signal mapper to allow for passing of parameters for delete action.
 	QSignalMapper deleteSignalMapper;
 
+	/// A signal mapper to allow for passing of parameters for edit action.
 	QSignalMapper editSignalMapper;
 
 private slots:
+	/// Listens for the call for a context menu
 	void contextMenu(const QPoint &pos);
 
 	/// Updates row numbers
@@ -165,25 +172,34 @@ private:
 
 	/// Column reference to Attachment column
 	static const int COLUMN_ATTACHMENT;
+	/// @}
 
 	/// Column reference to Start Date column
 	static const int COLUMN_STARTDATE;
 
 public:
+	/// Text of Index column
 	QString getIndexAsText(QTreeWidgetItem item);
 
+	/// Text of HiddenID column
 	QString getHiddenIDAsText(QTreeWidgetItem item);
 
+	/// Text of Description column
 	QString getDescriptionAsText(QTreeWidgetItem item);
 
+	/// Text of Deadline column
 	QString getDeadlineAsText(QTreeWidgetItem item);
 
+	/// Text of Priority column
 	QString getPriorityAsText(QTreeWidgetItem item);
 
+	/// Text of Dependencies column
 	QString getDependenciesAsText(QTreeWidgetItem item);
 
+	/// Text of Completion column
 	QString getCompletionAsText(QTreeWidgetItem item);
 
+	/// Text of Attachments column
 	QString getAttachmentAsText(QTreeWidgetItem item);
 
 	QString getStartDateAsText(QTreeWidgetItem item);

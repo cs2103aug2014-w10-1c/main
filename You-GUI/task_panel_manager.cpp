@@ -63,18 +63,13 @@ void MainWindow::TaskPanelManager::setup() {
 		this, SLOT(contextMenu(const QPoint &)));
 	taskTreePanel->setColumnCount(columnHeaders.size());
 	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
-	// TODO(angathorion): remove magic constants.
+
 	QHeaderView* header = taskTreePanel->header();
 	header->setStretchLastSection(true);
-
-	for (int i = 0; i < columnHeaders.size(); ++i) {
-		if (i == COLUMN_DESCRIPTION) {
-			continue;
-		}
-		header->resizeSection(i, header->defaultSectionSize());
-	}
-
-	taskTreePanel->header()->setMinimumSectionSize(75);
+	header->resizeSection(COLUMN_INDEX, 50);
+	header->resizeSection(COLUMN_DESCRIPTION, 210);
+	header->resizeSection(COLUMN_DEADLINE, 160);
+	header->resizeSection(COLUMN_PRIORITY, 40);
 	taskTreePanel->setColumnHidden(COLUMN_HIDDEN_ID, true);
 	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
 	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
