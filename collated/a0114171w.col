@@ -1,0 +1,1814 @@
+//@author: a0114171w
+
+
+
+	/**
+	 * origin: .\You-DataStore\datastore.cpp
+	 */
+
+#include "stdafx.h"
+#include "internal/internal_datastore.h"
+#include "datastore.h"
+
+namespace You {
+namespace DataStore {
+
+const std::wstring DataStore::TASKS_NODE = std::wstring(L"tasks");
+const std::wstring DataStore::RESOURCES_NODE = std::wstring(L"resources");
+
+DataStore& DataStore::get() {
+	static DataStore ds;
+	return ds;
+}
+
+Transaction DataStore::begin() {
+	return Internal::DataStore::get().begin();
+}
+
+void DataStore::post(TaskId taskId, const KeyValuePairs& task) {
+	std::wstring stringId = boost::lexical_cast<std::wstring>(taskId);
+	Internal::DataStore::get().post(TASKS_NODE, stringId, task);
+}
+
+void DataStore::put(TaskId taskId, const KeyValuePairs& task) {
+	std::wstring stringId = boost::lexical_cast<std::wstring>(taskId);
+	Internal::DataStore::get().put(TASKS_NODE, stringId, task);
+}
+
+void DataStore::erase(TaskId taskId) {
+	std::wstring stringId = boost::lexical_cast<std::wstring>(taskId);
+	Internal::DataStore::get().erase(TASKS_NODE, stringId);
+}
+
+void DataStore::post(std::wstring resourceId, const KeyValuePairs& kvp) {
+	Internal::DataStore::get().post(RESOURCES_NODE, resourceId, kvp);
+}
+
+void DataStore::put(std::wstring resourceId, const KeyValuePairs& kvp) {
+	Internal::DataStore::get().put(RESOURCES_NODE, resourceId, kvp);
+}
+
+void DataStore::erase(std::wstring resourceId) {
+	Internal::DataStore::get().erase(RESOURCES_NODE, resourceId);
+}
+
+std::vector<KeyValuePairs> DataStore::getAllTasks() {
+	return Internal::DataStore::get().getAll(TASKS_NODE);
+}
+
+std::vector<KeyValuePairs> DataStore::getAllResources() {
+	return Internal::DataStore::get().getAll(RESOURCES_NODE);
+}
+
+void DataStore::wipeData() {
+	Internal::DataStore::get().wipeData();
+}
+
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\datastore.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\datastore.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_DATASTORE_H_
+#define YOU_DATASTORE_DATASTORE_H_
+
+#include <vector>
+#include "task_typedefs.h"
+#include "transaction.h"
+
+namespace You {
+namespace DataStore {
+
+/// The public methods of the data store.
+///
+/// This is actually a facade for the \ref Internal::DataStore class.
+class DataStore {
+public:
+	/// Get the instance of DataStore
+	static DataStore& get();
+
+	/// Start a new transaction. \see Transaction
+	///
+	/// \return A reference to a new \ref Transaction
+	Transaction begin();
+
+	/// \name Methods modifying tasks
+	/// @{
+
+	/// Push a post operation to operation queue
+	///
+	/// \param[in] taskId The task's ID
+	/// \param[in] task The \ref KeyValuePairs of task fields
+	void post(TaskId taskId, const KeyValuePairs& task);
+
+	/// Push a put operation to operation queue
+	///
+	/// \param[in] taskId The task's ID
+	/// \param[in] task The \ref KeyValuePairs of task fields
+	void put(TaskId taskId, const KeyValuePairs& task);
+
+	/// Push an erase operation to operation queue
+	///
+	/// \param[in] taskId The task's ID
+	void erase(TaskId taskId);
+
+	/// @}
+
+	/// \name Methods modifying application resources
+	/// @{
+
+	/// Push a post operation to operation queue
+	///
+	/// \param[in] resourceId The resource's ID
+	/// \param[in] kvp The \ref KeyValuePairs of resource
+	void post(std::wstring resourceId, const KeyValuePairs& kvp);
+
+	/// Push a put operation to operation queue
+	///
+	/// \param[in] resourceId The resource's ID
+	/// \param[in] kvp The \ref KeyValuePairs of resource
+	void put(std::wstring resourceId, const KeyValuePairs& kvp);
+
+	/// Push an erase operation to operation queue
+	///
+	/// \param[in] resourceId The resource's ID
+	void erase(std::wstring resourceId);
+
+	/// @}
+
+	/// Get all tasks
+	/// \return a vector of KeyValuePairs
+	std::vector<KeyValuePairs> getAllTasks();
+
+	/// Get all resources
+	/// \return a vector of KeyValuePairs
+	std::vector<KeyValuePairs> getAllResources();
+
+	/// Wipe the datastore
+	void wipeData();
+
+private:
+	/// Default constructor. Use \ref get to get the singleton instance.
+	DataStore() = default;
+
+private:
+	/// Tag name of the tasks branch in the XML
+	static const std::wstring TASKS_NODE;
+	/// Tag name of the resources branch in the XML
+	static const std::wstring RESOURCES_NODE;
+};
+
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_DATASTORE_H_
+
+	// End of segment: .\You-DataStore\datastore.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\exception.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_EXCEPTION_H_
+#define YOU_DATASTORE_EXCEPTION_H_
+
+#include "exceptions/exception.h"
+#include "exceptions/datastore_corrupt_exception.h"
+
+#endif  // YOU_DATASTORE_EXCEPTION_H_
+
+	// End of segment: .\You-DataStore\exception.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\exceptions\datastore_corrupt_exception.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_EXCEPTIONS_DATASTORE_CORRUPT_EXCEPTION_H_
+#define YOU_DATASTORE_EXCEPTIONS_DATASTORE_CORRUPT_EXCEPTION_H_
+
+#include "exception.h"
+
+namespace You {
+namespace DataStore {
+
+/// The exception thrown if there is an error when parsing data.xml
+class DataStoreCorruptException : public DataStoreException {
+};
+
+/// The exception thrown if data.xml is not well-formed XML
+class NotWellFormedXmlException : public DataStoreCorruptException {
+};
+
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_EXCEPTIONS_DATASTORE_CORRUPT_EXCEPTION_H_
+
+	// End of segment: .\You-DataStore\exceptions\datastore_corrupt_exception.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\exceptions\exception.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_EXCEPTIONS_EXCEPTION_H_
+#define YOU_DATASTORE_EXCEPTIONS_EXCEPTION_H_
+
+#include "../../You-Utils/exceptions/exception.h"
+
+namespace You {
+namespace DataStore {
+
+/// Base exception class for Data Store exceptions
+class DataStoreException : public You::Utils::Exception {
+};
+
+/// The exception thrown if there is an I/O error when parsing data.xml
+class IOException : public DataStoreException {
+};
+
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_EXCEPTIONS_EXCEPTION_H_
+
+	// End of segment: .\You-DataStore\exceptions\exception.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\internal_datastore.cpp
+	 */
+
+#include "stdafx.h"
+#include <boost/format.hpp>
+#include "../../You-Utils/log.h"
+#include "../exception.h"
+#include "operation.h"
+#include "operations/post_operation.h"
+#include "operations/put_operation.h"
+#include "operations/erase_operation.h"
+#include "operations/branch_operation.h"
+#include "internal_transaction.h"
+#include "internal_datastore.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+using Log = Utils::Log;
+
+const char* DataStore::FILE_PATH = "data.xml";
+const std::wstring DataStore::ROOT_NODE_NAME = std::wstring(L"You");
+
+const std::wstring DataStore::LOG_CATEGORY = L"[DS][InternalDataStore]";
+
+DataStore& DataStore::get() {
+	static DataStore store;
+	return store;
+}
+
+You::DataStore::Transaction DataStore::begin() {
+	Log::info << LOG_CATEGORY << L": Begin transaction.";
+	You::DataStore::Transaction result;
+	transactionStack.push(std::weak_ptr<Internal::Transaction>(result));
+
+	return result;
+}
+
+void DataStore::onTransactionCommit(Transaction& transaction) {
+	// Only transaction on top of the stack may be committed
+	assert(*transactionStack.top().lock() == transaction);
+	auto self = transactionStack.top();
+
+	if (transactionStack.size() == 1) {
+		// it is the only active transaction, execute the operations and save
+		Log::info << LOG_CATEGORY << L": Committing transaction to data.xml.";
+
+		// Create a copy of the current data, so that if transaction fails,
+		// the original document is not corrupted
+		pugi::xml_document temp;
+		temp.reset(document);
+		pugi::xml_node tempRoot = BranchOperation::get(temp, ROOT_NODE_NAME.c_str());
+		executeTransaction(transaction, tempRoot);
+
+		// Commit successful, overwrite the document and root
+		document.reset(temp);
+		root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
+		bool isSaved = saveData();
+		if (!isSaved) {
+			Log::error << LOG_CATEGORY << L": An I/O error occured, data.xml "
+				L"is not saved.";
+			throw IOException();
+		}
+		Log::info << LOG_CATEGORY << L": data.xml is saved successfully.";
+		transactionStack.pop();
+	} else {
+		// There is a transaction before it that is yet to be committed.
+		// Merge with that transaction
+		Log::info << LOG_CATEGORY << L": Merging transaction.";
+		transactionStack.pop();
+		auto below = transactionStack.top().lock();
+		below->mergeOperationsQueue(transaction.operationsQueue);
+		below->mergeOperationsQueue(transaction.mergedOperationsQueue);
+	}
+}
+
+void DataStore::onTransactionRollback(Transaction& transaction) {
+	// Can only rollback the latest transaction
+	assert(*(transactionStack.top().lock()) == transaction);
+	Log::info << LOG_CATEGORY << L": Popping transaction from the stack.";
+	transactionStack.pop();
+}
+
+void DataStore::post(std::wstring branch, std::wstring id,
+	const KeyValuePairs& kvp) {
+	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: POST to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
+
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PostOperation>(branch, id, kvp);
+
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
+}
+
+void DataStore::put(std::wstring branch, std::wstring id,
+	const KeyValuePairs& kvp) {
+	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: PUT to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
+
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::PutOperation>(branch, id, kvp);
+
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
+}
+
+void DataStore::erase(std::wstring branch, std::wstring id) {
+	assert(!transactionStack.empty());
+	Log::info << (boost::wformat(L"%1%: ERASE to %2%, id = %3%.") %
+		LOG_CATEGORY % branch % id).str();
+
+	std::unique_ptr<Internal::Operation> operation =
+		std::make_unique<Internal::EraseOperation>(branch, id);
+
+	auto transaction = transactionStack.top().lock();
+	assert(transaction);  // Checks if the pointer is valid
+	transaction->push(std::move(operation));
+}
+
+std::vector<KeyValuePairs> DataStore::getAll(std::wstring nodeName) {
+	Log::info << LOG_CATEGORY << L": Getting all " << nodeName;
+	loadData();
+	pugi::xml_node dataNode = BranchOperation::get(root, nodeName);
+	std::vector<KeyValuePairs> allData;
+	for (auto i = dataNode.begin(); i != dataNode.end(); ++i) {
+		allData.push_back(SerializationOperation::deserialize(*i));
+	}
+	return allData;
+}
+
+void DataStore::wipeData() {
+	Log::warning << LOG_CATEGORY << L": All DataStore state, including data.xml"
+		L"and the XML document will be wiped.";
+	document.reset();
+	std::remove(FILE_PATH);
+}
+
+bool DataStore::saveData() {
+	bool status = document.save_file(FILE_PATH);
+	return status;
+}
+
+void DataStore::loadData() {
+	bool isInitialized = !document.first_child().empty();
+	if (!isInitialized) {
+		pugi::xml_parse_result loadStatus = document.load_file(FILE_PATH);
+		bool loadSuccessful = loadStatus;
+		bool isFirstLoad =
+			loadStatus.status == pugi::xml_parse_status::status_file_not_found;
+		if (!loadSuccessful && !isFirstLoad) {
+			onXmlParseResult(loadStatus);
+		} else {
+			root = BranchOperation::get(document, ROOT_NODE_NAME.c_str());
+		}
+	}
+}
+
+void DataStore::executeTransaction(Transaction& transaction,
+	pugi::xml_node& node) {
+	Log::debug << LOG_CATEGORY << L": Executing operationsQueue.";
+	for (auto operation = transaction.operationsQueue.begin();
+		operation != transaction.operationsQueue.end();
+		++operation) {
+		bool status = operation->run(node);
+		if (!status) {
+			transaction.rollback();
+			assert(false);
+		}
+	}
+
+	Log::debug << LOG_CATEGORY << L": Executing mergedOperationsQueue.";
+	for (auto mergedOperation = transaction.mergedOperationsQueue.begin();
+		mergedOperation != transaction.mergedOperationsQueue.end();
+		++mergedOperation) {
+		bool status = mergedOperation->run(node);
+		if (!status) {
+			transaction.rollback();
+			assert(false);
+		}
+	}
+}
+
+void DataStore::onXmlParseResult(const pugi::xml_parse_result& result) {
+	bool isIoError =
+		result.status == pugi::xml_parse_status::status_io_error ||
+		result.status == pugi::xml_parse_status::status_out_of_memory ||
+		result.status == pugi::xml_parse_status::status_internal_error;
+	if (isIoError) {
+		Log::error << LOG_CATEGORY << L": An I/O error occured, data.xml "
+			L"is not loaded.";
+		throw IOException();
+	} else {
+		Log::error << LOG_CATEGORY << L": " << result.description();
+		throw NotWellFormedXmlException();
+	}
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\internal_datastore.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\internal_datastore.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
+#define YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
+
+#include <stack>
+#include <memory>
+
+#include "pugixml.h"
+
+#include "internal_transaction.h"
+#include "../transaction.h"
+#include "../task_typedefs.h"
+
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+class DataStoreTest;
+class DataStoreApiTest;
+}
+
+/// The internal components of data store
+namespace Internal {
+
+/// The most primitive class that does the changes to the actual xml file
+class DataStore {
+	/// \name Test classes
+	/// @{
+	friend class UnitTests::DataStoreTest;
+	friend class UnitTests::DataStoreApiTest;
+	/// @}
+public:
+	/// Gets the singleton instance of the internal data store.
+	///
+	/// \return The internal data store instance.
+	static DataStore& get();
+
+	/// \name Transaction management.
+	/// @{
+
+	/// Starts a new transaction.
+	///
+	/// \return A reference to a new \ref DataStrore::Transaction
+	You::DataStore::Transaction begin();
+
+	/// Notifies the data store that the given transaction is being committed.
+	///
+	/// \param[out] transaction The transaction being committed.
+	/// \exception IOException if I/O error occurs
+	void onTransactionCommit(Transaction& transaction);
+
+	/// Notifies the data store that the given transaction is being rolled back.
+	///
+	/// \param[out] transaction The transaction being rolled back.
+	void onTransactionRollback(Transaction& transaction);
+
+	/// @}
+
+	/// Pushes \ref PostOperation into the active \ref Transaction
+	///
+	/// \param[in] branch The name of the XML branch to be modified
+	/// \param[in] id The ID of the data to be added
+	/// \param[in] kvp The KeyValuePairs of the data to be added
+	void post(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
+
+	/// Pushes \ref PutOperation into the active \ref Transaction
+	void put(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
+
+	/// Pushes \ref EraseOperation into the active \ref Transaction
+	void erase(std::wstring branch, std::wstring id);
+
+	/// General all getter of a data from the direct child of
+	/// the root node of the XML document
+	///
+	/// \param[in] nodeName the name of the child
+	/// \return a vector of unordered map of data in the xml node
+	/// with the specified nodeName
+	std::vector<KeyValuePairs> getAll(std::wstring nodeName);
+
+	/// Wipe the datastore
+	void wipeData();
+
+private:
+	DataStore() = default;
+
+	/// Saves the xml object to a file
+	///
+	/// \return true if operation successful and false otherwise
+	bool saveData();
+
+	/// Loads the xml file into the document variable
+	/// May throw \ref DataStoreCorruptException when parsing fails
+	///
+	/// \exception NotWellFormedException if data.xml is not well formed
+	/// \exception IOException if I/O error occurs
+	void loadData();
+
+	/// Executes the operation queue into the xml_document
+	///
+	/// \param[in] transaction The transaction to be executed
+	/// \param[out] xml The xml document to be modified by the operations
+	void executeTransaction(Transaction& transaction, pugi::xml_node& node);
+
+	/// Throws the exception for the xml_parse_status given
+	///
+	/// \param[in] result The xml_parse_result
+	void onXmlParseResult(const pugi::xml_parse_result& result);
+
+private:
+	static const char* FILE_PATH;
+	static const std::wstring ROOT_NODE_NAME;
+
+	/// The xml_document representation of data.xml
+	pugi::xml_document document;
+
+	/// The root node of data.xml
+	pugi::xml_node root;
+
+	/// The current stack of active transactions.
+	std::stack<std::weak_ptr<Transaction>> transactionStack;
+
+	/// The log category for \ref Internal::DataStore
+	static const std::wstring LOG_CATEGORY;
+};
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_INTERNAL_INTERNAL_DATASTORE_H_
+
+	// End of segment: .\You-DataStore\internal\internal_datastore.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\internal_transaction.cpp
+	 */
+
+#include "stdafx.h"
+#include "internal_datastore.h"
+#include "internal_transaction.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+void Transaction::commit() {
+	DataStore::get().onTransactionCommit(*this);
+}
+
+void Transaction::rollback() {
+	DataStore::get().onTransactionRollback(*this);
+}
+
+void Transaction::push(std::unique_ptr<Internal::Operation> op) {
+	operationsQueue.push_back(op.release());
+}
+
+bool Transaction::operator==(Transaction& rhs) {
+	return &*this == &rhs;
+}
+
+void Transaction::mergeOperationsQueue(boost::ptr_deque<Operation>& queue) {
+	mergedOperationsQueue.transfer(
+		mergedOperationsQueue.end(),
+		queue.begin(),
+		queue.end(),
+		queue);
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\internal_transaction.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\internal_transaction.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
+#define YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
+
+#include <memory>
+#include <boost/ptr_container/ptr_deque.hpp>
+
+#include "operation.h"
+
+namespace You {
+namespace DataStore {
+namespace UnitTests { class DataStoreTest; class DataStoreApiTest; }
+namespace Internal {
+
+/// The class that stores a group of \ref Operation s that need to collectively
+/// succeed or fail
+class Transaction {
+	friend class DataStore;
+	friend class UnitTests::DataStoreTest;
+	friend class UnitTests::DataStoreApiTest;
+
+public:
+	/// Default constructor. This is meant to be called by \ref DataStore.
+	Transaction() = default;
+
+	/// Commits the set of operations made.
+	void commit();
+
+	/// Rolls back all the operations made.
+	void rollback();
+
+	/// Pushes a transaction onto the stack. This is meant to be called by
+	/// \ref DataStore.
+	///
+	/// \param[out] operation The operation to push, wrapped in a unique_ptr.
+	///						  The pointer will be invalidated at the end of
+	///						  the function call.
+	void push(std::unique_ptr<Operation> operation);
+
+	/// Merges the operationsQueue of the next transaction that is committed
+	/// earlier.
+	///
+	/// \param[out] queue The operations queue
+	///					  The queue will be empty at the end of the function call.
+	void mergeOperationsQueue(boost::ptr_deque<Operation>& queue);
+
+	/// Checks whether this and rhs refer the same \ref Internal::Transaction
+	///
+	/// \param[in] rhs The other Transaction to compare with
+	bool operator==(Transaction& rhs);
+
+private:
+	/// The collection of operations that need to be executed when the
+	/// transaction is committed.
+	boost::ptr_deque<Operation> operationsQueue;
+
+	/// The collection of operations from the subsequent commits that are
+	/// merged before this transaction.
+	boost::ptr_deque<Operation> mergedOperationsQueue;
+};
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_INTERNAL_INTERNAL_TRANSACTION_H_
+
+	// End of segment: .\You-DataStore\internal\internal_transaction.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATION_H_
+
+#include "../task_typedefs.h"
+#include "pugixml.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// A pure virtual class of operations to be put into transaction stack
+class Operation {
+public:
+	/// Executes the operation
+	///
+	/// \param[out] node The XML node to be modified
+	/// \return True if the operation succeeded.
+	virtual bool run(pugi::xml_node& node) = 0;
+
+	virtual ~Operation() = default;
+
+protected:
+	/// The "id" attribute of the XML node to modify
+	std::wstring nodeId;
+
+	/// The name of the XML branch to modify
+	std::wstring branchName;
+};
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_INTERNAL_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\branch_operation.cpp
+	 */
+
+#include "stdafx.h"
+#include "branch_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+pugi::xml_node BranchOperation::get(pugi::xml_node& node,
+	std::wstring nodeName) {
+	pugi::xml_node newNode = node.child(nodeName.c_str());
+	if (newNode.empty()) {
+		newNode = node.append_child(nodeName.c_str());
+	}
+	return newNode;
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\operations\branch_operation.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\branch_operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATIONS_BRANCH_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATIONS_BRANCH_OPERATION_H_
+
+#include "../operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// BranchOperation gets the XML node in the document with the name specified
+/// or create one if none exists
+class BranchOperation : public Operation {
+public:
+	/// Get the handler of the XML node with the specified name
+	/// in the specified XML document
+	/// Creates the XML node if none exists
+	///
+	/// \param[out] node the XML node to get the handler from
+	/// \param[in] nodeName the name of the node to get the handler of
+	/// \return the pugi::xml_node handler
+	static pugi::xml_node get(pugi::xml_node& node, std::wstring nodeName);
+};
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+#endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_BRANCH_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operations\branch_operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\erase_operation.cpp
+	 */
+
+#include "stdafx.h"
+#include "branch_operation.h"
+#include "erase_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+EraseOperation::EraseOperation(std::wstring branch, std::wstring id) {
+	branchName = branch;
+	nodeId = id;
+}
+
+bool EraseOperation::run(pugi::xml_node& node) {
+	pugi::xml_node xmlBranch = BranchOperation::get(node, branchName);
+	pugi::xml_node toErase =
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+	return xmlBranch.remove_child(toErase);
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\operations\erase_operation.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\erase_operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATIONS_ERASE_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATIONS_ERASE_OPERATION_H_
+
+#include "../operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// An \ref Operation class for erase operation
+/// Erases a node from the XML when \ref run is called
+class EraseOperation : public Operation {
+public:
+	/// Constructor
+	///
+	/// \param[in] branch the name of the branch to be modified
+	/// \param[in] id the id attribute of the node to be erased
+	EraseOperation(std::wstring branch, std::wstring id);
+	bool run(pugi::xml_node& node) override;
+	virtual ~EraseOperation() = default;
+};
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+#endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_ERASE_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operations\erase_operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\post_operation.cpp
+	 */
+
+#include "stdafx.h"
+#include "../../task_typedefs.h"
+#include "branch_operation.h"
+#include "post_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+PostOperation::PostOperation(std::wstring branch, std::wstring id,
+	const KeyValuePairs& kvp) {
+	branchName = branch;
+	nodeId = id;
+	task = kvp;
+}
+
+bool PostOperation::run(pugi::xml_node& node) {
+	pugi::xml_node xmlBranch = BranchOperation::get(node, branchName);
+	pugi::xml_node toAdd =
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+
+	// Checks if the id of the node to be added already exists
+	if (toAdd) {
+		return false;
+	}
+
+	// The name of the node is just the non-plural form of branchName
+	std::wstring nodeName(branchName);
+	nodeName.pop_back();
+
+	pugi::xml_node newNode = xmlBranch.append_child(nodeName.c_str());
+	pugi::xml_attribute id = newNode.append_attribute(L"id");
+	id.set_value(nodeId.c_str());
+	serialize(task, newNode);
+	return true;
+}
+
+}  // namespace Internal
+}   // namespace DataStore
+}   // namespace You
+
+	// End of segment: .\You-DataStore\internal\operations\post_operation.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\post_operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATIONS_POST_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATIONS_POST_OPERATION_H_
+
+#include "serialization_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// An \ref Operation class for post operation.
+/// Adds a node to the XML when \ref run is called
+class PostOperation : public SerializationOperation {
+public:
+	/// Constructor
+	///
+	/// \param[in] branch the name of the branch to be modified
+	/// \param[in] id the id attribute of the node to be added
+	/// \param[in] kvp the KeyValuePairs of the node to be added
+	PostOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
+	bool run(pugi::xml_node& node) override;
+	virtual ~PostOperation() = default;
+
+private:
+	/// The new task contents.
+	KeyValuePairs task;
+};
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_POST_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operations\post_operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\put_operation.cpp
+	 */
+
+#include "stdafx.h"
+#include "../../task_typedefs.h"
+#include "post_operation.h"
+#include "put_operation.h"
+#include "branch_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+PutOperation::PutOperation(std::wstring branch, std::wstring id,
+	const KeyValuePairs& kvp) {
+	branchName = branch;
+	nodeId = id;
+	task = kvp;
+}
+
+bool PutOperation::run(pugi::xml_node& node) {
+	pugi::xml_node xmlBranch = BranchOperation::get(node, branchName);
+	pugi::xml_node toEdit =
+		xmlBranch.find_child_by_attribute(L"id", nodeId.c_str());
+
+	// Checks if the node to be edited exists
+	if (!toEdit) {
+		return false;
+	}
+
+	xmlBranch.remove_child(toEdit);
+
+	PostOperation post(branchName, nodeId, task);
+	return post.run(node);
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\operations\put_operation.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\put_operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATIONS_PUT_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATIONS_PUT_OPERATION_H_
+
+#include "serialization_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// An \ref Operation class for put operation.
+/// Edits the XML when \ref run is called
+class PutOperation : public SerializationOperation {
+public:
+	/// Constructor
+	///
+	/// \param[in] branch the name of the branch to be modified
+	/// \param[in] id the id attribute of the node to be edited
+	/// \param[in] kvp the KeyValuePairs to be written over the old one
+	PutOperation(std::wstring branch, std::wstring id, const KeyValuePairs& kvp);
+	bool run(pugi::xml_node& node) override;
+	virtual ~PutOperation() = default;
+
+private:
+	/// The new task contents.
+	KeyValuePairs task;
+};
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+#endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_PUT_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operations\put_operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\serialization_operation.cpp
+	 */
+
+#include "stdafx.h"
+#include "serialization_operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+void SerializationOperation::serialize(const KeyValuePairs& kvp,
+	pugi::xml_node& node) {
+	for (auto iter = kvp.begin(); iter != kvp.end(); ++iter) {
+		pugi::xml_node keyNode =
+			node.append_child(iter->first.c_str());
+		pugi::xml_node keyValue =
+			keyNode.append_child(pugi::xml_node_type::node_pcdata);
+		keyValue.set_value(iter->second.c_str());
+	}
+}
+
+KeyValuePairs SerializationOperation::deserialize(const pugi::xml_node& node) {
+	KeyValuePairs kvp;
+	for (auto iter = node.begin(); iter != node.end(); ++iter) {
+		kvp.insert(KeyValuePair(Key(iter->name()),
+			Value(iter->child_value())));
+	}
+	return kvp;
+}
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore\internal\operations\serialization_operation.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\internal\operations\serialization_operation.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_INTERNAL_OPERATIONS_SERIALIZATION_OPERATION_H_
+#define YOU_DATASTORE_INTERNAL_OPERATIONS_SERIALIZATION_OPERATION_H_
+
+#include "../operation.h"
+
+namespace You {
+namespace DataStore {
+namespace Internal {
+
+/// Intermediate parent class of \ref Operation requiring serialization
+class SerializationOperation : public Operation {
+public:
+	/// Serialize task to an xml node
+	///
+	/// \param[in] kvp The KeyValuePairs to be serialized into the node
+	/// \param[out] node The xml_node to be modifed
+	static void serialize(const KeyValuePairs& kvp, pugi::xml_node& node);
+
+	/// Deserialize task from an xml node
+	///
+	/// \param[in] node The xml_node to be deserialized
+	/// \return KeyValuePairs deserialized from node
+	static KeyValuePairs deserialize(const pugi::xml_node& node);
+};
+
+}  // namespace Internal
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_INTERNAL_OPERATIONS_SERIALIZATION_OPERATION_H_
+
+	// End of segment: .\You-DataStore\internal\operations\serialization_operation.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore\task_typedefs.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_TASK_TYPEDEFS_H_
+#define YOU_DATASTORE_TASK_TYPEDEFS_H_
+
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+
+namespace You {
+namespace DataStore {
+
+/// typedef for Task ID
+typedef int64_t TaskId;
+
+/// \name Typedefs for serializing to xml
+/// @{
+typedef std::wstring Key;
+typedef std::wstring Value;
+typedef std::pair<Key, Value> KeyValuePair;
+typedef std::unordered_map<Key, Value> KeyValuePairs;
+/// @}
+
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_TASK_TYPEDEFS_H_
+
+	// End of segment: .\You-DataStore\task_typedefs.h
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore-Tests\datastore_api_test.cpp
+	 */
+
+#include "stdafx.h"
+#include <CppUnitTest.h>
+
+#include <cstdio>
+#include "datastore.h"
+#include "transaction.h"
+#include "internal/internal_datastore.h"
+#include "mocks.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+
+/// Unit test for DataStore API that is exposed to Query Engine, namely
+/// \ref DataStore and \ref Transaction
+TEST_CLASS(DataStoreApiTest) {
+public:
+	/// Clears xml document tree and save empty xml file
+	TEST_METHOD_INITIALIZE(clearDataStoreState) {
+		Internal::DataStore::get().document.reset();
+		std::remove("data.xml");
+	}
+
+	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
+		Internal::DataStore::get().document.reset();
+		std::remove("data.xml");
+	}
+
+	/// Checks if rollback cleans up the transaction stack
+	TEST_METHOD(rollbackDeleteTransactionFromStack) {
+		Transaction sut(DataStore::get().begin());
+		Assert::AreEqual(1U, Internal::DataStore::get().transactionStack.size());
+
+		sut.rollback();
+		Assert::AreEqual(0U, Internal::DataStore::get().transactionStack.size());
+	}
+
+	/// Checks if post, put, erase for both tasks and resources pushes
+	/// \ref Internal::Operation objects to the \ref Internal::Transaction 's
+	/// operationsQueue
+	TEST_METHOD(dataStoreOperationPushedToOperationsQueue) {
+		Transaction sut(DataStore::get().begin());
+
+		DataStore::get().post(0, task1);
+		Assert::AreEqual(1U, sut->operationsQueue.size());
+		DataStore::get().put(0, task2);
+		Assert::AreEqual(2U, sut->operationsQueue.size());
+		DataStore::get().erase(0);
+		Assert::AreEqual(3U, sut->operationsQueue.size());
+		DataStore::get().post(LAST_ID, res2);
+		Assert::AreEqual(4U, sut->operationsQueue.size());
+		DataStore::get().put(LAST_ID, res1);
+		Assert::AreEqual(5U, sut->operationsQueue.size());
+		DataStore::get().erase(LAST_ID);
+		Assert::AreEqual(6U, sut->operationsQueue.size());
+	}
+
+	/// Checks if committing changes the data
+	TEST_METHOD(commitTransactionModifyData) {
+		Transaction sut(DataStore::get().begin());
+		// Operations to task
+		DataStore::get().post(0, task1);
+		DataStore::get().post(1, task2);
+		DataStore::get().erase(0);
+		// Operations to resource
+		DataStore::get().post(LAST_ID, res1);
+		DataStore::get().post(COLOUR, res2);
+		DataStore::get().erase(LAST_ID);
+		auto taskSizeBefore = DataStore::get().getAllTasks().size();
+		auto resourceSizeBefore = DataStore::get().getAllResources().size();
+		sut.commit();
+		auto taskSizeAfter = DataStore::get().getAllTasks().size();
+		auto resourceSizeAfter = DataStore::get().getAllResources().size();
+		Assert::AreEqual(taskSizeBefore + 1, taskSizeAfter);
+		Assert::AreEqual(resourceSizeBefore + 1, resourceSizeAfter);
+	}
+
+	/// Checks if nested transaction executes operations in the correct order
+	TEST_METHOD(nestedTransactionExecuteOperationsInCorrectOrder) {
+		Transaction sut(DataStore::get().begin());
+		DataStore::get().post(0, task1);
+
+		Transaction sut2(DataStore::get().begin());
+		DataStore::get().post(1, task2);
+
+		// Data must not be modified since the first transaction has not been
+		// committed
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut2.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore, sizeAfter);
+		}
+
+		Transaction sut3(DataStore::get().begin());
+		DataStore::get().erase(0);
+
+		// Data must not be modified since the first transaction has not been
+		// committed
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut3.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			// Hence, this one should be 1U
+			Assert::AreEqual(sizeAfter, sizeBefore);
+		}
+
+		// Execute all the operations, with the follow order:
+		// add task 0, add task 1, erase task 0
+		// Therefore the end result should be sizeBefore + 1
+		; {
+			auto sizeBefore = DataStore::get().getAllTasks().size();
+			sut.commit();
+			auto sizeAfter = DataStore::get().getAllTasks().size();
+			Assert::AreEqual(sizeBefore + 1, sizeAfter);
+		}
+	}
+};
+
+}  // namespace UnitTests
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore-Tests\datastore_api_test.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore-Tests\internal\internal_datastore_test.cpp
+	 */
+
+#include "stdafx.h"
+#include <CppUnitTest.h>
+
+#include <cstdio>
+#include <fstream>  // NOLINT (readability/streams)
+#include "../mocks.h"
+#include "internal/operations/erase_operation.h"
+#include "internal/operations/post_operation.h"
+#include "internal/operations/put_operation.h"
+#include "internal/internal_datastore.h"
+#include "exceptions/datastore_corrupt_exception.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+
+using DataStore = You::DataStore::Internal::DataStore;
+
+/// Unit Test Class for \ref Internal::DataStore class
+TEST_CLASS(DataStoreTest) {
+public:
+	void createDummyDataXml() {
+		std::ofstream ofs("data.xml");
+		ofs << "Lel I'm not even an xml";
+	}
+
+	TEST_METHOD_INITIALIZE(clearDataStoreState) {
+		DataStore::get().document.reset();
+		std::remove("data.xml");
+		DataStore::get().loadData();
+	}
+
+	TEST_METHOD_CLEANUP(cleanUpDataStoreState) {
+		DataStore::get().document.reset();
+		std::remove("data.xml");
+	}
+
+	/// Checks if DataStore::get() method adds a new transaction into
+	/// the active transaction stack
+	TEST_METHOD(beginTransactionAddsToTransactionStack) {
+		DataStore& sut = DataStore::get();
+		Assert::IsTrue(sut.transactionStack.empty());
+		Transaction t(sut.begin());
+		Assert::AreEqual(1U, sut.transactionStack.size());
+	}
+
+	/// Checks if post, put, and erase methods add \ref Internal::Operation
+	/// objects into the active transaction's operationsQueue
+	TEST_METHOD(pushedOperationsAddedToTransactionOperationsQueue) {
+		DataStore& sut = DataStore::get();
+		Transaction t(sut.begin());
+		sut.post(TASKS_NODE, L"10", task1);
+		Assert::AreEqual(1U, t->operationsQueue.size());
+		sut.put(TASKS_NODE, L"10", task2);
+		Assert::AreEqual(2U, t->operationsQueue.size());
+		sut.erase(TASKS_NODE, L"10");
+		Assert::AreEqual(3U, t->operationsQueue.size());
+	}
+
+	/// Checks if the document is only changed when a transaction is committed
+	TEST_METHOD(commitChangesXmlDocumentTree) {
+		DataStore& sut = DataStore::get();
+		Transaction t(sut.begin());
+		sut.post(TASKS_NODE, L"10", task1);
+
+		// Note: To check if document is not changed after commit requires
+		// 2 first_child()s because the first one retrieves the tasks node
+		// while the second one is to check if the children of the tasks node
+		// is empty
+
+		// document must not change without commit
+		Assert::IsTrue(sut.root.first_child().first_child().empty());
+		t.commit();
+		// document changes after commit
+		Assert::IsFalse(sut.root.first_child().first_child().empty());
+
+		Transaction t2(sut.begin());
+		sut.erase(TASKS_NODE, L"10");
+		// document must not change without commit
+		Assert::IsFalse(sut.root.first_child().first_child().empty());
+		t2.commit();
+		// document changes after commit
+		Assert::IsTrue(sut.root.first_child().first_child().empty());
+	}
+
+	/// Checks if rollback cleans up the transaction stack too
+	TEST_METHOD(rollbackDeleteTransactionFromStack) {
+		DataStore& sut = DataStore::get();
+		Transaction t(sut.begin());
+		Assert::AreEqual(1U, sut.transactionStack.size());
+		t.rollback();
+		Assert::AreEqual(0U, sut.transactionStack.size());
+	}
+
+	/// Unit test to check if getAll behaves correctly when getting from the
+	/// XML document tree
+	TEST_METHOD(getAllFromTree) {
+		DataStore& sut = DataStore::get();
+
+		// Create mock
+		sut.root.append_child(L"tasks").append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
+		Assert::AreEqual(1U, result.size());
+	}
+
+	/// Unit test to check if getAll behaves correctly when getting from
+	/// file (scenario: during load)
+	TEST_METHOD(getAllFromFile) {
+		DataStore& sut = DataStore::get();
+
+		// Create mock
+		sut.root.append_child(L"tasks").append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		sut.document.save_file(sut.FILE_PATH);
+		sut.document.reset();
+
+		std::vector<KeyValuePairs> result = sut.getAll(L"tasks");
+		Assert::AreEqual(1U, result.size());
+	}
+
+	/// Checks if saving and loading works
+	TEST_METHOD(saveAndLoadTheSameThing) {
+		DataStore& sut = DataStore::get();
+
+		sut.document.append_child(L"task").
+			append_child(pugi::xml_node_type::node_pcdata).set_value(L"what");
+		bool result = sut.saveData();
+		Assert::IsTrue(result);
+
+		sut.document.reset();
+
+		sut.loadData();
+		std::wstring value = sut.document.child(L"task").child_value();
+		Assert::AreEqual(std::wstring(L"what"), value);
+	}
+
+	/// Unit test for \ref Internal::Transaction 's push operation
+	TEST_METHOD(pushOperationToTransactionWithoutDataStore) {
+		Internal::Transaction sut;
+
+		std::unique_ptr<Internal::Operation> post =
+			std::make_unique<Internal::PostOperation>(TASKS_NODE, L"0", task1);
+		sut.push(std::move(post));
+		Assert::AreEqual(1U, sut.operationsQueue.size());
+
+		std::unique_ptr<Internal::Operation> put =
+			std::make_unique<Internal::PutOperation>(TASKS_NODE, L"0", task1);
+		sut.push(std::move(put));
+		Assert::AreEqual(2U, sut.operationsQueue.size());
+
+		std::unique_ptr<Internal::Operation> erase =
+			std::make_unique<Internal::EraseOperation>(TASKS_NODE, L"0");
+		sut.push(std::move(erase));
+		Assert::AreEqual(3U, sut.operationsQueue.size());
+
+		sut.operationsQueue.clear();
+	}
+
+	/// Unit test for \ref Internal::Transaction 's mergeOperationsQueue method
+	TEST_METHOD(mergeOperationsQueueIsAppend) {
+		boost::ptr_deque<Internal::Operation> q1;
+		boost::ptr_deque<Internal::Operation> q2;
+
+		std::unique_ptr<Internal::Operation> post =
+			std::make_unique<Internal::PostOperation>(TASKS_NODE, L"0", task1);
+		std::unique_ptr<Internal::Operation> erase =
+			std::make_unique<Internal::EraseOperation>(TASKS_NODE, L"0");
+		q1.push_back(post.release());
+		q2.push_back(erase.release());
+
+		Internal::Transaction sut;
+		sut.mergeOperationsQueue(q1);
+		Assert::AreEqual(1U, sut.mergedOperationsQueue.size());
+		sut.mergeOperationsQueue(q2);
+		Assert::AreEqual(2U, sut.mergedOperationsQueue.size());
+
+		pugi::xml_document mockDocument;
+
+		// Check if the order of operation is correct
+		bool result = sut.mergedOperationsQueue.front().run(mockDocument);
+		Assert::IsTrue(result);
+		result = sut.mergedOperationsQueue.back().run(mockDocument);
+		Assert::IsTrue(result);
+	}
+
+	/// Check if wipeData does not throw any exception or trigger any assert
+	TEST_METHOD(wipeData) {
+		DataStore::get().wipeData();
+	}
+
+	/// Unit test to ensure that the first load does not throw \ref IOException
+	/// As the file does exist yet
+	TEST_METHOD(firstLoadDoesNotThrowException) {
+		std::remove("data.xml");
+		Internal::DataStore::get().loadData();
+	}
+
+	/// Unit test to ensure that \ref NotWellFormedException is thrown when
+	/// loading not well-formed data.xml
+	TEST_METHOD(xmlParseErrorThrowsException) {
+		DataStore::get().wipeData();
+		createDummyDataXml();
+		auto fun = [] { Internal::DataStore::get().loadData(); };
+		Assert::ExpectException<NotWellFormedXmlException>(fun);
+	}
+};
+}  // namespace UnitTests
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore-Tests\internal\internal_datastore_test.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore-Tests\internal\operations_test.cpp
+	 */
+
+#include "stdafx.h"
+#include <CppUnitTest.h>
+
+#include "../mocks.h"
+#include "internal/operations/erase_operation.h"
+#include "internal/operations/post_operation.h"
+#include "internal/operations/put_operation.h"
+#include "internal/operations/serialization_operation.h"
+#include "internal/operations/branch_operation.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+
+/// Mock xml_document for \ref DataStoreOperationsTest
+static pugi::xml_document mockDocument;
+
+/// Unit Test Class for \ref Internal::Operation classes
+TEST_CLASS(DataStoreOperationsTest) {
+public:
+	/// Create a mock xml_document containing a task with content
+	/// as specified in task1
+	TEST_METHOD_INITIALIZE(initializeMockDocument) {
+		mockDocument.reset();
+		pugi::xml_node node = mockDocument.
+			append_child(TASKS_NODE.c_str()).
+			append_child(L"task");
+		node.append_attribute(L"id").set_value(L"0");
+		node.append_child(TASK_ID.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(TASK_ID).c_str());
+		node.append_child(DESCRIPTION.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DESCRIPTION).c_str());
+		node.append_child(DEADLINE.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DEADLINE).c_str());
+		node.append_child(PRIORITY.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(PRIORITY).c_str());
+		node.append_child(DEPENDENCIES.c_str()).
+			append_child(pugi::xml_node_type::node_pcdata).
+			set_value(task1.at(DEPENDENCIES).c_str());
+	}
+	/// Unit tests for \ref Internal::SerializationOperation
+	/// @{
+	/// Generic serialization operation test
+	TEST_METHOD(serializeOperation) {
+		pugi::xml_node newNode = mockDocument.append_child(L"new");
+		Internal::SerializationOperation::serialize(task2, newNode);
+		Assert::AreEqual(task2.at(TASK_ID).c_str(),
+			newNode.child(TASK_ID.c_str()).child_value());
+		Assert::AreEqual(task2.at(DESCRIPTION).c_str(),
+			newNode.child(DESCRIPTION.c_str()).child_value());
+		Assert::AreEqual(task2.at(DEADLINE).c_str(),
+			newNode.child(DEADLINE.c_str()).child_value());
+		Assert::AreEqual(task2.at(PRIORITY).c_str(),
+			newNode.child(PRIORITY.c_str()).child_value());
+		Assert::AreEqual(task2.at(DEPENDENCIES).c_str(),
+			newNode.child(DEPENDENCIES.c_str()).child_value());
+	}
+
+	/// Generic deserialization operation test
+	TEST_METHOD(deserializeOperation) {
+		using SerializationOperation = Internal::SerializationOperation;
+		pugi::xml_node toDeserialize = mockDocument.first_child().first_child();
+		KeyValuePairs task = SerializationOperation::deserialize(toDeserialize);
+		Assert::AreEqual(task1.at(TASK_ID), task.at(TASK_ID));
+		Assert::AreEqual(task1.at(DESCRIPTION), task.at(DESCRIPTION));
+		Assert::AreEqual(task1.at(DEADLINE), task.at(DEADLINE));
+		Assert::AreEqual(task1.at(PRIORITY), task.at(PRIORITY));
+		Assert::AreEqual(task1.at(DEPENDENCIES), task.at(DEPENDENCIES));
+	}
+	/// @}
+
+	/// Unit test for post method for valid input
+	TEST_METHOD(postWithNewId) {
+		Internal::PostOperation post(TASKS_NODE, L"1", task2);
+		bool status = post.run(mockDocument);
+		Assert::IsTrue(status);
+	}
+
+	/// Unit test for post method for invalid input
+	TEST_METHOD(postWithUsedId) {
+		Internal::PostOperation post(TASKS_NODE, L"0", task1);
+		bool status = post.run(mockDocument);
+		Assert::IsFalse(status);
+	}
+
+	/// Unit test for put method for valid input
+	TEST_METHOD(putWithExistingId) {
+		Internal::PutOperation put(TASKS_NODE, L"0", task1);
+		bool status = put.run(mockDocument);
+		Assert::IsTrue(status);
+	}
+
+	/// Unit test for put method for invalid input
+	TEST_METHOD(putNonExistentId) {
+		Internal::PutOperation put(TASKS_NODE, L"1", task1);
+		bool status = put.run(mockDocument);
+		Assert::IsFalse(status);
+	}
+
+	/// Unit test for erase method for valid input
+	TEST_METHOD(eraseExistingId) {
+		Internal::EraseOperation erase(TASKS_NODE, L"0");
+		bool status = erase.run(mockDocument);
+		Assert::IsTrue(status);
+	}
+
+	/// Unit test for erase method for invalid input
+	TEST_METHOD(eraseNonExistentId) {
+		Internal::EraseOperation erase(TASKS_NODE, L"1");
+		bool status = erase.run(mockDocument);
+		Assert::IsFalse(status);
+	}
+
+	/// Unit test for \ref BranchOperation
+	/// @{
+	/// Create a new branch if none exists
+	TEST_METHOD(createNewNodeWithBranchOperation) {
+		Internal::BranchOperation::get(mockDocument, L"tasks");
+		Assert::IsFalse(mockDocument.child(L"tasks").empty());
+	}
+
+	/// Get the branch if it already exists
+	TEST_METHOD(getExistingNodeWithBranchOperation) {
+		pugi::xml_node expected = mockDocument.append_child(L"resources");
+		pugi::xml_node actual =
+			Internal::BranchOperation::get(mockDocument, L"resources");
+		Assert::IsTrue(expected == actual);
+	}
+	/// @}
+};
+}  // namespace UnitTests
+}  // namespace DataStore
+}  // namespace You
+
+	// End of segment: .\You-DataStore-Tests\internal\operations_test.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-DataStore-Tests\mocks.h
+	 */
+
+#pragma once
+#ifndef YOU_DATASTORE_TESTS_MOCKS_H_
+#define YOU_DATASTORE_TESTS_MOCKS_H_
+
+#include "task_typedefs.h"
+
+namespace You {
+namespace DataStore {
+namespace UnitTests {
+
+/// Redefinition of \ref DataStore constants for unit test purposes
+/// @{
+const std::wstring ROOT_NODE = L"You";
+const std::wstring TASKS_NODE = L"tasks";
+const std::wstring RESOURCES_NODE = L"resources";
+/// @}
+
+/// Dummy constants for task
+/// @{
+const std::wstring TASK_ID = L"id";
+const std::wstring DESCRIPTION = L"description";
+const std::wstring DEADLINE = L"deadline";
+const std::wstring PRIORITY = L"priority";
+const std::wstring DEPENDENCIES = L"dependency";
+/// @}
+
+/// Dummy serialized task
+/// @{
+const KeyValuePairs task1 = {
+		{ TASK_ID, L"0" },
+		{ DESCRIPTION, L"bla bla" },
+		{ DEADLINE, L"xxxxxx" },
+		{ PRIORITY, L"urgent" },
+		{ DEPENDENCIES, L"12345" }
+};
+const KeyValuePairs task2 = {
+		{ TASK_ID, L"0" },
+		{ DESCRIPTION, L"yada yada" },
+		{ DEADLINE, L"yyyyyy" },
+		{ PRIORITY, L"normal" },
+		{ DEPENDENCIES, L"4321" }
+};
+/// @}
+
+/// Dummy constants for resources
+/// @{
+const std::wstring LAST_ID = L"last-id";
+const std::wstring COLOUR = L"colour";
+/// @}
+
+/// Dummy constants for resources
+/// @{
+const KeyValuePairs res1 = {
+		{ LAST_ID, L"1234" }
+};
+const KeyValuePairs res2 = {
+		{ COLOUR, L"green" }
+};
+/// @}
+
+}  // namespace UnitTests
+}  // namespace DataStore
+}  // namespace You
+
+#endif  // YOU_DATASTORE_TESTS_MOCKS_H_
+
+	// End of segment: .\You-DataStore-Tests\mocks.h
+
+
+
+
+

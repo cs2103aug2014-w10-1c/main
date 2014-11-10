@@ -1,0 +1,3063 @@
+//@author: a0094446x
+
+
+
+	/**
+	 * origin: .\You\exceptions.h
+	 */
+
+#pragma once
+#ifndef YOU_EXCEPTIONS_H_
+#define YOU_EXCEPTIONS_H_
+
+#include "You-Utils/exceptions/exception.h"
+
+namespace You {
+namespace Exception {
+
+/// Base exception class.
+class BaseException : public You::Utils::Exception {
+};
+
+class InitLogFileFailedException : public BaseException {
+};
+
+}  // namespace Exception
+}  // namespace You
+
+#endif  // YOU_EXCEPTIONS_H_
+
+	// End of segment: .\You\exceptions.h
+
+
+
+
+
+	/**
+	 * origin: .\You\log_sink.cpp
+	 */
+
+#include "stdafx.h"
+#include <QTextStream>
+#include <QFile>
+#include "log_sink.h"
+#include "exceptions.h"
+
+namespace You {
+
+const QString GUILogSink::LOG_FILENAME = "you.log";
+
+GUILogSink::GUILogSink() : file(new QFile(LOG_FILENAME)) {
+	if (!file->open(QIODevice::ReadWrite | QIODevice::Append)) {
+		throw Exception::InitLogFileFailedException();
+	}
+}
+
+void GUILogSink::onLog(LogSeverity severity,
+	const std::wstring& category,
+	const std::wstring& message) {
+	QTextStream severityStr(file.get());
+	switch (severity) {
+	case LogSeverity::DEBUG:
+		severityStr << "<<Debug>> ";
+		break;
+	case LogSeverity::INFO:
+		severityStr << "<<Information>> ";
+		break;
+	case LogSeverity::WARNING:
+		severityStr << "<<Warning>> ";
+		break;
+	case LogSeverity::ERROR:
+		severityStr << "<<Error>> ";
+		break;
+	case LogSeverity::CRITICAL:
+		severityStr << "<<Critical>> ";
+		break;
+	default:
+		severityStr << "<<Log Message Type not recognized.>>";
+		assert(false);
+		break;
+	}
+	severityStr << QString::fromStdWString(category)
+		<< QString::fromStdWString(message) << QString("\n");
+}
+
+}  // namespace You
+
+	// End of segment: .\You\log_sink.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You\log_sink.h
+	 */
+
+#pragma once
+#ifndef YOU_LOG_SINK_H_
+#define YOU_LOG_SINK_H_
+#include "You-Utils/log.h"
+#include "You-Utils/log/log_severity.h"
+
+namespace You {
+
+using LogSeverity = You::Utils::LogSeverity;
+
+/// The log sink, inheriting from You::Utils::LogSink. It collects log messages
+/// from the rest of the components and writes them into a log file.
+class GUILogSink : public You::Utils::LogSink {
+public:
+	GUILogSink();
+	~GUILogSink() = default;
+	void onLog(LogSeverity severity,
+		const std::wstring& category,
+		const std::wstring& message);
+
+private:
+	static const QString LOG_FILENAME;
+	std::shared_ptr<QFile> file;
+};
+
+}  // namespace You
+
+#endif  // YOU_LOG_SINK_H_
+
+	// End of segment: .\You\log_sink.h
+
+
+
+
+
+	/**
+	 * origin: .\You\main.cpp
+	 */
+
+#include "stdafx.h"
+#include <QtWidgets/QApplication>
+#include "You-Utils/log.h"
+#include "log_sink.h"
+#include "exceptions.h"
+#include "../You-GUI/main_window.h"
+#include "../You-GUI/window_title.h"
+
+#ifdef _WIN32
+#include "windows.h"
+int loadSingleApplication(int argc, char *argv[]);
+#else
+int loadApplication(int argc, char *argv[]);
+#endif
+
+int main(int argc, char *argv[]) {
+#ifdef _WIN32
+	return loadSingleApplication(argc, argv);
+#else
+	return loadApplication(argc, argv);
+#endif
+}
+
+int loadApplication(int argc, char *argv[]) {
+	QApplication a(argc, argv);
+	try {
+		std::shared_ptr<You::GUILogSink> ls =
+			std::make_shared<You::GUILogSink>();
+		You::Utils::Log::setSink(ls);
+	}
+	catch (You::Exception::InitLogFileFailedException &e) {
+		qDebug() << "Failed to initialize log file.";
+	}
+	You::GUI::MainWindow w;
+	w.show();
+	return a.exec();
+}
+
+int loadSingleApplication(int argc, char *argv[]) {
+	HANDLE hMutex;
+	hMutex = CreateMutex(NULL, FALSE, TEXT("YouGUIUniqueApplicationInstance"));
+	DWORD m_DwLastError = GetLastError();
+	if (m_DwLastError == ERROR_ALREADY_EXISTS) {
+		HWND hwnd = FindWindow(NULL, WINDOW_TITLE.c_str());
+		SetForegroundWindow(hwnd);
+		return 0;
+	} else {
+		return loadApplication(argc, argv);
+	}
+}
+
+	// End of segment: .\You\main.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You\stdafx.cpp
+	 */
+
+#include "stdafx.h"
+
+	// End of segment: .\You\stdafx.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You\stdafx.h
+	 */
+
+#pragma once
+#ifndef YOU_STDAFX_H_
+#define YOU_STDAFX_H_
+
+#include <QtWidgets>
+
+#endif  // YOU_STDAFX_H_
+
+	// End of segment: .\You\stdafx.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\base_manager.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_BASE_MANAGER_H_
+#define YOU_GUI_BASE_MANAGER_H_
+#include "main_window.h"
+
+namespace You {
+namespace GUI {
+
+/// The class from which all components inherit.
+class MainWindow::BaseManager : public QObject {
+	Q_OBJECT
+public:
+	/// The constructor that assigns to the manager the parent GUI.
+	explicit BaseManager(MainWindow * parentGUI);
+
+	/// Tasks needed to be run on startup
+	void setup();
+
+protected:
+	/// Pointer to the main GUI
+	MainWindow * const parentGUI;
+
+private:
+	/// BaseManager constructor. Not used.
+	BaseManager() = delete;
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_BASE_MANAGER_H_
+
+	// End of segment: .\You-GUI\base_manager.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\command_text_box.cpp
+	 */
+
+#include "stdafx.h"
+#include <QCompleter>
+#include <QApplication>
+#include "command_text_box.h"
+#include "keywords.h"
+
+namespace You {
+namespace GUI {
+
+CommandTextBox::CommandTextBox(QWidget *parent) : QTextEdit(parent) {
+	setFocusPolicy(Qt::StrongFocus);
+	historyIndex = commandHistory.begin();
+	setCompleter();
+	syntaxHighlighter.reset(
+		new SyntaxHighlighter(document()));
+}
+
+CommandTextBox::~CommandTextBox() {}
+
+void CommandTextBox::setup() {
+	setTabChangesFocus(true);
+	setWordWrapMode(QTextOption::NoWrap);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setFocus(Qt::FocusReason::ActiveWindowFocusReason);
+	setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Ignored);
+}
+
+void CommandTextBox::setCompleter() {
+	QStringList wordList;
+	std::wstringstream wss;
+	wss << PARAM_PREFIX << L" ";
+	wordList.append(QString::fromStdWString(wss.str()));
+	wss.str(L"");
+	wss << ORDER_PREFIX << L" ";
+	wordList.append(QString::fromStdWString(wss.str()));
+
+	for each (std::wstring item in PARAMS) {
+		wss.str(L"");
+		wss << item << L" ";
+		wordList.append(QString::fromStdWString(wss.str()));
+	}
+
+	for each (std::wstring item in COMMANDS) {
+		wss.str(L"");
+		wss << item << L" ";
+		wordList.append(QString::fromStdWString(wss.str()));
+	}
+
+	for each (std::wstring item in ORDERS) {
+		wss.str(L"");
+		wss << item;
+		wordList.append(QString::fromStdWString(wss.str()));
+	}
+
+	this->completer = new QCompleter(wordList, this);
+	this->completer->setWidget(this);
+	this->completer->setCompletionMode(QCompleter::PopupCompletion);
+	this->completer->setCaseSensitivity(Qt::CaseInsensitive);
+	QObject::connect(this->completer, SIGNAL(activated(QString)),
+		this, SLOT(insertCompletion(QString)));
+}
+
+void CommandTextBox::insertCompletion(const QString& completion) {
+	if (completer->widget() != this)
+		return;
+	QTextCursor tc = textCursor();
+	int extra = completion.length() - completer->completionPrefix().length();
+	tc.movePosition(QTextCursor::Left);
+	tc.movePosition(QTextCursor::EndOfWord);
+	tc.insertText(completion.right(extra));
+	setTextCursor(tc);
+}
+
+QString CommandTextBox::textUnderCursor() const {
+	QTextCursor tc = textCursor();
+	tc.movePosition(QTextCursor::StartOfWord);
+	if (tc.position() != 0) {
+		if (this->toPlainText().at(tc.position() - 1) == "/") {
+			tc.setPosition(tc.position() - 1);
+			tc.movePosition(tc.NextWord, QTextCursor::KeepAnchor, 2);
+			return tc.selectedText();
+		} else {
+			tc.movePosition(tc.NextWord, QTextCursor::KeepAnchor, 1);
+			return tc.selectedText();
+		}
+	}
+	return tc.selectedText();
+}
+
+void CommandTextBox::focusInEvent(QFocusEvent *e) {
+	if (completer)
+		completer->setWidget(this);
+	QTextEdit::focusInEvent(e);
+}
+
+void CommandTextBox::keyPressEvent(QKeyEvent *e) {
+	if (completer && completer->popup()->isVisible()) {
+		// If popup is shown then the following keys will break the popup
+		switch (e->key()) {
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+		case Qt::Key_Escape:
+		case Qt::Key_Tab:
+		case Qt::Key_Backtab:
+			e->ignore();
+			return;
+		default:
+			break;
+		}
+	} else {
+		// Handles up, down and enter key behavior
+		defaultKeyHandling(e);
+	}
+	completerKeyHandling(e);
+}
+
+void CommandTextBox::defaultKeyHandling(QKeyEvent *e) {
+	switch (e->key()) {
+	case Qt::Key_Enter:
+	case Qt::Key_Return:
+		if (!commandHistory.empty()) {
+			if (historyIndex == --commandHistory.end()) {
+				commandHistory.push_back(
+					this->toPlainText().toStdWString());
+				historyIndex++;
+			} else {
+				std::advance(historyIndex, 2);
+				commandHistory.erase(historyIndex, commandHistory.end());
+				commandHistory.push_back(
+					this->toPlainText().toStdWString());
+				historyIndex = --commandHistory.end();
+			}
+		} else {
+			commandHistory.push_back(this->toPlainText().toStdWString());
+			historyIndex--;
+		}
+		emit(enterKey());
+		this->setFocus();
+		return;
+	case Qt::Key_Up:
+		if (!commandHistory.empty()) {
+			if (historyIndex == commandHistory.end()) {
+				historyIndex--;
+			}
+			this->setText(
+				QString::fromStdWString(*historyIndex));
+			this->moveCursor(QTextCursor::End);
+			if (historyIndex != commandHistory.begin()) {
+				historyIndex--;
+			}
+		}
+		return;
+	case Qt::Key_Down:
+		if (!commandHistory.empty()) {
+			if (historyIndex == commandHistory.end()) {
+				historyIndex--;
+			}
+			this->setText(
+				QString::fromStdWString(*historyIndex));
+			this->moveCursor(QTextCursor::End);
+			if (historyIndex != --commandHistory.end()) {
+				historyIndex++;
+			}
+		}
+		return;
+	default:
+		return;
+	}
+}
+
+void CommandTextBox::completerKeyHandling(QKeyEvent *e) {
+	switch (e->key()) {
+	case Qt::Key_Enter:
+	case Qt::Key_Return:
+		return;
+	}
+	QTextEdit::keyPressEvent(e);
+	static QString eow("~!@#$%^&*()_+{}|:\"<>?,.;'[]\\-=");
+	QString completionPrefix = textUnderCursor();
+	QString substring = (completer->currentCompletion()).left(
+		(completer->currentCompletion().length() - 1));
+	if (e->text().isEmpty() || completionPrefix.length() < 2
+		|| eow.contains(e->text().right(1))
+		|| completionPrefix.compare(substring) == 0) {
+		completer->popup()->hide();
+		return;
+	}
+	if (completionPrefix != completer->completionPrefix()) {
+		completer->setCompletionPrefix(completionPrefix);
+		completer->popup()->setCurrentIndex(
+			completer->completionModel()->index(0, 0));
+	}
+
+	QRect cr = cursorRect();
+	cr.setWidth(completer->popup()->sizeHintForColumn(0)
+		+ completer->popup()->verticalScrollBar()->sizeHint().width());
+	completer->complete(cr);
+}
+
+void CommandTextBox::wheelEvent(QWheelEvent *e) {
+	e->ignore();
+}
+
+void CommandTextBox::dropEvent(QDropEvent * e) {
+	moveCursor(QTextCursor::End);
+	insertPlainText("\'");
+	moveCursor(QTextCursor::End);
+	QTextEdit::dropEvent(e);
+	moveCursor(QTextCursor::End);
+	insertPlainText("\'");
+	moveCursor(QTextCursor::End);
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\command_text_box.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\command_text_box.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_COMMAND_TEXT_BOX_H_
+#define YOU_GUI_COMMAND_TEXT_BOX_H_
+#include <QTextEdit>
+#include "syntax_highlighter.h"
+namespace You {
+namespace GUI {
+
+class CommandTextBox : public QTextEdit {
+	Q_OBJECT
+
+public:
+	explicit CommandTextBox(QWidget *parent = 0);
+	~CommandTextBox();
+
+	void setup();
+	void setCompleter();
+	QCompleter *completer;
+
+signals:
+	void enterKey();
+
+protected:
+	void keyPressEvent(QKeyEvent *e);
+	void focusInEvent(QFocusEvent *e);
+	void wheelEvent(QWheelEvent *e);
+	void dropEvent(QDropEvent * e);
+	private slots:
+	void insertCompletion(const QString &completion);
+
+private:
+	std::unique_ptr<SyntaxHighlighter> syntaxHighlighter;
+	std::list<std::wstring> commandHistory;
+	std::list<std::wstring>::iterator historyIndex;
+	QString textUnderCursor() const;
+	void defaultKeyHandling(QKeyEvent *e);
+	void completerKeyHandling(QKeyEvent *e);
+};
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_COMMAND_TEXT_BOX_H_
+
+	// End of segment: .\You-GUI\command_text_box.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\keywords.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_KEYWORDS_H_
+#define YOU_GUI_KEYWORDS_H_
+
+namespace You {
+namespace GUI {
+
+const std::wstring COMMAND_ADD = L"/add";
+const std::wstring COMMAND_DELETE = L"/delete";
+const std::wstring COMMAND_EDIT = L"/edit";
+const std::wstring COMMAND_SHOW = L"/show";
+const std::wstring COMMAND_UNDO = L"/undo";
+const std::wstring COMMAND_ATTACH = L"/attach";
+const std::array<std::wstring, 6> COMMANDS = { COMMAND_SHOW, COMMAND_ADD,
+COMMAND_DELETE, COMMAND_EDIT, COMMAND_UNDO, COMMAND_ATTACH };
+
+const std::wstring PARAM_PREFIX = L"set";
+
+const std::wstring PARAM_DESCRIPTION = L"description";
+const std::wstring PARAM_START = L"deadline";
+const std::wstring PARAM_DEADLINE = L"deadline";
+const std::wstring PARAM_PRIORITY = L"priority";
+const std::wstring PARAM_DEPENDENCIES = L"dependencies";
+
+const std::array<std::wstring, 5> PARAMS = { PARAM_DESCRIPTION, PARAM_START,
+PARAM_DEADLINE, PARAM_PRIORITY, PARAM_DEPENDENCIES };
+
+const std::wstring ORDER_PREFIX = L"order by";
+const std::wstring ORDER_ASCENDING = L"ascending";
+const std::wstring ORDER_DESCENDING = L"descending";
+
+const std::array<std::wstring, 2> ORDERS = { ORDER_ASCENDING,
+ORDER_DESCENDING };
+
+const std::wstring SYMBOL_SUBTASK = L":";
+const std::wstring SYMBOL_SIBLING = L";";
+const std::wstring SYMBOL_HASHTAG = L"#";
+const std::wstring SYMBOL_DEPENDENCY = L"->";
+const std::wstring SYMBOL_LESS_THAN = L"<";
+const std::wstring SYMBOL_MORE_THAN = L">";
+const std::wstring SYMBOL_EQUALS = L"=";
+const std::wstring SYMBOL_IMPT = L"!";
+const std::wstring SYMBOL_TRUE = L"\\btrue\\b";
+const std::wstring SYMBOL_FALSE = L"\\bfalse\\b";
+const std::wstring SYMBOL_BEFORE = L"\\bbefore\\b";
+const std::wstring SYMBOL_AFTER = L"\\bafter\\b";
+const std::wstring SYMBOL_FROM = L"\\bfrom\\b";
+const std::wstring SYMBOL_TO = L"\\bto\\b";
+const std::wstring SYMBOL_BY = L"\\bby\\b";
+
+const std::wstring SYMBOL_LESS_THAN_EQUALS = L"<=";
+const std::wstring SYMBOL_MORE_THAN_EQUALS = L">=";
+
+
+const std::array<std::wstring, 17> SYMBOLS = { SYMBOL_SUBTASK,
+SYMBOL_SIBLING, SYMBOL_HASHTAG, SYMBOL_DEPENDENCY, SYMBOL_LESS_THAN,
+SYMBOL_LESS_THAN, SYMBOL_EQUALS, SYMBOL_IMPT, SYMBOL_TRUE, SYMBOL_FALSE,
+SYMBOL_LESS_THAN_EQUALS, SYMBOL_MORE_THAN_EQUALS, SYMBOL_BEFORE, SYMBOL_AFTER,
+SYMBOL_FROM, SYMBOL_TO, SYMBOL_BY};
+
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_KEYWORDS_H_
+
+	// End of segment: .\You-GUI\keywords.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\main.cpp
+	 */
+
+#include "stdafx.h"
+#include <QtWidgets/QApplication>
+#include "you_main_gui.h"
+
+int main(int argc, char *argv[]) {
+	QApplication a(argc, argv);
+	YouMainGUI w;
+	w.show();
+	return a.exec();
+}
+
+	// End of segment: .\You-GUI\main.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\main_window.cpp
+	 */
+
+#include "stdafx.h"
+#include <functional>
+#include <QApplication>
+#include <QList>
+#include <set>
+#include "session_manager.h"
+#include "task_panel_manager.h"
+#include "system_tray_manager.h"
+#include "query_manager.h"
+#include "main_window_messages.h"
+#include "window_title.h"
+#include "keywords.h"
+#include "You-Controller/exception.h"
+
+namespace You {
+namespace GUI {
+
+using Task = You::Controller::Task;
+
+MainWindow::MainWindow(QWidget *parent)
+	: QMainWindow(parent), sm(new MainWindow::SessionManager(this)),
+		stm(new MainWindow::SystemTrayManager(this)),
+		tpm(new MainWindow::TaskPanelManager(this)),
+		qm(new MainWindow::QueryManager(this)),
+		commandTextBox(new CommandTextBox(this)),
+		taskList(new TaskList) {
+	#pragma warning(push)
+	#pragma warning(disable: 4127)
+	Q_INIT_RESOURCE(yougui);
+	#pragma warning(pop)
+	ui.setupUi(this);
+	ui.menuBar->setVisible(false);
+	ui.mainToolBar->setVisible(false);
+	setWindowTitle(QString::fromStdWString(WINDOW_TITLE));
+	stm->setup();
+	qm->setup();
+	tpm->setup();
+	sm->setup();
+	ui.horizontalLayout->insertWidget(0, &*commandTextBox);
+	commandTextBox->setup();
+	connect(&*commandTextBox, SIGNAL(enterKey()),
+		this, SLOT(commandEnterPressed()));
+	connect(this, SIGNAL(updateRowNumbers()), &*tpm, SLOT(updateRowNumbers()));
+	populateTaskPanel();
+	this->installEventFilter(this);
+	statusBar()->insertPermanentWidget(
+		0, ui.statusTasks, 0);
+	updateTaskInfoBar();
+	ui.taskDescriptor->setOpenLinks(false);
+	ui.taskDescriptor->setOpenExternalLinks(false);
+	connect(ui.taskDescriptor, SIGNAL(anchorClicked(const QUrl &)),
+		this, SLOT(openURL(const QUrl &)));
+}
+
+MainWindow::~MainWindow() {
+}
+
+void MainWindow::populateTaskPanel() {
+	StatusUpdate update;
+	try {
+		TaskList tl = qm->getTasks();
+		addTasks(tl);
+	} catch (You::Controller::IOException& e) {
+		update.setUpdate(RESOURCE_RED, QString("Error loading tasks."), &ui);
+		showErrorAndExit(IO_EXCEPTION_MESSAGE,
+			QString("Exception: File could not be opened."));
+	} catch (You::Controller::NotWellFormedXmlException& e) {
+		update.setUpdate(RESOURCE_RED, QString("Error loading tasks."), &ui);
+		showErrorAndExit(NOT_WELL_FORMED_XML_MESSAGE,
+			QString("Exception: XML is not well formed"));
+	}
+	tpm->repaintTasks();
+	updateRowNumbers();
+}
+
+void MainWindow::setVisible(bool visible) {
+	stm->minimizeAction->setEnabled(visible);
+	stm->maximizeAction->setEnabled(!isMaximized());
+	stm->restoreAction->setEnabled(isMaximized() || !visible);
+	QWidget::setVisible(visible);
+}
+
+const TaskList& MainWindow::getTaskList() const {
+	return *taskList;
+}
+
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList& tl) {
+	QTreeWidgetItem *item = tpm->addTaskTree(task).release();
+	ui.taskTreePanel->addTopLevelItem(item);
+	expandAllSubtasks(item);
+}
+
+void MainWindow::expandAllSubtasks(QTreeWidgetItem *item) {
+	if (item->childCount() == 0) {
+		return;
+	} else {
+		item->setExpanded(true);
+		for (int i = 0; i < item->childCount(); i++) {
+			expandAllSubtasks(item->child(i));
+		}
+	}
+}
+
+void MainWindow::addTasks(const TaskList& tl) {
+	std::for_each(tl.begin(), tl.end(),
+		std::bind(&MainWindow::addTaskWithSubtasks, this, std::placeholders::_1, tl));
+}
+
+void MainWindow::deleteTask(Task::ID taskID) {
+	TaskList::iterator i = std::find_if(taskList->begin(), taskList->end(),
+		[=](Task& task) {
+			return task.getID() == taskID;
+		});
+
+	assert(i != taskList->end());
+	taskList->erase(i);
+	tpm->deleteTask(taskID);
+}
+
+void MainWindow::editTask(const Task& task) {
+	tpm->editTask(task);
+	ui.taskTreePanel->viewport()->update();
+	emit(taskSelected());
+}
+
+void MainWindow::sendQuery() {
+	Task::ID curr = getSelectedTaskID();
+	QString inputString = commandTextBox->toPlainText();
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	pixmap.load(RESOURCE_GREEN, 0);
+	QString message(READY_MESSAGE);
+	ui.statusMessage->setText(message);
+	try {
+		qm->query(inputString, getTaskList());
+	} catch (You::Controller::EmptyTaskDescriptionException& e) {
+		ui.statusMessage->setText(EMPTY_TASK_DESCRIPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch(You::Controller::TaskNotFoundException& e) {
+		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParseErrorException& e) {
+		std::string str((e.getMessage().tag));
+		ui.statusMessage->setText(PARSE_ERROR_MESSAGE +
+			"\"" + QString::fromStdWString(e.getToken()) +
+			"\". Expected: " + QString::fromStdString(str));
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
+		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ContextRequiredException& e) {
+		ui.statusMessage->setText(CONTEXT_REQUIRED_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::CircularDependencyException& e) {
+		ui.statusMessage->setText(CIRCULAR_DEPENDENCY_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::NotUndoAbleException& e) {
+		ui.statusMessage->setText(NOT_UNDOABLE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParserTypeException& e) {
+		ui.statusMessage->setText(PARSER_TYPE_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::ParserException& e) {
+		ui.statusMessage->setText(PARSER_EXCEPTION_MESSAGE);
+		pixmap.load(RESOURCE_RED, 0);
+	} catch (You::Controller::IOException& e) {
+		showErrorAndExit(IO_EXCEPTION_MESSAGE,
+			QString("Exception: Tasks File could not be edited."));
+	}
+
+	/// Selects the item if it was originally selected and still exists
+	QList<QTreeWidgetItem*> items = ui.taskTreePanel->findItems(
+		boost::lexical_cast<QString>(curr), 0);
+	if (items.size() != 0) {
+		if (items.size() == 1) {
+			ui.taskTreePanel->setCurrentItem(items.at(0));
+		} else {
+			assert(false);
+		}
+	}
+
+	ui.statusIcon->setPixmap(pixmap);
+	commandTextBox->setPlainText(QString());
+	updateTaskInfoBar();
+	updateRowNumbers();
+	tpm->repaintTasks();
+}
+
+void MainWindow::commandEnterPressed() {
+	sendQuery();
+}
+
+void MainWindow::commandEnterButtonClicked() {
+	sendQuery();
+}
+
+void MainWindow::clearTasks() {
+	taskList.reset(new TaskList);
+	ui.taskTreePanel->clear();
+	ui.taskDescriptor->clear();
+	commandTextBox->clear();
+	updateTaskInfoBar();
+}
+
+void MainWindow::taskSelected() {
+	/// Find selected item and fill task box
+	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
+	QString contents = "";
+	if (selection.size() == 0) {
+		ui.taskDescriptor->setHtml(contents);
+	} else {
+		QTreeWidgetItem item = *selection.at(0);
+		QString index = tpm->getIndexAsText(item);
+		QString description = tpm->getDescriptionAsText(item);
+		QString startdate = tpm->getStartDateAsText(item);
+		QString deadline = tpm->getDeadlineAsText(item);
+		QString priority = tpm->getPriorityAsText(item);
+		QString dependencies = tpm->getDependenciesAsText(item);
+		QString attachment = tpm->getAttachmentAsText(item);
+		contents = "Index: " + index + "<br />"
+			+ "Description: " + description + "<br />"
+			+ "Start date: " + startdate + "<br />"
+			+ "Deadline: " + deadline + "<br />"
+			+ "Priority: " + priority + "<br />"
+			+ "Dependencies: " + dependencies + "<br / >"
+			+ "Attachment: " + "<a href='" + attachment + "'>"
+			+ attachment + "</a></li></ul>";
+		ui.taskDescriptor->setHtml(contents);
+	}
+	tpm->repaintTasks();
+}
+
+Task::ID MainWindow::getSelectedTaskID() {
+	QList<QTreeWidgetItem*> selection = ui.taskTreePanel->selectedItems();
+	QString contents = "";
+	if (selection.size() == 0) {
+		return -1;
+	} else {
+		QTreeWidgetItem item = *selection.at(0);
+		Task::ID index =
+			boost::lexical_cast<Task::ID>(
+			tpm->getHiddenIDAsText(item).toLongLong());
+		return index;
+	}
+}
+
+void MainWindow::contextAddTask() {
+	commandTextBox->setPlainText(QString("/add "));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::contextDeleteTask(int id) {
+	std::wstringstream wss;
+	wss << L"/delete " << id;
+	commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::contextEditTask(int id) {
+	std::wstringstream wss;
+	wss << L"/edit " << id << L" set ";
+	commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+	commandTextBox->setFocus();
+	commandTextBox->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::updateTaskInfoBar() {
+	int dueSoon = 0;
+	int overdue = 0;
+	for (int i = 0; i < taskList->size(); i++) {
+		if (tpm->isDueWithinExactly(taskList->at(i).getDeadline(), 7)) {
+			dueSoon++;
+		}
+		if (tpm->isPastDue(taskList->at(i).getDeadline())
+			&& !taskList->at(i).isCompleted()) {
+			overdue++;
+		}
+	}
+	std::wostringstream ss;
+	ss << L"Overdue tasks: " << overdue << L". Tasks due soon: " << dueSoon;
+	ui.statusTasks->setText(QString::fromStdWString(ss.str()));
+}
+
+void MainWindow::applicationExitRequested() {
+	qApp->quit();
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+	if (event->type() == QEvent::WindowStateChange) {
+		if (isMinimized()) {
+		hide();
+		}
+	}
+	QMainWindow::changeEvent(event);
+}
+
+void MainWindow::openURL(const QUrl &url) {
+	QDesktopServices::openUrl(url);
+}
+
+void MainWindow::showErrorAndExit(QString message, QString title) {
+	QMessageBox messageBox;
+	messageBox.setIcon(QMessageBox::Critical);
+	messageBox.setWindowTitle(title);
+	messageBox.setText(message);
+	messageBox.setStandardButtons(QMessageBox::Ok);
+	messageBox.exec();
+	QTimer::singleShot(250, qApp, SLOT(quit()));
+}
+
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+	if (obj == this) {
+		if (event->type() == QEvent::KeyPress) {
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->matches(QKeySequence::Undo)) {
+				std::wstringstream wss;
+				wss << L"/undo";
+				commandTextBox->setPlainText(QString::fromStdWString(wss.str()));
+				commandTextBox->setFocus();
+				commandTextBox->moveCursor(QTextCursor::End);
+				return true;
+			}
+			return false;
+		} else {
+			return false;
+		}
+	} else {
+		// pass the event on to the parent class
+		return QMainWindow::eventFilter(obj, event);
+	}
+}
+
+MainWindow::BaseManager::BaseManager(MainWindow* parentGUI)
+	: parentGUI(parentGUI) {
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\main_window.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\main_window.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_MAIN_WINDOW_H_
+#define YOU_GUI_MAIN_WINDOW_H_
+#include <memory>
+#include <QtWidgets/QMainWindow>
+#include "You-Controller/result.h"
+#include "ui_yougui.h"
+#include "command_text_box.h"
+
+namespace You {
+namespace GUI {
+
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+using TaskList = You::Controller::TaskList;
+
+/// The entity that deals with all GUI operations, and makes calls to the NLP
+/// engine. It deals with basic tasks regarding GUI initialization, passes all
+/// user input to the NLP engine and listens for any return instructions.
+class MainWindow : public QMainWindow {
+	Q_OBJECT
+	friend class UnitTests::MainWindowTests;
+public:
+	/// Constructor for the GUI.
+	explicit MainWindow(QWidget *parent = nullptr);
+
+	/// Destructor for the GUI.
+	~MainWindow();
+
+	/// Populates the task panel with data.
+	void populateTaskPanel();
+
+	/// The class from which all components inherit.
+	class BaseManager;
+
+	/// The component that handles all session-related data of the application.
+	/// It handles basics such as the window state of the application and task
+	/// sets previously displayed, saving the state on program exit, and
+	/// restoring them when the program is started again. It inherits from the
+	/// BaseManager class.
+	class SessionManager;
+
+	/// The component that deals with everything in the task panel. It handles
+	/// the presentation of logic of a set of tasks presented to it by the NLP
+	/// engine. It inherits from the BaseManager class.
+	class TaskPanelManager;
+
+	/// The component that handles all interactions with the tray icon. It
+	/// handles the window state of the application based on commands sent to
+	/// the tray manager. It inherits from the BaseManager class.
+	class SystemTrayManager;
+
+	/// The component that handles passing of data between the NLP parser and
+	/// the rest of the GUI. It has two primary operations: on setup it passes
+	/// a list containing the IDs of tasks that were previously open, and
+	/// receives a Result object. Every time a command is sent, the current
+	/// Result as well as input string is sent to the parser. The Result is a
+	/// vector of tasks, and this replaces the existing Result. It inherits
+	/// from the BaseManager class.
+	class QueryManager;
+
+	/// A struct to assist in building a status update to indicate
+	/// program state.
+	struct StatusUpdate {
+		Ui::MainWindowClass* ui;
+		QPixmap pixmap;
+		QString message;
+		void setUpdate(QString color, QString message, Ui::MainWindowClass* ui) {
+			QPixmap pixmap;
+			pixmap.fill(Qt::transparent);
+			pixmap.load(color, 0);
+			(*ui).statusMessage->setText(message);
+			(*ui).statusIcon->setPixmap(pixmap);
+		}
+	};
+
+	/// Calls TaskPanelManager and requests addition of a single task,
+	/// with its subtasks
+	void addTaskWithSubtasks(const Task& task, const TaskList& tl);
+
+	/// Calls TaskPanelManager and requests addition of a list of tasks.
+	void addTasks(const TaskList& tl);
+
+	/// Calls TaskPanelManager and requests editing of a single task.
+	void editTask(const Task& task);
+
+	/// Calls TaskPanelManager and requests deletion of a single task.
+	void deleteTask(Task::ID taskID);
+
+	/// Clears the task panel of all tasks, and clears taskList.
+	void clearTasks();
+
+	/// Gets the current list of tasks.
+	const TaskList& getTaskList() const;
+
+	void showErrorAndExit(QString message, QString title);
+
+	void expandAllSubtasks(QTreeWidgetItem *item);
+
+signals:
+	void taskPanelContextMenu(const QPoint &pos);
+
+	void updateRowNumbers();
+
+protected:
+	void changeEvent(QEvent *event);
+
+	bool eventFilter(QObject *obj, QEvent *event);
+
+private:
+	/// The SessionManager instance
+	const std::unique_ptr<SessionManager> sm;
+
+	/// The TaskPanelManager instance
+	const std::unique_ptr<TaskPanelManager> tpm;
+
+	/// The SystemTrayManager instance
+	const std::unique_ptr<SystemTrayManager> stm;
+
+	/// The QueryManager instance
+	const std::unique_ptr<QueryManager> qm;
+
+private:
+	/// The QT object that holds all items that are defined when building the
+	/// UI in Designer. All UI objects must be referenced through this class.
+	Ui::MainWindowClass ui;
+
+	const std::unique_ptr<CommandTextBox> commandTextBox;
+
+	/// TaskList containing tasks to be placed in the task panel.
+	std::unique_ptr<TaskList> taskList;
+
+	/// Reimplementation of setVisible for system tray manager.
+	void setVisible(bool visible);
+
+	/// Sends the current query to the NLP manager.
+	void sendQuery();
+
+	/// Helper function to get ID of selected task.
+	Task::ID getSelectedTaskID();
+
+private:
+	static const QString READY_MESSAGE;
+	static const QString EMPTY_TASK_DESCRIPTION_MESSAGE;
+	static const QString TASK_NOT_FOUND_MESSAGE;
+	static const QString PARSE_ERROR_MESSAGE;
+	static const QString PARSER_EXCEPTION_MESSAGE;
+	static const QString RESOURCE_RED;
+	static const QString RESOURCE_GREEN;
+	static const QString CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE;
+	static const QString CONTEXT_REQUIRED_MESSAGE;
+	static const QString CIRCULAR_DEPENDENCY_MESSAGE;
+	static const QString NOT_UNDOABLE_MESSAGE;
+	static const QString PARSER_TYPE_MESSAGE;
+	static const QString UNKNOWN_EXCEPTION_MESSAGE;
+	static const QString IO_EXCEPTION_MESSAGE;
+	static const QString NOT_WELL_FORMED_XML_MESSAGE;
+
+private slots:
+	/// Sends a query to Controller from the commandInputBox.
+	/// Connected to signal enterKey() from commandTextBox
+	void commandEnterPressed();
+
+	/// Sends a query to Controller from the commandInputBox.
+	/// Connected via moc to commandEnterButton
+	void commandEnterButtonClicked();
+
+	/// Triggers application exit
+	/// Connected to signal triggered() from quitAction
+	void applicationExitRequested();
+
+	/// Task panel context menu Add action
+	void contextAddTask();
+
+	/// Task panel context menu Delete action
+	void contextDeleteTask(int id);
+
+	/// Task panel context menu Edit action
+	void contextEditTask(int id);
+
+	/// Opens a URL. Connected to signal anchorClicked() from taskDescriptor
+	void openURL(const QUrl &);
+
+	/// Updates task descriptor panel on task selection.
+	void taskSelected();
+
+	/// Updates task information bar on task addition/deletion/edit
+	void updateTaskInfoBar();
+};
+
+
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_MAIN_WINDOW_H_
+
+	// End of segment: .\You-GUI\main_window.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\main_window_messages.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_MAIN_WINDOW_MESSAGES_H_
+#define YOU_GUI_MAIN_WINDOW_MESSAGES_H_
+#include "main_window.h"
+
+namespace You {
+namespace GUI {
+
+const QString MainWindow::READY_MESSAGE = "Ready.";
+
+const QString MainWindow::IO_EXCEPTION_MESSAGE =
+"Error: Task file could not be loaded from disk.";
+
+const QString MainWindow::NOT_WELL_FORMED_XML_MESSAGE =
+"Error: Task file is not well formed. Please ensure the syntax of the file "
+"is valid.";
+
+const QString MainWindow::EMPTY_TASK_DESCRIPTION_MESSAGE =
+"Error: Please fill in a task description.";
+
+const QString MainWindow::TASK_NOT_FOUND_MESSAGE =
+"Error: Requested task was not found.";
+
+const QString MainWindow::PARSE_ERROR_MESSAGE =
+"Error: Unable to parse: ";
+
+const QString MainWindow::PARSER_EXCEPTION_MESSAGE =
+"Error: Unable to parse input.";
+
+const QString MainWindow::CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE =
+"Error: The task requested does not exist in the list.";
+
+const QString MainWindow::CONTEXT_REQUIRED_MESSAGE =
+"Error: A context is required.";
+
+const QString MainWindow::UNKNOWN_EXCEPTION_MESSAGE =
+"Error: An unknown exception was thrown.";
+
+const QString MainWindow::CIRCULAR_DEPENDENCY_MESSAGE =
+"Error: A circular dependency was detected.";
+
+const QString MainWindow::NOT_UNDOABLE_MESSAGE =
+"Error: The previous operation could not be undone.";
+
+const QString MainWindow::PARSER_TYPE_MESSAGE =
+"Error: A parser type exception was thrown..";
+
+const QString MainWindow::RESOURCE_RED =
+":/Status_red.png";
+
+const QString MainWindow::RESOURCE_GREEN =
+":/Status_green.png";
+
+}  // namespace GUI
+}  // namespace You
+#endif  // YOU_GUI_MAIN_WINDOW_MESSAGES_H_
+
+	// End of segment: .\You-GUI\main_window_messages.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\query_manager.cpp
+	 */
+
+#include "stdafx.h"
+#include <QApplication>
+#include <QList>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "query_manager.h"
+
+namespace You {
+namespace GUI {
+
+using Controller = You::Controller::Controller;
+
+void MainWindow::QueryManager::setup() {
+	QPixmap pixmap;
+	pixmap.fill(Qt::transparent);
+	pixmap.load(":/Status_green.png", 0);
+	parentGUI->ui.statusIcon->setPixmap(QPixmap(":/Status_green.png"));
+	parentGUI->ui.statusIcon->show();
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusIcon, 0);
+	parentGUI->statusBar()->insertPermanentWidget(
+		0, parentGUI->ui.statusMessage, 0);
+}
+
+void MainWindow::QueryManager::query(
+	const QString& query,
+	const You::Controller::TaskList& taskList) {
+	Result result = Controller::get().query(query.toStdWString(), taskList);
+
+	struct ResultProcessorVisitor : boost::static_visitor<void> {
+		explicit ResultProcessorVisitor(MainWindow* const parentGUI)
+		: parentGUI(parentGUI) {
+		}
+		void operator()(You::Controller::ADD_RESULT addResult) {
+			parentGUI->addTaskWithSubtasks(
+				addResult.task, parentGUI->getTaskList());
+		}
+		void operator()(const You::Controller::SHOW_RESULT& showResult) {
+			parentGUI->clearTasks();
+			parentGUI->addTasks(showResult.tasks);
+		}
+		void operator()(You::Controller::EDIT_RESULT) {
+			parentGUI->clearTasks();
+			parentGUI->populateTaskPanel();
+		}
+		void operator()(You::Controller::DELETE_RESULT deleteResult) {
+			parentGUI->deleteTask(deleteResult.task);
+		}
+		void operator()(const You::Controller::UNDO_RESULT& undoResult) {
+			parentGUI->clearTasks();
+			parentGUI->addTasks(undoResult.tasks);
+		}
+
+	private:
+		MainWindow* parentGUI;
+	};
+
+	ResultProcessorVisitor visitor(parentGUI);
+	boost::apply_visitor(visitor, result);
+}
+
+TaskList MainWindow::QueryManager::getTasks(
+	const QList<Task::ID>& taskIDs) {
+	std::vector<Task::ID> taskIDVector;
+	std::copy(
+		taskIDs.begin(),
+		taskIDs.end(),
+		std::back_inserter(taskIDVector)
+	);
+
+	return Controller::get().getTasks(taskIDVector);
+}
+
+TaskList MainWindow::QueryManager::getTasks() {
+	return Controller::get().getTasks();
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\query_manager.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\query_manager.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_QUERY_MANAGER_H_
+#define YOU_GUI_QUERY_MANAGER_H_
+#include <QApplication>
+#include <QWidget>
+#include "You-Controller/controller.h"
+#include "You-Controller/result.h"
+#include "You-Controller/controller_context.h"
+#include "base_manager.h"
+
+namespace You {
+namespace GUI {
+
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+using Result = You::Controller::Result;
+using TaskList = You::Controller::TaskList;
+
+/// The component that handles passing of data between the controller and the
+/// rest of the GUI. It has two primary operations: on setup it passes a list
+/// containing the IDs of tasks that were previously open, and receives a
+/// Result object. Every time a command is sent, the current Result as well
+/// as input string is sent to the parser. The Result is a vector of tasks, and
+/// this replaces the existing Result. It inherits from the BaseManager class.
+class MainWindow::QueryManager : public MainWindow::BaseManager{
+	friend class UnitTests::MainWindowTests;
+public:
+	/// Constructor inherited from BaseManager.
+	explicit QueryManager(MainWindow* const parentGUI)
+		: BaseManager(parentGUI) {}
+
+	/// Wrapper function to connect commandEnterButton to NLP call signal/slot
+	void setup();
+
+	/// Queries the NLP engine. Sends the query into the NLP engine, and gets a
+	/// Result which it will process.
+	void query(const QString& query, const TaskList& taskList);
+
+	/// Gets the tasks with the given task IDs.
+	TaskList getTasks(const QList<Task::ID>& taskIDs);
+
+	/// Gets all tasks.
+	TaskList getTasks();
+
+private:
+	/// The current result/context displayed to the user
+	std::unique_ptr<Result> currentResult;
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_QUERY_MANAGER_H_
+
+	// End of segment: .\You-GUI\query_manager.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\session_manager.cpp
+	 */
+
+#include "stdafx.h"
+#include <memory>
+#include <QApplication>
+#include <QList>
+#include "session_manager.h"
+
+namespace You {
+namespace GUI {
+
+MainWindow::SessionManager::~SessionManager() {
+	saveSession();
+}
+
+void MainWindow::SessionManager::setup() {
+	loadSession();
+}
+
+void MainWindow::SessionManager::loadSession() {
+	QSettings settings("session.txt", QSettings::IniFormat);
+	settings.beginGroup("MainWindow");
+	parentGUI->resize(settings.value("size", QSize(572, 528)).toSize());
+	parentGUI->move(settings.value("pos", QPoint(200, 200)).toPoint());
+	if (settings.value("maximized", false).toBool()) {
+		parentGUI->setWindowState(
+			parentGUI->windowState() | Qt::WindowMaximized);
+	} else {
+		parentGUI->setWindowState(
+			parentGUI->windowState() & (~Qt::WindowMaximized));
+	}
+	parentGUI->ui.taskTreePanel->header()->
+		restoreState(settings.value("width").toByteArray());
+
+	settings.endGroup();
+}
+
+void MainWindow::SessionManager::saveSession() {
+	QSettings settings("session.txt", QSettings::IniFormat);
+	settings.beginGroup("MainWindow");
+	settings.setValue("size", parentGUI->size());
+	settings.setValue("pos", parentGUI->pos());
+	settings.setValue("maximized", parentGUI->isMaximized());
+	settings.setValue("width", parentGUI->ui.taskTreePanel->header()->saveState());
+	settings.endGroup();
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\session_manager.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\session_manager.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_SESSION_MANAGER_H_
+#define YOU_GUI_SESSION_MANAGER_H_
+#include <QApplication>
+#include "base_manager.h"
+
+namespace You {
+namespace GUI {
+
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+
+/// The component that handles all session-related data of the application. It
+/// handles basics such as the window state of the application,
+/// saving the state on program exit, and restoring them
+/// when the program is started again. It inherits from the BaseManager class.
+class MainWindow::SessionManager : public MainWindow::BaseManager{
+	Q_OBJECT
+	friend class UnitTests::MainWindowTests;
+public:
+	/// Constructor inherited from BaseManager.
+	explicit SessionManager(MainWindow * const parentGUI)
+		: BaseManager(parentGUI) {}
+
+	/// Destructor.
+	~SessionManager();
+
+	/// Wrapper function to load session
+	void setup();
+
+private:
+	/// Loads the previous state of the GUI. Called during constructor.
+	void loadSession();
+
+	/// Saves the state of the GUI before closing. Called during closeEvent.
+	void saveSession();
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_SESSION_MANAGER_H_
+
+	// End of segment: .\You-GUI\session_manager.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\stdafx.cpp
+	 */
+
+#include "stdafx.h"
+
+	// End of segment: .\You-GUI\stdafx.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\stdafx.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_STDAFX_H_
+#define YOU_GUI_STDAFX_H_
+
+#include <memory>
+#include <functional>
+
+#pragma warning(push)
+#include <QApplication>
+#include <QList>
+#pragma warning(disable: 4127)
+#include <QVector>
+#include <QWidget>
+#include <QtWidgets>
+#pragma warning(pop)
+
+#include <boost/date_time/gregorian/greg_month.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/lexical_cast.hpp>
+#pragma warning(push)
+#pragma warning(disable: 4127 4100 4244 4555)
+#include <boost/variant.hpp>
+#pragma warning(pop)
+
+#include "qt_helpers.h"
+
+#endif  // YOU_GUI_STDAFX_H_
+
+	// End of segment: .\You-GUI\stdafx.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\syntax_highlighter.cpp
+	 */
+
+#include "stdafx.h"
+#include "syntax_highlighter.h"
+#include "keywords.h"
+
+namespace You {
+namespace GUI {
+
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
+	: QSyntaxHighlighter(parent) {
+	setColors();
+	buildRules();
+}
+
+SyntaxHighlighter::HighlightingRule SyntaxHighlighter::makeRule(
+	std::wstring input,	QTextCharFormat format,
+	QTextCharFormat secondaryFormat) {
+	HighlightingRule rule;
+	rule.pattern = QRegExp(QString::fromStdWString(input));
+	rule.format = format;
+	rule.secondaryFormat = secondaryFormat;
+	return rule;
+}
+
+void SyntaxHighlighter::setColors() {
+	commandNameFormat.setForeground(Qt::darkBlue);
+	commandNameFormat.setFontWeight(QFont::Bold);
+
+	parameterNameFormat.setFontWeight(QFont::Bold);
+	parameterNameFormat.setForeground(Qt::darkMagenta);
+
+	parameterPrefixFormat.setFontWeight(QFont::Bold);
+	parameterPrefixFormat.setForeground(Qt::darkGreen);
+
+	orderNameFormat.setFontWeight(QFont::Bold);
+	orderNameFormat.setForeground(Qt::blue);
+
+	orderPrefixFormat.setFontWeight(QFont::Bold);
+	orderPrefixFormat.setForeground(Qt::darkGreen);
+
+	symbolFormat.setFontWeight(QFont::Bold);
+	symbolFormat.setForeground(Qt::darkRed);
+}
+
+void SyntaxHighlighter::buildRules() {
+	std::wstringstream wss;
+	for (const auto& cmd : COMMANDS) {
+		wss << L"^" << cmd << L"\\b";
+		commandHighlightingRules.append(makeRule(wss.str(),
+			commandNameFormat, commandNameFormat));
+		wss.str(L"");
+	}
+
+	wss << L"\\s" << PARAM_PREFIX << L"\\s+";
+	paramHighlightingRules.append(makeRule(wss.str(),
+		parameterPrefixFormat, parameterPrefixFormat));
+	wss.str(L"");
+
+	for (const auto& param : PARAMS) {
+		wss << L"\\s+" << param << L"\\b";
+		paramHighlightingRules.append(makeRule(wss.str(),
+			parameterNameFormat, parameterNameFormat));
+		wss.str(L"");
+	}
+
+	for (const auto& param : PARAMS) {
+		for (const auto& order : ORDERS) {
+			wss << L"\\s+" << param << L"\\s+" << order << L"\\b";
+			orderHighlightingRules.append(makeRule(wss.str(),
+				orderNameFormat, parameterNameFormat));
+			wss.str(L"");
+		}
+	}
+
+	wss << L"\\s+" << ORDER_PREFIX << L"\\s+";
+	orderPrefixHighlightingRule.append(makeRule(wss.str(),
+		orderPrefixFormat, orderPrefixFormat));
+	wss.str(L"");
+
+	for (const auto& symbol : SYMBOLS) {
+		wss << symbol;
+		symbolHighlightingRule.append(makeRule(wss.str(),
+			symbolFormat, symbolFormat));
+		wss.str(L"");
+	}
+}
+
+void SyntaxHighlighter::highlightBlock(const QString &text) {
+	/// Highlight the basic commands
+	for (const auto& rule : commandHighlightingRules) {
+		QRegExp expression(rule.pattern);
+		int index = expression.indexIn(text);
+		while (index >= 0) {
+			int length = expression.matchedLength();
+			setFormat(index, length, rule.format);
+			index = expression.indexIn(text, index + length);
+		}
+	}
+
+	/// Highlight parameters and the 'set' prefix such as 'set description'
+	for (const auto& rule : paramHighlightingRules) {
+		QRegExp expression(rule.pattern);
+		int index = expression.indexIn(text);
+		while (index >= 0) {
+			int length = expression.matchedLength();
+			setFormat(index, length, rule.format);
+			setFormat(index, PARAM_PREFIX.length() + 1, rule.secondaryFormat);
+			index = expression.indexIn(text, index + length);
+		}
+	}
+
+	/// Highlights the 'order by' keywords
+	QRegExp expression(orderPrefixHighlightingRule.at(0).pattern);
+	HighlightingRule rule = orderPrefixHighlightingRule.at(0);
+	int index = expression.indexIn(text);
+	while (index >= 0) {
+		int length = expression.matchedLength();
+		setFormat(index, length, rule.format);
+		index = expression.indexIn(text, index + length);
+	}
+
+	/// Highlights parameter 'ascending' or 'descending'
+	for (const auto& rule : orderHighlightingRules) {
+		QRegExp expression(rule.pattern);
+		int offset = 0;
+		int index = expression.indexIn(text);
+		if (index != -1) {
+			for (int i = 0; i < ORDERS.size(); i++) {
+				if (rule.pattern.pattern().contains(
+					QString::fromStdWString(ORDERS[i]))) {
+					offset = ORDERS[i].length();
+				}
+			}
+		}
+		while (index >= 0) {
+			int length = expression.matchedLength();
+			setFormat(index, length - offset, rule.format);
+			setFormat(index + length - offset,
+				length - offset, rule.secondaryFormat);
+			index = expression.indexIn(text, index + length);
+		}
+	}
+
+	/// Highlights symbols
+	for (const auto& rule : symbolHighlightingRule) {
+		QRegExp expression(rule.pattern);
+		int index = expression.indexIn(text);
+		while (index >= 0) {
+			int length = expression.matchedLength();
+			setFormat(index, length, rule.format);
+			index = expression.indexIn(text, index + length);
+		}
+	}
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\syntax_highlighter.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\syntax_highlighter.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_SYNTAX_HIGHLIGHTER_H_
+#define YOU_GUI_SYNTAX_HIGHLIGHTER_H_
+#include <QSyntaxHighlighter>
+
+namespace You {
+namespace GUI {
+
+class SyntaxHighlighter : public QSyntaxHighlighter {
+	Q_OBJECT
+
+public:
+	explicit SyntaxHighlighter(QTextDocument *parent = 0);
+
+protected:
+	void highlightBlock(const QString &text);
+
+private:
+	struct HighlightingRule {
+		QRegExp pattern;
+		QTextCharFormat format;
+		QTextCharFormat secondaryFormat;
+	};
+
+	HighlightingRule makeRule(std::wstring input, QTextCharFormat format,
+		QTextCharFormat secondaryFormat);
+	void setColors();
+	void buildRules();
+	QVector<HighlightingRule> commandHighlightingRules;
+	QVector<HighlightingRule> paramHighlightingRules;
+	QVector<HighlightingRule> orderHighlightingRules;
+	QVector<HighlightingRule> orderPrefixHighlightingRule;
+	QVector<HighlightingRule> symbolHighlightingRule;
+
+	QTextCharFormat commandNameFormat;
+	QTextCharFormat parameterNameFormat;
+	QTextCharFormat parameterPrefixFormat;
+	QTextCharFormat orderPrefixFormat;
+	QTextCharFormat orderNameFormat;
+	QTextCharFormat symbolFormat;
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_SYNTAX_HIGHLIGHTER_H_
+
+	// End of segment: .\You-GUI\syntax_highlighter.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\system_tray_manager.cpp
+	 */
+
+#include "stdafx.h"
+#include <QApplication>
+#include <QList>
+#include "main_window.h"
+#include "system_tray_manager.h"
+namespace You {
+namespace GUI {
+
+MainWindow::SystemTrayManager::~SystemTrayManager() {
+}
+
+void MainWindow::SystemTrayManager::setup() {
+	createActions();
+	setIcon();
+	makeContextMenu();
+	connectTrayActivatedSlot();
+	parentGUI->setVisible(true);
+	thread.start();
+}
+
+void MainWindow::SystemTrayManager::setIcon() {
+	QIcon icon(":/Icon.png");
+	trayIcon.setIcon(icon);
+	parentGUI->setWindowIcon(icon);
+	trayIcon.show();
+}
+
+void MainWindow::SystemTrayManager::makeContextMenu() {
+	trayIconMenu = new QMenu(parentGUI);
+	trayIconMenu->addAction(minimizeAction);
+	trayIconMenu->addAction(maximizeAction);
+	trayIconMenu->addAction(restoreAction);
+	trayIconMenu->addSeparator();
+	trayIconMenu->addAction(quitAction);
+	trayIcon.setContextMenu(trayIconMenu);
+}
+
+void MainWindow::SystemTrayManager::connectTrayActivatedSlot() {
+	connect(&trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+	connect(&thread, SIGNAL(hotkeyClicked(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+}
+
+void MainWindow::SystemTrayManager::iconActivated(
+	QSystemTrayIcon::ActivationReason reason) {
+	if (reason == QSystemTrayIcon::Trigger) {
+		bool visible = parentGUI->isVisible();
+		bool minimized = parentGUI->isMinimized();
+		assert((visible && minimized) || (visible && !minimized) ||
+			(!visible));
+		Qt::WindowStates toggleState
+			(parentGUI->windowState() & ~Qt::WindowMinimized);
+		if (visible && minimized) {
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
+			parentGUI->commandTextBox->setFocus(
+				Qt::FocusReason::ActiveWindowFocusReason);
+		} else if (visible && !minimized) {
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
+			parentGUI->hide();
+		} else if (!visible) {
+			parentGUI->show();
+			parentGUI->setWindowState(toggleState | Qt::WindowActive);
+			parentGUI->commandTextBox->setFocus(
+				Qt::FocusReason::ActiveWindowFocusReason);
+		}
+	}
+}
+
+void MainWindow::SystemTrayManager::createActions() {
+	minimizeAction = new QAction(tr("Minimize"), parentGUI);
+	connect(minimizeAction, SIGNAL(triggered()), parentGUI, SLOT(hide()));
+
+	maximizeAction = new QAction(tr("Maximize"), parentGUI);
+	connect(maximizeAction, SIGNAL(triggered()), parentGUI, SLOT(showMaximized()));
+
+	restoreAction = new QAction(tr("Restore"), parentGUI);
+	connect(restoreAction, SIGNAL(triggered()), parentGUI, SLOT(showNormal()));
+
+	quitAction = new QAction(tr("Quit"), parentGUI);
+	connect(quitAction, SIGNAL(triggered()),
+		parentGUI, SLOT(applicationExitRequested()));
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\system_tray_manager.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\system_tray_manager.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_SYSTEM_TRAY_MANAGER_H_
+#define YOU_GUI_SYSTEM_TRAY_MANAGER_H_
+#include <QApplication>
+#include "base_manager.h"
+#include "tray_hotkey_handler.h"
+
+namespace You {
+namespace GUI {
+namespace UnitTests { class MainWindowTests; }
+
+/// The component that handles all interactions with the tray icon. It handles
+/// the window state of the application based on commands sent to the tray
+/// manager. It inherits from the BaseManager class.
+class MainWindow::SystemTrayManager : public MainWindow::BaseManager {
+	Q_OBJECT
+	friend class MainWindow;
+	friend class UnitTests::MainWindowTests;
+public:
+	/// Constructor inherited from BaseManager.
+	explicit SystemTrayManager(MainWindow * const parentGUI)
+		: BaseManager(parentGUI) {}
+
+	/// Destructor.
+	~SystemTrayManager();
+
+	/// Defines and sets functionality of the tray icon. Called in the
+	/// constructor.
+	void setup();
+
+private:
+	/// Minimize action in the context menu in system tray
+	QAction *minimizeAction;
+
+	/// Maximize action in the context menu in system tray
+	QAction *maximizeAction;
+
+	/// Restore action in the context menu in system tray
+	QAction *restoreAction;
+
+	/// Quit action in the context menu in system tray
+	QAction *quitAction;
+
+	/// Tray icon context menu
+	QMenu* trayIconMenu;
+
+	/// Thread that detects hotkey press and notifies SystemTrayManager
+	Thread::TrayHotkeyHandler thread;
+
+	/// Declares and defines the image of the tray icon.
+	void setIcon();
+
+	/// Creates actions for the context menu.
+	void createActions();
+
+	/// Adds created actions to the context menu.
+	void makeContextMenu();
+
+	/// Connects the signal/slot of the tray icon
+	void connectTrayActivatedSlot();
+
+	/// System tray icon object that adds an icon to the tray.
+	QSystemTrayIcon trayIcon;
+
+	/// Icon image for system tray.
+	QIcon icon;
+
+	private slots:
+	/// QT's signal/slot mechanism for tray icon activation. Implements
+	/// show/hide behavior on click.
+	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_SYSTEM_TRAY_MANAGER_H_
+
+	// End of segment: .\You-GUI\system_tray_manager.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\task_panel_manager.cpp
+	 */
+
+#include "stdafx.h"
+#include <QApplication>
+#include <QList>
+#include <QPair>
+#include <QBrush>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/range/adaptor/transformed.hpp>
+#include "task_panel_manager.h"
+namespace You {
+namespace GUI {
+
+using Date = boost::gregorian::date;
+
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_0_TITLE = "Index";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE =
+"Hidden ID Column";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE =
+"Dependencies";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Attachment";
+
+const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
+const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
+const int MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 2;
+const int MainWindow::TaskPanelManager::COLUMN_STARTDATE = 3;
+const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 4;
+const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
+const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
+const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
+const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 8;
+
+MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
+: BaseManager(parentGUI), deleteAction(QString("Delete"), this),
+editAction(QString("Edit"), this), addAction(QString("Add"), this),
+deleteSignalMapper(this), editSignalMapper(this) {
+}
+
+MainWindow::TaskPanelManager::~TaskPanelManager() {
+}
+
+void MainWindow::TaskPanelManager::setup() {
+	QStringList columnHeaders({
+		TASK_COLUMN_0_TITLE,
+		TASK_COLUMN_1_TITLE,
+		TASK_COLUMN_2_TITLE,
+		TASK_COLUMN_3_TITLE,
+		TASK_COLUMN_4_TITLE,
+		TASK_COLUMN_5_TITLE,
+		TASK_COLUMN_6_TITLE,
+		TASK_COLUMN_7_TITLE,
+		TASK_COLUMN_8_TITLE
+	});
+	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
+	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
+		parentGUI, SLOT(taskSelected()));
+
+	connect(taskTreePanel, SIGNAL(customContextMenuRequested(const QPoint &)),
+		this, SLOT(contextMenu(const QPoint &)));
+	taskTreePanel->setColumnCount(columnHeaders.size());
+	taskTreePanel->setHeaderItem(createItem(columnHeaders).release());
+
+	QHeaderView* header = taskTreePanel->header();
+	header->setStretchLastSection(true);
+	header->resizeSection(COLUMN_INDEX, 50);
+	header->resizeSection(COLUMN_DESCRIPTION, 210);
+	header->resizeSection(COLUMN_DEADLINE, 160);
+	header->resizeSection(COLUMN_PRIORITY, 40);
+	taskTreePanel->setColumnHidden(COLUMN_HIDDEN_ID, true);
+	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
+	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
+	taskTreePanel->setColumnHidden(COLUMN_ATTACHMENT, true);
+}
+
+void MainWindow::TaskPanelManager::addTask(const Task& task) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(task));
+	parentGUI->ui.taskTreePanel->addTopLevelItem(item.release());
+}
+
+void MainWindow::TaskPanelManager::addSubtask(QTreeWidgetItem* parent,
+	const QStringList& rowStrings) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(rowStrings));
+	parent->addChild(item.release());
+}
+
+void MainWindow::TaskPanelManager::addSubtask(const Task& parentTask,
+	const Task& childTask) {
+	std::unique_ptr<QTreeWidgetItem> item(createItem(childTask));
+	QList<QTreeWidgetItem*> items = findItems(parentTask.getID());
+	items.at(0)->addChild(item.release());
+}
+
+void MainWindow::TaskPanelManager::editTask(const Task& task) {
+	QList<QTreeWidgetItem*> items = findItems(task.getID());
+	assert(items.length() == 1);
+	QTreeWidgetItem item = *items.at(0);
+	QStringList wstr = taskToStrVec(task);
+	*items.at(0) = *createItem(wstr);
+}
+
+void MainWindow::TaskPanelManager::deleteTask(Task::ID taskID) {
+	QList<QTreeWidgetItem*> items = findItems(taskID);
+	assert(items.length() == 1);
+	deleteTask(items.at(0));
+}
+
+void MainWindow::TaskPanelManager::deleteTask(QTreeWidgetItem* task) {
+	delete task;
+}
+
+/// Takes a single task, a map of all tasks, and produces a QTreeWidgetItem
+/// with all its subtasks, recursively.
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::addTaskTree(
+	const Task& task) {
+	parentGUI->taskList->push_back(task);
+	std::unique_ptr<QTreeWidgetItem> root = createItem(task);
+	for (const Task& subtask : task.getSubtasksObject()) {
+		root->addChild(addTaskTree(subtask).release());
+	}
+	return root;
+}
+
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
+	const Task& task) {
+	std::unique_ptr<QTreeWidgetItem> item = createItem(taskToStrVec(task));
+	item->setChildIndicatorPolicy(
+		QTreeWidgetItem::DontShowIndicatorWhenChildless);
+	return item;
+}
+
+std::unique_ptr<QTreeWidgetItem> MainWindow::TaskPanelManager::createItem(
+	const QStringList& rowStrings) {
+	return std::make_unique<QTreeWidgetItem>(rowStrings);
+}
+
+QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
+	You::Controller::Task::ID taskID) const {
+	return parentGUI->ui.taskTreePanel->findItems(
+		boost::lexical_cast<QString>(taskID), Qt::MatchRecursive, 1);
+}
+
+QStringList MainWindow::TaskPanelManager::taskToStrVec(
+	const You::Controller::Task& task) {
+	std::wstringstream wss;
+	QStringList result;
+	// Insert dummy count
+	result.push_back("0");
+
+	// Insert id
+	result.push_back(boost::lexical_cast<QString>(task.getID()));
+
+	// Insert description
+	result.push_back(QString::fromStdWString(task.getDescription()));
+
+	// Insert start time
+	result.push_back(getReadableDateTime(task.getStartTime()));
+
+	// Insert deadline
+	result.push_back(getReadableDateTime(task.getDeadline()));
+
+	// Insert priority
+	QString priority[] { "High", "Normal" };
+
+	switch (task.getPriority()) {
+	case Task::Priority::HIGH:
+		result.push_back(priority[0]);
+		break;
+	case Task::Priority::NORMAL:
+		result.push_back(priority[1]);
+		break;
+	}
+
+	// Insert dependencies
+	std::vector<Task> dependencies = task.getDependenciesObject();
+	if (dependencies.size() != 0) {
+		std::wstring temp = boost::algorithm::join(dependencies |
+			boost::adaptors::transformed(
+			std::mem_fn(&Task::getDescription)),
+			L", ");
+		result.push_back(boost::lexical_cast<QString>(temp));
+	} else {
+		result.push_back("None");
+	}
+
+	// Insert done-ness
+	if (task.isCompleted()) {
+		result.push_back(boost::lexical_cast<QString>("Yes"));
+	} else {
+		result.push_back(boost::lexical_cast<QString>("No"));
+	}
+	// Insert attachment
+	if (task.getAttachment().size() != 0) {
+		Task::Attachment attachments = task.getAttachment();
+		std::wstring temp = boost::algorithm::join(attachments, L", ");
+		result.push_back(boost::lexical_cast<QString>(temp));
+	} else {
+		result.push_back("None");
+	}
+
+	return result;
+}
+
+void MainWindow::TaskPanelManager::repaintTasks() {
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(false);
+	QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel);
+	/// Iterate through all tasks
+	while (*it) {
+		QTreeWidgetItem *item = *it;
+		/// If task is not done
+		if (getCompletionAsText(*item).compare(QString("No")) == 0) {
+			QList<QTreeWidgetItem*> selection =
+				parentGUI->ui.taskTreePanel->selectedItems();
+			if (selection.size() != 0) {
+				/// Get selected task
+				Task::ID id = parentGUI->getSelectedTaskID();
+				TaskList::iterator i = std::find_if(
+					parentGUI->taskList->begin(), parentGUI->taskList->end(),
+					[=](Task& task) {
+					return task.getID() == id;
+				});
+				Task task = *i;
+
+				/// Get ID of iterated task
+				Task::ID index = boost::lexical_cast<Task::ID>(
+					getHiddenIDAsText(*item).toLongLong());
+				QFont font = (item->font(0));
+				font.setStrikeOut(false);
+				font.setBold(false);
+				/// If current task is a dependency of selected task
+				Task::Dependencies dependencies = task.getDependencies();
+				if (std::find(dependencies.begin(), dependencies.end(), index)
+					/// Color it blue
+					!= dependencies.end()) {
+					font.setBold(true);
+					colorTask(item, Qt::darkGreen, Qt::lightGray, font);
+				} else {
+					/// Otherwise color it black
+					colorTask(item, Qt::black, Qt::white, font);
+				}
+			} else {
+				/// No selection
+				QFont font = (item->font(0));
+				font.setStrikeOut(false);
+				font.setBold(false);
+				colorTask(item, Qt::black, Qt::white, font);
+			}
+		} else {
+			/// Overrides all other formats if task is already done
+			QFont font = (item->font(0));
+			font.setStrikeOut(true);
+			font.setBold(false);
+			colorTask(item, Qt::gray, Qt::white, font);
+		}
+		++it;
+	}
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
+	parentGUI->ui.taskTreePanel->update();
+}
+
+void MainWindow::TaskPanelManager::updateRowNumbers() {
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(false);
+	int rowNum = 1;
+	for (QTreeWidgetItemIterator it(parentGUI->ui.taskTreePanel); *it; ++it) {
+		(*it)->setData(COLUMN_INDEX, Qt::DisplayRole, rowNum++);
+	}
+	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
+	parentGUI->ui.taskTreePanel->update();
+}
+
+void MainWindow::TaskPanelManager::colorTask(
+	QTreeWidgetItem *taskItem, QColor color, QColor bgColor, QFont font) {
+	for (int i = 0; i < taskItem->columnCount(); i++) {
+		taskItem->setTextColor(i, color);
+		taskItem->setBackgroundColor(i, bgColor);
+		taskItem->setFont(i, font);
+	}
+}
+
+bool MainWindow::TaskPanelManager::isPastDue(Task::Time deadline) {
+	Task::Time now = boost::posix_time::second_clock::local_time();
+	return deadline < now;
+}
+
+bool MainWindow::TaskPanelManager::isDueWithinExactly(
+	Task::Time deadline, int days) {
+	Task::Time now = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration day(days * 24, 0, 0, 0);
+	return deadline < (now + day) && deadline > now;
+}
+
+bool MainWindow::TaskPanelManager::isDueAfter(
+		Task::Time deadline, int daysLeft) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::local_day();
+	return by.modjulian_day() - today.modjulian_day() == daysLeft;
+}
+
+bool MainWindow::TaskPanelManager::isDueWithin(
+	Task::Time deadline, int daysLeft) {
+	Date by = Date(deadline.date());
+	Date today = boost::gregorian::day_clock::local_day();
+	return by.julian_day() - today.julian_day() < daysLeft;
+}
+
+void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
+	/// Try to get the item at the position of the context menu
+	QTreeWidgetItem *item = parentGUI->ui.taskTreePanel->itemAt(pos);
+	itemContextMenu.reset(new QMenu(parentGUI->ui.taskTreePanel));
+
+	/// Adds the Add Task action. This is always present in the menu.
+	itemContextMenu->addAction(&addAction);
+	connect(&addAction, SIGNAL(triggered()), parentGUI, SLOT(contextAddTask()));
+
+	/// Adds the Edit Task and Delete Task actions if an item is selected.
+	/// QSignalMapper is necessary because arguments need to be passed
+	/// as part of the signal.
+	if (item) {
+		deleteSignalMapper.setMapping(&deleteAction,
+			item->text(COLUMN_INDEX).toInt());
+		connect(&deleteAction, SIGNAL(triggered()),
+			&deleteSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&deleteAction);
+		connect(&deleteSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextDeleteTask(int)));
+
+		editSignalMapper.setMapping(&editAction,
+			item->text(COLUMN_INDEX).toInt());
+		connect(&editAction, SIGNAL(triggered()),
+			&editSignalMapper, SLOT(map()));
+		itemContextMenu->addAction(&editAction);
+		connect(&editSignalMapper, SIGNAL(mapped(int)),
+			parentGUI, SLOT(contextEditTask(int)));
+	}
+
+	itemContextMenu->popup(
+		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
+}
+
+QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
+	std::wstringstream wss;
+	std::unique_ptr<boost::posix_time::wtime_facet> facet(
+		new boost::posix_time::wtime_facet(L"%d %B %Y"));
+	std::stringstream ss;
+	wss.imbue(std::locale(wss.getloc(), facet.release()));
+	std::wstringstream time_of_day;
+	boost::posix_time::time_duration time =
+		datetime.time_of_day();
+
+	if (datetime == Task::NEVER) {
+		wss << L"Never";
+	} else if (isPastDue(datetime)) {
+		wss << L"Overdue (" << datetime << L")";
+	} else if (isDueAfter(datetime, 0)) {
+		wss << L"Today (" << datetime << L")";
+	} else if (isDueAfter(datetime, 1)) {
+		wss << L"Tomorrow (" << datetime << L")";
+	} else if (isDueAfter(datetime, 2)) {
+		wss << L"In two days (" << datetime << L")";
+	} else if (isDueWithin(datetime, 7)) {
+		Date dl = Date(datetime.date());
+		wss << L"This coming " << dl.day_of_week()
+			<< L" (" << datetime << L")";
+	} else if (isDueWithin(datetime, 14)) {
+		Date dl = Date(datetime.date());
+		wss << L"Next " << dl.day_of_week()
+			<< L" (" << datetime << L")";
+	} else if (isDueWithin(datetime, 21)) {
+		wss << L"Within three weeks (" << datetime << L")";
+	} else if (isDueWithin(datetime, 28)) {
+		wss << L"Within one month (" << datetime << L")";
+	} else {
+		wss << L"More than a month away (" << datetime << L")";
+	}
+	return boost::lexical_cast<QString>(wss.str());
+}
+
+QString MainWindow::TaskPanelManager::getIndexAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_INDEX);
+}
+
+QString MainWindow::TaskPanelManager::getHiddenIDAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_HIDDEN_ID);
+}
+
+QString MainWindow::TaskPanelManager::getDescriptionAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DESCRIPTION);
+}
+
+QString MainWindow::TaskPanelManager::getStartDateAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_STARTDATE);
+}
+
+QString MainWindow::TaskPanelManager::getDeadlineAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DEADLINE);
+}
+
+QString MainWindow::TaskPanelManager::getPriorityAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_PRIORITY);
+}
+
+QString MainWindow::TaskPanelManager::getDependenciesAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_DEPENDENCIES);
+}
+
+QString MainWindow::TaskPanelManager::getCompletionAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_COMPLETION);
+}
+
+QString MainWindow::TaskPanelManager::getAttachmentAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_ATTACHMENT);
+}
+
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\task_panel_manager.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\task_panel_manager.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_TASK_PANEL_MANAGER_H_
+#define YOU_GUI_TASK_PANEL_MANAGER_H_
+#include <QApplication>
+#include "You-Controller/controller.h"
+#include "You-Controller/controller_context.h"
+#include "You-Controller/result.h"
+#include "base_manager.h"
+
+namespace You {
+namespace GUI {
+
+namespace UnitTests { class MainWindowTests; }
+
+using Task = You::Controller::Task;
+
+/// The component that deals with everything in the task panel. It handles the
+/// presentation of logic of a set of tasks presented to it by the NLP engine.
+/// It inherits from the BaseManager class.
+class MainWindow::TaskPanelManager : public MainWindow::BaseManager{
+	Q_OBJECT
+	friend class UnitTests::MainWindowTests;
+public:
+	/// Constructor inherited from BaseManager.
+	explicit TaskPanelManager(MainWindow* const parentGUI);
+
+	/// Destructor.
+	~TaskPanelManager();
+
+	/// Initializes the taskTreePanel by setting column count and headers.
+	/// Called in the constructor of MainWindow.
+	void setup();
+
+	/// Adds a task to the taskTreePanel. Only deals with top-level tasks.
+	void addTask(const Task& task);
+
+	/// Edits a task.
+	void editTask(const Task& task);
+
+	/// Deletes a task.
+	void deleteTask(Task::ID taskID);
+
+	void repaintTasks();
+
+	std::unique_ptr<QTreeWidgetItem> addTaskTree(const Task& task);
+
+	/// Appends a child task to an existing parent task
+	void addSubtask(const Task& parentTask, const Task& childTask);
+
+	/// Time function to check if a deadline is past due.
+	static bool isPastDue(Task::Time deadline);
+
+	/// Time function to check if a deadline is due on the daysLeft'th day.
+	static bool isDueAfter(Task::Time deadline, int daysLeft);
+
+	/// Time function to check if a deadline is due within daysLeft days
+	static bool isDueWithin(Task::Time deadline, int daysLeft);
+
+	/// Time function to check if a deadline is due within exactly daysLeft days
+	static bool isDueWithinExactly(Task::Time deadline, int days);
+
+	/// Returns human-readable form for a deadline
+	static QString getReadableDateTime(Task::Time datetime);
+
+	/// Colors a task
+	void colorTask(QTreeWidgetItem *taskItem, QColor color, QColor bgColor,
+		QFont font);
+
+private:
+	/// Converts the properties of a task into a set of cells for display
+	/// in a QTreeWidget
+	static QStringList taskToStrVec(const Task& task);
+
+	/// Produces a generic QTreeWidgetItem from a task. It is an
+	/// intermediate step to adding headings and tasks.
+	static std::unique_ptr<QTreeWidgetItem> createItem(
+		const You::Controller::Task& task);
+
+	/// Produces a generic QTreeWidgetItem from an item. It is an
+	/// intermediate step to adding headings and tasks.
+	static std::unique_ptr<QTreeWidgetItem> createItem(
+		const QStringList& cells);
+
+	/// Finds the items which display the given task ID.
+	QList<QTreeWidgetItem*> findItems(Task::ID taskID) const;
+
+	/// Adds a subtask to the taskTreePanel. Requires the specification of a
+	/// parent task.
+	void addSubtask(QTreeWidgetItem* parent, const QStringList& rowStrings);
+
+	/// Deletes a task or subtask. Memory management is automagically dealt
+	/// with by QT's parent/child structure, so all child objects are
+	/// automatically deleted.
+	void deleteTask(QTreeWidgetItem* task);
+
+	/// The item context menu on right click.
+	QScopedPointer<QMenu> itemContextMenu;
+
+	/// The add action in the context menu.
+	QAction addAction;
+
+	/// The delete action in the context menu.
+	QAction deleteAction;
+
+	/// The edit action in the context menu.
+	QAction editAction;
+
+	/// A signal mapper to allow for passing of parameters for delete action.
+	QSignalMapper deleteSignalMapper;
+
+	/// A signal mapper to allow for passing of parameters for edit action.
+	QSignalMapper editSignalMapper;
+
+private slots:
+	/// Listens for the call for a context menu
+	void contextMenu(const QPoint &pos);
+
+	/// Updates row numbers
+	void updateRowNumbers();
+
+private:
+	/// String/numeric constants for the GUI
+	/// @{
+	/// Header string for column 1
+	static const QString TASK_COLUMN_0_TITLE;
+
+	/// Header string for column 2
+	static const QString TASK_COLUMN_1_TITLE;
+
+	/// Header string for column 3
+	static const QString TASK_COLUMN_2_TITLE;
+
+	/// Header string for column 4
+	static const QString TASK_COLUMN_3_TITLE;
+
+	/// Header string for column 5
+	static const QString TASK_COLUMN_4_TITLE;
+
+	/// Header string from column 6
+	static const QString TASK_COLUMN_5_TITLE;
+
+	/// Header string from column 7
+	static const QString TASK_COLUMN_6_TITLE;
+
+	/// Header string from column 7
+	static const QString TASK_COLUMN_7_TITLE;
+
+	/// Header string from column 8
+	static const QString TASK_COLUMN_8_TITLE;
+
+	/// Column reference to Index column
+	static const int COLUMN_INDEX;
+
+	/// Column reference to Hidden ID column
+	static const int COLUMN_HIDDEN_ID;
+
+	/// Column reference to Description column
+	static const int COLUMN_DESCRIPTION;
+
+	/// Column reference to Deadline column
+	static const int COLUMN_DEADLINE;
+
+	/// Column reference to Priority column
+	static const int COLUMN_PRIORITY;
+
+	/// Column reference to Dependencies column
+	static const int COLUMN_DEPENDENCIES;
+
+	/// Column reference to Completion column
+	static const int COLUMN_COMPLETION;
+
+	/// Column reference to Attachment column
+	static const int COLUMN_ATTACHMENT;
+	/// @}
+
+	/// Column reference to Start Date column
+	static const int COLUMN_STARTDATE;
+
+public:
+	/// Text of Index column
+	QString getIndexAsText(QTreeWidgetItem item);
+
+	/// Text of HiddenID column
+	QString getHiddenIDAsText(QTreeWidgetItem item);
+
+	/// Text of Description column
+	QString getDescriptionAsText(QTreeWidgetItem item);
+
+	/// Text of Deadline column
+	QString getDeadlineAsText(QTreeWidgetItem item);
+
+	/// Text of Priority column
+	QString getPriorityAsText(QTreeWidgetItem item);
+
+	/// Text of Dependencies column
+	QString getDependenciesAsText(QTreeWidgetItem item);
+
+	/// Text of Completion column
+	QString getCompletionAsText(QTreeWidgetItem item);
+
+	/// Text of Attachments column
+	QString getAttachmentAsText(QTreeWidgetItem item);
+
+	QString getStartDateAsText(QTreeWidgetItem item);
+
+	/// @}
+};
+
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_TASK_PANEL_MANAGER_H_
+
+	// End of segment: .\You-GUI\task_panel_manager.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\tray_hotkey_handler.cpp
+	 */
+
+#include "stdafx.h"
+#include <windows.h>
+#include "tray_hotkey_handler.h"
+
+namespace You {
+namespace GUI {
+namespace Thread {
+
+TrayHotkeyHandler::TrayHotkeyHandler() {
+	moveToThread(this);
+}
+
+void TrayHotkeyHandler::run() {
+	RegisterHotKey(0, 0, MOD_WIN, hotkey);
+	MSG msg;
+	// Allows Qt to send ActivationReason as a signal type
+	qRegisterMetaType<QSystemTrayIcon::ActivationReason>(
+		"QSystemTrayIcon::ActivationReason");
+
+	while (1) {
+		msg = { 0 };
+		GetMessage(&msg, 0, 0, 0);
+		if (msg.message == WM_HOTKEY) {
+			emit hotkeyClicked(QSystemTrayIcon::Trigger);
+		}
+		DispatchMessage(&msg);
+	}
+}
+
+}  // namespace Thread
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI\tray_hotkey_handler.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\tray_hotkey_handler.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_TRAY_HOTKEY_HANDLER_H_
+#define YOU_GUI_TRAY_HOTKEY_HANDLER_H_
+#include <QThread>
+
+namespace You {
+namespace GUI {
+namespace Thread {
+
+/// TrayHotkeyHandler inherits from QThread, and runs on a separate thread
+/// as a listener for a hotkey event. It registers the hotkey before looping.
+class TrayHotkeyHandler : public QThread {
+	Q_OBJECT
+public:
+	/// Constructor.
+	TrayHotkeyHandler();
+
+signals:
+	/// Signals to SystemTrayManager that hotkey has been pressed
+	void hotkeyClicked(QSystemTrayIcon::ActivationReason);
+
+protected:
+	/// Loops in its own thread to check if hotkey is pressed.
+	void run();
+
+private:
+	/// Hotkey to be pressed in conjunction with Win-Key. 0x59 is 'Y'
+	const int hotkey = 0x59;
+};
+
+}  // namespace Thread
+}  // namespace GUI
+}  // namespace You
+
+#endif  // YOU_GUI_TRAY_HOTKEY_HANDLER_H_
+
+	// End of segment: .\You-GUI\tray_hotkey_handler.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\window_title.cpp
+	 */
+
+#include "stdafx.h"
+#include "window_title.h"
+const std::wstring WINDOW_TITLE =
+L"\u7528 (Y\u014D) - Your Task Manager Application ";
+
+	// End of segment: .\You-GUI\window_title.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI\window_title.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_WINDOW_TITLE_H_
+#define YOU_GUI_WINDOW_TITLE_H_
+/// Title as shown in application window title bar
+extern const std::wstring WINDOW_TITLE;
+#endif  // YOU_GUI_WINDOW_TITLE_H_
+
+	// End of segment: .\You-GUI\window_title.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI-Tests\exclusions.h
+	 */
+
+#pragma once
+#ifndef YOU_GUI_TESTS_EXCLUSIONS_H_
+#define YOU_GUI_TESTS_EXCLUSIONS_H_
+
+// A local define since there is no way to test whether a header file exists.
+// If you have VS Premium, then add it to the project definition (user
+// properties) file
+#ifdef MS_CPP_CODECOVERAGE
+
+/// \file Exclusions from code coverage analysis.
+/// See http://msdn.microsoft.com/en-sg/library/dd537628.aspx
+
+#include <CodeCoverage/CodeCoverage.h>
+#pragma managed(push, off)
+
+ExcludeFromCodeCoverage(boost, L"boost::*");
+ExcludeFromCodeCoverage(boost_meta, L"??@*@");
+ExcludeFromCodeCoverage(Qt_AtomicOps, L"QAtomicOpsBySize*");
+ExcludeFromCodeCoverage(Qt_BasicAtomicInteger, L"QBasicAtomicInteger*");
+ExcludeFromCodeCoverage(Qt_GenericAtomicOps, L"QGenericAtomicOps*");
+ExcludeFromCodeCoverage(Qt_List, L"QList*");
+ExcludeFromCodeCoverage(Qt_Flags, L"QFlag*");
+ExcludeFromCodeCoverage(Qt_Meta, L"QtMetaTypePrivate*");
+ExcludeFromCodeCoverage(Qt_Private, L"QtPrivate*");
+ExcludeFromCodeCoverage(Qt_ScopedPointer, L"QScopedPointer*");
+ExcludeFromCodeCoverage(Qt_StringList, L"QStringList*");
+ExcludeFromCodeCoverage(Qt_StaticStringData, L"QStaticStringData*");
+ExcludeFromCodeCoverage(Qt_TypedArrayData, L"QTypedArrayData*");
+ExcludeFromCodeCoverage(Qt_Vector, L"QVector*");
+ExcludeFromCodeCoverage(You_NLP, L"You::NLP::*");
+ExcludeFromCodeCoverage(You_QueryEngine, L"You::QueryEngine::*");
+ExcludeFromCodeCoverage(You_Utils, L"You::Utils::*");
+ExcludeFromCodeCoverage(You_Controller, L"You::Controller::*");
+ExcludeFromCodeCoverage(You_DataStore, L"You::DataStore::*");
+#pragma managed(pop)
+#endif  // MS_CPP_CODECOVERAGE
+
+#endif  // YOU_GUI_TESTS_EXCLUSIONS_H_
+
+	// End of segment: .\You-GUI-Tests\exclusions.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI-Tests\stdafx.cpp
+	 */
+
+// stdafx.cpp : source file that includes just the standard includes
+// You-GUI-Tests.pch will be the pre-compiled header
+// stdafx.obj will contain the pre-compiled type information
+#include "stdafx.h"
+
+	// End of segment: .\You-GUI-Tests\stdafx.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI-Tests\stdafx.h
+	 */
+
+// stdafx.h : include file for standard system include files,
+// or project specific include files that are used frequently, but
+// are changed infrequently
+//
+
+#pragma once
+#ifndef YOU_GUI_TESTS_STDAFX_H_
+#define YOU_GUI_TESTS_STDAFX_H_
+
+#include <SDKDDKVer.h>
+#pragma warning(disable: 4505)
+#include <CppUnitTest.h>
+
+#include <string>
+#include <QtWidgets>
+
+#include "../You-GUI/stdafx.h"
+
+#include "exclusions.h"
+
+#endif  // YOU_GUI_TESTS_STDAFX_H_
+
+	// End of segment: .\You-GUI-Tests\stdafx.h
+
+
+
+
+
+	/**
+	 * origin: .\You-GUI-Tests\you_gui_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+#include "You-GUI\main_window.h"
+#include "You-GUI\system_tray_manager.h"
+#include "You-QueryEngine\api.h"
+#include "You-GUI\task_panel_manager.h"
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+using Task = You::Controller::Task;
+using TaskList = You::Controller::TaskList;
+using Date = boost::gregorian::date;
+namespace You {
+namespace GUI {
+namespace UnitTests {
+QApplication *app;
+
+// Simulate running the main() function
+// Qt event loop
+TEST_MODULE_INITIALIZE(ModuleInitialize) {
+	int argc = 1;
+	char *argv[] = { "You.exe" };
+	app = new QApplication(argc, argv);
+}
+
+// Cleans up what we set up
+TEST_MODULE_CLEANUP(ModuleCleanup) {
+	app->quit();
+	delete app;
+}
+
+TEST_CLASS(MainWindowTests) {
+public:
+	MainWindow* w;
+	TEST_METHOD_INITIALIZE(MethodInitialize) {
+		w = new MainWindow();
+		w->clearTasks();
+	}
+
+	TEST_METHOD_CLEANUP(MethodCleanup) {
+		while (w->ui.taskTreePanel->topLevelItemCount() != 0) {
+			w->commandTextBox->setPlainText(QString("/delete 1"));
+			w->commandEnterPressed();
+		}
+		w->clearTasks();
+		delete w;
+	}
+
+	/// These are generic tests for component visibility/invisibility
+	TEST_METHOD(visibilityTest) {
+		bool visibilityTest =
+			w->isVisible() &&
+			w->ui.centralWidget->isVisible() &&
+			w->ui.taskTreePanel->isVisible() &&
+			w->ui.commandEnterButton->isVisible() &&
+			w->ui.statusBar->isVisible() &&
+			w->ui.statusIcon->isVisible() &&
+			w->ui.statusMessage->isVisible() &&
+			!w->ui.mainToolBar->isVisible() &&
+			!w->ui.menuBar->isVisible();
+		Assert::IsTrue(visibilityTest);
+	}
+
+	/// Basic task addition test
+	TEST_METHOD(addSingleTask) {
+		w->clearTasks();
+		w->commandTextBox->setPlainText(QString("/add test by Nov 99"));
+		w->commandEnterPressed();
+
+		QTreeWidgetItem item = *w->ui.taskTreePanel->topLevelItem(0);
+		int column1 = QString::compare(item.text(0), QString("1"));
+		int column2 = QString::compare(item.text(2), QString("test"));
+		int column3 = QString::compare(
+			item.text(4),
+			QString("Overdue (01 November 1999)"));
+		int column4 = QString::compare(item.text(5), QString("Normal"));
+
+		Assert::IsTrue(w->ui.taskTreePanel->topLevelItemCount() == 1 &&
+			(column1 == 0) && (column2 == 0) &&
+			(column3 == 0) && (column4 == 0));
+	}
+
+	TEST_METHOD(editSingleTask) {
+		w->clearTasks();
+		w->commandTextBox->setPlainText(QString("/add test by Nov 99"));
+		w->commandEnterPressed();
+		w->commandTextBox->setPlainText(
+			QString("/edit 1 set description = 'abc'"));
+		w->commandEnterPressed();
+		QTreeWidgetItem item = *w->ui.taskTreePanel->topLevelItem(0);
+		int column1 = QString::compare(item.text(0), QString("1"));
+		int column2 = QString::compare(item.text(2), QString("abc"));
+		int column3 = QString::compare(
+			item.text(4),
+			QString("Overdue (01 November 1999)"));
+		int column4 = QString::compare(item.text(5), QString("Normal"));
+		int i = w->ui.taskTreePanel->topLevelItemCount();
+		w->clearTasks();
+		Assert::IsTrue(i == 1 &&
+			(column1 == 0) && (column2 == 0) &&
+			(column3 == 0) && (column4 == 0));
+	}
+
+	/// Boundary test case for the equivalence partition for the lower
+	/// bound of the valid zone for testing if a task is due today
+	TEST_METHOD(testDueToday1) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		Assert::IsTrue(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
+	}
+
+	/// Generic test case for testing if a task is due today (deadline ahead)
+	TEST_METHOD(testDueToday2) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl += boost::posix_time::hours(24) + boost::posix_time::minutes(1);
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
+	}
+
+	/// Generic test case for testing if a task is due today (deadline before)
+	TEST_METHOD(testDueToday3) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
+		Assert::IsFalse(MainWindow::TaskPanelManager::isDueAfter(dl, 0));
+	}
+
+	/// Generic test case for testing if a task is due
+	/// tomorrow (deadline after)
+	TEST_METHOD(testDueTomorrow1) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl += boost::posix_time::hours(24);
+		Assert::IsTrue(MainWindow::TaskPanelManager::isDueAfter(dl, 1));
+	}
+
+	/// Boundary test case for the equivalence partition for the upper
+	/// bound of the lower invalid zone for testing if a task is overdue
+	TEST_METHOD(testPastDue1) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl -= boost::posix_time::minutes(1);
+		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Generic test case for testing if a task is overdue
+	TEST_METHOD(testPastDue2) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl -= (boost::posix_time::hours(24) + boost::posix_time::minutes(1));
+		Assert::IsTrue(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Test if is past due, on the same time
+	TEST_METHOD(testPastDue3) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		Assert::IsFalse(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Test if is past due, with deadline 1 minute after
+	TEST_METHOD(testPastDue4) {
+		Task::Time dl = boost::posix_time::second_clock::local_time();
+		dl += boost::posix_time::minutes(1);
+		Assert::IsFalse(MainWindow::TaskPanelManager::isPastDue(dl));
+	}
+
+	/// Generic task deletion test
+	TEST_METHOD(deleteSingleTaskCount) {
+		w->clearTasks();
+		w->commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w->commandEnterPressed();
+		w->commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w->commandEnterPressed();
+		w->commandTextBox->setPlainText(QString("/delete 1"));
+		w->commandEnterPressed();
+		Assert::IsTrue(w->ui.taskTreePanel->topLevelItemCount() == 1);
+	}
+
+	/// Generic task deletion test
+	TEST_METHOD(deleteSingleTaskFind) {
+		w->clearTasks();
+		w->commandTextBox->setPlainText(QString("/add test by Nov 20"));
+		w->commandEnterPressed();
+		w->commandTextBox->setPlainText(QString("/add test2 by Nov 20"));
+		w->commandEnterPressed();
+		w->commandTextBox->setPlainText(QString("/delete 1"));
+		w->commandEnterPressed();
+		Assert::IsTrue(w->ui.taskTreePanel->findItems(
+			QString("1"), Qt::MatchExactly, 1).size() == 0);
+	}
+};
+}  // namespace UnitTests
+}  // namespace GUI
+}  // namespace You
+
+	// End of segment: .\You-GUI-Tests\you_gui_tests.cpp
+
+
+
+
+

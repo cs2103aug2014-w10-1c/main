@@ -1,0 +1,6023 @@
+//@author: a0112054y
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\api.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "internal/action/add_task.h"
+#include "internal/action/update_task.h"
+#include "internal/action/delete_task.h"
+#include "internal/action/get_task.h"
+#include "internal/action/delete_task.h"
+#include "internal/action/update_task.h"
+#include "internal/action/undo.h"
+#include "internal/action/batch_add_subtasks.h"
+#include "internal/action/batch_add_dependencies.h"
+#include "internal/state.h"
+#include "internal/controller.h"
+#include "api.h"
+
+namespace You {
+namespace QueryEngine {
+
+const std::wstring Query::logCategory = L"[QE]";
+
+using You::Utils::Option;
+using You::Utils::make_option;
+using Internal::Action::AddTask;
+using Internal::Action::BatchAddSubTasks;
+using Internal::Action::BatchAddDependencies;
+using Internal::Action::GetTask;
+using Internal::Action::DeleteTask;
+using Internal::Action::Undo;
+using Internal::Controller;
+
+std::unique_ptr<Query>
+Query::getReverse() {
+	throw Exception::NotUndoAbleException();
+}
+
+std::unique_ptr<Query>
+QueryEngine::AddTask(
+	const Task::Description& description,
+	const Task::Time& startTime,
+	const Task::Time& deadline,
+	const Task::Priority& priority,
+	std::vector<std::unique_ptr<Query>>&& dependencies,
+	std::vector<std::unique_ptr<Query>>&& subtasks) {
+	assert(!(dependencies.size() > 0 && subtasks.size() > 0));
+	if (dependencies.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddDependencies(
+				description, startTime, deadline, priority,
+				std::move(dependencies), {}));
+	} else if (subtasks.size() > 0) {
+		return std::unique_ptr<Query>(new BatchAddSubTasks(
+				description, startTime, deadline, priority,
+				{}, std::move(subtasks)));
+	} else {
+		return std::unique_ptr<Query>(
+			new Internal::Action::AddTask(
+				description, startTime, deadline,
+				priority, {}, {}));
+	}
+}
+
+std::unique_ptr<Query>
+QueryEngine::GetTask() {
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(
+			Internal::State::get().getActiveFilter(),
+			Internal::State::get().getActiveComparator()));
+}
+
+std::unique_ptr<Query>
+QueryEngine::GetTask(const Filter& filter) {
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter,
+			Comparator::byTimeCreated()));
+}
+
+std::unique_ptr<Query>
+QueryEngine::GetTask(const Filter& filter,
+	const Comparator& comparator) {
+	return std::unique_ptr<Query>(
+		new Internal::Action::GetTask(filter, comparator));
+}
+
+std::unique_ptr<Query>
+QueryEngine::DeleteTask(Task::ID id) {
+	return std::unique_ptr<Query>(
+		new Internal::Action::DeleteTask(id));
+}
+
+std::unique_ptr<Query>
+QueryEngine::UpdateTask(Task::ID id,
+	Option<Task::Description> description,
+	Option<Task::Time> startTime,
+	Option<Task::Time> deadline,
+	Option<Task::Priority> priority,
+	Delta<Task::Dependencies::value_type> dependencies,
+	Option<bool> completed,
+	Option<Task::ID> parent,
+	Delta<Task::Subtasks::value_type> subtasks,
+	Delta<Task::Attachment::value_type> attachment) {
+	using UpdateTask = Internal::Action::UpdateTask;
+	Task task = Internal::State::get().graph().getTask(id);
+	auto newSubtasks =
+		subtasksFromDelta(subtasks, task);
+	auto newDependencies =
+		dependenciesFromDelta(dependencies, task);
+	auto newAttachment =
+		attachmentsFromDelta(attachment, task);
+	return std::unique_ptr<Query>(
+		new UpdateTask(id, description,
+			startTime, deadline, priority,
+			newDependencies, completed,
+			parent, newSubtasks, newAttachment));
+}
+
+std::unique_ptr<Query>
+QueryEngine::UpdateTask(const Task& task) {
+	using UpdateTask = Internal::Action::UpdateTask;
+	return std::unique_ptr<Query>(new UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::Undo() {
+	return std::unique_ptr<Query>(new Internal::Action::Undo());
+}
+
+std::unique_ptr<Query>
+QueryEngine::AddDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.insert(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveDependency(Task::ID id, Task::ID dependency) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Dependencies dependencies = task.getDependencies();
+	dependencies.erase(dependency);
+	task.setDependencies(dependencies);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::AddSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.insert(subtask);
+	task.setSubtasks(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+std::unique_ptr<Query>
+QueryEngine::RemoveSubtask(Task::ID id, Task::ID subtask) {
+	Task task = Internal::State::get().graph().getTask(id);
+	Task::Subtasks subtasks = task.getSubtasks();
+	subtasks.erase(subtask);
+	task.setSubtasks(subtasks);
+	return std::unique_ptr<Query>(new Internal::Action::UpdateTask(task));
+}
+
+Response QueryEngine::executeQuery(std::unique_ptr<Query> query) {
+	Response response;
+	std::unique_ptr<Query> reverse;
+	response = query->execute(Internal::State::get());
+	try {
+		reverse = query->getReverse();
+		Internal::State::get().undoStack().emplace(std::move(reverse));
+	} catch (const Exception::NotUndoAbleException&) {
+	}
+	return response;
+}
+
+Option<Task::Attachment> QueryEngine::attachmentsFromDelta(
+	const Delta<Task::Attachment::value_type>& attachment,
+	const Task& task) {
+	Task::Attachment att = task.getAttachment();
+	if (attachment.type ==
+			Delta<Task::Attachment::value_type>::Type::ADD) {
+		att.insert(
+			end(att),
+			begin(attachment.elements),
+			end(attachment.elements));
+	} else {
+		for (const auto& a : attachment.elements) {
+			auto pos = std::find(begin(att), end(att), a);
+			if (pos != end(att)) {
+				att.erase(pos);
+			}
+		}
+	}
+	return make_option<Task::Attachment>(att);
+}
+
+Option<Task::Subtasks> QueryEngine::subtasksFromDelta(
+	const Delta<Task::Subtasks::value_type>& subtasks,
+	const Task& task) {
+	Task::Subtasks subs= task.getSubtasks();
+	if (subtasks.type ==
+			Delta<Task::Subtasks::value_type>::Type::ADD) {
+		for (const auto& s : subtasks.elements) {
+			subs.insert(s);
+		}
+	} else {
+		for (const auto& s : subtasks.elements) {
+			subs.erase(s);
+		}
+	}
+	return make_option<Task::Subtasks>(subs);
+}
+
+Option<Task::Dependencies> QueryEngine::dependenciesFromDelta(
+	const Delta<Task::Dependencies::value_type>& dependencies,
+	const Task& task) {
+	Task::Dependencies deps = task.getDependencies();
+	if (dependencies.type ==
+			Delta<Task::Dependencies::value_type>::Type::ADD) {
+		for (const auto& s : dependencies.elements) {
+			deps.insert(s);
+		}
+	} else {
+		for (const auto& s : dependencies.elements) {
+			deps.erase(s);
+		}
+	}
+	return make_option<Task::Dependencies>(deps);
+}
+
+std::wstring ToString(const Task& task) {
+	using Serializer = Controller::Serializer;
+	auto serialized = Serializer::serialize(task);
+	std::wstring TASK_FORMAT = L"[%1%][%2%][%3%][%4%][%5%][%6%][%7%][%8%][%9%]";
+	return (boost::wformat(TASK_FORMAT)
+		% serialized.at(Serializer::KEY_ID)
+		% serialized.at(Serializer::KEY_DESCRIPTION)
+		% serialized.at(Serializer::KEY_START_TIME)
+		% serialized.at(Serializer::KEY_PRIORITY)
+		% serialized.at(Serializer::KEY_DEADLINE)
+		% serialized.at(Serializer::KEY_DEPENDENCIES)
+		% serialized.at(Serializer::KEY_PARENT)
+		% serialized.at(Serializer::KEY_SUBTASKS)
+		% serialized.at(Serializer::KEY_ATTACHMENT)).str();
+}
+
+}  // namespace QueryEngine
+}  // namespace You
+
+
+	// End of segment: .\You-QueryEngine\api.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\api.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_API_H_
+#define YOU_QUERYENGINE_API_H_
+
+#include <memory>
+#include <boost/variant.hpp>
+#include "../You-Utils/option.h"
+#include "task_model.h"
+#include "filter.h"
+#include "comparator.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class QueryEngineTests; }
+namespace Internal { class State; }
+
+using You::Utils::Option;
+
+/// A synthesized type for holding query responses
+/// \code {cpp}
+///		 auto deleteQuery = QueryEngine::DeleteTask(id);
+///		 auto response = QueryEngine::executeQuery(std::move(deleteQuery));
+///		 auto deletedId = boost::get<Task::ID>(response);
+/// \endcode
+typedef boost::variant<std::vector<Task>, Task, Task::ID> Response;
+
+/// Interface for queries (or in our terms, actions).
+/// Actions have execute method which modifies the state and return a response
+/// object.
+class Query {
+    friend class QueryEngine;
+public:
+    /// Execute the query on a state.
+    /// \pre The state has been loaded and valid.
+    virtual Response execute(Internal::State& state) = 0;
+
+protected:
+    /// Get the reverse of this query for undo.
+    virtual std::unique_ptr<Query> getReverse();
+
+    /// String appended before each log message.
+    static const std::wstring logCategory;
+};
+
+/// Utility class for QueryEngine.
+/// This is the API which will be called by Controller
+class QueryEngine {
+    friend class You::QueryEngine::UnitTests::QueryEngineTests;
+public:
+    /// The task model.
+    typedef You::QueryEngine::Task Task;
+
+    /// The query interface.
+    typedef You::QueryEngine::Query Query;
+
+    /// The filter used for filtering task.
+    typedef You::QueryEngine::Filter Filter;
+
+    /// The response type of the query action.
+    typedef You::QueryEngine::Response Response;
+    /// @}
+
+public:
+    /// Delta data structure to represent insertion/deletion of elements.
+    /// This will be used and passed to the \ref UpdateTask method.
+    template<typename T>
+    struct Delta {
+        /// Delta can be addition, deletion, or no change.
+        enum class Type { ADD, DELETE, NO_CHANGE };
+
+        /// Default constructor.
+        Delta()
+        : type(Type::NO_CHANGE), elements() {}
+
+        /// Construct with type and elements.
+        Delta(Type type, const std::vector<T>& elements)
+        : type(type), elements(elements) {}
+
+        /// The type of the delta.
+        Type type;
+
+        /// The element stored in the delta.
+        std::vector<T> elements;
+    };
+
+public:
+    /// Construct a query to add a task, possibly along with its dependencies
+	/// and subtasks.
+	/// \see \ref BatchAddDependencies
+	/// \see \ref BatchAddSubtasks
+	/// \param [in] description The description of the new task.
+	/// \param [in] startTime The startTime of the new task.
+	/// \param [in] deadline The deadline of the new task.
+	/// \param [in] priority The priority of the new task.
+	/// \param [in] dependencies The list of add queries for the dependencies.
+	/// \param [in] subtasks The list of add queries for the subtasks.
+	/// \return A query which, when executed will add a single parent task
+	/// after executing the queries given in dependencies and subtasks.
+    static std::unique_ptr<Query> AddTask(
+        const Task::Description& description,
+        const Task::Time& startTime,
+        const Task::Time& deadline,
+        const Task::Priority& priority,
+        std::vector<std::unique_ptr<Query>>&& dependencies,
+        std::vector<std::unique_ptr<Query>>&& subtasks);
+
+	/// Construct query to get the list of tasks.
+	/// \return A query which, when executed will get all task
+	/// that match the last filter used, then sort it based on the
+	/// last comparator used.
+    static std::unique_ptr<Query> GetTask();
+
+	/// Construct query to get the list of tasks.
+	/// \param [in] filter The filter object to be used.
+	/// \param [in] comparator The comparator object to be used.
+	/// \return A query which, when executed will get all task
+	/// that match the current filter, then sort it based on the
+	/// creation time of the task.
+    static std::unique_ptr<Query> GetTask(const Filter& filter);
+
+	/// Construct query to get the list of tasks.
+	/// \param [in] filter The filter object to be used.
+	/// \param [in] comparator The comparator object to be used.
+	/// \return A query which, when executed will get all task
+	/// that match the current filter, then sort it using the
+	/// comparator.
+    static std::unique_ptr<Query> GetTask(const Filter& filter,
+        const Comparator& comparator);
+
+    /// Construct a query for deleting a task.
+	/// \param [in] id The id of the task to be deleted.
+	/// \return A query which, when executed will delete the task with
+	/// specified id
+    static std::unique_ptr<Query> DeleteTask(Task::ID id);
+
+    /// Construct a query for updating a task.
+	/// \see You::Utils:Option for usage of option type.
+	/// \see Delta for usage of delta type.
+	/// \param [in] id The id of the current task.
+	/// \param [in] description The task description.
+	/// \param [in] startTime The task starting time.
+	/// \param [in] deadline The deadline.
+	/// \param [in] priority The priority.
+	/// \param [in] dependencies The delta of the dependencies.
+	/// \param [in] completed The completion status.
+	/// \param [in] parent The new parent of the task.
+	/// \param [in] subtasks The delta of the subtasks.
+	/// \param [in] attachment The delta of the attachment.
+	/// \return A query which, when executed will update the current task
+	/// according to the parameter given.
+    static std::unique_ptr<Query> UpdateTask(
+		Task::ID id,
+        Option<Task::Description> description,
+        Option<Task::Time> startTime,
+        Option<Task::Time> deadline,
+        Option<Task::Priority> priority,
+        Delta<Task::Dependencies::value_type> dependencies,
+        Option<bool> completed,
+        Option<Task::ID> parent,
+        Delta<Task::Subtasks::value_type> subtasks,
+        Delta<Task::Attachment::value_type> attachment);
+
+
+    /// Construct a query for updating a task.
+	/// \param [in] task The task object to be updated.
+	/// \return A query which, when executed, update the task.
+    static std::unique_ptr<Query> UpdateTask(const Task& task);
+
+public:
+    /// Construct a query to add a task as a dependency of another task.
+	/// \param [in] id The id of the depending task.
+	/// \param [in] dependency The id of the dependent task.
+	/// \return A query that, when executed, add the task as a dependency.
+    static std::unique_ptr<Query> AddDependency(
+		Task::ID id, Task::ID dependency);
+
+    /// Construct a query to remove a task from the dependencies
+	/// of another Task.
+	/// \param [in] id The id of the depending task.
+	/// \param [in] dependency The id of the task to be removed.
+	/// \note This method is non-recursive.
+	/// \return A query that, when executed, remove the task from
+	/// the dependency.
+    static std::unique_ptr<Query> RemoveDependency(
+		Task::ID id, Task::ID dependency);
+
+    /// Construct a query to add a task as a subtask of another task.
+	/// \param [in] id The id of the parent task.
+	/// \param [in] subtask The id of the subtask.
+	/// \return A query that, when executed, add the task as a subtask.
+    static std::unique_ptr<Query> AddSubtask(
+		Task::ID id, Task::ID subtask);
+
+    /// Construct a query to remove a task from a subtask of another task.
+	/// \param [in] id The id of the parent task.
+	/// \param [in] subtask The id of the subtask.
+	/// \return A query that, when executed, remove the task from the subtasks.
+    static std::unique_ptr<Query> RemoveSubtask(
+		Task::ID id, Task::ID subtask);
+
+    /// Construct undo query.
+    static std::unique_ptr<Query> Undo();
+
+public:
+    /// Execute a query and return a \ref Response object.
+    /// \param [in] query The query to be executed
+    /// \return The result of the query as a response object.
+    static Response executeQuery(std::unique_ptr<Query> query);
+
+private:
+    static Option<Task::Attachment> attachmentsFromDelta(
+        const Delta<Task::Attachment::value_type>& attachment,
+        const Task& task);
+
+    static Option<Task::Subtasks> subtasksFromDelta(
+        const Delta<Task::Subtasks::value_type>& subtasks,
+        const Task& task);
+
+    static Option<Task::Dependencies> dependenciesFromDelta(
+        const Delta<Task::Dependencies::value_type>& dependencies,
+        const Task& task);
+
+    QueryEngine() = delete;
+};  // class QueryEngine
+
+/// String representation of a task, for testing and logging.
+///
+/// \param[in] task The task object, assumed all fields are valid
+/// \return A string representation of the task
+std::wstring ToString(const Task& task);
+
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_API_H_
+
+	// End of segment: .\You-QueryEngine\api.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\comparator.cpp
+	 */
+
+#include "stdafx.h"
+#include "comparator.h"
+#include "filter.h"
+#include "internal/state.h"
+
+namespace You {
+namespace QueryEngine {
+
+Comparator Comparator::notSorted() {
+	Comparator comp([](const Task&, const Task&) {
+		return ComparisonResult::EQ;
+	});
+	comp.isDefaultComparator = true;
+	return comp;
+}
+
+Comparator Comparator::byTimeCreated() {
+	return byApplying<Task::ID>([](const Task& task) {
+		return task.getID();
+	});
+}
+
+Comparator Comparator::byDescription() {
+	return byApplying<Task::Description>([](const Task& task) {
+		auto desc = task.getDescription();
+		std::transform(desc.begin(), desc.end(),
+			desc.begin(), ::tolower);
+		return desc;
+	});
+}
+
+Comparator Comparator::byStartTime() {
+	return byApplying<Task::Time>([](const Task& task) {
+		return task.getStartTime();
+	});
+}
+
+Comparator Comparator::byDeadline() {
+	return byApplying<Task::Time>([](const Task& task) {
+		return task.getDeadline();
+	});
+}
+
+Comparator Comparator::byDependenciesCount() {
+	return byApplying<int>([](const Task& task) {
+		return task.getDependencies().size();
+	});
+}
+
+Comparator Comparator::byPriority() {
+	return byApplying<int>([](const Task& task) {
+		if (task.getPriority() == Task::Priority::NORMAL) {
+			return 0;
+		} else {
+			return 1;
+		}
+	});
+}
+
+Comparator Comparator::byRelationship(Task::ID id) {
+	return byApplying<int>([id] (const Task& task) {
+		auto theTask = Internal::State::get().graph().getTask(id);
+		if (task.isTopLevel()) {
+			return 4;
+		} else if (Filter::isChildOf(id)(task)) {
+			return 3;
+		} else if (Filter::isDependedBy(id)(task)) {
+			return 2;
+		} else if (Filter::isDependOn(id)(task)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	});
+}
+Comparator::Comparator(const ComparatorFunc& func) {
+	comparators.push_back(func);
+}
+
+bool Comparator::operator() (const Task& lhs, const Task& rhs) const {
+	ComparisonResult result = ComparisonResult::EQ;
+	for (const auto& comparator : comparators) {
+		result = comparator(lhs, rhs);
+		if (result != ComparisonResult::EQ) {
+			break;
+		} else {
+			continue;
+		}
+	}
+
+	// If identical, it is NOT less than.
+	return result == ComparisonResult::LT;
+}
+
+void Comparator::negateAllComparators() {
+	std::vector<const ComparatorFunc> newComparators;
+	for (const auto& func : comparators) {
+		newComparators.push_back(this->negate(func));
+	}
+	comparators = newComparators;
+}
+
+Comparator& Comparator::ascending() {
+	if (!isAscending) {
+		negateAllComparators();
+	}
+	isAscending = true;
+	return *this;
+}
+
+Comparator& Comparator::descending() {
+	if (isAscending) {
+		negateAllComparators();
+	}
+	isAscending = false;
+	return *this;
+}
+
+Comparator& Comparator::operator&&(const Comparator& rhs) {
+	isDefaultComparator = isDefaultComparator && rhs.isDefault();
+	comparators.insert(comparators.end(),
+		begin(rhs.comparators), end(rhs.comparators));
+	return *this;
+}
+
+Comparator::ComparatorFunc Comparator::negate(const ComparatorFunc& comp) {
+	return [comp] (const Task& lhs, const Task& rhs) {
+		ComparisonResult result = comp(lhs, rhs);
+		if (result == ComparisonResult::LT) {
+			return ComparisonResult::GT;
+		} else if (result == ComparisonResult::GT) {
+			return ComparisonResult::LT;
+		} else {
+			return ComparisonResult::EQ;
+		}
+	};
+}
+
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\comparator.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\comparator.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_COMPARATOR_H_
+#define YOU_QUERYENGINE_COMPARATOR_H_
+
+#include <stdexcept>
+#include <functional>
+#include "task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class ComparatorTests; }
+
+/// Base class for binary comparators.
+/// Comparators are helper objects used to sort any object based on
+/// a certain properties of the object.
+/// Comparators can be combined by using the && operator.
+/// \see \ref You::QueryEngine::GetTask
+class Comparator {
+	friend class You::QueryEngine::UnitTests::ComparatorTests;
+public:
+	/// \name Commonly used comparators
+	/// @{
+
+	/// Do not sort.
+	static Comparator notSorted();
+
+	/// Sort by time the task is created
+	static Comparator byTimeCreated();
+
+	/// Sort lexicographically by description.
+	static Comparator byDescription();
+
+	/// Sort by deadline.
+	static Comparator byStartTime();
+
+	/// Sort by deadline.
+	static Comparator byDeadline();
+
+	/// Sort by the number of dependencies.
+	static Comparator byDependenciesCount();
+
+	/// Sort by priority, normal goes first.
+	static Comparator byPriority();
+
+	/// Sort nicely by relationship
+	static Comparator byRelationship(Task::ID id);
+	/// @}
+
+public:
+	/// Enumerated type for comparison result.
+	/// When comparing two tasks x and y, tasks x goes first
+	/// if the result is LT (conversely, GT). If the result is EQ,
+	/// continue to use the second comparator.
+	enum class ComparisonResult { LT, GT, EQ };
+
+	/// Type of the binary function underneath the comparator.
+	typedef std::function<ComparisonResult(const Task&, const Task&)>
+		ComparatorFunc;
+
+	/// Construct a comparator from using binary function.
+	Comparator(const ComparatorFunc& func);  // NOLINT
+
+	/// Return whether this is the default comparator.
+	inline bool isDefault() const { return isDefaultComparator; }
+
+	/// Cast to binary comparison function used by std::sort and the others.
+	/// \note Default comparison method is ascending.
+	/// \param [in] lhs The first task to be compared.
+	/// \param [in] lhs The second task to be compared.
+	/// \return True if the comparison result is less than.
+	bool operator()(const Task& lhs, const Task& rhs) const;
+
+	/// Set the comparator function underneath to compare ascendingly.
+	/// \return Self reference after modification.
+	Comparator& ascending();
+
+	/// Set the comparator function underneath to compare descendingly.
+	/// \return Self reference after modification.
+	Comparator& descending();
+
+	/// Combine this comparator with another comparator
+	/// \param [in] rhs Another comparator to combine with.
+	Comparator& operator&&(const Comparator& rhs);
+
+private:
+	/// Helper function to create a comparator for two task objects
+	/// by previously applying a unary function to both task objects.
+	/// \param [in] func The unary function to be pre-applied.
+	template <class T>
+	static Comparator byApplying(std::function<T(const Task&)> func) {
+		return Comparator([func] (const Task& lhs, const Task& rhs) {
+			if (func(lhs) < func(rhs)) {
+				return ComparisonResult::LT;
+			} else if (func(lhs) > func(rhs)) {
+				return ComparisonResult::GT;
+			} else {
+				return ComparisonResult::EQ;
+			}
+		});
+	}
+
+private:
+	ComparatorFunc negate(const ComparatorFunc& comp);
+	void negateAllComparators();
+	std::vector<const ComparatorFunc> comparators;
+	bool isAscending = true;
+	bool isDefaultComparator = false;
+};
+
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_COMPARATOR_H_
+
+	// End of segment: .\You-QueryEngine\comparator.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\exception.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_EXCEPTION_H_
+#define YOU_QUERYENGINE_EXCEPTION_H_
+
+#include "You-Utils/exceptions/exception.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Exception {
+
+/// Base exception class that will be thrown by Query Engine.
+class BaseException : public You::Utils::Exception {
+};
+
+/// An exception thrown when trying to create task with empty description.
+class EmptyTaskDescriptionException : public BaseException {
+};
+
+/// An exception thrown when trying to delete or edit a task that does not
+/// exists.
+class TaskNotFoundException : public BaseException {
+};
+
+/// An exception thrown when dependency/subtasks of two or more tasks
+/// is circular.
+class CircularDependencyException : public BaseException {
+};
+
+/// An exception thrown when trying to undo an undoable query (e.g GetTask)
+class NotUndoAbleException : public BaseException {
+};
+
+/// An exception thrown when trying to attach a task that
+/// already has a parent to another task.
+class TaskAlreadyHasParentException : public BaseException {
+};
+
+}  // namespace Exception
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_EXCEPTION_H_
+
+	// End of segment: .\You-QueryEngine\exception.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\filter.cpp
+	 */
+
+#include "stdafx.h"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "internal/state.h"
+#include "filter.h"
+
+namespace You {
+namespace QueryEngine {
+
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::gregorian::date;
+using boost::gregorian::to_tm;
+using boost::gregorian::day_clock;
+using boost::gregorian::weeks;
+
+Filter Filter::anyTask() {
+	return Filter([] (const Task&) {
+		return true;
+	});
+}
+
+Filter Filter::idIsIn(std::vector<Task::ID> taskIDs) {
+	return Filter([taskIDs] (const Task& task) {
+		return std::find(begin(taskIDs), end(taskIDs),
+			task.getID()) != taskIDs.end();
+	});
+}
+
+Filter Filter::completed() {
+	return Filter([] (const Task& task) {
+		return task.isCompleted();
+	});
+}
+
+Filter Filter::dependsOn(const Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.isDependOn(id);
+	});
+}
+
+Filter Filter::highPriority() {
+	return Filter([] (const Task& task) {
+		return task.getPriority() == Task::Priority::HIGH;
+	});
+}
+
+Filter Filter::normalPriority() {
+	return Filter([] (const Task& task) {
+		return task.getPriority() == Task::Priority::NORMAL;
+	});
+}
+
+Filter Filter::overdue() {
+	return Filter([] (const Task& task) {
+		return task.getDeadline().date() < day_clock::local_day();
+	});
+}
+
+Filter Filter::dueThisYear() {
+	return !completed() && Filter([] (const Task& task) {
+		return task.getDeadline().date().year() == now().year;
+	});
+}
+
+Filter Filter::dueThisMonth() {
+	return dueThisYear() && Filter([] (const Task& task) {
+		return task.getDeadline().date().month() == now().month;
+	});
+}
+
+Filter Filter::dueToday() {
+	return dueThisMonth() && Filter([] (const Task& task) {
+		return task.getDeadline().date().day() == now().day;
+	});
+}
+
+Filter Filter::dueThisWeek() {
+	return dueThisMonth() && Filter([] (const Task& task) {
+		return (task.getDeadline().date() - day_clock::local_day()) < weeks(1);
+	});
+}
+
+Filter Filter::dueNever() {
+	return Filter([] (const Task& task) {
+		return task.getDeadline() == Task::NEVER;
+	});
+}
+
+Filter Filter::dueBefore(std::int16_t year, std::int16_t month,
+	std::int16_t day, std::int16_t hour, std::int16_t minute,
+	std::int16_t seconds) {
+	auto due = ptime(date(year, month, day),
+		time_duration(hour, minute, seconds));
+	return Filter([due] (const Task& task) {
+		return task.getDeadline() < due;
+	});
+}
+
+Filter Filter::isChildOf(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return !task.isTopLevel() && task.getParent() == id;
+	});
+}
+
+Filter Filter::isParentOf(Task::ID id) {
+	auto theTask = Internal::State::get().sgraph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.getParent() == task.getID();
+	});
+}
+
+Filter Filter::isDependOn(Task::ID id) {
+	return Filter([id] (const Task& task) {
+		return task.isDependOn(id);
+	});
+}
+
+Filter Filter::isDependedBy(Task::ID id) {
+	auto theTask = Internal::State::get().sgraph().getTask(id);
+	return Filter([id, theTask] (const Task& task) {
+		return theTask.isDependOn(task.getID());
+	});
+}
+
+Filter Filter::isRelatedTo(Task::ID id) {
+	return Filter([=](const Task& task) {
+		return (Filter::isChildOf(id)
+			|| Filter::isParentOf(id)
+			|| Filter::isDependOn(id)
+			|| Filter::isDependedBy(id))(task);
+	});
+ }
+
+Filter Filter::isDescendantOf(Task::ID id) {
+	auto theTask = Internal::State::get().graph().getTask(id);
+	return Filter([=] (const Task& task) {
+		bool cond = (isChildOf(id))(task);
+		for (auto child : theTask.getSubtasks()) {
+			cond = cond || (isDescendantOf(child))(task);
+		}
+		return cond;
+	});
+}
+
+Filter& Filter::operator&&(const Filter& filter) {
+	ffilter = AND(ffilter, filter.ffilter);
+	return *this;
+}
+
+Filter& Filter::operator||(const Filter& filter) {
+	ffilter = OR(ffilter, filter.ffilter);
+	return *this;
+}
+
+Filter& Filter::operator!(void) {
+	ffilter = NOT(ffilter);
+	return *this;
+}
+
+bool Filter::operator()(const Task& task) const {
+	return ffilter(task);
+}
+
+Filter::FFilter Filter::AND(const FFilter& f, const FFilter& g) {
+	return [f, g] (FFilter::argument_type x) {
+		return f(x) && g(x);
+	};
+}
+
+Filter::FFilter Filter::OR(const FFilter& f, const FFilter& g) {
+	return [f, g] (FFilter::argument_type x) {
+		return f(x) || g(x);
+	};
+}
+
+Filter::FFilter Filter::NOT(const FFilter& f) {
+	return [f] (FFilter::argument_type x) {
+		return !f(x);
+	};
+}
+
+Filter::operator FFilter() const {
+	return this->ffilter;
+}
+
+Filter::Time Filter::now() {
+	auto date = day_clock::local_day();
+	auto tm = to_tm(date);
+	return {
+		date.year(),
+		date.month(),
+		date.day(),
+		tm.tm_hour,
+		tm.tm_min
+	};
+}
+
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\filter.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\filter.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_FILTER_H_
+#define YOU_QUERYENGINE_FILTER_H_
+
+#include <stdexcept>
+#include <functional>
+#include "task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class FilterTests; }
+
+/// Base class for filter object.
+/// New instances of the filter can be created by
+/// NLP by combining common filters provided.
+class Filter {
+public:
+	/// Type of the predicate function using in Filter
+	typedef std::function<bool(const Task&)> FFilter;
+
+	/// \name Commonly used filters
+	/// @{
+	/// Filter any task.
+	static Filter anyTask();
+
+	/// Filter tasks that id is in a list.
+	static Filter idIsIn(std::vector<Task::ID> taskIDs);
+
+	/// Filter completed tasks.
+	static Filter completed();
+
+	/// Filter tasks that depends on the task.
+	static Filter dependsOn(const Task::ID id);
+
+	/// Filter tasks with high priority.
+	static Filter highPriority();
+
+	/// Filter tasks with normal priority.
+	static Filter normalPriority();
+
+	/// Filter tasks that is overdue this year.
+	static Filter overdue();
+
+	/// Filter tasks that due this year.
+	static Filter dueThisYear();
+
+	/// Filter tasks with high priority.
+	static Filter dueThisMonth();
+
+	/// Filter tasks that due this month.
+	static Filter dueToday();
+
+	/// Filter tasks that due this month.
+	static Filter dueThisWeek();
+
+	/// Filter tasks that does not have deadline set (i.e never)
+	static Filter dueNever();
+
+	/// Filter tasks that due before a date
+	/// Date is assumed valid
+	static Filter dueBefore(std::int16_t year, std::int16_t month,
+		std::int16_t day, std::int16_t hour, std::int16_t minute,
+		std::int16_t seconds);
+	/// @}
+
+	/// Filter task that has relationship with a task.
+	static Filter Filter::isRelatedTo(Task::ID id);
+
+	/// Filter task that match the parent of the task.
+	static Filter isParentOf(Task::ID id);
+
+	/// Filter the subtasks.
+	static Filter isChildOf(Task::ID id);
+
+	/// Filter the depedencies.
+	static Filter isDependedBy(Task::ID id);
+
+	/// Filter the depedendants.
+	static Filter isDependOn(Task::ID id);
+
+	/// Filter the descendants.
+	static Filter isDescendantOf(Task::ID id);
+
+	/// Construct a filter from a filtering function.
+	/// \see FFilter
+	explicit Filter(const FFilter& ffilter)
+	: ffilter(ffilter) {}
+
+	/// Copy construct a filter.
+	Filter(const Filter& filter)
+	: ffilter(filter.ffilter) {}
+
+	/// Compose using AND operation with another filter
+	/// \param[in] filter Filter object to combine with.
+	/// \returns Own reference.
+	Filter& operator&&(const Filter& filter);
+
+	/// Compose using OR operation with another filter
+	/// \param[in] filter Filter object to combine with.
+	/// \returns Own reference
+	Filter& operator||(const Filter& filter);
+
+	/// Invert the filter using NOT.
+	Filter& operator!(void);
+
+	/// Shortcut for AND NOT operation with another filter.
+	/// \param[in] filter Filter object to combine with.
+	/// \returns Own reference
+	const Filter butNot(const Filter& filter);
+
+	/// Implicitly cast a filter to its predicate function.
+	operator FFilter() const;
+
+	/// Functor for filter to task.
+	/// Filter can be applied directly
+	bool operator()(const Task&) const;
+
+private:
+	static FFilter AND(const FFilter& f, const FFilter& g);
+	static FFilter OR(const FFilter& f, const FFilter& g);
+	static FFilter NOT(const FFilter& f);
+
+	struct Time {
+		std::int16_t year;
+		std::int16_t month;
+		std::int16_t day;
+		std::int16_t hour;
+		std::int16_t minute;
+	};
+
+	static Time now();
+
+	FFilter ffilter;
+};
+
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_FILTER_H_
+
+	// End of segment: .\You-QueryEngine\filter.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\add_task.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
+#include "../state.h"
+#include "../controller.h"
+#include "add_task.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
+
+const std::wstring AddTask::logCategory = Query::logCategory + L"[AddTask]";
+
+std::unique_ptr<Query> AddTask::getReverse() {
+	return QueryEngine::DeleteTask(insertedID);
+}
+
+Task AddTask::buildTask(const Task::ID newID) {
+	return Controller::Builder::get().id(newID)
+		.description(this->description)
+		.startTime(this->startTime)
+		.deadline(this->deadline)
+		.priority(this->priority)
+		.dependencies(this->dependencies)
+		.subtasks(this->subtasks);
+}
+
+void AddTask::ensureDependencyIsValid() const {
+	for (const auto& id : dependencies) {
+		if (!Controller::Graph::isTaskExist(
+			State::get().graph(), id)) {
+			throw Exception::TaskNotFoundException();
+		}
+	}
+}
+
+void AddTask::ensureSubtasksIsValid() const {
+	for (const auto& id : subtasks) {
+		try {
+			auto task = State::get().sgraph().getTask(id);
+			if (!task.isTopLevel()) {
+				throw Exception::TaskAlreadyHasParentException();
+			}
+		} catch (const Exception::TaskNotFoundException& e) {
+			throw e;
+		} catch (const Exception::TaskAlreadyHasParentException& e) {
+			throw e;
+		}
+	}
+}
+
+void AddTask::updateParentPointer(State& state) const {
+	for (const auto& id : subtasks) {
+		auto previous = State::get().sgraph().getTask(id);
+		previous.setParent(insertedID);
+		QueryEngine::UpdateTask(previous)->execute(state);
+	}
+}
+
+void AddTask::addTaskToGraphs(const Task& task,
+	State& state) const {
+	Log::debug << (boost::wformat(L"%1% : Registering \"%2%\"\n") %
+		logCategory % task.getDescription()).str();
+	Controller::Graph::addTask(state.graph(), task);
+	Controller::Graph::addTask(state.sgraph(), task);
+}
+
+void AddTask::makeTransaction(const Task& newTask) const {
+	auto serialized = Controller::Serializer::serialize(newTask);
+	Transaction t(DataStore::get().begin());
+	Log::debug << (boost::wformat(L"%1% : POST \"%2%\"\n") %
+		logCategory % newTask.getID()).str();
+	DataStore::get().post(newTask.getID(), serialized);
+	t.commit();
+}
+
+void AddTask::updateActiveFilter(State& state) const {
+	state.setActiveFilter(
+		state.getActiveFilter() ||
+			Filter::idIsIn({ insertedID }));
+}
+
+Response AddTask::execute(State& state) {
+	bool isFirstTime = false;
+	if (insertedID == -1) {
+		insertedID = state.inquireNewID();
+	} else if (insertedID == 0) {
+		isFirstTime = true;
+	}
+	auto newTask = buildTask(insertedID);
+	ensureSubtasksIsValid();
+	ensureDependencyIsValid();
+	addTaskToGraphs(newTask, state);
+	makeTransaction(newTask);
+	updateParentPointer(state);
+
+	state.commitMaxIDToDataStore();
+	return newTask;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\add_task.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\add_task.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_ADD_TASK_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_ADD_TASK_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Action for adding a new task.
+/// Three types of addition are supported.
+/// 1. Adding single task.
+/// 2. Adding single task alongside its dependencies.
+/// 3. Adding single task alongside its subtasks.
+class AddTask : public Query {
+	friend class BatchAddSubTasks;
+	friend class BatchDeleteSubTasks;
+	friend class BatchAddDependencies;
+
+public:
+	/// Constructor for new Task, i.e the one without ID known.
+	/// \see QueryEngine::AddTask
+	/// \see QueryEngine::BatchAddDependencies
+	/// \see QueryEngine::BatchAddSubtasks
+	explicit AddTask(Task::Description description, Task::Time startTime,
+		Task::Time deadline, Task::Priority priority,
+		Task::Dependencies dependencies, Task::Subtasks subtasks)
+	: insertedID(-1), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(subtasks) {}
+
+	/// Constructor for already known ID.
+	/// \see QueryEngine::AddTask
+	/// \see QueryEngine::BatchAddDependencies
+	/// \see QueryEngine::BatchAddSubtasks
+	explicit AddTask(Task::ID id, Task::Description description,
+		Task::Time startTime, Task::Time deadline, Task::Priority priority,
+		Task::Dependencies dependencies, Task::Subtasks subtasks)
+	: insertedID(id), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(subtasks) {}
+
+	/// Disable assignment operator.
+	AddTask& operator=(const AddTask&) = delete;
+
+	/// Destructor.
+	virtual ~AddTask() = default;
+
+protected:
+	/// The reverse of addition is deletion.
+	/// \returns The delete query as a reverse of this action.
+	std::unique_ptr<Query> getReverse() override;
+
+	/// The header of the log string.
+	/// \returns The log category string.
+	static const std::wstring logCategory;
+
+private:
+	Task buildTask(const Task::ID id);
+
+	void addTaskToGraphs(const Task& task, State& state) const;
+	void makeTransaction(const Task& newTask) const;
+	void ensureDependencyIsValid() const;
+	void ensureSubtasksIsValid() const;
+	void updateParentPointer(State& state) const;
+	void updateActiveFilter(State& state) const;
+	/// Execute add task.
+	Response execute(State& tasks) override;
+
+	Task::ID insertedID;  ///< Inserted ID
+	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Deadline.
+	const Task::Time deadline;  ///< Deadline.
+	const Task::Priority priority;  ///< Priority.
+	const Task::Dependencies dependencies;  ///< Dependencies.
+	const Task::Subtasks subtasks;  ///< Subtasks.
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_ADD_TASK_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\add_task.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\batch_add_dependencies.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+
+#include "add_task.h"
+#include "batch_add_dependencies.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Log = You::Utils::Log;
+
+const std::wstring BatchAddDependencies::logCategory =
+	Query::logCategory + L"[BatchAddDependencies]";
+
+std::unique_ptr<Query> BatchAddDependencies::getReverse() {
+	class BatchDeleteDependencies : public Query {
+	public:
+		explicit BatchDeleteDependencies(
+			const std::vector<Task::ID>& dependencies)
+		: dependencies(dependencies) {}
+
+		Response execute(State& state) {
+			for (const auto& id : dependencies) {
+				QueryEngine::DeleteTask(id)->execute(state);
+			}
+			return dependencies.back();
+		}
+	private:
+		const std::vector<Task::ID> dependencies;
+		BatchDeleteDependencies operator=(
+			const BatchDeleteDependencies&) = delete;
+	};
+	return std::unique_ptr<Query>(new BatchDeleteDependencies(insertedIDs));
+}
+
+Task::ID BatchAddDependencies::executeDependenciesAddQuery(State& state) {
+	auto qBegin = dependencies.begin();
+	auto qEnd = dependencies.end();
+	Task::ID lastInserted =
+		boost::get<Task>((*qBegin)->execute(state)).getID();
+	++qBegin;
+
+	insertedIDs.emplace_back(lastInserted);
+	for (qBegin; qBegin != qEnd; ++qBegin) {
+		Response r = (*qBegin)->execute(state);
+		auto task = boost::get<Task>(r);
+		task.setDependencies({ lastInserted });
+		QueryEngine::UpdateTask(task)->execute(state);
+		lastInserted = task.getID();
+		insertedIDs.emplace_back(lastInserted);
+	}
+
+	return lastInserted;
+}
+
+Task BatchAddDependencies::executeParentAddQuery(State& state) {
+	std::unique_ptr<Query> addParentQuery;
+	Task::ID lastInserted = insertedIDs.back();
+	Response response =
+		AddTask(description, startTime, deadline, priority,
+			{ lastInserted }, subtasks).execute(state);
+	Task parent = boost::get<Task>(response);
+	insertedIDs.emplace_back(parent.getID());
+	return parent;
+}
+
+Response BatchAddDependencies::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
+	executeDependenciesAddQuery(state);
+	Task parent = executeParentAddQuery(state);
+	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
+	return parent;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\batch_add_dependencies.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\batch_add_dependencies.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Action for adding a new task alongside dependencies.
+class BatchAddDependencies : public Query {
+public:
+	/// Constructor that use datastore to inquire new id
+	explicit BatchAddDependencies(
+		const Task::Description& description,
+		const Task::Time& startTime,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		std::vector<std::unique_ptr<Query>>&& dependencies,
+		const Task::Subtasks& subtasks)
+	: startTime(startTime), description(description), deadline(deadline),
+	  priority(priority), dependencies(std::move(dependencies)),
+	  subtasks(subtasks) {}
+
+	/// Disable assignment operator
+	BatchAddDependencies& operator=(const BatchAddDependencies&) = delete;
+
+	/// Destructor
+	virtual ~BatchAddDependencies() = default;
+
+protected:
+	/// The header of the log string
+	static const std::wstring logCategory;
+
+	std::unique_ptr<Query> getReverse() override;
+
+private:
+	Task executeParentAddQuery(State& state);
+	Task::ID executeDependenciesAddQuery(State& state);
+	/// Execute add task.
+	Response execute(State& tasks) override;
+
+	std::vector<Task::ID> insertedIDs;  ///< List of inserted IDs
+	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Deadline.
+	const Task::Time deadline;  ///< Deadline.
+	const Task::Priority priority;  ///< Priority.
+	std::vector<std::unique_ptr<Query>> dependencies;  ///< Dependencies
+	const Task::Subtasks subtasks;  ///< Subtasks.
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_DEPENDENCIES_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\batch_add_dependencies.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\batch_add_subtasks.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+
+#include "add_task.h"
+#include "delete_task.h"
+#include "batch_add_subtasks.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Log = You::Utils::Log;
+
+const std::wstring BatchAddSubTasks::logCategory =
+	Query::logCategory + L"[BatchAddSubtasks]";
+
+std::unique_ptr<Query> BatchAddSubTasks::getReverse() {
+	return std::unique_ptr<Query>(new DeleteTask(insertedID));
+}
+
+Task::Subtasks BatchAddSubTasks::executeSubtasksAddQuery(State& state) const {
+	Task::Subtasks theSubtasks;
+	for (auto& q : subtasks) {
+		Response r = q->execute(state);
+		theSubtasks.insert(boost::get<Task>(r).getID());
+	}
+	return theSubtasks;
+}
+
+Task BatchAddSubTasks::executeParentAddQuery(State& state,
+	const Task::Subtasks& subtasks) const {
+	std::unique_ptr<Query> addParentQuery;
+	if (insertedID == -1) {
+		addParentQuery = std::unique_ptr<AddTask>(new AddTask(description,
+			startTime, deadline, priority, dependencies, subtasks));
+	} else {
+		addParentQuery = std::unique_ptr<AddTask>(new AddTask(insertedID, description,
+			startTime, deadline, priority, dependencies, subtasks));
+	}
+	return boost::get<Task>(addParentQuery->execute(state));
+}
+
+Response BatchAddSubTasks::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : BEGIN") % logCategory).str();
+	Task::Subtasks theSubtasks = executeSubtasksAddQuery(state);
+	Task newTask = executeParentAddQuery(state, theSubtasks);
+	insertedID = newTask.getID();
+	Log::debug << (boost::wformat(L"%1% : END") % logCategory).str();
+	return newTask;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\batch_add_subtasks.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\batch_add_subtasks.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Action for adding a new task
+class BatchAddSubTasks : public Query {
+public:
+	/// Constructor that use datastore to inquire new id
+	explicit BatchAddSubTasks(
+		const Task::Description& description,
+		const Task::Time& startTime,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		const Task::Dependencies& dependencies,
+		std::vector<std::unique_ptr<Query>>&& subtasks)
+	: insertedID(-1), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(std::move(subtasks)) {}
+
+	/// Constructor for already known id
+	explicit BatchAddSubTasks(
+		Task::ID id,
+		const Task::Description& description,
+		const Task::Time& startTime,
+		const Task::Time& deadline,
+		const Task::Priority& priority,
+		const Task::Dependencies& dependencies,
+		std::vector<std::unique_ptr<Query>>&& subtasks)
+	: insertedID(id), description(description), startTime(startTime),
+	  deadline(deadline), priority(priority), dependencies(dependencies),
+	  subtasks(std::move(subtasks)) {}
+
+	/// Disable assignment operator
+	BatchAddSubTasks& operator=(const BatchAddSubTasks&) = delete;
+
+	/// Destructor
+	virtual ~BatchAddSubTasks() = default;
+
+protected:
+	/// The reverse of batch addition is batch deletion.
+	std::unique_ptr<Query> getReverse() override;
+
+	/// The header of the log string
+	static const std::wstring logCategory;
+
+private:
+	Task::Subtasks executeSubtasksAddQuery(State& state) const;
+	Task executeParentAddQuery(State& state,
+		const Task::Subtasks& subtasks) const;
+
+	/// Execute add task.
+	Response execute(State& tasks) override;
+
+	Task::ID insertedID;   ///< Inserted ID of the parent task.
+	const Task::Description description;  ///< Description.
+	const Task::Time startTime;  ///< Start time.
+	const Task::Time deadline;  ///< Deadline.
+	const Task::Priority priority;  ///< Priority.
+	const Task::Dependencies dependencies;  ///< Dependencies.
+	std::vector<std::unique_ptr<Query>> subtasks;	 ///< Subtasks
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_BATCH_ADD_SUBTASKS_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\batch_add_subtasks.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\delete_task.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
+#include "../state.h"
+#include "../controller.h"
+#include "add_task.h"
+#include "batch_add_subtasks.h"
+#include "delete_task.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
+
+const std::wstring DeleteTask::logCategory =
+	Query::logCategory + L"[DeleteTask]";
+
+std::unique_ptr<Query> DeleteTask::getReverse() {
+	if (deletedTask.getSubtasks().empty()) {
+		return std::unique_ptr<Query>(new AddTask(
+			deletedTask.getID(),
+			deletedTask.getDescription(),
+			deletedTask.getStartTime(),
+			deletedTask.getDeadline(),
+			deletedTask.getPriority(),
+			deletedTask.getDependencies(),
+			deletedTask.getSubtasks()));
+	} else {
+		std::vector<std::unique_ptr<Query>> subtaskAddQueries;
+		// Construct add query for each subtask
+		for (const auto& cid : deletedTask.getSubtasks()) {
+			auto c = children[cid];
+			subtaskAddQueries.push_back(
+				std::unique_ptr<Query>(
+					new AddTask(
+						cid,
+						c.getDescription(),
+						c.getStartTime(),
+						c.getDeadline(),
+						c.getPriority(),
+						c.getDependencies(),
+						c.getSubtasks())));
+		}
+		return std::unique_ptr<Query>(new BatchAddSubTasks(
+			deletedTask.getID(),
+			deletedTask.getDescription(),
+			deletedTask.getStartTime(),
+			deletedTask.getDeadline(),
+			deletedTask.getPriority(),
+			deletedTask.getDependencies(),
+			std::move(subtaskAddQueries)));
+	}
+}
+
+void DeleteTask::makeTransaction(const Task::ID id) {
+	Log::debug << (boost::wformat(L"%1% : ERASE \"%2%\"")
+		% logCategory % id).str();
+	Transaction t(DataStore::get().begin());
+	DataStore::get().erase(id);
+	t.commit();
+}
+
+void DeleteTask::deleteTree(State& state, Task::ID id) {
+	Task c = state.get().graph().getTask(id);
+	children.insert({ id, c });
+	for (auto cid : c.getSubtasks()) {
+		deleteTree(state, cid);
+	}
+	Controller::Graph::deleteTask(state.graph(), id);
+	Controller::Graph::deleteTask(state.sgraph(), id);
+	makeTransaction(id);
+}
+
+void DeleteTask::disconnectDependencies(State& state) {
+	Task c = state.get().graph().getTask(id);
+	auto allTasks = state.get().graph().asTaskList();
+	for (auto& task : allTasks) {
+		if (task.isDependOn(id)) {
+			auto dep = task.getDependencies();
+			auto cchild = c.getDependencies();
+			// Remove it from depending task.
+			dep.erase(id);
+			// Reparent task.
+			for (const auto& cid : cchild) {
+				dep.insert(cid);
+			}
+			task.setDependencies(dep);
+			QueryEngine::UpdateTask(task)->execute(state);
+		}
+	}
+}
+
+Response DeleteTask::execute(State& state) {
+	deletedTask = state.get().graph().getTask(id);
+	// Remove the task from the parent's task.
+	if (!deletedTask.isTopLevel()) {
+		auto parent = deletedTask.getParent();
+		QueryEngine::RemoveSubtask(parent, id)->execute(state);
+	}
+	disconnectDependencies(state);
+	// If it has subtasks, delete the entire tree.
+	if (!deletedTask.getSubtasks().empty()) {
+		deleteTree(state, id);
+	} else {
+		Controller::Graph::deleteTask(state.graph(), id);
+		Controller::Graph::deleteTask(state.sgraph(), id);
+		makeTransaction(id);
+	}
+	return this->id;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\delete_task.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\delete_task.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_DELETE_TASK_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_DELETE_TASK_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Action for deleting an existing task
+/// Executing this action on non-existing task will throw
+/// TaskNotFoundException.
+class DeleteTask : public Query {
+	friend class BatchDeleteSubTasks;
+public:
+	/// Construct the action using the task ID.
+	explicit DeleteTask(Task::ID id)
+	: id(id) {}
+
+	/// Disable assignment operator.
+	DeleteTask& operator=(const DeleteTask&) = delete;
+
+	/// Destructor.
+	virtual ~DeleteTask() = default;
+
+protected:
+	/// The reverse of deletion is adding.
+	/// \return The query for adding the tasks (and their subtasks) back.
+	std::unique_ptr<Query> getReverse() override;
+
+	/// The header of the log string
+	static const std::wstring logCategory;
+
+private:
+	/// Execute delete task.
+	Response execute(State& tasks) override;
+	void makeTransaction(const Task::ID id);
+	void deleteTree(State& state, Task::ID id);
+	void disconnectDependencies(State& state);
+	/// ID of the task to be deleted.
+	const Task::ID id;
+	/// The task object that has been deleted.
+	Task deletedTask;
+	/// The mini database for children.
+	std::unordered_map<Task::ID, Task> children;
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_DELETE_TASK_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\delete_task.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\get_task.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../state.h"
+#include "../controller.h"
+#include "get_task.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+const std::wstring GetTask::logCategory = Query::logCategory + L"[GetTask]";
+
+std::unordered_map<Task::ID, Task>
+GetTask::getFilteredTasks(const State& state) const {
+	std::unordered_map<Task::ID, Task> filtered;
+	std::vector<Task> all = state.graph().asTaskList();
+	for (const auto& task : all) {
+		if (filter(task)) {
+			filtered.insert({ task.getID(), task });
+		}
+	}
+	return filtered;
+}
+
+std::vector<Task> GetTask::removeTaskIfParentIsShown(
+	std::unordered_map<Task::ID, Task>& filtered) const {
+	std::vector<Task> result;
+	for (const auto& r : filtered) {
+		// Always show toplevel task.
+		if (r.second.isTopLevel()) {
+			result.push_back(r.second);
+		} else {
+			// Show child task iff the parent is not filtered.
+			auto parent = r.second.getParent();
+			bool parentIsAlreadyFiltered =
+				filtered.find(parent) != filtered.end();
+			if (!parentIsAlreadyFiltered) {
+				result.push_back(r.second);
+			}
+		}
+	}
+	return result;
+}
+
+void GetTask::sortTheResultIfRequested(std::vector<Task>& result) const {
+	if (!comparator.isDefault()) {
+		std::sort(begin(result), end(result), comparator);
+	} else {
+		std::sort(begin(result), end(result), Comparator::byTimeCreated());
+	}
+}
+
+void GetTask::updateActiveFilterAndSorter(State& state) const {
+	state.setActiveComparator(comparator);
+	state.setActiveFilter(filter);
+}
+
+Response GetTask::execute(State& state) {
+	std::unordered_map<Task::ID, Task> filtered = getFilteredTasks(state);
+	std::vector<Task> result = removeTaskIfParentIsShown(filtered);
+	sortTheResultIfRequested(result);
+	updateActiveFilterAndSorter(state);
+	return result;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\get_task.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\get_task.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
+
+#include <functional>
+#include "../../filter.h"
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Action for getting tasks by applying a filter and optionally a sorter.
+class GetTask : public Query {
+public:
+	/// Construct from filter and sort.
+	/// \param [in] filter The filter used.
+	/// \param [in] comparator The comparator used.
+	explicit GetTask(const Filter& filter, const Comparator& comparator)
+	: filter(filter), comparator(comparator) {}
+
+	/// Destructor
+	virtual ~GetTask() = default;
+
+protected:
+	/// The header of the log string
+	static const std::wstring logCategory;
+
+private:
+	std::unordered_map<Task::ID, Task>
+		getFilteredTasks(const State& state) const;
+	std::vector<Task> removeTaskIfParentIsShown(
+		std::unordered_map<Task::ID, Task>& filtered) const;
+	void sortTheResultIfRequested(std::vector<Task>& result) const;
+	void updateActiveFilterAndSorter(State& state) const;
+	Response execute(State& tasks) override;
+	GetTask& operator=(const GetTask&) = delete;
+	Filter filter;
+	Comparator comparator;
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_GET_TASK_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\get_task.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\undo.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
+#include "../state.h"
+#include "../controller.h"
+#include "get_task.h"
+#include "undo.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
+
+Response Undo::execute(State& state) {
+	if (!State::get().undoStack().empty()) {
+		std::unique_ptr<Query> query = std::move(state.get().undoStack().top());
+		state.get().undoStack().pop();
+		query->execute(state);
+		std::unique_ptr<Query> refresh = std::unique_ptr<Query>(new GetTask(
+			state.getActiveFilter(), state.getActiveComparator()));
+		return refresh->execute(state);
+	} else {
+		throw Exception::NotUndoAbleException();
+	}
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\undo.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\undo.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UNDO_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_UNDO_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Undo last action, then reapply the current filter and comparator
+/// and return the task list as a response.
+/// - The undo of add task is delete task and vice versa.
+/// - The undo of update task is update the task with the old one.
+class Undo : public Query {
+public:
+	/// Construct Undo query
+	Undo() = default;
+
+	/// Destructor
+	virtual ~Undo() = default;
+private:
+	Undo& operator=(const Undo&) = delete;
+
+	Response execute(State& tasks) override;
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_UNDO_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\undo.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\update_task.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-Utils/log.h"
+#include "../../../You-DataStore/datastore.h"
+#include "../../../You-DataStore/transaction.h"
+
+#include "../state.h"
+#include "../controller.h"
+#include "update_task.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+using Transaction = You::DataStore::Transaction;
+using DataStore = You::DataStore::DataStore;
+using Log = You::Utils::Log;
+
+const std::wstring UpdateTask::logCategory =
+	Query::logCategory + L"[UpdateTask]";
+
+std::unique_ptr<Query> UpdateTask::getReverse() {
+	return QueryEngine::UpdateTask(previous);
+}
+
+Task UpdateTask::buildUpdatedTask(State& state) const {
+	auto current = state.get().graph().getTask(this->id);
+	auto builder = Controller::Builder::fromTask(current);
+
+	// Update the fields if it is requested
+	if (this->description) {
+		builder.description(this->description.get());
+	}
+	if (this->startTime) {
+		builder.deadline(this->startTime.get());
+	}
+	if (this->deadline) {
+		builder.deadline(this->deadline.get());
+	}
+	if (this->priority) {
+		builder.priority(this->priority.get());
+	}
+	if (this->dependencies) {
+		builder.dependencies(this->dependencies.get());
+	}
+	if (this->parent) {
+		builder.parent(this->parent.get());
+	}
+	if (this->subtasks) {
+		builder.subtasks(this->subtasks.get());
+	}
+	if (this->attachment) {
+		builder.attachment(this->attachment.get());
+	}
+	Task newTask = builder;
+	if (this->completed) {
+		newTask.setCompleted(this->completed.get());
+	}
+
+	Log::debug << (boost::wformat(L"%1% : Updated to %2%") %
+		logCategory % ToString(newTask)).str();
+
+	return newTask;
+}
+
+void UpdateTask::updateDependencyGraph(State& state, const Task& task) const {
+	Log::debug << (boost::wformat(L"%1% : Updating Dependencies %2% - \"%3%\"") %
+		logCategory % task.getID() % task.getDescription()).str();
+	Controller::Graph::updateTask(state.graph(), task);
+}
+
+void UpdateTask::updateSubtaskGraph(State& state, const Task& task) const {
+	Log::debug << (boost::wformat(L"%1% : Updating Subtasks %2% - \"%3%\"") %
+		logCategory % task.getID() % task.getDescription()).str();
+	Controller::Graph::updateTask(state.sgraph(), task);
+}
+
+void UpdateTask::makeTransaction(const Task& updated) const {
+	Log::debug << (boost::wformat(L"%1% : Commiting %2%") %
+		logCategory % id).str();
+	auto serialized = Controller::Serializer::serialize(updated);
+	Transaction t(DataStore::get().begin());
+	DataStore::get().put(updated.getID(), serialized);
+	t.commit();
+}
+
+void UpdateTask::recMarkChildren(State& state,
+	Task::ID id) const {
+	auto task = state.graph().getTask(id);
+	if (!task.getDependencies().empty()) {
+		for (const auto& id : task.getDependencies()) {
+			recMarkChildren(state, id);
+		}
+	}
+	if (!task.getSubtasks().empty()) {
+		for (const auto& id : task.getSubtasks()) {
+			recMarkChildren(state, id);
+		}
+	}
+	task.setCompleted(completed.get());
+	Controller::Graph::updateTask(state.graph(), task);
+	Controller::Graph::updateTask(state.sgraph(), task);
+	makeTransaction(task);
+}
+
+void UpdateTask::reparentTask(State& state, Task::ID id,
+	Task::ID newParent) const {
+	auto theTask = state.graph().getTask(id);
+	auto theNewParent = state.graph().getTask(newParent);
+
+	// Remove the task from old parent's subtasks list.
+	if (!theTask.isTopLevel()) {
+		auto oldParentTask = state.graph().getTask(theTask.getParent());
+		auto newSubtasks = oldParentTask.getSubtasks();
+		newSubtasks.erase(id);
+		oldParentTask.setSubtasks(newSubtasks);
+		Controller::Graph::updateTask(state.graph(), oldParentTask);
+		Controller::Graph::updateTask(state.sgraph(), oldParentTask);
+		makeTransaction(oldParentTask);
+	}
+
+	// Add the task to the newParent subtasks and update it.
+	if (newParent != id) {
+		auto subtasks = theNewParent.getSubtasks();
+		subtasks.insert(id);
+		theNewParent.setSubtasks(subtasks);
+		Controller::Graph::updateTask(state.graph(), theNewParent);
+		Controller::Graph::updateTask(state.sgraph(), theNewParent);
+		makeTransaction(theNewParent);
+	}
+
+	// Set the parent field of the task and update it.
+	{  // NOLINT(whitespace/braces)
+		theTask.setParent(newParent);
+		Controller::Graph::updateTask(state.graph(), theTask);
+		Controller::Graph::updateTask(state.sgraph(), theTask);
+		makeTransaction(theTask);
+	}
+}
+
+void UpdateTask::setRemovedSubtasksAsTopLevel(State& state) const {
+	for (const auto& c : previous.getSubtasks()) {
+		bool isRemovedFromSubtask =
+			subtasks->find(c) == subtasks->end();
+		if (isRemovedFromSubtask) {
+			reparentTask(state, c, c);
+		}
+	}
+}
+
+void UpdateTask::updateActiveFilter(State& state) const {
+	state.setActiveFilter(
+		state.getActiveFilter() ||
+			Filter::idIsIn({ this->id }));
+}
+
+Response UpdateTask::execute(State& state) {
+	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
+		logCategory % id).str();
+	previous = state.graph().getTask(id);
+	auto currentSubtasks = previous.getSubtasksObject();
+	auto updated = buildUpdatedTask(state);
+	try {
+		// If a parent is changed, reparent the task accordingly.
+		if (parent && (previous.getParent() != *parent)) {
+			reparentTask(state, id, *parent);
+		}
+		updateDependencyGraph(state, updated);
+		updateSubtaskGraph(state, updated);
+		// If a task is marked as complete, mark all the
+		// dependencies and subtasks as complete as well.
+		if (completed && (previous.isCompleted() != *completed)) {
+			recMarkChildren(state, id);
+		}
+		// If the subtasks field is changed, reparent every subtask as necessary.
+		if (subtasks) {
+			setRemovedSubtasksAsTopLevel(state);
+			for (Task::ID cid : *subtasks) {
+				reparentTask(state, cid, id);
+			}
+		}
+		updateActiveFilter(state);
+		makeTransaction(updated);
+	} catch (Exception::CircularDependencyException&) {
+		UpdateTask(previous).execute(state);
+		return previous;
+	}
+	return updated;
+}
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\action\update_task.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\action\update_task.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
+#define YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
+
+#include "../../api.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+namespace Action {
+
+/// Update a task. (e.g changing its description or marking it as done)
+/// To denote that a certain field should not be updated, pass boost::none
+/// as argument.
+class UpdateTask : public Query {
+public:
+	/// Constructor for UpdateTask query
+	explicit UpdateTask(
+		Task::ID id,
+		You::Utils::Option<Task::Description> description,
+		You::Utils::Option<Task::Time> startTime,
+		You::Utils::Option<Task::Time> deadline,
+		You::Utils::Option<Task::Priority> priority,
+		You::Utils::Option<Task::Dependencies> dependencies,
+		You::Utils::Option<bool> completed,
+		You::Utils::Option<Task::ID> parent,
+		You::Utils::Option<Task::Subtasks> subtasks,
+		You::Utils::Option<Task::Attachment> attachment)
+	: id(id),
+	  description(description),
+	  startTime(startTime),
+	  deadline(deadline),
+	  priority(priority),
+	  dependencies(dependencies),
+	  completed(completed),
+	  parent(parent),
+	  subtasks(subtasks),
+	  attachment(attachment) {}
+
+	/// Quick constructor for UpdateTask query
+	explicit UpdateTask(const Task& task)
+	: id(task.getID()),
+	  description(task.getDescription()),
+	  startTime(task.getStartTime()),
+	  deadline(task.getDeadline()),
+	  priority(task.getPriority()),
+	  dependencies(task.getDependencies()),
+	  completed(task.isCompleted()),
+	  parent(task.getParent()),
+	  subtasks(task.getSubtasks()),
+	  attachment(task.getAttachment()) {}
+
+	/// Disable assignment operator
+	UpdateTask& operator=(const UpdateTask&) = delete;
+
+	/// Destructor
+	virtual ~UpdateTask() = default;
+
+	Response execute(State& tasks) override;
+
+protected:
+	/// The reverse of updating is returning the original value.
+	std::unique_ptr<Query> getReverse() override;
+
+	/// The header of the log string
+	static const std::wstring logCategory;
+
+private:
+	Task buildUpdatedTask(State& state) const;
+	void updateDependencyGraph(State& state, const Task& updated) const;
+	void updateSubtaskGraph(State& state, const Task& updated) const;
+	void recMarkChildren(State& state, Task::ID id) const;
+	void reparentTask(State& state, Task::ID id, Task::ID newParent) const;
+	void setRemovedSubtasksAsTopLevel(State& state) const;
+	void updateActiveFilter(State& state) const;
+
+	void makeTransaction(const Task& updated) const;
+
+	const Task::ID id;
+	const You::Utils::Option<Task::Description> description;  ///< Description.
+	const You::Utils::Option<Task::Time> startTime;  ///< Start time.
+	const You::Utils::Option<Task::Time> deadline;  ///< Deadline.
+	const You::Utils::Option<Task::Priority> priority;  ///< Priority.
+	const You::Utils::Option<Task::Dependencies> dependencies;  ///< Dependencies.
+	const You::Utils::Option<bool> completed;  ///< Completed.
+	const You::Utils::Option<Task::ID> parent;  ///< Parent.
+	const You::Utils::Option<Task::Subtasks> subtasks;  ///< Parent.
+	const You::Utils::Option<Task::Attachment> attachment;  ///< Parent.
+
+	/// The previous state of the task.
+	Task previous;
+};
+
+}  // namespace Action
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_ACTION_UPDATE_TASK_H_
+
+	// End of segment: .\You-QueryEngine\internal\action\update_task.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_builder.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../state.h"
+#include "../../exception.h"
+#include "task_builder.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+TaskBuilder TaskBuilder::get() {
+	Task defaultTask = Task(
+		Task::DEFAULT_ID,
+		Task::DEFAULT_DESCRIPTION,
+		Task::DEFAULT_DEADLINE,
+		Task::DEFAULT_DEADLINE,
+		Task::DEFAULT_DEPENDENCIES,
+		Task::DEFAULT_PRIORITY,
+		Task::DEFAULT_ID,
+		Task::DEFAULT_SUBTASKS,
+		Task::DEFAULT_ATTACHMENT);
+	TaskBuilder builder(defaultTask);
+	return builder;
+}
+
+TaskBuilder TaskBuilder::fromTask(const Task& task) {
+	return TaskBuilder(task);
+}
+
+TaskBuilder& TaskBuilder::id(Task::ID id) {
+	instance.id = id;
+	instance.parent = id;
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::description(const Task::Description &description) {
+	instance.setDescription(description);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::startTime(const Task::Time& startTime) {
+	instance.setStartTime(startTime);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::deadline(const Task::Time& deadline) {
+	instance.setDeadline(deadline);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::dependencies(const Task::Dependencies &dependencies) {
+	instance.setDependencies(dependencies);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::priority(Task::Priority priority) {
+	instance.setPriority(priority);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::completed(bool completed) {
+	instance.setCompleted(completed);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::parent(const Task::ID parent) {
+	instance.setParent(parent);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::subtasks(const Task::Subtasks &subtasks) {
+	instance.setSubtasks(subtasks);
+	return *this;
+}
+
+TaskBuilder& TaskBuilder::attachment(const Task::Attachment& attachment) {
+	instance.setAttachment(attachment);
+	return *this;
+}
+
+TaskBuilder::operator Task() const {
+	bool isEmptyDescription =
+		instance.description == Task::DEFAULT_DESCRIPTION;
+	if (isEmptyDescription) {
+		throw Exception::EmptyTaskDescriptionException();
+	}
+	return instance;
+}
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_builder.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_builder.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_BUILDER_H_
+#define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_BUILDER_H_
+
+#include "../../task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class TaskBuilderTests;  }
+namespace Internal {
+
+/// Builder for tasks.
+///	 New instance of task may be created using this builder.
+///
+///  Example usage:
+///  \code{.cpp}
+/// 	Task newTask = Controller::Builder::get().description("Feed");
+///  \endcode
+///
+///	 \note At least description must be provided.
+class TaskBuilder {
+public:
+	/// Return a new builder instance.
+	/// \return A builder object.
+	static TaskBuilder get();
+
+	/// Start building from a current task object
+	static TaskBuilder fromTask(const Task& task);
+
+	/// Initialize task id.
+	/// This also initialize parent's id to self.
+	TaskBuilder& id(Task::ID id);
+	/// Initialize task description .
+	TaskBuilder& description(const Task::Description& description);
+	/// Initialize task starting time.
+	TaskBuilder& startTime(const Task::Time& startTime);
+	/// Initialize task deadline.
+	TaskBuilder& deadline(const Task::Time& deadline);
+	/// Initialize task dependencies.
+	TaskBuilder& dependencies(const Task::Dependencies& dependencies);
+	/// Initialize task priority.
+	TaskBuilder& priority(Task::Priority priority);
+	/// Initialize task completed.
+	TaskBuilder& completed(bool completed);
+	/// Initialize task's parent.
+	/// Parent id assumed exist.
+	TaskBuilder& parent(const Task::ID id);
+	/// Initialize task's subtasks.
+	TaskBuilder& subtasks(const Task::Subtasks& subtasks);
+	/// Initialize task's attachment
+	TaskBuilder& attachment(const Task::Attachment& attachment);
+	/// Convert the builder to task implicitly
+	operator Task() const;
+
+private:
+	/// Disable default no-arg constructor.
+	TaskBuilder();
+
+	/// Copy constructor from instance.
+	explicit TaskBuilder(const Task& instance)
+	: instance(instance) {}
+
+	/// Instance that will be returned by the builder
+	Task instance;
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+#endif  // YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_BUILDER_H_
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_builder.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_graph_controller.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../../You-DataStore/datastore.h"
+#include "task_serializer.h"
+
+#include "task_graph_controller.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+using TGC = TaskGraphController;
+using Vertex = TaskGraph::Vertex;
+using Graph = TaskGraph::Graph;
+using VIterator = TaskGraph::VIterator;
+using DataStore = You::DataStore::DataStore;
+
+Task::ID TaskGraphController::loadFromFile(TaskGraph& graph) {
+	Task::ID maxID = 0;
+	auto serialized = DataStore::get().getAllTasks();
+	for (const auto& task : serialized) {
+		auto t = TaskSerializer::deserialize(task);
+		addTask(graph, t);
+		maxID = std::max(t.getID(), maxID);
+	}
+	return maxID;
+}
+
+bool TaskGraphController::isTaskExist(TaskGraph& graph,
+	const Task::ID id) {
+	bool isExist = true;
+	try {
+		graph.getTask(id);
+	} catch (const Exception::TaskNotFoundException&) {
+		isExist = false;
+	}
+	return isExist;
+}
+
+void TaskGraphController::addTask(TaskGraph& g, const Task& task) {
+	assert(!isTaskExist(g, task.getID()));
+	auto neighbors = g.getAdjacentTasks(task);
+	bool noCycleInNeighbors =
+		std::all_of(begin(neighbors), end(neighbors),
+			std::bind(std::not_equal_to<Task::ID>(),
+				task.getID(), std::placeholders::_1));
+	if (noCycleInNeighbors) {
+		boost::add_vertex(task.getID(), g.graph);
+		g.taskTable.insert({ task.getID(), task });
+		if (neighbors.size() > 0) {
+			connectEdges(g, task);
+		}
+	} else {
+		throw Exception::CircularDependencyException();
+	}
+}
+
+void TaskGraphController::connectEdges(TaskGraph& g, const Task& task) {
+	auto neighbors = g.getAdjacentTasks(task);
+	for (const auto& cid : neighbors) {
+		 connectEdge(g, task.getID(), cid);
+	}
+}
+
+void TaskGraphController::connectEdge(TaskGraph& g,
+	const Task::ID pid, const Task::ID cid) {
+	boost::add_edge(cid, pid, g.graph);
+}
+
+void TaskGraphController::deleteTask(TaskGraph& g, const Task::ID id) {
+	Task task;
+
+	try {
+		task = g.getTask(id);
+	} catch (const Exception::TaskNotFoundException&) {
+		return;
+	}
+
+	/// Reparent the graph
+	if (g.type == TaskGraph::GraphType::DEPENDENCY) {
+		auto children = task.getDependencies();
+		for (auto& t : g.asTaskList()) {
+			if (t.isDependOn(task.getID())) {
+				auto dep = t.getDependencies();
+				for (const auto& c : children) {
+					dep.insert(c);
+				}
+				t.setDependencies(dep);
+				g.taskTable[t.getID()] = t;
+			}
+		}
+	}
+
+	g.taskTable.erase(id);
+}
+
+void TaskGraphController::updateTask(TaskGraph& g, const Task& task) {
+	auto found = g.taskTable.find(task.getID());
+	if (found != g.taskTable.end()) {
+		auto neighborBefore = g.getAdjacentTasks(task);
+		auto neighborAfter = g.getAdjacentTasks(found->second);
+		bool neighborIsChanged = neighborBefore != neighborAfter;
+		if (neighborIsChanged) {
+			auto backup = found->second;
+			found->second = task;
+			bool hasCycle = false;
+			CycleDetector detector(hasCycle);
+			rebuildGraph(g);
+			boost::depth_first_search(g.graph,
+				boost::visitor(detector));
+			if (hasCycle) {
+				found->second = backup;
+				rebuildGraph(g);
+				throw Exception::CircularDependencyException();
+			}
+		} else {
+			found->second = task;
+		}
+	} else {
+		throw Exception::TaskNotFoundException();
+	}
+}
+
+void TaskGraphController::rebuildGraph(TaskGraph& g) {
+	g.graph = TaskGraph::Graph();
+	for (const auto& idTaskPair : g.taskTable) {
+		Vertex v = boost::add_vertex(g.graph);
+		g.graph[v] = idTaskPair.first;
+	}
+	for (const auto& idTaskPair : g.taskTable) {
+		for (const auto& cid : g.getAdjacentTasks(
+			idTaskPair.second)) {
+			boost::add_edge(cid, idTaskPair.first, g.graph);
+		}
+	}
+}
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_graph_controller.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_graph_controller.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
+#define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
+
+#include <boost/config.hpp>
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include "../../exception.h"
+#include "../task_graph.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+/// Static utility class to manage a graph.
+class TaskGraphController {
+public:
+	/// Load the xml and build an initial task graph.
+	/// \param[in] graph The graph to be built.
+	/// \return The last task ID seen.
+	static Task::ID loadFromFile(TaskGraph& graph);
+
+	/// Return true if the task exist in the graph.
+	/// \param [in] id The id to be checked.
+	/// \param [in] graph The graph to be checked.
+	static bool isTaskExist(TaskGraph& graph, const Task::ID id);
+
+	/// Add a task to the graph if it is not exist.
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] task The task to be added.
+	/// \return true if the task is added, false otherwise.
+	static void addTask(TaskGraph& graph, const Task& task);
+
+	/// Delete a task from the graph.
+	/// May throw \ref Exception::TaskNotFoundException
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] id The id of the to-be deleted task
+	/// \return true if success, false otherwise.
+	static void deleteTask(TaskGraph& graph, const Task::ID id);
+
+	/// Delete a task tree from the graph
+	/// May throw \ref Exception::TaskNotFoundException
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] id The id of the to-be deleted task
+	/// \return true if success, false otherwise.
+	static void deleteTaskTree(TaskGraph& g, const Task::ID id);
+
+	/// Update a task from the graph
+	/// Rebuilds the graph if there is a connection change.
+	/// May throw \ref Exception::TaskNotFoundException if trying
+	/// to update non existent task.
+	/// May throw CircularDependencyException if it
+	/// causes circular dependency.
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] task The updated task
+	static void updateTask(TaskGraph& graph, const Task& task);
+
+	/// Rebuild the graph based on task table.
+	static void rebuildGraph(TaskGraph& graph);
+
+private:
+	/// Visitor to find back edge in the graph during DFS.
+	struct CycleDetector : public boost::dfs_visitor<> {
+		explicit CycleDetector(bool& hasCycle) : hasCycle(hasCycle) {}
+		template <class Edge, class Graph>
+		void back_edge(Edge, Graph&) { hasCycle = true; }
+		bool& hasCycle;
+		CycleDetector& operator=(const CycleDetector&) = delete;
+	};
+
+private:
+	/// Insert and connect all of the children edges to the graph.
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] parent The parent task.
+	static void connectEdges(TaskGraph& graph, const Task& parent);
+
+	/// Connect an edge from the child to the parent.
+	/// No-op if already connected.
+	/// \param [out] graph The graph to be modified.
+	/// \param [in] parent The id of the parent vertex.
+	/// \param [in] child The id of the child vertex.
+	static void connectEdge(TaskGraph& graph, const Task::ID parent,
+		const Task::ID child);
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_GRAPH_CONTROLLER_H_
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_graph_controller.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_serializer.cpp
+	 */
+
+#include "stdafx.h"
+
+#include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
+#include "../../exception.h"
+#include "task_builder.h"
+#include "task_serializer.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+using boost::posix_time::ptime;
+using boost::gregorian::date;
+using boost::gregorian::greg_year_month_day;
+using boost::posix_time::time_duration;
+
+const TaskSerializer::Key TaskSerializer::KEY_ID = L"id";
+const TaskSerializer::Key TaskSerializer::KEY_DESCRIPTION = L"description";
+const TaskSerializer::Key TaskSerializer::KEY_START_TIME = L"start_time";
+const TaskSerializer::Key TaskSerializer::KEY_DEADLINE = L"deadline";
+const TaskSerializer::Key TaskSerializer::KEY_PRIORITY = L"priority";
+const TaskSerializer::Key TaskSerializer::KEY_DEPENDENCIES = L"dependencies";
+const TaskSerializer::Key TaskSerializer::KEY_COMPLETED = L"completed";
+const TaskSerializer::Key TaskSerializer::KEY_PARENT = L"parent";
+const TaskSerializer::Key TaskSerializer::KEY_SUBTASKS = L"subtasks";
+const TaskSerializer::Key TaskSerializer::KEY_ATTACHMENT = L"attachment";
+
+const TaskSerializer::Value TaskSerializer::VALUE_PRIORITY_NORMAL = L"normal";
+const TaskSerializer::Value TaskSerializer::VALUE_PRIORITY_HIGH = L"high";
+const TaskSerializer::Value TaskSerializer::VALUE_DELIMITER = L";";
+
+TaskSerializer::STask TaskSerializer::serialize(const Task& task) {
+	Value value_id = serializeID(task.getID());
+	Value value_description = serializeDescription(task.getDescription());
+
+	Value value_start_time = serializeTime(task.getStartTime());
+	Value value_deadline = serializeTime(task.getDeadline());
+	Value value_priority = serializePriority(task.getPriority());
+	Value value_dependencies = serializeDependencies(task.getDependencies());
+	Value value_completed = serializeCompleted(task.isCompleted());
+	Value value_parent = serializeParent(task.getParent());
+	Value value_subtasks = serializeSubtasks(task.getSubtasks());
+	Value value_attachment = serializeAttachment(task.getAttachment());
+	return {
+		{ KEY_ID, value_id },
+		{ KEY_DESCRIPTION, value_description },
+		{ KEY_START_TIME, value_start_time },
+		{ KEY_DEADLINE, value_deadline },
+		{ KEY_PRIORITY, value_priority },
+		{ KEY_DEPENDENCIES, value_dependencies },
+		{ KEY_COMPLETED, value_completed },
+		{ KEY_PARENT, value_parent },
+		{ KEY_SUBTASKS, value_subtasks },
+		{ KEY_ATTACHMENT, value_attachment }
+	};
+}
+
+Task TaskSerializer::deserialize(const STask& stask) {
+	TaskBuilder sofar = TaskBuilder::get();
+	try {
+		Task::ID id =
+			deserializeID(stask.at(KEY_ID));
+		sofar.id(id);
+
+		Task::Description description =
+			deserializeOrDefault<Task::Description>(
+				&TaskSerializer::deserializeDescription,
+				stask,
+				KEY_DESCRIPTION,
+				Task::DEFAULT_DESCRIPTION);
+		sofar.description(description);
+
+		Task::Time startTime =
+			deserializeOrDefault<Task::Time>(
+				&TaskSerializer::deserializeTime,
+				stask,
+				KEY_START_TIME,
+				Task::DEFAULT_START_TIME);
+		sofar.startTime(startTime);
+
+		Task::Time deadline =
+			deserializeOrDefault<Task::Time>(
+				&TaskSerializer::deserializeTime,
+				stask,
+				KEY_DEADLINE,
+				Task::DEFAULT_DEADLINE);
+		sofar.deadline(deadline);
+
+		Task::Priority priority =
+			deserializeOrDefault<Task::Priority>(
+				&TaskSerializer::deserializePriority,
+				stask,
+				KEY_PRIORITY,
+				Task::DEFAULT_PRIORITY);
+		sofar.priority(priority);
+
+		Task::Dependencies dependencies =
+			deserializeOrDefault<Task::Dependencies>(
+				&TaskSerializer::deserializeDependencies,
+				stask,
+				KEY_DEPENDENCIES,
+				Task::DEFAULT_DEPENDENCIES);
+		sofar.dependencies(dependencies);
+
+		bool completed =
+			deserializeOrDefault<bool>(
+				&TaskSerializer::deserializeCompleted,
+				stask,
+				KEY_COMPLETED,
+				false);
+		sofar.completed(completed);
+
+		Task::ID parent =
+			deserializeOrDefault<Task::ID>(
+				&TaskSerializer::deserializeParent,
+				stask,
+				KEY_PARENT,
+				id);
+		sofar.parent(parent);
+
+		Task::Dependencies subtasks =
+			deserializeOrDefault<Task::Subtasks>(
+				&TaskSerializer::deserializeSubtasks,
+				stask,
+				KEY_SUBTASKS,
+				Task::DEFAULT_SUBTASKS);
+		sofar.subtasks(subtasks);
+
+		Task::Attachment attachment =
+			deserializeOrDefault<Task::Attachment>(
+				&TaskSerializer::deserializeAttachment,
+				stask,
+				KEY_ATTACHMENT,
+				Task::DEFAULT_ATTACHMENT);
+		sofar.attachment(attachment);
+
+		return sofar;
+	} catch (const boost::bad_lexical_cast&) {
+		return sofar;
+	}
+}
+
+
+TaskSerializer::Value TaskSerializer::serializeID(const Task::ID id) {
+	return boost::lexical_cast<std::wstring>(id);
+}
+
+TaskSerializer::Value TaskSerializer::serializeDescription(
+	const Task::Description& description) {
+	return description;
+}
+
+TaskSerializer::Value TaskSerializer::serializeTime(
+	const Task::Time& deadline) {
+	std::string stime = boost::posix_time::to_iso_string(deadline);
+	std::wstring value(begin(stime), end(stime));
+	return value;
+}
+
+TaskSerializer::Value TaskSerializer::serializePriority(
+	const Task::Priority& priority) {
+	return prioStrTable.at(priority);
+}
+
+TaskSerializer::Value TaskSerializer::serializeDependencies(
+	const Task::Dependencies& dependencies) {
+	std::wstringstream ws;
+	for (const auto& id : dependencies) {
+		ws << TaskSerializer::serializeID(id);
+		ws << TaskSerializer::VALUE_DELIMITER;
+	}
+	return ws.str();
+}
+
+TaskSerializer::Value TaskSerializer::serializeParent(
+	const Task::ID parent) {
+	return serializeID(parent);
+}
+
+TaskSerializer::Value TaskSerializer::serializeCompleted(
+	const bool completed) {
+	if (completed) {
+		return L"true";
+	} else {
+		return L"false";
+	}
+}
+
+TaskSerializer::Value TaskSerializer::serializeSubtasks(
+	const Task::Subtasks& subtasks) {
+	return serializeDependencies(subtasks);
+}
+
+TaskSerializer::Value TaskSerializer::serializeAttachment(
+	const Task::Attachment& attachments) {
+	std::wstringstream ws;
+	for (const auto& attachment : attachments) {
+		ws << attachment;
+		ws << TaskSerializer::VALUE_DELIMITER;
+	}
+	return ws.str();
+}
+
+Task::ID TaskSerializer::deserializeID(const Value& id) {
+	return boost::lexical_cast<Task::ID>(id);
+}
+
+Task::Description TaskSerializer::deserializeDescription(
+	const Value& description) {
+	return description;
+}
+
+Task::Time TaskSerializer::deserializeTime(const Value& deadline) {
+	if (deadline.find(VALUE_DELIMITER) != std::wstring::npos) {
+		// The user is using the old serialization method.
+		std::vector<std::int16_t> numbers;
+		std::vector<std::wstring> tokens = tokenize(deadline);
+		for (const auto& token : tokens) {
+			numbers.push_back(boost::lexical_cast<std::int16_t>(token));
+		}
+		auto year = numbers[0];
+		auto month = numbers[1];
+		auto day = numbers[2];
+		auto hour = numbers[3];
+		auto minute = numbers[4];
+		auto second = numbers[5];
+		return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+			boost::posix_time::time_duration(hour, minute, second));
+	} else {
+		std::string sdeadline(begin(deadline), end(deadline));
+		return boost::posix_time::from_iso_string(sdeadline);
+	}
+}
+
+Task::Priority TaskSerializer::deserializePriority(const Value& priority) {
+	return strPrioTable.at(priority);
+}
+
+Task::Dependencies TaskSerializer::deserializeDependencies(
+	const Value& dependencies) {
+	Task::Dependencies deps;
+	std::vector<std::wstring> tokens = tokenize(dependencies);
+	for (const auto& token : tokens) {
+		deps.insert(boost::lexical_cast<Task::ID>(token));
+	}
+	return deps;
+}
+
+bool TaskSerializer::deserializeCompleted(const Value& completed) {
+	return completed == L"true";
+}
+
+Task::ID TaskSerializer::deserializeParent(const Value& parent) {
+	return deserializeID(parent);
+}
+
+Task::Subtasks TaskSerializer::deserializeSubtasks(const Value& subtasks) {
+	return deserializeDependencies(subtasks);
+}
+
+Task::Attachment TaskSerializer::deserializeAttachment(
+	const Value& attachment) {
+	return tokenize(attachment);
+}
+
+std::vector<std::wstring> TaskSerializer::tokenize(const std::wstring& input) {
+	std::vector<std::wstring> output;
+	boost::char_separator<wchar_t> sep(VALUE_DELIMITER.c_str());
+	boost::tokenizer<boost::char_separator<wchar_t>,
+		std::wstring::const_iterator, std::wstring> tokens(input, sep);
+	for (const auto& token : tokens) {
+		output.push_back(std::wstring(begin(token), end(token)));
+	}
+	return output;
+}
+
+const std::unordered_map<TaskSerializer::Value, Task::Priority>
+TaskSerializer::strPrioTable = {
+	{ VALUE_PRIORITY_NORMAL, Task::Priority::NORMAL },
+	{ VALUE_PRIORITY_HIGH, Task::Priority::HIGH },
+};
+
+const std::unordered_map<Task::Priority, TaskSerializer::Value>
+TaskSerializer::prioStrTable = {
+	{ Task::Priority::NORMAL, VALUE_PRIORITY_NORMAL },
+	{ Task::Priority::HIGH, VALUE_PRIORITY_HIGH },
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_serializer.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller\task_serializer.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
+#define YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
+
+#include "../../task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class TaskSerializerTests;  }
+namespace Internal {
+
+/// Utility class to serialize and deserialize tasks.
+class TaskSerializer {
+public:
+	/// \name Typedefs
+	/// @{
+	typedef std::wstring Key;
+	typedef std::wstring Value;
+	typedef std::unordered_map<Key, Value> STask;
+	/// @}
+
+	/// Serialize a task model.
+	/// \param [in] task The task to be serialized.
+	/// \return Serialized form of the task.
+	static STask serialize(const Task& task);
+
+	/// Deserialize a serialized form of task model.
+	/// \param [in] serialized The serialized task.
+	/// \return The deserialized task of type \ref Task.
+	static Task deserialize(const STask& serialized);
+
+	/// \name Serialized task field names.
+	/// @{
+	static const Key KEY_ID;
+	static const Key KEY_DESCRIPTION;
+	static const Key KEY_START_TIME;
+	static const Key KEY_DEADLINE;
+	static const Key KEY_PRIORITY;
+	static const Key KEY_DEPENDENCIES;
+	static const Key KEY_COMPLETED;
+	static const Key KEY_PARENT;
+	static const Key KEY_SUBTASKS;
+	static const Key KEY_ATTACHMENT;
+	/// @}
+
+	/// \name String for priorities
+	/// @{
+	static const Value VALUE_PRIORITY_NORMAL;
+	static const Value VALUE_PRIORITY_HIGH;
+	/// @}
+
+	/// Delimiter for dependencies and deadlines
+	static const Value VALUE_DELIMITER;
+
+private:
+	/// Disable constructor, this is a utility class
+	TaskSerializer() = delete;
+
+	/// \name Serializer for each fields.
+	/// @{
+	/// The ID converted to std::wstring using lexical_cast
+	static Value serializeID(Task::ID id);
+	/// Description is already the same
+	static Value serializeDescription(const Task::Description& description);
+	/// YYYY:MM:DD HH::MM::SS to "YYYY;MM;DD;HH;MM;SS;"
+	static Value serializeTime(const Task::Time& deadline);
+	/// Lowercased enum name
+	static Value serializePriority(const Task::Priority& priority);
+	/// { 1,2,3 } to "1;2;3"
+	static Value serializeDependencies(const Task::Dependencies& dependencies);
+	/// Serialize completed
+	static Value serializeCompleted(const bool completed);
+	/// Same with ID
+	static Value serializeParent(const Task::ID parent);
+	/// Same with dependencies.
+	static Value serializeSubtasks(const Task::Subtasks& subtasks);
+	/// A string of attachments, delimited by VALUE_DELIMITER.
+	static Value serializeAttachment(const Task::Attachment& attachment);
+	/// @}
+
+private:
+	/// Deserialize a field, return the default value in case an
+	/// error is encountered.
+	template <typename T>
+	static T deserializeOrDefault(
+		T (*deserializer)(const Value&),
+		const STask& stask,
+		const std::wstring& field,
+		const T& defaultValue) {
+		auto value = stask.find(field);
+		if (value == stask.end()) {
+			return defaultValue;
+		}
+		try {
+			T result = deserializer(value->second);
+			return result;
+		} catch (const boost::bad_lexical_cast&) {
+			return defaultValue;
+		}
+	}
+
+	/// \name Deserializer for each fields.
+	/// @{
+	/// Lexical_cast back the ID to int64
+	static Task::ID deserializeID(const Value& id);
+	/// Description is already the same
+	static Task::Description deserializeDescription(const Value& description);
+	/// "YYYY;MM;DD;HH;MM;SS;" to ptime object
+	static Task::Time deserializeTime(const Value& deadline);
+	/// Lowercased enum name to enum
+	static Task::Priority deserializePriority(const Value& priority);
+	/// "1;2;3" to { 1,2,3 }
+	static Task::Dependencies deserializeDependencies(const Value& dependencies);
+	/// Deserialize completed
+	static bool deserializeCompleted(const Value& completed);
+	/// Same with id.
+	static Task::ID deserializeParent(const Value& parent);
+	/// Same with dependencies.
+	static Task::Subtasks deserializeSubtasks(const Value& subtasks);
+	/// Deserialize the attachment.
+	static Task::Attachment deserializeAttachment(const Value& subtasks);
+	/// @}
+
+	/// Tokenize a string by VALUE_DELIMITER.
+	static std::vector<std::wstring> tokenize(const Value& input);
+
+	/// Maps string to priority.
+	static const std::unordered_map<Value, Task::Priority> strPrioTable;
+	/// Maps priority to string.
+	static const std::unordered_map<Task::Priority, Value> prioStrTable;
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+#endif  // YOU_QUERYENGINE_INTERNAL_CONTROLLER_TASK_SERIALIZER_H_
+
+	// End of segment: .\You-QueryEngine\internal\controller\task_serializer.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\controller.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_CONTROLLER_H_
+#define YOU_QUERYENGINE_INTERNAL_CONTROLLER_H_
+
+#include "controller/task_builder.h"
+#include "controller/task_serializer.h"
+#include "controller/task_graph_controller.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+class Controller {
+public:
+	/// Access the TaskGraph controller.
+	typedef TaskGraphController Graph;
+	/// Access the TaskBuilder.
+	typedef TaskBuilder Builder;
+	/// Access the TaskSerializer.
+	typedef TaskSerializer Serializer;
+private:
+	Controller() = delete;
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+#endif  // YOU_QUERYENGINE_INTERNAL_CONTROLLER_H_
+
+	// End of segment: .\You-QueryEngine\internal\controller.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\state.cpp
+	 */
+
+#include "stdafx.h"
+
+#include "../../You-DataStore/datastore.h"
+#include "../../You-DataStore/task_typedefs.h"
+#include "controller/task_graph_controller.h"
+
+#include "state.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+using You::DataStore::DataStore;
+using You::DataStore::Transaction;
+using You::DataStore::KeyValuePairs;
+
+const std::wstring State::MAX_ID_FIELD = L"max-id";
+
+std::int64_t State::getMaxIDFromDataStore() {
+	auto resources = DataStore::get().getAllResources();
+	bool resourceFound = false;
+	for (const auto& resource : resources) {
+		auto it = resource.find(MAX_ID_FIELD);
+		if (it != resource.end()) {
+			resourceFound = true;
+			auto newMaxID = boost::lexical_cast<Task::ID>(it->second);
+			return newMaxID;
+		}
+	}
+	return -1;
+}
+
+State::State()
+: innerGraph(TaskGraph(TaskGraph::GraphType::DEPENDENCY)),
+  innerSubtaskGraph(TaskGraph(TaskGraph::GraphType::SUBTASK)) {
+	initialize();
+}
+
+State& State::get() {
+	static State instance;
+	return instance;
+}
+
+void State::clear() {
+	get().innerGraph = TaskGraph(TaskGraph::GraphType::DEPENDENCY);
+	get().innerSubtaskGraph = TaskGraph(TaskGraph::GraphType::SUBTASK);
+	while (!get().undoStack().empty()) {
+		get().undoStack().pop();
+	}
+	get().maxID = 0;
+}
+
+void State::initialize() {
+	clear();
+	get().maxID = TaskGraphController::loadFromFile(get().innerGraph);
+	TaskGraphController::loadFromFile(get().innerSubtaskGraph);
+	get().commitMaxIDToDataStore();
+}
+
+void State::setActiveFilter(const Filter& filter) {
+	this->activeFilter = filter;
+}
+
+void State::setActiveComparator(const Comparator& comparator) {
+	this->activeComparator = comparator;
+}
+
+Task::ID State::inquireNewID() {
+	++maxID;
+	return maxID;
+}
+
+void State::commitMaxIDToDataStore() {
+	Transaction t(DataStore::get().begin());
+	auto previousMaxID = getMaxIDFromDataStore();
+	maxID = std::max(previousMaxID, maxID);
+	auto sMaxID = boost::lexical_cast<std::wstring>(maxID);
+	if (previousMaxID == -1) {
+		DataStore::get().post(MAX_ID_FIELD, {{ MAX_ID_FIELD, sMaxID }});
+	} else {
+		DataStore::get().put(MAX_ID_FIELD, {{ MAX_ID_FIELD, sMaxID }});
+	}
+	t.commit();
+}
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\state.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\state.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_STATE_H_
+#define YOU_QUERYENGINE_INTERNAL_STATE_H_
+
+#include <stack>
+#include <memory>
+#include "../api.h"
+#include "task_graph.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+/// Singleton class to store \ref TaskGraph instance.\n
+/// When the application run, only one TaskGraph instance
+/// is alive. This singleton property of this class helped
+/// to achieve this property.
+class State {
+public:
+	/// Getter of the current instance.
+	static State& get();
+
+	/// Get the task dependency graph.
+	inline TaskGraph& graph() const { return get().innerGraph;  }
+
+	/// Get the task subtask graph.
+	inline TaskGraph& sgraph() const { return get().innerSubtaskGraph;  }
+
+	/// Get the current active filter.
+	inline Filter& getActiveFilter() const { return get().activeFilter; }
+
+	/// Get the current active comparator.
+	inline Comparator& getActiveComparator() const {
+		return get().activeComparator; }
+
+	/// Update the active filter
+	void setActiveFilter(const Filter& filter);
+
+	/// Update the active comparator
+	void setActiveComparator(const Comparator& comparator);
+
+	/// Reset the state back to empty state.
+	static void clear();
+
+	/// Reinitialize the singleton.
+	static void initialize();
+
+	/// Get the undo stack.
+	inline std::stack<std::unique_ptr<Query>>& undoStack() {
+		return get().innerUndoStack; }
+
+	/// Inquire a new and unique task id.
+	Task::ID inquireNewID();
+
+	/// Get max id from datastore.
+	/// Return -1 if not found.
+	std::int64_t getMaxIDFromDataStore();
+
+	/// Save max id to datastore.
+	void commitMaxIDToDataStore();
+
+private:
+	State();
+	State(const State&) = delete;
+	State& operator=(const State&) = delete;
+
+	Task::ID maxID;
+	TaskGraph innerGraph;
+	TaskGraph innerSubtaskGraph;
+	std::stack<std::unique_ptr<Query>> innerUndoStack;
+
+	static const std::wstring MAX_ID_FIELD;
+	Filter activeFilter = Filter::anyTask();
+	Comparator activeComparator = Comparator::notSorted();
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_STATE_H_
+
+	// End of segment: .\You-QueryEngine\internal\state.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\task_graph.cpp
+	 */
+
+#include "stdafx.h"
+#include "../exception.h"
+#include "task_graph.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+Task TaskGraph::getTask(const Task::ID id) const {
+	auto get = taskTable.find(id);
+	if (get != taskTable.end()) {
+		return get->second;
+	} else {
+		throw Exception::TaskNotFoundException();
+	}
+}
+
+std::vector<Task> TaskGraph::asTaskList() const {
+	std::vector<Task> result;
+	for (const auto& idTaskPair : taskTable) {
+		result.push_back(idTaskPair.second);
+	}
+	return result;
+}
+
+Task::Dependencies TaskGraph::getAdjacentTasks(const Task& task) const {
+	if (type == TaskGraph::GraphType::DEPENDENCY) {
+		return task.getDependencies();
+	} else {
+		return task.getSubtasks();
+	}
+}
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\internal\task_graph.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\internal\task_graph.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
+#define YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
+
+#include <vector>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include "../task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace Internal {
+
+/// Defines a simple task graph
+class TaskGraph {
+	friend class TaskGraphController;
+public:
+	/// TaskGraph is a directed graph of task.
+	typedef boost::adjacency_list<boost::vecS, boost::vecS,
+		boost::directedS, Task::ID> Graph;
+	/// Type of the vertices
+	typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+	/// Type of the vertex iterator
+	typedef boost::graph_traits<Graph>::vertex_iterator VIterator;
+	/// Type of the graph
+	enum class GraphType { DEPENDENCY, SUBTASK };
+
+	/// Construct a task graph with type.
+	explicit TaskGraph(GraphType type)
+	: type(type), graph(Graph()), taskTable() {}
+
+	/// Retrieve a single task from the graph
+	/// May throw Exception::TaskNotFoundException
+	/// \param [in] id The id of the task to be retrieved.
+	/// \return The task with specified ID
+	Task getTask(const Task::ID id) const;
+
+	/// Represent the graph as list of tasks.
+	/// \return Vector of all tasks.
+	std::vector<Task> asTaskList() const;
+
+	/// Return number of task resided in the graph.
+	inline int getTaskCount() const { return taskTable.size(); }
+
+	/// Return either task dependency list or subtask list
+	/// depends on the type of the graph.
+	Task::Dependencies getAdjacentTasks(const Task& task) const;
+
+private:
+	Graph graph;
+	std::unordered_map<Task::ID, Task> taskTable;
+	GraphType type;
+};
+
+}  // namespace Internal
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_INTERNAL_TASK_GRAPH_H_
+
+	// End of segment: .\You-QueryEngine\internal\task_graph.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\task_model.cpp
+	 */
+
+#include "stdafx.h"
+#include "internal/state.h"
+#include "task_model.h"
+
+using boost::posix_time::ptime;
+using boost::posix_time::hours;
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+using boost::gregorian::day_clock;
+
+namespace You {
+namespace QueryEngine {
+
+void Task::setDescription(const Description& description) {
+	this->description = description;
+}
+
+void Task::setStartTime(const Time& startTime) {
+	this->startTime = startTime;
+}
+
+void Task::setDeadline(const Time& deadline) {
+	this->deadline = deadline;
+}
+
+void Task::setDependencies(const Dependencies& dependencies) {
+	this->dependencies = dependencies;
+}
+
+void Task::setPriority(Priority priority) {
+	this->priority = priority;
+}
+
+void Task::setCompleted(bool completed) {
+	this->completed = completed;
+}
+
+void Task::setSubtasks(const Subtasks& subtasks) {
+	this->subtasks = subtasks;
+}
+
+void Task::setParent(const ID parent) {
+	this->parent = parent;
+}
+
+void Task::setAttachment(const Attachment& attachment) {
+	this->attachment = attachment;
+}
+
+bool Task::isDependOn(const ID id) const {
+	return dependencies.find(id) != dependencies.end();
+}
+
+bool Task::isTopLevel() const {
+	return parent == id;
+}
+
+std::vector<Task> Task::getSubtasksObject() const {
+	std::vector<Task> result;
+	for (const auto& id : subtasks) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
+}
+
+std::vector<Task> Task::getDependenciesObject() const {
+	std::vector<Task> result;
+	for (const auto& id : dependencies) {
+		result.push_back(Internal::State::get().graph().getTask(id));
+	}
+	return result;
+}
+
+const Task::ID Task::DEFAULT_ID = 0L;
+const Task::Description Task::DEFAULT_DESCRIPTION = L"";
+const Task::Time Task::NEVER = ptime(date(max_date_time), hours(0));
+const Task::Time Task::DEFAULT_START_TIME = Task::NEVER;
+const Task::Time Task::DEFAULT_DEADLINE = Task::NEVER;
+const Task::Dependencies Task::DEFAULT_DEPENDENCIES;
+const Task::Priority Task::DEFAULT_PRIORITY = Task::Priority::NORMAL;
+const Task::Subtasks Task::DEFAULT_SUBTASKS;
+const Task::Attachment Task::DEFAULT_ATTACHMENT;
+
+bool Task::isStrictEqual(const Task& task) const {
+	bool idIsEqual = id == task.id;
+	bool descriptionIsEqual = description == task.description;
+	bool startTimeIsEqual = startTime == task.startTime;
+	bool deadlineIsEqual = deadline == task.deadline;
+	bool priorityIsEqual = priority == task.priority;
+	bool dependenciesIsEqual = dependencies == task.dependencies;
+	bool completedIsEqual = completed == task.completed;
+	bool subtasksIsEqual = subtasks == task.subtasks;
+	return idIsEqual && descriptionIsEqual && startTimeIsEqual && priorityIsEqual
+		&& dependenciesIsEqual && deadlineIsEqual && subtasksIsEqual
+		&& completedIsEqual;
+}
+
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine\task_model.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine\task_model.h
+	 */
+
+
+#pragma once
+#ifndef YOU_QUERYENGINE_TASK_MODEL_H_
+#define YOU_QUERYENGINE_TASK_MODEL_H_
+
+#include <cstdint>
+#include <string>
+#include <unordered_set>
+#include <vector>
+#include <boost/format.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests { class TaskBuilderTests; }
+namespace Internal { class TaskSerializer; class TaskBuilder; }
+
+/// Defines the task model.
+class Task {
+	friend class Internal::TaskBuilder;
+public:
+	/// Default Constructor
+	Task() = default;
+
+	/// \name Typedefs
+	/// @{
+	typedef int64_t ID;
+	typedef std::wstring Description;
+	typedef boost::posix_time::ptime Time;
+	typedef std::unordered_set<Task::ID> Dependencies;
+	enum class Priority { NORMAL, HIGH };
+	typedef std::unordered_set<Task::ID> Subtasks;
+	typedef std::vector<std::wstring> Attachment;
+	/// @}
+
+	/// \name Inlined Field Getters.
+	/// @{
+	ID getID() const { return id; }
+	Description getDescription() const { return description; }
+	Time getStartTime() const { return startTime; }
+	Time getDeadline() const { return deadline; }
+	Dependencies getDependencies() const { return dependencies; }
+	Priority getPriority() const { return priority; }
+	bool isCompleted() const { return completed; }
+	ID getParent() const { return parent; }
+	Subtasks getSubtasks() const { return subtasks; }
+	Attachment getAttachment() const { return attachment; }
+	/// @}
+
+	/// Get subtasks as a list of Task objects.
+	/// \returns The list of children of the task.
+	std::vector<Task> getSubtasksObject() const;
+
+	/// Get dependencies as a list of Task objects.
+	/// \returns The list of dependencies of the task.
+	std::vector<Task> getDependenciesObject() const;
+
+	/// Check wheter this task depends on a task.
+	/// \param [in] id The id of the dependant task.
+	/// \returns True if the task id is in the dependency.
+	bool isDependOn(const Task::ID id) const;
+
+	/// Check whether this task is a toplevel task.
+	/// A task is a toplevel task if it does not have any parent.
+	/// \returns True if the task is toplevel.
+	bool Task::isTopLevel() const;
+
+	/// \name Field Setters
+	/// @{
+	void setDescription(const Description& description);
+	void setStartTime(const Time& startTime);
+	void setDeadline(const Time& deadline);
+	void setDependencies(const Dependencies& dependencies);
+	void setPriority(Priority priority);
+	void setCompleted(bool completed);
+	void setParent(const Task::ID parent);
+	void setSubtasks(const Subtasks& subtasks);
+	void setAttachment(const Attachment& attachment);
+	/// @}
+
+	/// \name Field Default Values
+	/// @{
+	static const ID DEFAULT_ID;
+	static const Description DEFAULT_DESCRIPTION;
+	static const Time NEVER;
+	static const Time DEFAULT_START_TIME;
+	static const Time DEFAULT_DEADLINE;
+	static const Dependencies DEFAULT_DEPENDENCIES;
+	static const Priority DEFAULT_PRIORITY;
+	static const Subtasks DEFAULT_SUBTASKS;
+	static const Attachment DEFAULT_ATTACHMENT;
+	/// @}
+
+	/// Check equality of two tasks by comparing field by field.
+	/// \param[in] rhs The task object to be compared
+	/// \returns True if the tasks is equal.
+	inline bool operator==(const Task& rhs) const {
+		return isStrictEqual(rhs);
+	}
+
+private:
+	/// The all-field constructor called by the builder
+	explicit Task(ID id, const Description& description, const Time& startTime,
+		const Time& deadline, const Dependencies& dependencies,
+		const Priority& priority, ID parent, const Subtasks& subtasks,
+		const Attachment& attachment)
+	: id(id), description(description), startTime(startTime), deadline(deadline),
+	  dependencies(dependencies), priority(priority), completed(false),
+	  parent(parent), subtasks(subtasks), attachment(attachment) {}
+
+	/// Check if the task is strictly equal with another task
+	/// Two taks are strictly equal if all fields are equal
+	/// \returns The strict equality of two tasks.
+	bool isStrictEqual(const Task& task) const;
+
+	/// \name Private Fields
+	/// @{
+	ID id;
+	Description description;
+	Time startTime;
+	Time deadline;
+	Dependencies dependencies;
+	Priority priority;
+	bool completed;
+	ID parent;
+	Subtasks subtasks;
+	Attachment attachment;
+	/// @}
+};
+
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_TASK_MODEL_H_
+
+	// End of segment: .\You-QueryEngine\task_model.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\advanced_query_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+#include "common.h"
+#include "exclusions.h"
+
+#include <type_traits>
+#include "../You-DataStore/datastore.h"
+#include "mocks/task_list.h"
+#include "exception.h"
+#include "internal/controller/task_builder.h"
+#include "internal/state.h"
+#include "internal/action/update_task.h"
+#include "api.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
+
+/// Test the advanced functionalities of QueryEngine API
+TEST_CLASS(AdvancedQueryEngineTests) {
+	const Task::Description desc = L"Learn Haskell Lens";
+	const Task::Description desc2 = L"Learn me";
+	const Task::Time dead = Task::NEVER;
+	const Task::Priority prio = Task::Priority::HIGH;
+	const Task::Dependencies dep = Task::Dependencies();
+	const Task::Subtasks sub = Task::Subtasks();
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(executeAndUndoBatchAddSubtaskQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		auto query = QueryEngine::AddTask(
+			desc, dead, dead, prio, {}, std::move(childQueries));
+
+		QueryEngine::executeQuery(std::move(query));
+
+		auto graph = Internal::State::get().graph();
+
+		auto tasklist = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+
+		graph = Internal::State::get().graph();
+		// TODO(evansb) define ToString
+		Assert::AreEqual(tasklist.size(), static_cast<std::size_t>(1));
+
+		QueryEngine::executeQuery(QueryEngine::Undo());
+
+		tasklist = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+
+		Assert::AreEqual(tasklist.size(), static_cast<std::size_t>(0));
+	}
+
+	TEST_METHOD(executeAndUndoBatchDeleteSubtaskQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+
+		Task parent;
+		{  // NOLINT
+			auto query = QueryEngine::AddTask(
+				desc, dead, dead, prio, {}, std::move(childQueries));
+			QueryEngine::executeQuery(std::move(query));
+		}
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			2);
+
+		{  // NOLINT
+			auto query = QueryEngine::DeleteTask(2);
+			QueryEngine::executeQuery(std::move(query));
+		}
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			0);
+	}
+
+	TEST_METHOD(executeBatchAddDependenciesQuery) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		auto query = QueryEngine::AddTask(
+			desc, dead, dead, prio, std::move(childQueries), {});
+		auto inserted = boost::get<Task>(
+			QueryEngine::executeQuery(std::move(query)));
+
+		Assert::IsTrue(inserted.isDependOn(3));
+	}
+
+	TEST_METHOD(markTaskAsDoneWillMarkItsChildrenAsDoneAlso) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {},
+					std::move(childQueries))));
+		task.setCompleted(true);
+		task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::UpdateTask(task)));
+		auto subtasks = task.getSubtasksObject();
+		Assert::IsTrue(std::all_of(begin(subtasks), end(subtasks),
+				[] (const Task& t) { return t.isCompleted();}));
+	}
+
+	TEST_METHOD(dontShowChildTaskIfTheParentIsAlreadyShown) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+			Task::Priority::HIGH, {}, {})));
+		QueryEngine::executeQuery(
+			QueryEngine::AddTask(
+			desc, dead, dead, Task::Priority::HIGH, {}, std::move(childQueries)));
+		auto getTask = QueryEngine::GetTask(Filter::highPriority());
+		auto response = QueryEngine::executeQuery(std::move(getTask));
+		auto result = boost::get<std::vector<Task>>(response);
+		Assert::AreEqual(result.size(), static_cast<std::size_t>(1));
+		Assert::IsTrue(result.at(0).isTopLevel());
+	}
+
+	TEST_METHOD(editParent) {
+		// Add two trees
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+			Task::Priority::HIGH, {}, {})));
+
+		auto tree1 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+				desc, dead, dead, Task::Priority::HIGH, {},
+					std::move(childQueries))));
+
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+			Task::Priority::HIGH, {}, {})));
+		auto tree2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+
+		// Set the second to parent the first one.
+		tree2.setParent(tree1.getID());
+		QueryEngine::executeQuery(QueryEngine::UpdateTask(tree2));
+
+		auto getTask = QueryEngine::GetTask(Filter::anyTask());
+		auto response = QueryEngine::executeQuery(std::move(getTask));
+		auto result = boost::get<std::vector<Task>>(response);
+		Assert::AreEqual(result.at(0).getSubtasks().size(), std::size_t(2));
+	}
+
+	TEST_METHOD(setToplevelWithoutChildTasksAsSubtasks) {
+		// Add two trees
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead,
+						Task::Priority::HIGH, {}, {})));
+
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead,
+						Task::Priority::HIGH, {}, {})));
+
+		auto parent3 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					L"Should be shown", dead, dead,
+						Task::Priority::HIGH, {}, {})));
+
+		parent3.setSubtasks({ parent.getID(), parent2.getID() });
+		auto parent4 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(parent3))));
+		Assert::IsTrue(parent4.getSubtasks() == parent3.getSubtasks());
+
+		auto list = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+
+		Assert::AreEqual(list.size(), static_cast<std::size_t>(1));
+		Assert::AreEqual(list.at(0).getDescription(),
+			std::wstring(L"Should be shown"));
+	}
+
+
+	TEST_METHOD(setToplevelWithChildTasksAsSubtasks) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+			Task::Priority::HIGH, {}, {})));
+
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
+		parent2.setSubtasks({ parent.getID() });
+
+		parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(parent2))));
+		Assert::IsTrue(parent2.getSubtasks().size() == 1);
+		Assert::IsTrue(parent2.getSubtasksObject().at(0).getID() == parent.getID());
+	}
+
+
+	TEST_METHOD(setSubtaskOfAChildTask) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+			Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
+		child.setSubtasks({ parent2.getID() });
+		child = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(child))));
+		auto list = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		parent = Internal::State::get().graph().getTask(parent.getID());
+		Assert::IsTrue(list.size() == 1);
+		Assert::IsTrue(parent.getSubtasksObject().at(0).getID() == child.getID());
+		Assert::IsTrue(child.getSubtasksObject().at(0).getID() == parent2.getID());
+	}
+
+	TEST_METHOD(deleteLevelTwoTree) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+			childQueries.push_back(
+				std::move(QueryEngine::AddTask(desc, dead, dead,
+				Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {}, {})));
+		child.setSubtasks({ parent2.getID() });
+		child = boost::get<Task>(
+			QueryEngine::executeQuery(
+				std::unique_ptr<Query>(
+					new Internal::Action::UpdateTask(child))));
+		auto deleted = boost::get<Task::ID>(QueryEngine::executeQuery(
+				QueryEngine::DeleteTask(child.getID())));
+		Assert::IsTrue(deleted == child.getID());
+		parent = Internal::State::get().graph().getTask(parent.getID());
+		Assert::IsTrue(Internal::State::get().graph().getTask(parent.getID())
+			.getSubtasks().empty());
+	}
+
+	TEST_METHOD(removingSubtaskSetItAsToplevel) {
+		std::vector<std::unique_ptr<Query>> childQueries;
+			childQueries.push_back(
+				std::move(QueryEngine::AddTask(desc, dead, dead,
+					Task::Priority::HIGH, {}, {})));
+		auto parent = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		auto child = parent.getSubtasksObject().at(0);
+		auto parent2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::RemoveSubtask(
+					parent.getID(), child.getID())));
+		Assert::IsTrue(parent2.getSubtasks().empty());
+		auto child2 = Internal::State::get().graph().getTask(child.getID());
+		Assert::IsTrue(child2.isTopLevel());
+	}
+
+	TEST_METHOD(swappingChildBetweenTwoTaskTrees) {
+		// Create a tree with one leaf
+		std::vector<std::unique_ptr<Query>> childQueries;
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+				Task::Priority::HIGH, {}, {})));
+		auto tree1 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+		// Create another tree with one leaf
+		childQueries.push_back(
+			std::move(QueryEngine::AddTask(desc, dead, dead,
+				Task::Priority::HIGH, {}, {})));
+		auto tree2 = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(
+					desc, dead, dead, Task::Priority::HIGH, {},
+						std::move(childQueries))));
+
+		auto child = tree1.getSubtasksObject().at(0);
+		child.setParent(tree2.getID());
+		QueryEngine::executeQuery(QueryEngine::UpdateTask(child));
+
+		tree1 = Internal::State::get().graph().getTask(tree1.getID());
+		tree2 = Internal::State::get().graph().getTask(tree2.getID());
+		child = Internal::State::get().graph().getTask(child.getID());
+
+		Assert::IsTrue(child.getParent() == tree2.getID());
+		Assert::AreEqual(tree1.getSubtasks().size(),
+			static_cast<std::size_t>(0));
+		Assert::AreEqual(tree2.getSubtasks().size(),
+			static_cast<std::size_t>(2));
+	}
+	AdvancedQueryEngineTests& operator=(const AdvancedQueryEngineTests&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\advanced_query_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\common.h
+	 */
+
+#pragma once
+#ifndef YOU_QUERYENGINE_TESTS_COMMON_H_
+#define YOU_QUERYENGINE_TESTS_COMMON_H_
+
+#include "CppUnitTest.h"
+#include "task_model.h"
+
+#define USE_WSTRING_TEST_WRITER(X) namespace Microsoft {\
+namespace VisualStudio {\
+namespace CppUnitTestFramework {\
+\
+template <>\
+static std::wstring ToString<X> (const X& t) {\
+	return boost::lexical_cast<std::wstring>(t);\
+}}}}
+
+#endif  // YOU_QUERYENGINE_TESTS_COMMON_H_
+
+	// End of segment: .\You-QueryEngine-Tests\common.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\comparator_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+#include "common.h"
+#include "internal/state.h"
+#include "internal/controller.h"
+#include "api.h"
+#include "comparator.h"
+
+#include "mocks/task.h"
+#include "mocks/task_list.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
+using You::QueryEngine::Task;
+using You::QueryEngine::Comparator;
+using You::QueryEngine::QueryEngine;
+using You::QueryEngine::Internal::State;
+using You::QueryEngine::Internal::Controller;
+
+TEST_CLASS(ComparatorTests) {
+	TEST_METHOD(ascendingIsTheDefault) {
+		Assert::IsTrue(Comparator::byDescription().isAscending);
+	}
+
+	TEST_METHOD(descendingComparator) {
+		Assert::IsFalse(
+			Comparator::byDescription().descending().isAscending);
+	}
+	TEST_METHOD(compareByDescription) {
+		Assert::IsFalse((Comparator::byDescription()
+			.descending().ascending())
+			(FEED_THE_KITTEN(), FEED_THE_DOGGY()));
+		Assert::IsTrue((Comparator::byDescription().descending())
+			(FEED_THE_KITTEN(), FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(useComparatorToSort) {
+		auto t = fromDescription(TASK_DESCRIPTIONS());
+		std::sort(t.begin(), t.end(), Comparator::byDescription());
+		Assert::IsTrue(std::is_sorted(t.begin(), t.end(),
+			[] (Task& lhs, Task& rhs) {
+				return lhs.getDescription() < rhs.getDescription();
+			}));
+	}
+
+	TEST_METHOD(compareByDeadline) {
+		Assert::IsTrue((Comparator::byDeadline())
+			(FOR_TOMMOROW(), FEED_THE_DOGGY()));
+		Assert::IsTrue((Comparator::byDeadline())
+			(FOR_TOMMOROW(), FOR_NEXT_WEEK()));
+		Assert::IsTrue((Comparator::byDeadline().descending())
+			(FOR_NEXT_WEEK(), FOR_TOMMOROW()));
+	}
+
+	TEST_METHOD(combineComparators) {
+		auto complex =
+			Comparator::byDescription() &&
+			(Comparator::byDeadline().descending());
+		Assert::IsTrue(complex(FOR_NEXT_WEEK(), FOR_TOMMOROW()));
+	}
+
+	TEST_METHOD(compareByPriority) {
+		Assert::IsTrue((Comparator::byPriority())
+			(LESS_IMPORTANT_TASK(), SUPER_IMPORTANT_TASK()));
+	}
+
+	TEST_METHOD(compareByDependencies) {
+		Assert::IsTrue((Comparator::byDependenciesCount())
+			(NINE_DEPENDENCIES(), TEN_DEPENDENCIES()));
+	}
+
+	TEST_METHOD(compareByTimeCreated) {
+		Assert::IsTrue((Comparator::byTimeCreated())
+			(TASK_WITH_ID_1(), TASK_WITH_ID_2()));
+	}
+
+	ComparatorTests& operator=(const ComparatorTests&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\comparator_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\dependency_graph_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+#include "common.h"
+#include "internal/controller.h"
+#include "exception.h"
+#include "api.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using Task = You::QueryEngine::Task;
+using TaskGraph = You::QueryEngine::Internal::TaskGraph;
+using Controller = You::QueryEngine::Internal::Controller;
+
+/// Test the functionality of Dependency graph
+TEST_CLASS(DependencyGraphTest) {
+	TEST_METHOD(createTaskGraph) {
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
+	}
+
+	TEST_METHOD(addTaskToGraph) {
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Controller::Graph::addTask(graph, Controller::Builder::get()
+			.id(10L).description(L"Hello World"));
+		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
+		Controller::Graph::addTask(graph, Controller::Builder::get()
+			.id(11L).description(L"Hello Warld"));
+		Assert::AreEqual(graph.asTaskList().size(), std::size_t(2));
+		Assert::IsTrue(graph.asTaskList().at(1).getID() <= (Task::ID) 11);
+	}
+
+	TEST_METHOD(deleteExistingTaskFromGraph) {
+		using Exception::TaskNotFoundException;
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Task task = Controller::Builder::get().id(10L).description(L"Hello Warld");
+		Controller::Graph::addTask(graph, task);
+		Assert::AreEqual(graph.asTaskList().size(), std::size_t(1));
+		Controller::Graph::deleteTask(graph, task.getID());
+		Assert::AreEqual(graph.asTaskList().size(), std::size_t(0));
+	}
+
+	TEST_METHOD(deleteNonExistingTaskFromGraphIsANoOp) {
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Controller::Graph::deleteTask(graph, 10L);
+	}
+
+	TEST_METHOD(getExistingTaskFromGraph) {
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Task task = Controller::Builder::get()
+			.id(10L).description(L"Hello Warld");
+		Controller::Graph::addTask(graph, task);
+		Assert::AreEqual(graph.getTask(task.getID()).getDescription(),
+			std::wstring(L"Hello Warld"));
+	}
+
+	TEST_METHOD(getNonExistingTaskFromGraph) {
+		using Exception::TaskNotFoundException;
+		Assert::ExpectException<TaskNotFoundException>([] {
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+			graph.getTask(10L);
+		});
+	}
+
+	TEST_METHOD(updateExistingTaskInGraph) {
+		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Controller::Graph::addTask(graph, t);
+		Task u = Controller::Builder::get().id(10L).description(L"Hello Marnie");
+		Controller::Graph::updateTask(graph, u);
+		Assert::AreEqual(graph.getTask(t.getID()).getDescription(),
+			std::wstring(L"Hello Marnie"));
+	}
+
+	TEST_METHOD(updateExistingTaskInGraphThatCausesCycle) {
+		TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+		Task firstTask = Controller::Builder::get()
+			.id(10L).description(L"Hello World");
+		Controller::Graph::addTask(graph, firstTask);
+
+		Task secondTask = Controller::Builder::get()
+			.id(11L).description(L"Hello World").dependencies({10L});
+		Controller::Graph::addTask(graph, secondTask);
+
+		Assert::AreEqual(graph.getTaskCount(), 2);
+		Task willFail = Controller::Builder::get()
+			.id(10L).description(L"Hello Marnie").dependencies({ secondTask.getID() });
+
+		Assert::ExpectException<Exception::CircularDependencyException>(
+			[&graph, &willFail] {
+			Controller::Graph::updateTask(graph, willFail);
+		});
+	}
+
+	TEST_METHOD(updateNonExistingTaskInGraph) {
+		using Exception::TaskNotFoundException;
+		Task t = Controller::Builder::get().id(10L).description(L"Hello World");
+		Assert::ExpectException<TaskNotFoundException>([t] {
+			TaskGraph graph(TaskGraph::GraphType::DEPENDENCY);
+			Controller::Graph::updateTask(graph, t);
+		});
+	}
+
+	// Create a dependency chain t -> t2 -> t3
+	// When t2 is deleted, it should now be t -> t3
+	TEST_METHOD(deleteExistingTaskFromGraphWithDependency) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"test");
+		Task t2 = Controller::Builder::get().id(21L).description(L"test2").
+			dependencies({t.getID()});
+		Task t3 = Controller::Builder::get().id(22L).description(L"test3").
+			dependencies({t2.getID()});
+		Controller::Graph::addTask(g, t);
+		Controller::Graph::addTask(g, t2);
+		Controller::Graph::addTask(g, t3);
+
+		Assert::IsFalse(t3.isDependOn(t.getID()));
+		Controller::Graph::deleteTask(g, t2.getID());
+		t3 = g.getTask(t3.getID());
+		Assert::IsTrue(t3.isDependOn(t.getID()));
+	}
+
+	TEST_METHOD(subtasksAndDependenciesAreSeparateConcern) {
+		TaskGraph g(TaskGraph::GraphType::DEPENDENCY);
+		Task t = Controller::Builder::get().id(20L).description(L"Circular")
+										   .subtasks({ 20L });
+		Controller::Graph::addTask(g, t);
+		Assert::AreEqual(g.getTask(t.getID()), t);
+	}
+
+	DependencyGraphTest& operator=(const DependencyGraphTest&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\dependency_graph_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\exclusions.h
+	 */
+
+#pragma once
+#ifndef YOU_QUERYENGINE_TESTS_EXCLUSIONS_H_
+#define YOU_QUERYENGINE_TESTS_EXCLUSIONS_H_
+
+// A local define since there is no way to test whether a header file exists.
+// If you have VS Premium, then add it to the project definition (user
+// properties) file
+#ifdef MS_CPP_CODECOVERAGE
+
+/// \file Exclusions from code coverage analysis.
+/// See http://msdn.microsoft.com/en-sg/library/dd537628.aspx
+
+#include <CodeCoverage/CodeCoverage.h>
+#pragma managed(push, off)
+
+ExcludeFromCodeCoverage(boost, L"boost::*");
+ExcludeFromCodeCoverage(You_DataStore, L"You::DataStore::*");
+ExcludeFromCodeCoverage(Destructors, L"~[A-Z]+()");
+ExcludeFromCodeCoverage(You_QueryEngine_UnitTests,
+	L"You::QueryEngine::UnitTests::*");
+ExcludeFromCodeCoverage(You_Utils,
+	L"You::Utils::*");
+
+#pragma managed(pop)
+
+#endif  // MS_CPP_CODECOVERAGE
+
+#endif  // YOU_QUERYENGINE_TESTS_EXCLUSIONS_H_
+
+	// End of segment: .\You-QueryEngine-Tests\exclusions.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\filter_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+#include "../You-DataStore/datastore.h"
+#include "common.h"
+#include "mocks/task.h"
+#include "mocks/task_list.h"
+#include "internal/state.h"
+#include "internal/controller.h"
+#include "api.h"
+#include "filter.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
+using State = You::QueryEngine::Internal::State;
+using Controller = You::QueryEngine::Internal::Controller;
+using F = You::QueryEngine::Filter;
+
+TEST_CLASS(FilterTests) {
+	static const std::size_t N_TASK = 10;
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		Internal::State::clear();
+		You::DataStore::DataStore::get().wipeData();
+	}
+
+	TEST_METHOD(implicitConversionFromFilterToLambda) {
+		Assert::IsTrue((F::anyTask())(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterAnyTask) {
+		Assert::IsTrue((F::anyTask())(FEED_THE_KITTEN()));
+		Assert::IsFalse((!F::anyTask())(FEED_THE_KITTEN()));
+	}
+
+	TEST_METHOD(filterIdIsIn) {
+		Assert::IsTrue((F::idIsIn({ 1, 2, 3 }))(TASK_WITH_ID_1()));
+		Assert::IsFalse((F::idIsIn({ 4, 4, 5, 6 }))(TASK_WITH_ID_1()));
+		Assert::IsTrue((F::idIsIn({ 2, 4 }) || F::idIsIn({ 3 , 5}))
+			(TASK_WITH_ID_3()));
+	}
+
+	TEST_METHOD(filterByDependencies) {
+		Assert::IsTrue((F::dependsOn(1))(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(3))(DEPENDS_ON_1_2_3()));
+		Assert::IsFalse((F::dependsOn(4))(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(2) && F::dependsOn(3))
+			(DEPENDS_ON_1_2_3()));
+		Assert::IsTrue((F::dependsOn(4) || F::dependsOn(3))
+			(DEPENDS_ON_1_2_3()));
+	}
+
+	TEST_METHOD(filterByPriority) {
+		Assert::IsTrue((F::highPriority())(SUPER_IMPORTANT_TASK()));
+		Assert::IsTrue((F::normalPriority())(LESS_IMPORTANT_TASK()));
+	}
+
+	TEST_METHOD(filterOverdue) {
+		Assert::IsTrue((F::overdue())(OVERDUE()));
+	}
+
+	TEST_METHOD(filterDueToday) {
+		Assert::IsTrue((F::dueToday())(DUE_TODAY()));
+	}
+
+	TEST_METHOD(filterDueThisWeek) {
+		Assert::IsTrue((F::dueThisWeek())(DUE_THIS_WEEK()));
+	}
+
+	TEST_METHOD(filterDueThisMonth) {
+		Assert::IsTrue((F::dueThisMonth())(DUE_THIS_MONTH()));
+	}
+
+	TEST_METHOD(filterDueNever) {
+		Assert::IsTrue((F::dueNever())(FEED_THE_DOGGY()));
+	}
+
+	TEST_METHOD(filterBeforeTime) {
+		auto beforeChristmas =
+			F::dueBefore(2014, 12, 25, 0, 0, 0);
+		Assert::IsTrue(beforeChristmas(DUE_BEFORE_CHRISTMAS()));
+		Assert::IsFalse(beforeChristmas(DUE_ON_CHRISTMAS()));
+		Assert::IsFalse(beforeChristmas(DUE_AFTER_CHRISTMAS()));
+	}
+
+	TEST_METHOD(filterIsRelatedTo) {
+		auto& g = Internal::State::get().sgraph();
+		auto& g2 = Internal::State::get().graph();
+
+		Controller::Graph::addTask(g, RELATED_TO_3());
+		Controller::Graph::addTask(g, RELATED_TO_2());
+		Controller::Graph::addTask(g, RELATED_TO_1());
+
+		Controller::Graph::addTask(g2, RELATED_TO_3());
+		Controller::Graph::addTask(g2, RELATED_TO_2());
+		Controller::Graph::addTask(g2, RELATED_TO_1());
+
+		Assert::AreEqual(
+			Internal::State::get().graph().getTaskCount(),
+			3);
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_1()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_1().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_3().getID()))
+			(RELATED_TO_2()));
+
+		Assert::IsTrue(
+			(F::isRelatedTo(RELATED_TO_2().getID()))
+			(RELATED_TO_3()));
+	}
+
+	TEST_METHOD(filterIsDescendant) {
+		auto& g = Internal::State::get().graph();
+
+		Controller::Graph::addTask(g, CHILD());
+		Controller::Graph::addTask(g, MOTHER());
+		Controller::Graph::addTask(g, GRANDMOTHER());
+
+		Assert::IsTrue(
+			(F::isChildOf(GRANDMOTHER().getID()))(MOTHER()));
+		Assert::IsTrue(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(MOTHER()));
+		Assert::IsTrue(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(CHILD()));
+		Assert::IsTrue(
+			(F::isDescendantOf(MOTHER().getID()))(CHILD()));
+		Assert::IsFalse(
+			(F::isDescendantOf(GRANDMOTHER().getID()))(GRANDMOTHER()));
+	}
+
+	TEST_METHOD(logicalAndTwoFilters) {
+		populateStateWithTasks(ID_ONE_TO_FIVE());
+		auto alwaysEmpty = F::anyTask() && (!F::anyTask());
+		auto result = QueryEngine::executeQuery(
+			QueryEngine::GetTask(alwaysEmpty));
+
+		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
+	}
+
+	TEST_METHOD(logicalOrTwoFilters) {
+		populateStateWithTasks(ID_ONE_TO_FIVE());
+		auto alwaysEmpty = (!F::anyTask()) || (!F::anyTask());
+		auto result = QueryEngine::executeQuery(
+			QueryEngine::GetTask(alwaysEmpty));
+
+		Assert::IsTrue(boost::get<std::vector<Task>>(result).empty());
+	}
+
+	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\filter_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\integration_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+#include "common.h"
+
+#include "../You-DataStore/datastore.h"
+#include "internal/state.h"
+#include "api.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
+using You::DataStore::DataStore;
+
+/// Test the main \ref QueryEngine API
+TEST_CLASS(IntegrateWithDataStoreTest) {
+	const Task::Description desc = L"Learn Haskell Lens";
+	const Task::Description desc2 = L"Learn me";
+	const Task::Time dead = Task::NEVER;
+	const Task::Priority prio = Task::Priority::HIGH;
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(initiallyDataStoreShouldBeEmpty) {
+		auto taskList = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		Task::ID initialID = Internal::State::get().getMaxIDFromDataStore();
+		Assert::AreEqual(taskList.size(), static_cast<std::size_t>(0));
+		Assert::IsTrue(initialID == -1L);
+	}
+
+	TEST_METHOD(postTaskToDataStore) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		Internal::State::initialize();
+		Task::ID initialID = Internal::State::get().getMaxIDFromDataStore();
+		Assert::IsTrue(initialID == 1L);
+		auto taskList = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		Assert::AreEqual(taskList.size(), static_cast<std::size_t>(1));
+	}
+
+	TEST_METHOD(putTaskToDataStore) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+
+		Internal::State::initialize();
+		task.setDescription(L"Hello World");
+		QueryEngine::executeQuery(QueryEngine::UpdateTask(task));
+
+		Internal::State::initialize();
+		auto taskList = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		Assert::AreEqual(taskList[0].getDescription(),
+			std::wstring(L"Hello World"));
+	}
+
+	TEST_METHOD(eraseTaskFromDataStore) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+
+		Internal::State::initialize();
+		QueryEngine::executeQuery(QueryEngine::DeleteTask(task.getID()));
+
+		Internal::State::initialize();
+		auto taskList = boost::get<std::vector<Task>>(
+			QueryEngine::executeQuery(
+				QueryEngine::GetTask(Filter::anyTask())));
+		Assert::AreEqual(taskList.size(), static_cast<std::size_t>(0));
+	}
+
+	IntegrateWithDataStoreTest& operator=(
+		const IntegrateWithDataStoreTest&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\integration_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\mocks\task.cpp
+	 */
+
+#include "stdafx.h"
+#include "task.h"
+
+#include "../You-QueryEngine/internal/controller.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::greg_month;
+using boost::gregorian::greg_year;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::posix_time::to_tm;
+using boost::posix_time::hours;
+using boost::gregorian::date;
+using boost::gregorian::days;
+using boost::gregorian::day_clock;
+
+using Task = You::QueryEngine::Task;
+using Controller = You::QueryEngine::Internal::Controller;
+
+Task TASK_WITH_ID_1() {
+	return Controller::Builder::get()
+		.id(1)
+		.description(L"Hello World");
+}
+
+Task TASK_WITH_ID_2() {
+	return Controller::Builder::get()
+		.id(2)
+		.description(L"Hello World");
+}
+
+Task TASK_WITH_ID_3() {
+	return Controller::Builder::get()
+		.id(3)
+		.description(L"Hello World");
+}
+
+Task FEED_THE_DOGGY() {
+	return Controller::Builder::get().
+		id(43L).
+		description(L"Feed the doggy");
+}
+
+Task FEED_THE_KITTEN() {
+	return Controller::Builder::get().
+		id(42L).
+		description(L"Feed the kitten");
+}
+
+Task SUPER_IMPORTANT_TASK() {
+	return Controller::Builder::get().
+		id(42L).
+		description(L"Sleep").
+		priority(Task::Priority::HIGH);
+}
+
+Task LESS_IMPORTANT_TASK() {
+	return Controller::Builder::get().
+		id(42L).
+		description(L"Save the Earth").
+		priority(Task::Priority::NORMAL);
+}
+
+Task FOR_TOMMOROW() {
+	return Controller::Builder::get().
+		id(42L).
+		description(L"Save the Earth").
+		deadline(ptime(date(2014, 10, 7)));
+}
+
+Task FOR_NEXT_WEEK() {
+	return Controller::Builder::get().
+		id(43L).
+		description(L"Save the Earth").
+		deadline(ptime(date(2014, 10, 14)));
+}
+
+Task DEPENDS_ON_1_2_3() {
+	return Controller::Builder::get()
+		.id(0)
+		.description(L"Hello World")
+		.dependencies({ 1, 2, 3 });
+}
+
+Task DEPENDS_ON_3_4_5() {
+	return Controller::Builder::get()
+		.id(0)
+		.description(L"Hello World")
+		.dependencies({ 3, 4, 5 });
+}
+
+Task DEPENDS_ON_NOTHING() {
+	return Controller::Builder::get()
+		.id(0)
+		.description(L"Hello World")
+		.dependencies({});
+}
+
+Task TEN_DEPENDENCIES() {
+	return Controller::Builder::get().
+		id(666L).
+		description(L"Impossible is nothing").
+		dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+}
+
+Task NINE_DEPENDENCIES() {
+	return Controller::Builder::get().
+		id(666L).
+		description(L"Impossible is nothing").
+		dependencies({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+}
+
+Task OVERDUE() {
+	date now = day_clock::local_day();
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Overdue").
+		deadline(ptime(now) - hours(1));
+}
+
+Task DUE_THIS_MONTH() {
+	date now = day_clock::local_day();
+	return Controller::Builder::get().
+		id(23L).
+		description(L"This Month").
+		deadline(ptime(
+			date(now.year(), now.month(), 1),
+			time_duration(0, 0, 0)));
+}
+
+Task DUE_THIS_WEEK() {
+	date now = day_clock::local_day();
+	ptime due(now + days(1));
+	return Controller::Builder::get().
+		id(23L).
+		description(L"This Week").
+		deadline(due);
+}
+
+Task DUE_TODAY() {
+	date now = day_clock::local_day();
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Today").
+		deadline(ptime(now));
+}
+
+Task DUE_ON_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Christmas").
+		deadline(ptime(date(2014, 12, 25),
+					   time_duration(0, 0, 0)));
+}
+
+Task DUE_BEFORE_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"Before Christmas").
+		deadline(ptime(date(2014, 12, 24),
+					   time_duration(0, 0, 0)));
+}
+
+Task DUE_AFTER_CHRISTMAS() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"After Christmas").
+		deadline(ptime(date(2014, 12, 26),
+					   time_duration(0, 0, 0)));
+}
+
+Task ONE_SUBTASK() {
+	return Controller::Builder::get().
+		id(23L).
+		description(L"One Subtask").
+		subtasks({ 20L });
+}
+
+Task TWO_SUBTASKS() {
+	return Controller::Builder::get().
+		id(22L).
+		description(L"Two Subtasks").
+		subtasks({ 20L, 21L });
+}
+
+Task CIRCULAR_SUBTASKS() {
+	return Controller::Builder::get().
+		id(21L).
+		description(L"Circular Subtasks").
+		subtasks({ 21L });
+}
+
+Task RELATED_TO_1() {
+	return Controller::Builder::get().
+		id(1L).
+		description(L"Related to").
+		subtasks({ RELATED_TO_2().getID() });
+}
+
+Task RELATED_TO_2() {
+	return Controller::Builder::get().
+		id(2L).
+		description(L"Related to").
+		dependencies({ RELATED_TO_3().getID() }).
+		parent(1L);
+}
+
+Task RELATED_TO_3() {
+	return Controller::Builder::get().
+		id(3L).
+		description(L"Related");
+}
+
+Task GRANDMOTHER() {
+	return Controller::Builder::get().
+		id(1L).
+		description(L"Grandmother").
+		subtasks({ 2L });
+}
+
+Task MOTHER() {
+	return Controller::Builder::get().
+		id(2L).
+		description(L"Mother").
+		subtasks({ 3L }).
+		parent(1L);
+}
+
+Task CHILD() {
+	return Controller::Builder::get().
+		id(3L).
+		description(L"Child").
+		parent(2L);
+}
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\mocks\task.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\mocks\task.h
+	 */
+
+#pragma once
+#ifndef YOU_QUERYENGINE_TESTS_MOCKS_TASK_H_
+#define YOU_QUERYENGINE_TESTS_MOCKS_TASK_H_
+
+#include "../You-QueryEngine/task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+/// \name Various task examples for testing
+/// @{
+
+/// Has specific ID
+extern Task TASK_WITH_ID_1();
+extern Task TASK_WITH_ID_2();
+extern Task TASK_WITH_ID_3();
+
+/// Has description.
+extern Task FEED_THE_DOGGY();
+extern Task FEED_THE_KITTEN();
+
+/// Has priority
+extern Task SUPER_IMPORTANT_TASK();
+extern Task LESS_IMPORTANT_TASK();
+
+/// Has due dates.
+extern Task FOR_TOMMOROW();
+extern Task FOR_NEXT_WEEK();
+
+/// Has dependencies.
+extern Task DEPENDS_ON_1_2_3();
+extern Task DEPENDS_ON_3_4_5();
+extern Task DEPENDS_ON_NOTHING();
+extern Task TEN_DEPENDENCIES();
+extern Task NINE_DEPENDENCIES();
+
+/// Due on various time point
+extern Task OVERDUE();
+extern Task DUE_THIS_MONTH();
+extern Task DUE_THIS_WEEK();
+extern Task DUE_TODAY();
+extern Task DUE_ON_CHRISTMAS();
+extern Task DUE_BEFORE_CHRISTMAS();
+extern Task DUE_AFTER_CHRISTMAS();
+
+/// Subtasks
+extern Task ONE_SUBTASK();
+extern Task TWO_SUBTASKS();
+extern Task CIRCULAR_SUBTASKS();
+
+
+/// Related to
+extern Task RELATED_TO_1();
+extern Task RELATED_TO_2();
+extern Task RELATED_TO_3();
+
+/// Descendant
+extern Task GRANDMOTHER();
+extern Task MOTHER();
+extern Task CHILD();
+
+/// @}
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_TESTS_MOCKS_TASK_H_
+
+	// End of segment: .\You-QueryEngine-Tests\mocks\task.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\mocks\task_list.cpp
+	 */
+
+#include "stdafx.h"
+#include "../You-QueryEngine/internal/controller.h"
+#include "../You-QueryEngine/internal/state.h"
+#include "task_list.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+namespace {
+	using Controller = You::QueryEngine::Internal::Controller;
+	using State = You::QueryEngine::Internal::State;
+}
+
+std::vector<Task::Description> TASK_DESCRIPTIONS() {
+	return {
+		std::wstring(L"CD"),
+		std::wstring(L"ABC"),
+		std::wstring(L"BCD"),
+		std::wstring(L"ABCD"),
+		std::wstring(L"EFGH"),
+	};
+};
+
+std::vector<Task> ID_ONE_TO_FIVE() {
+	return {
+		Controller::Builder::get().description(L"meh").id(1),
+		Controller::Builder::get().description(L"meh").id(2),
+		Controller::Builder::get().description(L"meh").id(3),
+		Controller::Builder::get().description(L"meh").id(4),
+		Controller::Builder::get().description(L"meh").id(5)
+	};
+}
+
+std::vector<Task> fromDescription(const std::vector<Task::Description>& v) {
+	std::vector<Task> result;
+	std::for_each(v.begin(), v.end(),
+		[&result] (const Task::Description& d) {
+			result.push_back(Controller::Builder::get().description(d));
+		}
+	);
+	return result;
+}
+
+void populateStateWithTasks(const std::vector<Task>& tasks) {
+	State::clear();
+	std::for_each(tasks.begin(), tasks.end(), [] (const Task t) {
+		Controller::Graph::addTask(State::get().graph(), t);
+	});
+}
+
+/// @}
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\mocks\task_list.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\mocks\task_list.h
+	 */
+
+#pragma once
+#ifndef YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
+#define YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
+
+#include "../You-QueryEngine/task_model.h"
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+/// \name Various task lists for testing
+/// @{
+
+/// List of task with random descriptions.
+extern std::vector<Task::Description> TASK_DESCRIPTIONS();
+/// List of tasks with ID one to five.
+extern std::vector<Task> ID_ONE_TO_FIVE();
+
+/// Helper to construct task from a list of description.
+extern std::vector<Task> fromDescription(
+	const std::vector<Task::Description>& v);
+
+extern void populateStateWithTasks(
+	const std::vector<Task>& tasks);
+
+/// @}
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+#endif  // YOU_QUERYENGINE_TESTS_MOCKS_TASK_LIST_H_
+
+	// End of segment: .\You-QueryEngine-Tests\mocks\task_list.h
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\query_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+#include "common.h"
+
+#include <type_traits>
+#include "../You-DataStore/datastore.h"
+#include "mocks/task_list.h"
+#include "exception.h"
+#include "internal/controller/task_builder.h"
+#include "internal/state.h"
+#include "api.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::gregorian::date;
+using boost::gregorian::max_date_time;
+
+using You::QueryEngine::Filter;
+using You::QueryEngine::Task;
+using You::QueryEngine::Response;
+using You::QueryEngine::QueryEngine;
+
+/// Test the main \ref QueryEngine API
+TEST_CLASS(QueryEngineTests) {
+	const Task::Description desc = L"Learn Haskell Lens";
+	const Task::Description desc2 = L"Learn me";
+	const Task::Time dead = Task::NEVER;
+	const Task::Priority prio = Task::Priority::HIGH;
+
+	TEST_METHOD_INITIALIZE(cleanupBeforeTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD_CLEANUP(cleanupAfterTest) {
+		You::DataStore::DataStore::get().wipeData();
+		Internal::State::clear();
+	}
+
+	TEST_METHOD(queryEngineIsUtilityClass) {
+		static_assert(
+			!std::is_trivially_default_constructible<QueryEngine>::value,
+		"QueryEngine cannot be default constructed");
+	}
+
+	TEST_METHOD(constructAddTaskQuery) {
+		auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+		Assert::IsNotNull(&query);
+	}
+
+	TEST_METHOD(constructGetTaskQuery) {
+		std::vector<Task::ID> emptyVec;
+		auto query = QueryEngine::GetTask(Filter::idIsIn(emptyVec));
+		Assert::IsNotNull(&query);
+		query = QueryEngine::GetTask(Filter::anyTask());
+		Assert::IsNotNull(&query);
+	}
+
+	TEST_METHOD(executeFilterQuery) {
+		populateStateWithTasks(ID_ONE_TO_FIVE());
+		std::vector<Task::ID> mustBeHere = { 0, 1, 2, 3, 10 };
+
+		auto result = QueryEngine::executeQuery(
+			QueryEngine::GetTask(Filter::idIsIn(mustBeHere)));
+		std::size_t N_FILTERED = 3;
+
+		Assert::AreEqual(boost::get<std::vector<Task>>(result).size(), N_FILTERED);
+	}
+
+	TEST_METHOD(executeAddQuery) {
+		for (int i = 1; i <= 5; i++) {
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			std::size_t newSize = Internal::State::get().graph().asTaskList().size();
+			Assert::AreEqual(newSize, std::size_t(i));
+			Assert::AreEqual(boost::get<Task>(response).getDescription(), desc);
+		}
+	}
+
+	TEST_METHOD(executeEditQuery) {
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		#pragma region Update the description
+		{  // NOLINT(whitespace/braces)
+			task.setDescription(desc2);
+			auto query = QueryEngine::UpdateTask(task);
+			auto response = QueryEngine::executeQuery(std::move(query));
+
+			Task::ID id = boost::get<Task>(response).getID();
+			Assert::AreEqual(boost::get<Task>(response)
+				.getDescription(), desc2);
+			Assert::AreEqual(Internal::State::get().graph().getTask(id)
+				.getDescription(), desc2);
+		}
+		#pragma endregion
+	}
+
+	TEST_METHOD(executeMarkTaskQuery) {
+		#pragma region Add one Task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsFalse(task.isCompleted());
+		}
+		#pragma endregion
+
+		#pragma region Mark the task added as done
+		{  // NOLINT(whitespace/braces)
+			task.setCompleted(true);
+			auto query = QueryEngine::UpdateTask(task);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsTrue(task.isCompleted());
+			Assert::IsTrue(Internal::State::get().graph()
+				.getTask(task.getID()).isCompleted());
+		}
+		#pragma endregion
+
+		#pragma region Mark the task added as undone again
+		{  // NOLINT(whitespace/braces)
+			task.setCompleted(false);
+			auto query = QueryEngine::UpdateTask(task);
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+			Assert::IsFalse(task.isCompleted());
+			Assert::IsFalse(Internal::State::get().graph()
+				.getTask(task.getID()).isCompleted());
+		}
+		#pragma endregion
+	}
+
+	TEST_METHOD(executeDeleteQuery) {
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+
+		#pragma endregion
+
+		#pragma region Delete the task
+		{   // NOLINT(whitespace/braces)
+			auto query = QueryEngine::DeleteTask(task.getID());
+			auto response = QueryEngine::executeQuery(std::move(query));
+			Assert::AreEqual(Internal::State::get().graph()
+				.asTaskList().size(), std::size_t(0));
+		}
+		#pragma endregion
+	}
+
+	TEST_METHOD(undoAddQuery) {
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Undo Last action
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(0));
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(),
+			0);
+	}
+
+	TEST_METHOD(undoDeleteQuery) {
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Delete one task
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::DeleteTask(task.getID());
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(2));
+
+		#pragma region Undo last action
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().graph().getTaskCount(), 1);
+	}
+
+	TEST_METHOD(undoUpdateQuery) {
+		#pragma region Add one task
+		Task task;
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::AddTask(desc, dead, dead, prio, {}, {});
+			auto response = QueryEngine::executeQuery(std::move(query));
+			task = boost::get<Task>(response);
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+
+		#pragma region Update one task
+		{  // NOLINT(whitespace/braces)
+			task.setDescription(L"De geso");
+			auto query = QueryEngine::UpdateTask(task);
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(2));
+
+		#pragma region Undo last action
+		{  // NOLINT(whitespace/braces)
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		}
+		#pragma endregion
+
+		Assert::AreEqual(Internal::State::get().undoStack().size(),
+			std::size_t(1));
+		Assert::AreEqual(Internal::State::get().graph().getTask(task.getID())
+			.getDescription(), desc);
+	}
+
+	TEST_METHOD(undoWithEmptyStackShouldThrowException) {
+		Assert::ExpectException<Exception::NotUndoAbleException>([] {
+			auto query = QueryEngine::Undo();
+			auto response = QueryEngine::executeQuery(std::move(query));
+		});
+	}
+
+	TEST_METHOD(setAttachment) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		Task::Attachment expected = { L"index.html", L"index2.html" };
+		task.setAttachment(expected);
+		task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::UpdateTask(task)));
+		Assert::IsTrue(task.getAttachment() == expected);
+	}
+
+	TEST_METHOD(convertDependenciesAndSubtasksFromAndToDelta) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		QueryEngine::Delta<Task::ID> deltaID(
+			QueryEngine::Delta<Task::ID>::Type::ADD,
+			{ 1, 2, 3 });
+		QueryEngine::Delta<std::wstring> deltaAttachments(
+			QueryEngine::Delta<std::wstring>::Type::ADD,
+			{ L"Hello", L"World" });
+		auto deps = QueryEngine::dependenciesFromDelta(deltaID, task);
+		Assert::IsTrue(deps.get().size() == 3);
+		auto subs = QueryEngine::subtasksFromDelta(deltaID, task);
+		Assert::IsTrue(subs.get().size() == 3);
+		auto atts = QueryEngine::attachmentsFromDelta(deltaAttachments, task);
+		Assert::IsTrue(atts.get().size() == 2);
+	}
+
+	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\query_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\subtask_graph_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+#include "common.h"
+#include "mocks/task.h"
+#include "internal/state.h"
+#include "internal/controller.h"
+#include "exception.h"
+#include "api.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using You::QueryEngine::Task;
+using You::QueryEngine::Internal::TaskGraph;
+using You::QueryEngine::Internal::Controller;
+using You::QueryEngine::Internal::State;
+
+/// Test the functionality of subtask graph.
+TEST_CLASS(SubtaskGraphTests) {
+	TEST_METHOD(subtaskGraphIsCreatedOnStart) {
+		Assert::IsNotNull(&State::get().sgraph());
+	}
+
+	TEST_METHOD(subtaskGraphHasTheSameTaskTableWithDependencyGraph) {
+		auto list1 = State::get().sgraph().asTaskList();
+		auto list2 = State::get().graph().asTaskList();
+		Assert::IsTrue(std::equal(begin(list1), end(list1), begin(list2)));
+	}
+
+	TEST_METHOD(addValidTaskToSubtaskGraph) {
+		TaskGraph g(TaskGraph::GraphType::SUBTASK);
+		Controller::Graph::addTask(g, ONE_SUBTASK());
+		Controller::Graph::addTask(g, TWO_SUBTASKS());
+		Assert::AreEqual(g.getTaskCount(), 2);
+	}
+
+	TEST_METHOD(addCircularSubtaskToSubtaskGraphShouldThrowException) {
+		TaskGraph g(TaskGraph::GraphType::SUBTASK);
+		Assert::ExpectException<Exception::CircularDependencyException>([&g] {
+			Controller::Graph::addTask(g, CIRCULAR_SUBTASKS());
+		});
+	}
+
+	SubtaskGraphTests& operator=(const SubtaskGraphTests&) = delete;
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\subtask_graph_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\task_builder_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+#include "internal/controller/task_builder.h"
+#include "exception.h"
+
+#include "common.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+USE_WSTRING_TEST_WRITER(You::QueryEngine::Task::ID);
+USE_WSTRING_TEST_WRITER(You::QueryEngine::Task::Time);
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using Task = You::QueryEngine::Task;
+using TaskBuilder = You::QueryEngine::Internal::TaskBuilder;
+
+/// Test the functionality of TaskBuilder
+TEST_CLASS(TaskBuilderTests) {
+	/// Should be able to create a task using minimal required.
+	/// field.
+	TEST_METHOD(buildValidTask) {
+		const Task::Description desc = L"Learn Haskell Lens";
+		Task task = TaskBuilder::get().description(desc);
+		Task task2 = TaskBuilder::get().description(desc);
+		Assert::AreEqual(task.getDescription(), desc);
+		// They should have equal deadline, which is the default
+		Assert::AreEqual(task.getDeadline(), task2.getDeadline());
+	}
+
+	/// Should be able to create a task with complete fields.
+	TEST_METHOD(buildCompleteTask) {
+		const Task::Description desc = L"Learn Haskell Lens";
+		const Task::Time dead = Task::NEVER;
+		const Task::Dependencies dep = { 1, 2, 3 };
+		const Task::Priority prio = Task::Priority::HIGH;
+		const Task::Subtasks sub = { 1, 2, 3 };
+		const Task::Attachment att = { desc };
+		Task task = TaskBuilder::get()
+			.description(desc)
+			.deadline(Task::NEVER)
+			.deadline(dead)
+			.priority(prio)
+			.dependencies({ 0 })
+			.dependencies(dep)
+			.parent(43L)
+			.subtasks(sub)
+			.attachment(att);
+		Assert::AreEqual(task.getDescription(), desc);
+		// The valid one should be the last chain
+		Assert::AreEqual(task.getDeadline(), dead);
+		Assert::IsTrue(task.getDependencies() == dep);
+		Assert::IsTrue(task.getParent() == static_cast<Task::ID>(43L));
+		Assert::IsTrue(task.getSubtasks() == sub);
+		Assert::IsTrue(task.getAttachment() == att);
+	}
+
+	/// Should throw an exception when trying to create
+	/// an empty task.
+	TEST_METHOD(buildEmptyDescriptionShouldThrow) {
+		using You::QueryEngine::Exception::
+			EmptyTaskDescriptionException;
+		using TB = TaskBuilder;
+		auto mustFail1 = [] { (Task) TB::get().
+			deadline(Task::DEFAULT_DEADLINE); };
+		auto mustFail2 = [] { (Task) TB::get().
+			id(Task::DEFAULT_ID); };
+		auto mustFail3 = [] { (Task) TB::get().
+			dependencies(Task::DEFAULT_DEPENDENCIES); };
+		auto mustFail4 = [] { (Task) TB::get().
+			priority(Task::DEFAULT_PRIORITY); };
+		auto mustFail5 = [] { (Task) TB::get().
+			subtasks(Task::DEFAULT_SUBTASKS); };
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail1);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail2);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail3);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail4);
+		Assert::ExpectException<EmptyTaskDescriptionException>(mustFail5);
+	}
+};
+
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\task_builder_tests.cpp
+
+
+
+
+
+	/**
+	 * origin: .\You-QueryEngine-Tests\task_serializer_tests.cpp
+	 */
+
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+#include "internal/controller/task_builder.h"
+#include "internal/controller/task_serializer.h"
+#include "exception.h"
+
+#include "common.h"
+
+using Assert = Microsoft::VisualStudio::CppUnitTestFramework::Assert;
+
+namespace You {
+namespace QueryEngine {
+namespace UnitTests {
+
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+using boost::gregorian::date;
+using boost::gregorian::greg_month;
+
+using You::QueryEngine::Task;
+using You::QueryEngine::Internal::TaskBuilder;
+using You::QueryEngine::Internal::TaskSerializer;
+
+/// Test the functionality of TaskSerializer
+TEST_CLASS(TaskSerializerTests) {
+public:
+	static Task getMockTask() {
+		Task::Description desc = L"Learn Haskell Lens";
+		Task::Time start = ptime(date(2001, 1, 10),
+			time_duration(1, 2, 3));
+		Task::Time dead = ptime(date(2002, 1, 10),
+			time_duration(1, 2, 3));
+		Task::Dependencies dep = { 1, 2, 3 };
+		Task::Priority prio = Task::Priority::HIGH;
+		Task::ID parent = 43L;
+		return TaskBuilder::get()
+			.description(desc)
+			.startTime(start)
+			.deadline(dead)
+			.priority(prio)
+			.dependencies(dep)
+			.parent(parent)
+			.subtasks(dep)
+			.completed(true);
+	}
+
+	TEST_METHOD(taskSerializerIsUtilityClass) {
+		static_assert(
+		!std::is_trivially_default_constructible<TaskSerializer>::value,
+		"QueryEngine cannot be default constructed");
+	}
+
+	/// Should be able to serialize a complex task.
+	TEST_METHOD(serializeTask) {
+		Task task = getMockTask();
+		auto serialized = TaskSerializer::serialize(task);
+		Assert::AreEqual(serialized[TaskSerializer::KEY_DESCRIPTION],
+			task.getDescription());
+		Assert::AreEqual(serialized[TaskSerializer::KEY_START_TIME],
+			std::wstring(L"20010110T010203"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_DEADLINE],
+			std::wstring(L"20020110T010203"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_PRIORITY],
+			std::wstring(L"high"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_DEPENDENCIES],
+			std::wstring(L"1;2;3;"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_COMPLETED],
+			std::wstring(L"true"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_PARENT],
+			std::wstring(L"43"));
+		Assert::AreEqual(serialized[TaskSerializer::KEY_SUBTASKS],
+			std::wstring(L"1;2;3;"));
+	}
+
+	/// Should be able to deserialize a complex task.
+	TEST_METHOD(deserializeTask) {
+		Task task = getMockTask();
+		auto serialized = TaskSerializer::serialize(task);
+		auto deserialized = TaskSerializer::deserialize(serialized);
+		Assert::IsTrue(deserialized == task);
+	}
+
+	TEST_METHOD(deserializeEmptyTaskDefaultedToNotCompleted) {
+		TaskSerializer::STask serialized;
+		serialized.insert({
+			TaskSerializer::KEY_ID, L"0"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DESCRIPTION, L"Any"
+		});
+		Task task = TaskSerializer::deserialize(serialized);
+		Assert::IsFalse(task.isCompleted());
+	}
+
+	TEST_METHOD(deserializeInvalidFieldShouldReturnWhatIsAvailable) {
+		TaskSerializer::STask serialized;
+		serialized.insert({
+			TaskSerializer::KEY_ID, L"0"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DESCRIPTION, L"Wrong!"
+		});
+		serialized.insert({
+			TaskSerializer::KEY_DEADLINE, L"Wrong!"
+		});
+		Task task = TaskSerializer::deserialize(serialized);
+		Assert::IsTrue(task.getID() == Task::ID(0L));
+		Assert::AreEqual(task.getDescription(),
+			std::wstring(L"Wrong!"));
+	}
+};
+}  // namespace UnitTests
+}  // namespace QueryEngine
+}  // namespace You
+
+	// End of segment: .\You-QueryEngine-Tests\task_serializer_tests.cpp
+
+
+
+
+
