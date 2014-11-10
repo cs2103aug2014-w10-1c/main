@@ -14,7 +14,7 @@ namespace UnitTests { class TaskBuilderTests;  }
 namespace Internal {
 
 /// Builder for tasks.
-///	New instance of task may be created using this builder.
+///	 New instance of task may be created using this builder.
 ///
 ///  Example usage:
 ///  \code{.cpp}

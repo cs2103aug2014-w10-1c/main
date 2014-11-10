@@ -60,9 +60,10 @@ protected:
     static const std::wstring logCategory;
 };
 
-/// Utility class for QueryEngine \n
+/// Utility class for QueryEngine.
 /// This is the API which will be called by Controller
 class QueryEngine {
+    friend class You::QueryEngine::UnitTests::QueryEngineTests;
 public:
     /// The task model.
     typedef You::QueryEngine::Task Task;
