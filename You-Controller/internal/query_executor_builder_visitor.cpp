@@ -267,10 +267,10 @@ QueryExecutorBuilderVisitor::build(const EDIT_QUERY& query) const {
 			int childTask = query.childTask.get();
 			if (childTask < 0) {
 				subtasks.type = Subtasks::Type::DELETE;
-				subtasks.elements = { context.at(-childTask).getID() };
+				subtasks.elements = { context.at(-childTask - 1).getID() };
 			} else {
 				subtasks.type = Subtasks::Type::ADD;
-				subtasks.elements = { context.at(childTask).getID() };
+				subtasks.elements = { context.at(childTask - 1).getID() };
 			}
 		}
 
