@@ -163,16 +163,16 @@ Response UpdateTask::execute(State& state) {
 	auto currentSubtasks = previous.getSubtasksObject();
 	auto updated = buildUpdatedTask(state);
 	try {
+		// If a parent is changed, reparent the task accordingly.
+		if (parent && (previous.getParent() != *parent)) {
+			reparentTask(state, id, *parent);
+		}
 		updateDependencyGraph(state, updated);
 		updateSubtaskGraph(state, updated);
 		// If a task is marked as complete, mark all the
 		// dependencies and subtasks as complete as well.
 		if (completed && (previous.isCompleted() != *completed)) {
 			recMarkChildren(state, id);
-		}
-		// If a parent is changed, reparent the task accordingly.
-		if (parent && (previous.getParent() != *parent)) {
-			reparentTask(state, id, *parent);
 		}
 		// If the subtasks field is changed, reparent every subtask as necessary.
 		if (subtasks) {
