@@ -288,6 +288,16 @@ private:
 	/// Add command's start time/deadline rule.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()> addCommandTime;
 
+	/// Add command's start time/deadline rule.
+	/// This is split in two because of a release build bug in the compiler.
+	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
+		addCommandTimeFrom;
+
+	/// Add command's start time/deadline rule.
+	/// This is split in two because of a release build bug in the compiler.
+	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
+		addCommandTimeTo;
+
 	/// Add command's optional start time/deadline rule. This acts as the
 	/// terminal for the add query parser.
 	boost::spirit::qi::rule<IteratorType, ADD_QUERY()>
@@ -382,6 +392,16 @@ private:
 
 	/// Edit command terminal rule for setting the task start time or deadlines.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY()> editSetTimes;
+
+	/// Edit command terminal rule for setting the task start time or deadlines.
+	/// This is split in two because of a release build bug in the compiler.
+	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
+		editSetTimesFrom;
+
+	/// Edit command terminal rule for setting the task start time or deadlines.
+	/// This is split in two because of a release build bug in the compiler.
+	boost::spirit::qi::rule<IteratorType, boost::posix_time::ptime()>
+		editSetTimesTo;
 
 	/// Edit command rule for attaching and detaching attachments.
 	boost::spirit::qi::rule<IteratorType, EDIT_QUERY(bool)>

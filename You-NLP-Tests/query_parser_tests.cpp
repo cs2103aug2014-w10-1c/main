@@ -161,7 +161,7 @@ public:
 
 	TEST_METHOD(parsesStringWithDependenciesAsTask) {
 		QUERY q = QueryParser::parse(L"Buy her flower by 14 dec -> Ask her "
-			L"out by 15 dec -> Confess to her by 16 dec");
+			L"out -> Confess to her by 16 dec");
 
 		Assert::AreEqual(QUERY(ADD_QUERY {
 			L"Buy her flower",
@@ -173,7 +173,7 @@ public:
 				L"Ask her out",
 				TaskPriority::NORMAL,
 				boost::none,
-				ptime(date(2014, boost::gregorian::Dec, 15)),
+				boost::none,
 				{},
 				std::shared_ptr<ADD_QUERY>(new ADD_QUERY {
 					L"Confess to her",

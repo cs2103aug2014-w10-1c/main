@@ -98,12 +98,30 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(addCommandPriority);
 
 	addCommandTime = (
-		(space >> (qi::lit("from") | qi::lit("after")) >> space >> time) ||
-		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) >>
-			space >> time) >>
-		*space
-	)[qi::_val = phoenix::bind(&constructAddQueryWithTime, qi::_1, qi::_2)];
+#ifdef _DEBUG
+		((addCommandTimeFrom || addCommandTimeTo)
+		[qi::_val = phoenix::bind(&constructAddQueryWithTime, qi::_1, qi::_2)])
+#else
+		// Equivalent code for release builds. VC++ generates the wrong program
+		// with optimisations.
+		((addCommandTimeFrom >> -addCommandTimeTo)
+		[qi::_val = phoenix::bind(&constructAddQueryWithTime,
+			qi::_1,
+			qi::_2)]) |
+		((addCommandTimeTo)
+		[qi::_val = phoenix::bind(&constructAddQueryWithTime,
+			boost::none,
+			qi::_1)])
+#endif
+		>> *space
+	);
 	BOOST_SPIRIT_DEBUG_NODE(addCommandTime);
+
+	addCommandTimeFrom %= (
+		space >> (qi::lit("from") | qi::lit("after")) >> space >> time);
+	addCommandTimeTo %= (
+		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) >>
+			space >> time));
 
 	addCommandTimeOptional = (
 		addCommandTime || (
@@ -236,12 +254,28 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 	BOOST_SPIRIT_DEBUG_NODE(editSetHighPriority);
 
 	editSetTimes = (
-		(space >> qi::lit("from") > space > time) ||
-		(space >> (qi::lit("by") | qi::lit("before") | qi::lit("to")) > space >
-			time)
-	)[qi::_val = phoenix::bind(&constructEditQueryTimes,
-		qi::_1, qi::_2)];
+#ifdef _DEBUG
+		(editSetTimesFrom || editSetTimesTo)
+		[qi::_val = phoenix::bind(&constructEditQueryTimes,
+			qi::_1, qi::_2)]
+#else
+		// Equivalent code for release builds. VC++ generates the wrong program
+		// with optimisations.
+		(editSetTimesFrom > -editSetTimesTo)
+		[qi::_val = phoenix::bind(&constructEditQueryTimes,
+			qi::_1, qi::_2)] |
+		(editSetTimesTo)
+		[qi::_val = phoenix::bind(&constructEditQueryTimes,
+			boost::none, qi::_1)]
+#endif
+	);
 	BOOST_SPIRIT_DEBUG_NODE(editSetTimes);
+
+	editSetTimesFrom %= (space >>
+		(qi::lit("from") | qi::lit("after")) > space > time);
+	editSetTimesTo %= (space >>
+		(qi::lit("by") | qi::lit("before") | qi::lit("to")) > space >
+		time);
 
 	editSetSubtask = (
 		qi::int_
