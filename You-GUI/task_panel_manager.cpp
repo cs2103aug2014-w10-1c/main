@@ -257,7 +257,7 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 			/// Overrides all other formats if task is already done
 			QFont font = (item->font(0));
 			font.setStrikeOut(true);
-			font.setStrikeOut(false);
+			font.setBold(false);
 			colorTask(item, Qt::gray, Qt::white, font);
 		}
 		++it;
