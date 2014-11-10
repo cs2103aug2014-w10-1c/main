@@ -16,21 +16,23 @@ const QString MainWindow::TaskPanelManager::TASK_COLUMN_0_TITLE = "Index";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_1_TITLE =
 "Hidden ID Column";
 const QString MainWindow::TaskPanelManager::TASK_COLUMN_2_TITLE = "Description";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Deadline";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Priority";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE =
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_3_TITLE = "Start Date";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_4_TITLE = "Deadline";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_5_TITLE = "Priority";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE =
 "Dependencies";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_6_TITLE = "Completion";
-const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Attachment";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_7_TITLE = "Completion";
+const QString MainWindow::TaskPanelManager::TASK_COLUMN_8_TITLE = "Attachment";
 
 const int MainWindow::TaskPanelManager::COLUMN_INDEX = 0;
 const int MainWindow::TaskPanelManager::COLUMN_HIDDEN_ID = 1;
 const int MainWindow::TaskPanelManager::COLUMN_DESCRIPTION = 2;
-const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 3;
-const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 4;
-const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 5;
-const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 6;
-const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 7;
+const int MainWindow::TaskPanelManager::COLUMN_STARTDATE = 3;
+const int MainWindow::TaskPanelManager::COLUMN_DEADLINE = 4;
+const int MainWindow::TaskPanelManager::COLUMN_PRIORITY = 5;
+const int MainWindow::TaskPanelManager::COLUMN_DEPENDENCIES = 6;
+const int MainWindow::TaskPanelManager::COLUMN_COMPLETION = 7;
+const int MainWindow::TaskPanelManager::COLUMN_ATTACHMENT = 8;
 
 MainWindow::TaskPanelManager::TaskPanelManager(MainWindow* const parentGUI)
 : BaseManager(parentGUI), deleteAction(QString("Delete"), this),
@@ -49,7 +51,9 @@ void MainWindow::TaskPanelManager::setup() {
 		TASK_COLUMN_3_TITLE,
 		TASK_COLUMN_4_TITLE,
 		TASK_COLUMN_5_TITLE,
-		TASK_COLUMN_6_TITLE
+		TASK_COLUMN_6_TITLE,
+		TASK_COLUMN_7_TITLE,
+		TASK_COLUMN_8_TITLE
 	});
 	QTreeWidget* taskTreePanel = parentGUI->ui.taskTreePanel;
 	connect(taskTreePanel, SIGNAL(itemSelectionChanged()),
@@ -74,6 +78,7 @@ void MainWindow::TaskPanelManager::setup() {
 	taskTreePanel->setColumnHidden(COLUMN_HIDDEN_ID, true);
 	taskTreePanel->setColumnHidden(COLUMN_DEPENDENCIES, true);
 	taskTreePanel->setColumnHidden(COLUMN_COMPLETION, true);
+	taskTreePanel->setColumnHidden(COLUMN_ATTACHMENT, true);
 }
 
 void MainWindow::TaskPanelManager::addTask(const Task& task) {
@@ -145,6 +150,7 @@ QList<QTreeWidgetItem*> MainWindow::TaskPanelManager::findItems(
 
 QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	const You::Controller::Task& task) {
+	std::wstringstream wss;
 	QStringList result;
 	// Insert dummy count
 	result.push_back("0");
@@ -155,8 +161,11 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	// Insert description
 	result.push_back(QString::fromStdWString(task.getDescription()));
 
+	// Insert start time
+	result.push_back(getReadableDateTime(task.getStartTime()));
+
 	// Insert deadline
-	result.push_back(getReadableDeadline(task));
+	result.push_back(getReadableDateTime(task.getDeadline()));
 
 	// Insert priority
 	QString priority[] { "High", "Normal" };
@@ -188,7 +197,6 @@ QStringList MainWindow::TaskPanelManager::taskToStrVec(
 	} else {
 		result.push_back(boost::lexical_cast<QString>("No"));
 	}
-
 	// Insert attachment
 	if (task.getAttachment().size() != 0) {
 		Task::Attachment attachments = task.getAttachment();
@@ -251,7 +259,6 @@ void MainWindow::TaskPanelManager::repaintTasks() {
 		}
 		++it;
 	}
-	parentGUI->ui.taskTreePanel->expandAll();
 	parentGUI->ui.taskTreePanel->setUpdatesEnabled(true);
 	parentGUI->ui.taskTreePanel->update();
 }
@@ -335,35 +342,40 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 		parentGUI->ui.taskTreePanel->viewport()->mapToGlobal(pos));
 }
 
-QString MainWindow::TaskPanelManager::getReadableDeadline(Task task) {
+QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	std::wstringstream wss;
-	boost::gregorian::date_facet *facet
-		= new boost::gregorian::date_facet("%d-%b-%Y");
+	boost::posix_time::wtime_facet *facet =
+		new boost::posix_time::wtime_facet(L"%d %B %Y at %I:%M%p");
+	std::stringstream ss;
 	wss.imbue(std::locale(wss.getloc(), facet));
-	if (task.getDeadline() == Task::NEVER) {
+	std::wstringstream time_of_day;
+	boost::posix_time::time_duration time =
+		datetime.time_of_day();
+
+	if (datetime == Task::NEVER) {
 		wss << L"Never";
-	} else if (isPastDue(task.getDeadline())) {
-		wss << L"Overdue (" << task.getDeadline().date() << L")";
-	} else if (isDueAfter(task.getDeadline(), 0)) {
-		wss << L"Today (" << task.getDeadline() << L")";
-	} else if (isDueAfter(task.getDeadline(), 1)) {
-		wss << L"Tomorrow (" << task.getDeadline().date() << L")";
-	} else if (isDueAfter(task.getDeadline(), 2)) {
-		wss << L"In two days (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 7)) {
-		Date dl = Date(task.getDeadline().date());
+	} else if (isPastDue(datetime)) {
+		wss << L"Overdue (" << datetime << L")";
+	} else if (isDueAfter(datetime, 0)) {
+		wss << L"Today (" << datetime << L")";
+	} else if (isDueAfter(datetime, 1)) {
+		wss << L"Tomorrow (" << datetime << L")";
+	} else if (isDueAfter(datetime, 2)) {
+		wss << L"In two days (" << datetime << L")";
+	} else if (isDueWithin(datetime, 7)) {
+		Date dl = Date(datetime.date());
 		wss << L"This coming " << dl.day_of_week()
-			<< L" (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 14)) {
-		Date dl = Date(task.getDeadline().date());
+			<< L" (" << datetime << L")";
+	} else if (isDueWithin(datetime, 14)) {
+		Date dl = Date(datetime.date());
 		wss << L"Next " << dl.day_of_week()
-			<< L" (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 21)) {
-		wss << L"Within three weeks (" << task.getDeadline().date() << L")";
-	} else if (isDueWithin(task.getDeadline(), 28)) {
-		wss << L"Within one month (" << task.getDeadline().date() << L")";
+			<< L" (" << datetime << L")";
+	} else if (isDueWithin(datetime, 21)) {
+		wss << L"Within three weeks (" << datetime << L")";
+	} else if (isDueWithin(datetime, 28)) {
+		wss << L"Within one month (" << datetime << L")";
 	} else {
-		wss << L"More than a month away (" << task.getDeadline().date() << L")";
+		wss << L"More than a month away (" << datetime << L")";
 	}
 	return boost::lexical_cast<QString>(wss.str());
 }
@@ -381,6 +393,11 @@ QString MainWindow::TaskPanelManager::getHiddenIDAsText(
 QString MainWindow::TaskPanelManager::getDescriptionAsText(
 	QTreeWidgetItem item) {
 	return item.text(COLUMN_DESCRIPTION);
+}
+
+QString MainWindow::TaskPanelManager::getStartDateAsText(
+	QTreeWidgetItem item) {
+	return item.text(COLUMN_STARTDATE);
 }
 
 QString MainWindow::TaskPanelManager::getDeadlineAsText(

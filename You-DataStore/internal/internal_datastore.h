@@ -99,7 +99,7 @@ private:
 	void onXmlParseResult(const pugi::xml_parse_result& result);
 
 private:
-	static const std::string FILE_PATH;
+	static const char* FILE_PATH;
 	static const std::wstring ROOT_NODE_NAME;
 
 	/// The xml_document representation of data.xml
@@ -110,6 +110,9 @@ private:
 
 	/// The current stack of active transactions.
 	std::stack<std::weak_ptr<Transaction>> transactionStack;
+
+	/// The log category for \ref Internal::DataStore
+	static const std::wstring LOG_CATEGORY;
 };
 
 }  // namespace Internal

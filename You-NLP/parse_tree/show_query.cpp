@@ -75,6 +75,9 @@ std::wostream& operator<<(std::wostream& s, const SHOW_QUERY::Predicate& p) {
 	case SHOW_QUERY::Predicate::EQ:
 		string = L"=";
 		break;
+	case SHOW_QUERY::Predicate::SIMILAR:
+		string = L"~";
+		break;
 	case SHOW_QUERY::Predicate::NOT_EQ:
 		string = L"!=";
 		break;

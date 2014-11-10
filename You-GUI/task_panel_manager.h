@@ -61,7 +61,7 @@ public:
 	static bool isDueWithinExactly(Task::Time deadline, int days);
 
 	/// Returns human-readable form for a deadline
-	static QString getReadableDeadline(Task task);
+	static QString getReadableDateTime(Task::Time datetime);
 
 	/// Colors a task
 	void colorTask(QTreeWidgetItem *taskItem, QColor color, QColor bgColor,
@@ -139,6 +139,9 @@ private:
 	/// Header string from column 7
 	static const QString TASK_COLUMN_7_TITLE;
 
+	/// Header string from column 8
+	static const QString TASK_COLUMN_8_TITLE;
+
 	/// Column reference to Index column
 	static const int COLUMN_INDEX;
 
@@ -163,6 +166,9 @@ private:
 	/// Column reference to Attachment column
 	static const int COLUMN_ATTACHMENT;
 
+	/// Column reference to Start Date column
+	static const int COLUMN_STARTDATE;
+
 public:
 	QString getIndexAsText(QTreeWidgetItem item);
 
@@ -179,6 +185,9 @@ public:
 	QString getCompletionAsText(QTreeWidgetItem item);
 
 	QString getAttachmentAsText(QTreeWidgetItem item);
+
+	QString getStartDateAsText(QTreeWidgetItem item);
+
 	/// @}
 };
 

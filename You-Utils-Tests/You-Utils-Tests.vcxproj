@@ -90,6 +90,7 @@
     <ClInclude Include="test_helpers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms_tests.cpp" />
     <ClCompile Include="log_tests.cpp" />
     <ClCompile Include="option_tests.cpp" />
     <ClCompile Include="stdafx.cpp">

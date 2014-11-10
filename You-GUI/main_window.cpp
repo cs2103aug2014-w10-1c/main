@@ -98,9 +98,21 @@ const TaskList& MainWindow::getTaskList() const {
 	return *taskList;
 }
 
-/// This function adds a task to the task panel, along with all of its subtasks
-void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList &tl) {
-	ui.taskTreePanel->addTopLevelItem(tpm->addTaskTree(task).release());
+void MainWindow::addTaskWithSubtasks(const Task& task, const TaskList& tl) {
+	QTreeWidgetItem *item = tpm->addTaskTree(task).release();
+	ui.taskTreePanel->addTopLevelItem(item);
+	expandAllSubtasks(item);
+}
+
+void MainWindow::expandAllSubtasks(QTreeWidgetItem *item) {
+	if (item->childCount() == 0) {
+		return;
+	} else {
+		item->setExpanded(true);
+		for (int i = 0; i < item->childCount(); i++) {
+			expandAllSubtasks(item->child(i));
+		}
+	}
 }
 
 void MainWindow::addTask(const Task& task) {
@@ -213,12 +225,14 @@ void MainWindow::taskSelected() {
 		QTreeWidgetItem item = *selection.at(0);
 		QString index = tpm->getIndexAsText(item);
 		QString description = tpm->getDescriptionAsText(item);
+		QString startdate = tpm->getStartDateAsText(item);
 		QString deadline = tpm->getDeadlineAsText(item);
 		QString priority = tpm->getPriorityAsText(item);
 		QString dependencies = tpm->getDependenciesAsText(item);
 		QString attachment = tpm->getAttachmentAsText(item);
 		contents = "Index: " + index + "<br />"
 			+ "Description: " + description + "<br />"
+			+ "Start date: " + startdate + "<br />"
 			+ "Deadline: " + deadline + "<br />"
 			+ "Priority: " + priority + "<br />"
 			+ "Dependencies: " + dependencies + "<br / >"
