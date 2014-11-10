@@ -45,8 +45,6 @@ public:
 		delete w;
 	}
 
-
-
 	/// These are generic tests for component visibility/invisibility
 	TEST_METHOD(visibilityTest) {
 		bool visibilityTest =
@@ -81,16 +79,13 @@ public:
 			(column3 == 0) && (column4 == 0));
 	}
 
-
 	TEST_METHOD(editSingleTask) {
 		w->clearTasks();
 		w->commandTextBox->setPlainText(QString("/add test by Nov 99"));
 		w->commandEnterPressed();
-		
 		w->commandTextBox->setPlainText(
 			QString("/edit 1 set description = 'abc'"));
 		w->commandEnterPressed();
-		
 		QTreeWidgetItem item = *w->ui.taskTreePanel->topLevelItem(0);
 		int column1 = QString::compare(item.text(0), QString("1"));
 		int column2 = QString::compare(item.text(2), QString("abc"));
@@ -104,7 +99,6 @@ public:
 			(column1 == 0) && (column2 == 0) &&
 			(column3 == 0) && (column4 == 0));
 	}
-
 
 	/// Boundary test case for the equivalence partition for the lower
 	/// bound of the valid zone for testing if a task is due today
