@@ -150,6 +150,12 @@ void UpdateTask::setRemovedSubtasksAsTopLevel(State& state) const {
 	}
 }
 
+void UpdateTask::updateActiveFilter(State& state) const {
+	state.setActiveFilter(
+		state.getActiveFilter() ||
+			Filter::idIsIn({ this->id }));
+}
+
 Response UpdateTask::execute(State& state) {
 	Log::debug << (boost::wformat(L"%1% : PUT %2%") %
 		logCategory % id).str();
@@ -175,6 +181,7 @@ Response UpdateTask::execute(State& state) {
 	}
 	updateDependencyGraph(state, updated);
 	updateSubtaskGraph(state, updated);
+	updateActiveFilter(state);
 	makeTransaction(updated);
 	return updated;
 }

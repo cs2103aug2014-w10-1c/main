@@ -57,7 +57,7 @@ private:
 	void ensureDependencyIsValid() const;
 	void ensureSubtasksIsValid() const;
 	void updateParentPointer(State& state) const;
-
+	void updateActiveFilter(State& state) const;
 	/// Execute add task.
 	Response execute(State& tasks) override;
 
