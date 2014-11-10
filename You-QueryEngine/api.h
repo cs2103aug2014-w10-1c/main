@@ -36,9 +36,9 @@ using You::Utils::Option;
 
 /// A synthesized type for holding query responses
 /// \code {cpp}
-///		auto deleteQuery = QueryEngine::DeleteTask(id);
-///		auto response = QueryEngine::executeQuery(std::move(deleteQuery));
-///		auto deletedId = boost::get<Task::ID>(response);
+///		 auto deleteQuery = QueryEngine::DeleteTask(id);
+///		 auto response = QueryEngine::executeQuery(std::move(deleteQuery));
+///		 auto deletedId = boost::get<Task::ID>(response);
 /// \endcode
 typedef boost::variant<std::vector<Task>, Task, Task::ID> Response;
 
