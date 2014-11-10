@@ -51,10 +51,16 @@ void SyntaxHighlighter::buildRules() {
 		wss.str(L"");
 	}
 
-	for (const auto& param : PARAMS) {
-		wss << L"\\s" << PARAM_PREFIX << L"\\s+" << param << L"\\b";
+		wss << L"\\s" << PARAM_PREFIX << L"\\s+";
 		paramHighlightingRules.append(makeRule(wss.str(),
-			parameterNameFormat, parameterPrefixFormat));
+			parameterPrefixFormat, parameterPrefixFormat));
+		wss.str(L"");
+	
+
+	for (const auto& param : PARAMS) {
+		wss << L"\\s+" << param << L"\\b";
+		paramHighlightingRules.append(makeRule(wss.str(),
+			parameterNameFormat, parameterNameFormat));
 		wss.str(L"");
 	}
 
@@ -71,17 +77,17 @@ void SyntaxHighlighter::buildRules() {
 	orderPrefixHighlightingRule.append(makeRule(wss.str(),
 		orderPrefixFormat, orderPrefixFormat));
 	wss.str(L"");
-	
+
 	for (const auto& symbol : SYMBOLS) {
 		wss << symbol;
-		orderHighlightingRules.append(makeRule(wss.str(),
+		symbolHighlightingRule.append(makeRule(wss.str(),
 			symbolFormat, symbolFormat));
 		wss.str(L"");
 	}
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
-	// Highlight the basic commands
+	/// Highlight the basic commands
 	for (const auto& rule : commandHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
@@ -92,7 +98,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		}
 	}
 
-	// Highlight parameters and the 'set' prefix such as 'set description'
+	/// Highlight parameters and the 'set' prefix such as 'set description'
 	for (const auto& rule : paramHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
@@ -104,7 +110,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		}
 	}
 
-	// Highlights the 'order by' keywords
+	/// Highlights the 'order by' keywords
 	QRegExp expression(orderPrefixHighlightingRule.at(0).pattern);
 	HighlightingRule rule = orderPrefixHighlightingRule.at(0);
 	int index = expression.indexIn(text);
@@ -114,7 +120,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		index = expression.indexIn(text, index + length);
 	}
 
-	// Highlights parameter 'ascending' or 'descending'
+	/// Highlights parameter 'ascending' or 'descending'
 	for (const auto& rule : orderHighlightingRules) {
 		QRegExp expression(rule.pattern);
 		int offset = 0;
@@ -136,7 +142,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 		}
 	}
 
-	// Highlights hashtags
+	/// Highlights symbols
 	for (const auto& rule : symbolHighlightingRule) {
 		QRegExp expression(rule.pattern);
 		int index = expression.indexIn(text);
