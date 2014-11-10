@@ -188,15 +188,20 @@ public:
 		Assert::IsTrue(result);
 	}
 
+	/// Check if wipeData does not throw any exception or trigger any assert
 	TEST_METHOD(wipeData) {
 		DataStore::get().wipeData();
 	}
 
+	/// Unit test to ensure that the first load does not throw \ref IOException
+	/// As the file does exist yet
 	TEST_METHOD(firstLoadDoesNotThrowException) {
 		std::remove("data.xml");
 		Internal::DataStore::get().loadData();
 	}
 
+	/// Unit test to ensure that \ref NotWellFormedException is thrown when
+	/// loading not well-formed data.xml
 	TEST_METHOD(xmlParseErrorThrowsException) {
 		DataStore::get().wipeData();
 		createDummyDataXml();

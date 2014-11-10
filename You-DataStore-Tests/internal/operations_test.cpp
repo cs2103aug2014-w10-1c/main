@@ -18,7 +18,7 @@ namespace UnitTests {
 /// Mock xml_document for \ref DataStoreOperationsTest
 static pugi::xml_document mockDocument;
 
-/// Unit Test Class for DataStore class
+/// Unit Test Class for \ref Internal::Operation classes
 TEST_CLASS(DataStoreOperationsTest) {
 public:
 	/// Create a mock xml_document containing a task with content

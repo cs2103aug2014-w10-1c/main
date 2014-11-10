@@ -18,28 +18,53 @@ public:
 	/// Get the instance of DataStore
 	static DataStore& get();
 
-	/// Start a new transaction
+	/// Start a new transaction. \see Transaction
+	///
 	/// \return A reference to a new \ref Transaction
 	Transaction begin();
 
-	/// Methods modifying tasks
+	/// \name Methods modifying tasks
 	/// @{
+
 	/// Push a post operation to operation queue
-	void post(TaskId, const KeyValuePairs&);
+	///
+	/// \param[in] taskId The task's ID
+	/// \param[in] task The \ref KeyValuePairs of task fields
+	void post(TaskId taskId, const KeyValuePairs& task);
+
 	/// Push a put operation to operation queue
-	void put(TaskId, const KeyValuePairs&);
+	///
+	/// \param[in] taskId The task's ID
+	/// \param[in] task The \ref KeyValuePairs of task fields
+	void put(TaskId taskId, const KeyValuePairs& task);
+
 	/// Push an erase operation to operation queue
-	void erase(TaskId);
+	///
+	/// \param[in] taskId The task's ID
+	void erase(TaskId taskId);
+
 	/// @}
 
-	/// Methods modifying application resources
+	/// \name Methods modifying application resources
 	/// @{
+
 	/// Push a post operation to operation queue
-	void post(std::wstring, const KeyValuePairs&);
+	///
+	/// \param[in] resourceId The resource's ID
+	/// \param[in] kvp The \ref KeyValuePairs of resource
+	void post(std::wstring resourceId, const KeyValuePairs& kvp);
+
 	/// Push a put operation to operation queue
-	void put(std::wstring, const KeyValuePairs&);
+	///
+	/// \param[in] resourceId The resource's ID
+	/// \param[in] kvp The \ref KeyValuePairs of resource
+	void put(std::wstring resourceId, const KeyValuePairs& kvp);
+
 	/// Push an erase operation to operation queue
-	void erase(std::wstring);
+	///
+	/// \param[in] resourceId The resource's ID
+	void erase(std::wstring resourceId);
+
 	/// @}
 
 	/// Get all tasks

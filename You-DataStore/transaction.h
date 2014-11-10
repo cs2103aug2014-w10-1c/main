@@ -22,7 +22,14 @@ class Transaction : protected std::shared_ptr<Internal::Transaction> {
 
 public:
 	/// Move constructor. We only allow a transaction to have one strong
-	/// reference.
+	/// reference. \see DataStore
+	///
+	/// Usage:
+	///
+	///     Transaction t(DataStore::get().begin());
+	///
+	/// \param[in] transaction The transaction returned from
+	///						   DataStore::get().begin()
 	Transaction(Transaction&& transaction);
 
 	/// Destructor. Rolls back the active transaction if it has not been
