@@ -339,10 +339,10 @@ void MainWindow::TaskPanelManager::contextMenu(const QPoint &pos) {
 
 QString MainWindow::TaskPanelManager::getReadableDateTime(Task::Time datetime) {
 	std::wstringstream wss;
-	boost::posix_time::wtime_facet *facet =
-		new boost::posix_time::wtime_facet(L"%d %B %Y at %I:%M%p");
+	std::unique_ptr<boost::posix_time::wtime_facet> facet(
+		new boost::posix_time::wtime_facet(L"%d %B %Y"));
 	std::stringstream ss;
-	wss.imbue(std::locale(wss.getloc(), facet));
+	wss.imbue(std::locale(wss.getloc(), facet.release()));
 	std::wstringstream time_of_day;
 	boost::posix_time::time_duration time =
 		datetime.time_of_day();

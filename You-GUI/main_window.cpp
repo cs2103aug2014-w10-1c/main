@@ -140,7 +140,10 @@ void MainWindow::sendQuery() {
 		ui.statusMessage->setText(TASK_NOT_FOUND_MESSAGE);
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ParseErrorException& e) {
-		ui.statusMessage->setText(PARSE_ERROR_MESSAGE);
+		std::string str((e.getMessage().tag));
+		ui.statusMessage->setText(PARSE_ERROR_MESSAGE +
+			"\"" + QString::fromStdWString(e.getToken()) +
+			"\". Expected: " + QString::fromStdString(str));
 		pixmap.load(RESOURCE_RED, 0);
 	} catch (You::Controller::ContextIndexOutOfRangeException& e) {
 		ui.statusMessage->setText(CONTEXT_INDEX_OUT_OF_RANGE_MESSAGE);
