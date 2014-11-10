@@ -279,6 +279,24 @@ TEST_CLASS(QueryEngineTests) {
 		Assert::IsTrue(task.getAttachment() == expected);
 	}
 
+	TEST_METHOD(convertDependenciesAndSubtasksFromAndToDelta) {
+		auto task = boost::get<Task>(
+			QueryEngine::executeQuery(
+				QueryEngine::AddTask(desc, dead, dead, prio, {}, {})));
+		QueryEngine::Delta<Task::ID> deltaID(
+			QueryEngine::Delta<Task::ID>::Type::ADD,
+			{ 1, 2, 3 });
+		QueryEngine::Delta<std::wstring> deltaAttachments(
+			QueryEngine::Delta<std::wstring>::Type::ADD,
+			{ L"Hello", L"World" });
+		auto deps = QueryEngine::dependenciesFromDelta(deltaID, task);
+		Assert::IsTrue(deps.get().size() == 3);
+		auto subs = QueryEngine::subtasksFromDelta(deltaID, task);
+		Assert::IsTrue(subs.get().size() == 3);
+		auto atts = QueryEngine::attachmentsFromDelta(deltaAttachments, task);
+		Assert::IsTrue(atts.get().size() == 2);
+	}
+
 	QueryEngineTests& operator=(const QueryEngineTests&) = delete;
 };
 

@@ -34,8 +34,7 @@ std::unique_ptr<Query> BatchAddDependencies::getReverse() {
 		BatchDeleteDependencies operator=(
 			const BatchDeleteDependencies&) = delete;
 	};
-	return std::unique_ptr<Query>(
-		new BatchDeleteDependencies(insertedIDs));
+	return std::unique_ptr<Query>(new BatchDeleteDependencies(insertedIDs));
 }
 
 Task::ID BatchAddDependencies::executeDependenciesAddQuery(State& state) {

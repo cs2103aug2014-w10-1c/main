@@ -79,6 +79,25 @@ void DeleteTask::deleteTree(State& state, Task::ID id) {
 	makeTransaction(id);
 }
 
+void DeleteTask::disconnectDependencies(State& state) {
+	Task c = state.get().graph().getTask(id);
+	auto allTasks = state.get().graph().asTaskList();
+	for (auto& task : allTasks) {
+		if (task.isDependOn(id)) {
+			auto dep = task.getDependencies();
+			auto cchild = c.getDependencies();
+			// Remove it from depending task.
+			dep.erase(id);
+			// Reparent task.
+			for (const auto& cid : cchild) {
+				dep.insert(cid);
+			}
+			task.setDependencies(dep);
+			QueryEngine::UpdateTask(task)->execute(state);
+		}
+	}
+}
+
 Response DeleteTask::execute(State& state) {
 	deletedTask = state.get().graph().getTask(id);
 	// Remove the task from the parent's task.
@@ -86,6 +105,7 @@ Response DeleteTask::execute(State& state) {
 		auto parent = deletedTask.getParent();
 		QueryEngine::RemoveSubtask(parent, id)->execute(state);
 	}
+	disconnectDependencies(state);
 	// If it has subtasks, delete the entire tree.
 	if (!deletedTask.getSubtasks().empty()) {
 		deleteTree(state, id);

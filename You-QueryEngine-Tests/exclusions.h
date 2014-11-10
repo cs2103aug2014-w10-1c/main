@@ -19,6 +19,8 @@ ExcludeFromCodeCoverage(You_DataStore, L"You::DataStore::*");
 ExcludeFromCodeCoverage(Destructors, L"~[A-Z]+()");
 ExcludeFromCodeCoverage(You_QueryEngine_UnitTests,
 	L"You::QueryEngine::UnitTests::*");
+ExcludeFromCodeCoverage(You_Utils,
+	L"You::Utils::*");
 
 #pragma managed(pop)
 

@@ -82,8 +82,9 @@ private:
 	static Value serializeAttachment(const Task::Attachment& attachment);
 	/// @}
 
-	/// Deserialize a field, return the default value
-	/// in case an error is encountered.
+private:
+	/// Deserialize a field, return the default value in case an
+	/// error is encountered.
 	template <typename T>
 	static T deserializeOrDefault(
 		T (*deserializer)(const Value&),
@@ -124,12 +125,12 @@ private:
 	static Task::Attachment deserializeAttachment(const Value& subtasks);
 	/// @}
 
-	/// Tokenize a string by VALUE_DELIMITER
+	/// Tokenize a string by VALUE_DELIMITER.
 	static std::vector<std::wstring> tokenize(const Value& input);
 
-	/// Maps string to priority
+	/// Maps string to priority.
 	static const std::unordered_map<Value, Task::Priority> strPrioTable;
-	/// Maps priority to string
+	/// Maps priority to string.
 	static const std::unordered_map<Task::Priority, Value> prioStrTable;
 };
 

@@ -60,19 +60,31 @@ QueryExecutorBuilderVisitor::buildAddQuery(const ADD_QUERY& query) {
 		return QueryExecutorBuilderVisitor::buildAddQuery(q);
 	});
 
-	std::shared_ptr<ADD_QUERY> dependentQuery = query.dependent;
-	while (dependentQuery) {
-		ADD_QUERY withoutDependencies(*dependentQuery);
-		withoutDependencies.dependent.reset();
-		dependencyQueries.push_back(buildAddQuery(withoutDependencies));
-		dependentQuery = dependentQuery->dependent;
+	ADD_QUERY dependentQuery = query;
+	bool hasDependencies = false;
+	while (dependentQuery.dependent) {
+		hasDependencies = true;
+		dependencyQueries.push_back(QueryEngine::AddTask(
+			dependentQuery.description,
+			dependentQuery.start ? dependentQuery.start.get()
+								 : Task::DEFAULT_START_TIME,
+			dependentQuery.deadline ? dependentQuery.deadline.get()
+								    : Task::DEFAULT_DEADLINE,
+			dependentQuery.priority == TaskPriority::HIGH ?
+			Task::Priority::HIGH : Task::Priority::NORMAL,
+			{}, {}));
+		if (dependentQuery.dependent) {
+			dependentQuery = *dependentQuery.dependent;
+		}
 	}
 
+
+	ADD_QUERY addQuery = hasDependencies ? dependentQuery : query;
 	return QueryEngine::AddTask(
-		query.description,
-		query.start ? query.start.get() : Task::DEFAULT_START_TIME,
-		query.deadline ? query.deadline.get() : Task::DEFAULT_DEADLINE,
-		query.priority == TaskPriority::HIGH ?
+		addQuery.description,
+		addQuery.start ? addQuery.start.get() : Task::DEFAULT_START_TIME,
+		addQuery.deadline ? addQuery.deadline.get() : Task::DEFAULT_DEADLINE,
+		addQuery.priority == TaskPriority::HIGH ?
 		Task::Priority::HIGH : Task::Priority::NORMAL,
 		std::move(dependencyQueries),
 		std::move(subtaskQueries)

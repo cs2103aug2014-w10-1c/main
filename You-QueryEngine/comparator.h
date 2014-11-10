@@ -1,5 +1,5 @@
 /// \file You-QueryEngine/comparator.h
-/// Defines the base class for sorting comparators.
+/// Defines the base class and constructors for sorting comparators.
 //@author A0112054Y
 
 #pragma once
@@ -14,8 +14,11 @@ namespace You {
 namespace QueryEngine {
 namespace UnitTests { class ComparatorTests; }
 
-/// Base class for task comparators.
-/// Needed by Controller to construct GetTask query.
+/// Base class for binary comparators.
+/// Comparators are helper objects used to sort any object based on
+/// a certain properties of the object.
+/// Comparators can be combined by using the && operator.
+/// \see \ref You::QueryEngine::GetTask
 class Comparator {
 	friend class You::QueryEngine::UnitTests::ComparatorTests;
 public:
@@ -48,39 +51,45 @@ public:
 	/// @}
 
 public:
-	/// Enum class for comparison result.
+	/// Enumerated type for comparison result.
+	/// When comparing two tasks x and y, tasks x goes first
+	/// if the result is LT (conversely, GT). If the result is EQ,
+	/// continue to use the second comparator.
 	enum class ComparisonResult { LT, GT, EQ };
 
-	/// Type of the inner comparator function.
+	/// Type of the binary function underneath the comparator.
 	typedef std::function<ComparisonResult(const Task&, const Task&)>
 		ComparatorFunc;
 
-	/// Constructor using binary function.
+	/// Construct a comparator from using binary function.
 	Comparator(const ComparatorFunc& func);  // NOLINT
 
 	/// Return whether this is the default comparator.
 	inline bool isDefault() const { return isDefaultComparator; }
 
-	/// Cast to binary comparison function used by std::sort and
-	/// the others.
-	/// \note Default is ascending
+	/// Cast to binary comparison function used by std::sort and the others.
+	/// \note Default comparison method is ascending.
+	/// \param [in] lhs The first task to be compared.
+	/// \param [in] lhs The second task to be compared.
+	/// \return True if the comparison result is less than.
 	bool operator()(const Task& lhs, const Task& rhs) const;
 
-	/// Set the comparator function inside to compare
-	/// ascendingly.
+	/// Set the comparator function underneath to compare ascendingly.
+	/// \return Self reference after modification.
 	Comparator& ascending();
 
-	/// Set the comparator function inside to compare
-	/// descendingly.
+	/// Set the comparator function underneath to compare descendingly.
+	/// \return Self reference after modification.
 	Comparator& descending();
 
-	/// Combine with a second comparator
-	/// to be tested with it in case it is equal.
+	/// Combine this comparator with another comparator
+	/// \param [in] rhs Another comparator to combine with.
 	Comparator& operator&&(const Comparator& rhs);
 
 private:
-	/// Helper function to create a comparator by applying a function
-	/// beforehand.
+	/// Helper function to create a comparator for two task objects
+	/// by previously applying a unary function to both task objects.
+	/// \param [in] func The unary function to be pre-applied.
 	template <class T>
 	static Comparator byApplying(std::function<T(const Task&)> func) {
 		return Comparator([func] (const Task& lhs, const Task& rhs) {

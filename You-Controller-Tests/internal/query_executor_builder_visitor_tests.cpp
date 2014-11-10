@@ -136,6 +136,26 @@ TEST_CLASS(QueryExecutorBuilderVisitorTests) {
 		query = queryWithDependency;
 		executor = boost::apply_visitor(visitor, query);
 		result = boost::get<ADD_RESULT>(executor->execute());
+		Assert::AreEqual(result.task.getDependenciesObject().size(),
+			static_cast<std::size_t>(1));
+		Assert::AreEqual(
+			result.task.getDependenciesObject().at(0).getDescription(),
+				Task::Description(L"wow"));
+
+		queryWithDependency.dependent->dependent =
+			std::make_shared<NLP::ADD_QUERY>(
+				NLP::ADD_QUERY {
+					Mocks::Queries::ADD_QUERY.description + L"E"
+				});
+
+		query = queryWithDependency;
+		executor = boost::apply_visitor(visitor, query);
+		result = boost::get<ADD_RESULT>(executor->execute());
+		Assert::IsFalse(result.task.getDependenciesObject().empty());
+		Assert::AreEqual(result.task.
+				getDependenciesObject().at(0).
+				getDependenciesObject().at(0).getDescription(),
+				Task::Description(L"wow"));
 	}
 
 	TEST_METHOD(getsCorrectTypeForShowQueries) {

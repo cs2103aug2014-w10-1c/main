@@ -13,14 +13,21 @@ namespace QueryEngine {
 namespace Internal {
 namespace Action {
 
-/// Action for adding a new task
+/// Action for adding a new task.
+/// Three types of addition are supported.
+/// 1. Adding single task.
+/// 2. Adding single task alongside its dependencies.
+/// 3. Adding single task alongside its subtasks.
 class AddTask : public Query {
 	friend class BatchAddSubTasks;
 	friend class BatchDeleteSubTasks;
 	friend class BatchAddDependencies;
 
 public:
-	/// Constructor that use datastore to inquire new id
+	/// Constructor for new Task, i.e the one without ID known.
+	/// \see QueryEngine::AddTask
+	/// \see QueryEngine::BatchAddDependencies
+	/// \see QueryEngine::BatchAddSubtasks
 	explicit AddTask(Task::Description description, Task::Time startTime,
 		Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies, Task::Subtasks subtasks)
@@ -28,7 +35,10 @@ public:
 	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(subtasks) {}
 
-	/// Constructor for already known id
+	/// Constructor for already known ID.
+	/// \see QueryEngine::AddTask
+	/// \see QueryEngine::BatchAddDependencies
+	/// \see QueryEngine::BatchAddSubtasks
 	explicit AddTask(Task::ID id, Task::Description description,
 		Task::Time startTime, Task::Time deadline, Task::Priority priority,
 		Task::Dependencies dependencies, Task::Subtasks subtasks)
@@ -36,17 +46,19 @@ public:
 	  deadline(deadline), priority(priority), dependencies(dependencies),
 	  subtasks(subtasks) {}
 
-	/// Disable assignment operator
+	/// Disable assignment operator.
 	AddTask& operator=(const AddTask&) = delete;
 
-	/// Destructor
+	/// Destructor.
 	virtual ~AddTask() = default;
 
 protected:
 	/// The reverse of addition is deletion.
+	/// \returns The delete query as a reverse of this action.
 	std::unique_ptr<Query> getReverse() override;
 
-	/// The header of the log string
+	/// The header of the log string.
+	/// \returns The log category string.
 	static const std::wstring logCategory;
 
 private:

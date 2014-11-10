@@ -1,5 +1,5 @@
 /// \file You-QueryEngine/filter.h
-/// Defines the base class for filters.
+/// Defines the base class and common constructors. for filters.
 //@author A0112054Y
 
 #pragma once
