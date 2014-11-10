@@ -44,6 +44,7 @@ public:
 	/// Notifies the data store that the given transaction is being committed.
 	///
 	/// \param[out] transaction The transaction being committed.
+	/// \exception IOException if I/O error occurs
 	void onTransactionCommit(Transaction& transaction);
 
 	/// Notifies the data store that the given transaction is being rolled back.
