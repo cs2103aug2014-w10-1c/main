@@ -102,6 +102,8 @@ QueryParser::QueryParser() : QueryParser::base_type(start) {
 		((addCommandTimeFrom || addCommandTimeTo)
 		[qi::_val = phoenix::bind(&constructAddQueryWithTime, qi::_1, qi::_2)])
 #else
+		// Equivalent code for release builds. VC++ generates the wrong program
+		// with optimisations.
 		((addCommandTimeFrom >> -addCommandTimeTo)
 		[qi::_val = phoenix::bind(&constructAddQueryWithTime,
 			qi::_1,
